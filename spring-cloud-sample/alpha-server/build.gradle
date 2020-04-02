@@ -1,0 +1,7 @@
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter"
+    compile "com.h2database:h2:${h2Version}"
+    compile "org.apache.tomcat:tomcat-jdbc:${tomcatJdbcVersion}"
+    compile "org.apache.servicecomb.saga:alpha-server:${alphaServerVersion}"
+    compile "org.springframework.boot:spring-boot-starter-web"
+}

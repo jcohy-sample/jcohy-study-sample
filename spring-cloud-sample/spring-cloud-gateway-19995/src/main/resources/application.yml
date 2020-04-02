@@ -1,0 +1,47 @@
+server:
+  port: 19995
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+  application:
+    name: gateway-server
+
+
+  main:
+    allow-bean-definition-overriding: true
+
+eureka:
+  client: #客户端注册进eureka服务列表内
+    service-url:
+      defaultZone: http://localhost:19990/eureka
+
+  instance:
+    instance-id: gateway-server19995
+    prefer-ip-address: true     #访问路径可以显示IP地址
+
+logging: ## Spring Cloud Gateway的日志配置
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.ipc.netty: DEBUG
+
+info:
+  app.name: gateway-server
+  company.name: www.jcohy.com
+  build.artifactId: $project.artifactId$
+  build.version: $project.version$
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  security:
+    enabled: false
+

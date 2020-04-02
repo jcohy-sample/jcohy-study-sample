@@ -1,7 +1,7 @@
 package com.jcohy.sample.designpattern.proxy;
 
 
-public class RealObjectImpl implements java.lang.Object {
+public class RealObjectImpl implements Object {
 
 	
 	@Override

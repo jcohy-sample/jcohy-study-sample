@@ -2,13 +2,13 @@ dependencies {
 
     compile project(':spring-cloud-sample:spring-cloud-api')
 
-    compile('org.springframework.cloud:spring-cloud-starter-alibaba-nacos-config')
-    compile('org.springframework.cloud:spring-cloud-starter-alibaba-nacos-discovery')
     compile "org.springframework.cloud:spring-cloud-starter-openfeign"
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
 
-    compile "org.springframework.cloud:spring-cloud-starter-alibaba-seata"
+    compile "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config"
+    compile "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery"
+    compile "com.alibaba.cloud:spring-cloud-starter-alibaba-seata"
     
     compile "com.google.code.gson:gson:${gsonVersion}"
     compile "com.alibaba:druid-spring-boot-starter:${druidStarterVersion}"

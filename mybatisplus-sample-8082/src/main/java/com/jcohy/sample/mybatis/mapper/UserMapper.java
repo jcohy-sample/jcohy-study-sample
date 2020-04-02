@@ -1,8 +1,7 @@
 package com.jcohy.sample.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.flight.sample.mybatis.model.User;
-
+import com.jcohy.sample.mybatis.model.User;
 /**
  * @author jiac <a href="http://www.jcohy.com"></a>
  * @since 1.0.0

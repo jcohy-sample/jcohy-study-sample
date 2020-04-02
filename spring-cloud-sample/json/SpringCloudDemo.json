@@ -1,0 +1,688 @@
+{
+  "front-version": "2.19.2",
+  "version": 3,
+  "nodes": [
+    {
+      "type": "Service",
+      "id": "76f0050d-e941-445a-a484-4851b3c58ee4",
+      "lastModified": "2019-07-09T12:00:43.064+08:00",
+      "name": "course",
+      "parentId": "336e7cac-3209-4c03-8a18-3ee76feb47f5"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19992",
+        "path": "/course/list"
+      },
+      "id": "23115ad1-3cd8-4067-a63e-db574e3eb671",
+      "lastModified": "2019-07-09T16:01:48.969+08:00",
+      "name": " 获取全部课程",
+      "headers": [],
+      "metaInfo": {},
+      "parentId": "76f0050d-e941-445a-a484-4851b3c58ee4"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19992",
+        "path": "/course/get/2"
+      },
+      "id": "9a9d5c8f-28e3-4ac0-9f0b-2c407490d3fc",
+      "lastModified": "2019-07-10T09:16:20.526+08:00",
+      "name": " 获取单个课程",
+      "headers": [],
+      "metaInfo": {},
+      "parentId": "76f0050d-e941-445a-a484-4851b3c58ee4"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19992",
+        "path": "/course/discovery"
+      },
+      "id": "4e8a9e05-2e86-4192-a37d-2fa80f67f712",
+      "lastModified": "2019-07-09T16:01:15.618+08:00",
+      "name": "发现服务",
+      "headers": [],
+      "metaInfo": {},
+      "parentId": "76f0050d-e941-445a-a484-4851b3c58ee4"
+    },
+    {
+      "uriEditor": true,
+      "type": "Request",
+      "method": {
+        "requestBody": true,
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.3",
+        "name": "POST"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true,
+        "textBody": "{\n  \"cname\":\"test1\",\n  \"tid\":2\n}"
+      },
+      "headersType": "Form",
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19992",
+        "path": "/course/add"
+      },
+      "id": "74600e08-e0cf-40c3-9e7f-f6fad63ca8f7",
+      "lastModified": "2019-07-09T16:02:51.414+08:00",
+      "name": "添加课程",
+      "headers": [
+        {
+          "enabled": true,
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaInfo": {},
+      "parentId": "76f0050d-e941-445a-a484-4851b3c58ee4"
+    },
+    {
+      "type": "Project",
+      "id": "336e7cac-3209-4c03-8a18-3ee76feb47f5",
+      "lastModified": "2019-07-13T11:09:26.685+08:00",
+      "name": "SpringCloudDemo"
+    },
+    {
+      "type": "Service",
+      "id": "2d0e72d5-b590-4992-b9c8-f8d29ef8d674",
+      "lastModified": "2019-07-10T17:35:57.099+08:00",
+      "name": "gateway",
+      "parentId": "336e7cac-3209-4c03-8a18-3ee76feb47f5"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "requestBody": true,
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.3",
+        "name": "POST"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true,
+        "textBody": "{\n    \"sname\": \"jcohy\",\n    \"mapList\": [\n        {\n            \"score\": 99999,\n            \"cname\": \"语文\",\n            \"tname\": \"语文99999\"\n        },\n        {\n            \"score\": 99999,\n            \"cname\": \"数学\",\n            \"tname\": \"数学99999\"\n        },\n        {\n            \"score\": 99999,\n            \"cname\": \"英语\",\n            \"tname\": \"英语99999\"\n        }\n    ]\n}"
+      },
+      "headersType": "Form",
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19995",
+        "path": "/provider-student/student/score/add"
+      },
+      "id": "c39a692e-3d59-4106-b4a7-4604762d7b51",
+      "lastModified": "2019-07-13T11:04:22.870+08:00",
+      "name": "添加学生",
+      "headers": [
+        {
+          "enabled": true,
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "enabled": true,
+          "name": "Authorization",
+          "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIGluZm8iLCJpZCI6LTIwNDI0OTk1MSwidXNlciI6ImFkbWluIn0.9MKa4J3mgm7-uwX3b4AkXYFfjdx8c51Oz8I41GJ_vrQ"
+        }
+      ],
+      "metaInfo": {},
+      "parentId": "2d0e72d5-b590-4992-b9c8-f8d29ef8d674"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19995",
+        "path": "/provider-student/student/score/2"
+      },
+      "id": "e02454f9-c7a2-4584-9d24-641cba203794",
+      "lastModified": "2019-07-13T11:08:52.334+08:00",
+      "name": "网关转发",
+      "headers": [
+        {
+          "enabled": true,
+          "name": "Authorization",
+          "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIGluZm8iLCJpZCI6LTIwNDI0OTk1MSwidXNlciI6ImFkbWluIn0.9MKa4J3mgm7-uwX3b4AkXYFfjdx8c51Oz8I41GJ_vrQ"
+        }
+      ],
+      "metaInfo": {},
+      "parentId": "2d0e72d5-b590-4992-b9c8-f8d29ef8d674"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true,
+        "textBody": "{\n    \"sname\": \"123456\",\n    \"mapList\": [\n        {\n            \"score\": 123456,\n            \"cname\": \"语文\",\n            \"tname\": \"语文123456\"\n        },\n        {\n            \"score\": 123456,\n            \"cname\": \"数学\",\n            \"tname\": \"数学123456\"\n        },\n        {\n            \"score\": 123456,\n            \"cname\": \"英语\",\n            \"tname\": \"英语123456\"\n        }\n    ]\n}"
+      },
+      "headersType": "Form",
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19995",
+        "path": "/getToken/cloud"
+      },
+      "id": "4779a3d3-4b22-4369-9c81-1b3edc52ad73",
+      "lastModified": "2019-07-12T12:06:24.536+08:00",
+      "name": "获取token",
+      "headers": [],
+      "metaInfo": {},
+      "parentId": "2d0e72d5-b590-4992-b9c8-f8d29ef8d674"
+    },
+    {
+      "type": "Service",
+      "description": "",
+      "id": "7461d5c4-eac3-4043-a308-65836ab6f055",
+      "lastModified": "2019-07-09T12:00:23.345+08:00",
+      "name": "student",
+      "parentId": "336e7cac-3209-4c03-8a18-3ee76feb47f5"
+    },
+    {
+      "uriEditor": true,
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": [
+            {
+              "enabled": true,
+              "name": "str",
+              "value": "springboot"
+            }
+          ]
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19991",
+        "path": "/search/github"
+      },
+      "id": "388e0bb9-634e-45e5-a287-b67ba22d79fc",
+      "lastModified": "2019-07-09T14:21:07.335+08:00",
+      "name": "github搜索",
+      "headers": [],
+      "metaInfo": {},
+      "parentId": "7461d5c4-eac3-4043-a308-65836ab6f055"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19991",
+        "path": "/student/discovery"
+      },
+      "id": "a4522ebd-d49c-46df-9330-0d049835334e",
+      "lastModified": "2019-07-09T15:57:38.851+08:00",
+      "name": "发现服务",
+      "headers": [],
+      "metaInfo": {},
+      "parentId": "7461d5c4-eac3-4043-a308-65836ab6f055"
+    },
+    {
+      "uriEditor": true,
+      "type": "Request",
+      "method": {
+        "requestBody": true,
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.3",
+        "name": "POST"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true,
+        "textBody": "{\n  \"sname\":\"test1\",\n  \"ssex\":\"男\",\n  \"sage\":28\n}"
+      },
+      "headersType": "Form",
+      "uri": {
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19991",
+        "path": "/student/add"
+      },
+      "id": "45a20e46-cf93-4a28-8f67-5f8bdd15d535",
+      "lastModified": "2019-07-13T11:09:10.239+08:00",
+      "name": "添加学生",
+      "headers": [
+        {
+          "enabled": true,
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaInfo": {},
+      "parentId": "7461d5c4-eac3-4043-a308-65836ab6f055"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19991",
+        "path": "/student/list"
+      },
+      "id": "24937d58-01c2-4033-9dd6-52aa5538c274",
+      "lastModified": "2019-07-13T11:09:26.686+08:00",
+      "name": "获取全部学生",
+      "headers": [
+        {
+          "enabled": true,
+          "name": "Authorization",
+          "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIGluZm8iLCJpZCI6LTIwNDI0OTk1MSwidXNlciI6ImFkbWluIn0.9MKa4J3mgm7-uwX3b4AkXYFfjdx8c51Oz8I41GJ_vrQ"
+        }
+      ],
+      "metaInfo": {},
+      "parentId": "7461d5c4-eac3-4043-a308-65836ab6f055"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19991",
+        "path": "/student/get/2"
+      },
+      "id": "3938d30a-dffb-4ae9-836b-12d08e082b46",
+      "lastModified": "2019-07-10T17:09:38.284+08:00",
+      "name": "获取单个学生",
+      "headers": [],
+      "metaInfo": {},
+      "parentId": "7461d5c4-eac3-4043-a308-65836ab6f055"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19991",
+        "path": "/student/score/2"
+      },
+      "id": "9a8a8039-91ee-4a44-9178-dd503548ea65",
+      "lastModified": "2019-07-10T16:23:41.401+08:00",
+      "name": "获取单个学生成绩",
+      "headers": [],
+      "metaInfo": {},
+      "parentId": "7461d5c4-eac3-4043-a308-65836ab6f055"
+    },
+    {
+      "type": "Service",
+      "id": "cb0c644c-6666-4cdb-98f1-e85ae0f74744",
+      "lastModified": "2019-07-09T12:00:33.576+08:00",
+      "name": "teacher",
+      "parentId": "336e7cac-3209-4c03-8a18-3ee76feb47f5"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19993",
+        "path": "/teacher/list"
+      },
+      "id": "65d39808-a9ef-443e-8fbc-822a9898270e",
+      "lastModified": "2019-07-09T16:03:29.673+08:00",
+      "name": " 获取全部教师",
+      "headers": [],
+      "metaInfo": {},
+      "parentId": "cb0c644c-6666-4cdb-98f1-e85ae0f74744"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19993",
+        "path": "/teacher/discovery"
+      },
+      "id": "a61c3cf1-2648-420b-b3f0-214d7f32dc12",
+      "lastModified": "2019-07-09T16:03:12.609+08:00",
+      "name": "发现服务",
+      "headers": [],
+      "metaInfo": {},
+      "parentId": "cb0c644c-6666-4cdb-98f1-e85ae0f74744"
+    },
+    {
+      "uriEditor": true,
+      "type": "Request",
+      "method": {
+        "requestBody": true,
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.3",
+        "name": "POST"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true,
+        "textBody": "{\n  \"tname\":\"test1\"\n}"
+      },
+      "headersType": "Form",
+      "uri": {
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19991",
+        "path": "/student/add"
+      },
+      "id": "c927bb10-5259-4fe7-a98a-37864634ba21",
+      "lastModified": "2019-07-09T16:04:15.299+08:00",
+      "name": "添加教师",
+      "headers": [
+        {
+          "enabled": true,
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaInfo": {},
+      "parentId": "cb0c644c-6666-4cdb-98f1-e85ae0f74744"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:19993",
+        "path": "/teacher/get/1"
+      },
+      "id": "0a005b16-ae1f-44f5-a1dc-44cfd65dd5fe",
+      "lastModified": "2019-07-09T16:03:39.890+08:00",
+      "name": "获取单个学生",
+      "headers": [],
+      "metaInfo": {},
+      "parentId": "cb0c644c-6666-4cdb-98f1-e85ae0f74744"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+server:
+  port: 19992
+    
+spring:
+   application:
+    name: provider-course
+   datasource:
+    type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
+    driver-class-name: com.mysql.cj.jdbc.Driver              # mysql驱动包
+    url: jdbc:mysql://localhost:3306/db_course?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8&useSSL=false
+    username: root
+    password: jcohy1203
+    dbcp2:
+      min-idle: 5                                           # 数据库连接池的最小维持连接数
+      initial-size: 5                                       # 初始化连接数
+      max-total: 5                                          # 最大连接数
+      max-wait-millis: 200                                  # 等待连接获取的最大超时时间
+
+    druid:
+      url:
+eureka:
+  client: #客户端注册进eureka服务列表内
+    service-url: 
+      defaultZone: http://localhost:19990/eureka
+#       defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
+  instance:
+    instance-id: provider-course19992
+    prefer-ip-address: true     #访问路径可以显示IP地址     
+ 
+info: 
+  app.name: provider-course
+  company.name: www.jcohy.com
+  build.artifactId: $project.artifactId$
+  build.version: $project.version$
+

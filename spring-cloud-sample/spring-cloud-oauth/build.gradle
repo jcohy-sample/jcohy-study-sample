@@ -1,15 +1,7 @@
-plugins {
-    id 'java'
-}
-
-version 'unspecified'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile "org.springframework.cloud:spring-cloud-starter-openfeign"
+    compile "org.springframework.boot:spring-boot-starter-actuator"
+    compile "org.springframework.boot:spring-boot-starter-web"
+    compile "com.alibaba:fastjson:${fastjsonVersion}"
+    compile "io.jsonwebtoken:jjwt:${jjwtVersion}"
 }

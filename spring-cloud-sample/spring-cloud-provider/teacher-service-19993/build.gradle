@@ -1,15 +1,18 @@
-plugins {
-    id 'java'
-}
-
-version 'unspecified'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    compile project(':spring-cloud-sample:spring-cloud-api')
+//    compile project(':springcloud-oauth')
+    compile "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
+    compile "org.springframework.cloud:spring-cloud-starter-openfeign"
+    compile "org.springframework.boot:spring-boot-starter-web"
+    compile "org.springframework.boot:spring-boot-starter-data-redis"
+    compile "org.springframework.boot:spring-boot-starter-data-jpa"
+    compile "org.springframework.boot:spring-boot-starter-tomcat"
+    compile "org.springframework.boot:spring-boot-starter-actuator"
+    compile "com.codingapi.txlcn:txlcn-tc:${txLcnVersion}"
+    compile "com.codingapi.txlcn:txlcn-txmsg-netty:${txLcnVersion}"
+    compile "com.google.code.gson:gson:${gsonVersion}"
+    compile "com.alibaba:druid-spring-boot-starter:${druidStarterVersion}"
+//    compile "com.alibaba:druid:${druidVersion}"
+    compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
 }
