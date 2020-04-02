@@ -1,0 +1,18 @@
+rootProject.name = 'jcohy-study-sample'
+include 'spring-boot-sample:spring-boot-security-8081'
+include 'mybatisplus-sample-8082'
+include 'design-pattern-sample'
+
+include 'spring-cloud-sample:spring-cloud-api'
+include 'spring-cloud-sample:spring-cloud-oauth'
+include 'spring-cloud-sample:spring-cloud-eureka-19990'
+include 'spring-cloud-sample:spring-cloud-gateway-19995'
+
+include 'spring-cloud-sample:spring-cloud-provider:course-service-19992'
+include 'spring-cloud-sample:spring-cloud-provider:student-service-19991'
+include 'spring-cloud-sample:spring-cloud-provider:teacher-service-19993'
+include 'spring-cloud-sample:spring-cloud-provider2:account-service-19996'
+include 'spring-cloud-sample:spring-cloud-provider2:business-service-19997'
+include 'spring-cloud-sample:spring-cloud-provider2:order-service-19998'
+include 'spring-cloud-sample:spring-cloud-provider2:storage-service-19999'
+

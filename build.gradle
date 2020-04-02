@@ -1,0 +1,169 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.6.RELEASE' apply false
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+}
+
+description = "flight"
+
+ext {
+    //================= framework =================
+    springCloudVersion = "Hoxton.RELEASE"
+    springCloudAlibabaVersion = "2.2.0.RELEASE"
+    mybatisPlusStarterVersion = "3.3.1"
+
+    //================= Swagger =================
+    swaggerModelsVersion = "1.5.21"
+    swaggerVersion = "2.9.2"
+    swaggerUIVersion = "1.9.4"
+
+    //================= datasource ================
+    flywayVersion = "6.0.8"
+    druidStarterVersion = "1.1.21"
+    mysqlConnectorJavaVersion = "8.0.16"
+
+    //=================json=======================
+    fastjsonVersion = "1.2.62"
+    gsonVersion = "2.8.6"
+    jjwtVersion = "0.9.1"
+
+    //=================cache=======================
+    ehcacheVersion = "2.10.6"
+
+    //=================httpclient=================
+    httpclientVersion = "4.5.10"
+    OkHttpVersion = "3.14.4"
+
+    //=================Disruptor=================
+    disruptorVersion = "3.4.2"
+
+    //=================aliyun=====================
+    aliyunSdkVersion = "4.0.3"
+    aliyunSdkdysmsapiVersion = "1.1.0"
+
+    //=================minio=====================
+    minioVersion = "6.0.7"
+    qiniuVersion = "7.2.23"
+
+    //================= tools====================
+    tomcatJdbcVersion = "8.5.31"
+    GuavaVersion = "26.0-jre"
+    validationApiVersion = "2.0.1.Final"
+    protostuffVersion = "1.6.0"
+    curatorVersion = "4.0.1"
+    jacksonDataformatYamlVersion="2.9.8"
+
+    //================= test ====================
+    h2Version = "1.4.197"
+
+    //================= artifactRepoBase ====================
+    artifactRepoBase = ""
+    deployUsername = ""
+    deployPassword = ""
+
+    logstashVersion = "6.3"
+    janinoVersion = "3.1.0"
+}
+
+configure(allprojects ) { allprojects ->
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    repositories {
+
+        maven {
+            url 'http://maven.aliyun.com/nexus/content/groups/public/'
+        }
+
+        maven {
+            url = 'https://repo.spring.io/libs-milestone'
+        }
+
+        maven {
+            url 'https://repo.spring.io/snapshot/'
+        }
+
+        maven {
+            url = 'https://oss.sonatype.org/content/repositories/snapshots/'
+        }
+
+        maven {
+            url = 'http://repo.maven.apache.org/maven2'
+        }
+
+        mavenLocal()
+    }
+
+}
+configure(subprojects){subproject ->
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    apply plugin: 'io.spring.dependency-management'
+
+    group = 'com.jcohy.sample'
+    version = '0.1.0'
+
+    repositories {
+
+        maven {
+            url 'http://maven.aliyun.com/nexus/content/groups/public/'
+        }
+
+        maven {
+            url = 'https://repo.spring.io/libs-milestone'
+        }
+
+        maven {
+            url 'https://repo.spring.io/snapshot/'
+        }
+
+        maven {
+            url = 'https://oss.sonatype.org/content/repositories/snapshots/'
+        }
+
+        maven {
+            url = 'http://repo.maven.apache.org/maven2'
+        }
+
+        mavenLocal()
+    }
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+            mavenBom "com.alibaba.cloud:spring-cloud-alibaba-dependencies:${springCloudAlibabaVersion}"
+            mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+        }
+    }
+    dependencies{
+        compile "org.springframework.boot:spring-boot-starter-aop"
+        compile "org.springframework.boot:spring-boot-configuration-processor"
+        compile "org.springframework.retry:spring-retry"
+        compile "org.springframework.boot:spring-boot-starter-actuator"
+        runtime "org.springframework.boot:spring-boot-devtools"
+        testCompile "org.springframework.boot:spring-boot-starter-test"
+    }
+
+    configurations {
+        compile.exclude module: 'spring-boot-starter-tomcat'
+
+//        compile.exclude module: 'spring-boot-starter-logging'
+        // exclude transitive dependencies log4j1.x
+        compile.exclude group: 'log4j', module: 'log4j'
+        // exclude this to avoid multiple binding
+        compile.exclude group: 'org.slf4j', module: 'slf4j-simple'
+    }
+
+    compileJava {
+        sourceCompatibility = 1.8  // can be switched to 11 for testing
+        targetCompatibility = 1.8
+        options.encoding = "UTF-8"
+    }
+
+    task sourcesJar(type: Jar) {
+        from sourceSets.main.allJava
+        archiveClassifier = 'sources'
+    }
+
+    task javadocJar(type: Jar) {
+        from javadoc
+        archiveClassifier = 'javadoc'
+    }
+}

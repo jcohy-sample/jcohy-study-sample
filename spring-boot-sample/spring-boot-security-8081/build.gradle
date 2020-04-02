@@ -1,0 +1,12 @@
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-security'
+    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+}
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}

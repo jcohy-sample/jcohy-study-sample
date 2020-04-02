@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: account-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: f6bebeeb-e728-461f-b473-c3d0d3309a1a
+        #bebac610-16ce-4990-bd27-70b3a35bc493
+      config:
+        server-addr: localhost:8848
+        namespace: f6bebeeb-e728-461f-b473-c3d0d3309a1a
+        #bebac610-16ce-4990-bd27-70b3a35bc493
+        group: JCOHY_CONFIG
+        prefix: ${spring.application.name}
+        file-extension: yml
+management:
+  endpoints:
+    web:
+      exposure:
+        include*: "*"
+
+
+
+
+

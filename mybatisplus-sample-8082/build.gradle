@@ -1,0 +1,8 @@
+dependencies {
+    compile "com.baomidou:mybatis-plus-boot-starter:${mybatisPlusStarterVersion}"
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    runtimeOnly "com.h2database:h2"
+}
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
