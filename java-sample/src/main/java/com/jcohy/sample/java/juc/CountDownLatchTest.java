@@ -7,7 +7,7 @@ import java.util.concurrent.CountDownLatch;
  * ClassName  : com.jcohy.study.juc
  * Description  :
  */
-public class Test {
+public class CountDownLatchTest {
 
     private static int x = 0, y = 0;
     private static int a = 0, b =0;

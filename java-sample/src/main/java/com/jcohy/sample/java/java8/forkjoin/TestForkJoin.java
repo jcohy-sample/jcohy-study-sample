@@ -1,6 +1,6 @@
 package com.jcohy.sample.java.java8.forkjoin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;

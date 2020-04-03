@@ -6,7 +6,7 @@ package com.jcohy.sample.java.nio;
  * Description  :
  */
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
 

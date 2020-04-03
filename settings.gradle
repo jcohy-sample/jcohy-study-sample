@@ -1,3 +1,9 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven { url 'https://repo.spring.io/plugins-release' }
+    }
+}
 rootProject.name = 'jcohy-study-sample'
 include 'spring-boot-sample:spring-boot-security-8081'
 include 'mybatisplus-sample-8082'
@@ -17,4 +23,5 @@ include 'spring-cloud-sample:spring-cloud-provider2:order-service-19998'
 include 'spring-cloud-sample:spring-cloud-provider2:storage-service-19999'
 include 'alogrithm-sample'
 include 'java-sample'
+include 'buildSrc'
 

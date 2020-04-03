@@ -1,7 +1,7 @@
 package com.jcohy.sample.java.nio;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

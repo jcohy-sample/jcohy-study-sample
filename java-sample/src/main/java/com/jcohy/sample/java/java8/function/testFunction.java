@@ -1,6 +1,6 @@
 package com.jcohy.sample.java.java8.function;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;

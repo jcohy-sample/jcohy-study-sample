@@ -1,7 +1,8 @@
 package com.jcohy.sample.java.java8.stream;
 
-import com.jcohy.study.java8.lambda.Employee;
-import org.junit.Test;
+
+import com.jcohy.sample.java.java8.lambda.Employee;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -1,7 +1,7 @@
 package com.jcohy.sample.java.java8.stream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ public class TestTransaction {
 	
 	List<Transaction> transactions = null;
 	
-	@Before
+	@BeforeAll
 	public void before(){
 		Trader raoul = new Trader("Raoul", "Cambridge");
 		Trader mario = new Trader("Mario", "Milan");

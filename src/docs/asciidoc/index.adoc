@@ -1,0 +1,25 @@
+= Jcohy 学习笔记
+include::attributes.adoc[]
+
+****
+作者网页：
+http://www.jcohy.com[*http://www.jcohy.com*]
+
+文档翻译网址：
+http://docs.jcohy.com[*http://docs.jcohy.com*]
+
+我的学习笔记，记录学习过程中的笔记以及遇到的问题,以及我的一些经验总结。如果出现链接失效,或者想知道更多的内容等情况可以提交 https://github.com/jcohy/jcohy-issues/issues[Issues] 提醒我修改相关内容。
+****
+
+[horizontal]
+<<java.adoc#overview, Java基础>> :: java 基础，Java 新特性
+<<designpattern.adoc#overview, 设计模式>> :: Java设计模式
+<<alogrithm.adoc#overview, 算法>>  :: 算法精题
+<<linux.adoc#overview, linux>>  :: Linux 介绍
+<<nosql.adoc#overview, nosql>>  :: nosql 介绍
+<<spring.adoc#overview, spring>>  :: spring全家桶
+<<zookeeper.adoc#overview, zookeeper>>  :: zookeeper
+<<nginx.adoc#overview, nginx>>  :: nginx
+<<docker.adoc#overview, docker>>  :: docker
+<<go.adoc#overview, go>>  :: go
+<<guide.adoc#overview, 面试指南>>  :: 面试指南

@@ -1,7 +1,8 @@
 package com.jcohy.sample.java.java8.anno;
 
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 
