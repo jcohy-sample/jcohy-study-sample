@@ -1,0 +1,80 @@
+[[java-10-feature]]
+= jdk10新特性
+
+[[java-10-feature-overview]]
+== jdk10新特性一览
+
+
+[[java-9-feature-jigsaw-Feature]]
+=== 官方 Feature
+
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+
+----
+
+[[java-12-feature-overview-tbl]]
+.jdk12新特性一览
+|===
+| 新特性 | 翻译
+
+|
+|
+|
+|
+|===
+
+[NOTE]
+====
+
+====
+
+[IMPORTANT]
+====
+
+====
+
+[TIP]
+====
+
+====
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+
+----
+.Kotlin
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+
+----
+
+
+footnote:[Clarification about this statement.]
+
+.Starters and Auto-configuration
+****
+
+****
+
+[qanda]
+What is Asciidoctor?::
+  An implementation of the AsciiDoc processor in Ruby.
+What is the answer to the Ultimate Question?:: 42
+
+
+symbol
+
+。   ------- .
+；   -------  ;
+：   ------- :
+“”   ------- ""
+？   ------- ?
+（） ------- ()
+【】 ------- []
+{}   ------- {}
+【
+￥

@@ -201,7 +201,7 @@ h%length，但是&比%具有更高的效率。
 归纳起来简单地说，HashMap 在底层将 key-value 当成一个整体进行处理，这个整体
 就是一个 Entry 对象。HashMap 底层采用一个 Entry[] 数组来保存所有的 key-value 对，当
 需要存储一个 Entry 对象时，会根据hash 算法来决定其在数组中的存储位置，在根据equals
-方法决定其在该数组位置上的链表中的存储位置；当需要取出一个Entry 时，也会根据hash
+方法决定其在该数组位置上的链表中的存储位置;当需要取出一个Entry 时，也会根据hash
 算法找到其在数组中的存储位置，再根据equals 方法从该位置上的链表中取出该Entry
 
 <p id="size">
@@ -235,9 +235,10 @@ h%length，但是&比%具有更高的效率。
 &nbsp;&nbsp;&nbsp;&nbsp;loadFactor：负载因子loadFactor 定义为：散列表的实际元素数目(n)/ 散列表的容量(m)。</br>
 负载因子衡量的是一个散列表的空间的使用程度，负载因子越大表示散列表的装填程度越
 高，反之愈小。对于使用链表法的散列表来说，查找一个元素的平均时间是O(1+a)，因此
-如果负载因子越大，对空间的利用更充分，然而后果是查找效率的降低；如果负载因子太小，
-那么散列表的数据将过于稀疏，对空间造成严重浪费。</br>
-&nbsp;&nbsp;&nbsp;&nbsp;HashMap 的实现中，通过threshold 字段来判断HashMap 的最大容量：
+如果负载因子越大，对空间的利用更充分，然而后果是查找效率的降低;如果负载因子太小，
+那么散列表的数据将过于稀疏，对空间造成严重浪费。
+
+&nbsp;&nbsp;&nbsp;&nbsp;HashMap 的实现中，通过 `threshold` 字段来判断 `HashMap` 的最大容量：
 
              Java 代码
              threshold = (int)(capacity * loadFactor);

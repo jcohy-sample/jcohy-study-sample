@@ -4,7 +4,7 @@
 [[java-hashset-overview]]
 ==  概述
 
-`HashSet` 实现 `Set` 接口，由哈希表（实际上是一个 `HashMap` 实例）支持。它不保证 `set` 的 迭代顺序；特别是它不保证该顺序恒久不变。此类允许使用 `null` 元素。
+`HashSet` 实现 `Set` 接口，由哈希表（实际上是一个 `HashMap` 实例）支持。它不保证 `set` 的 迭代顺序;特别是它不保证该顺序恒久不变。此类允许使用 `null` 元素。
 
 
 [[java-hashset-impl]]

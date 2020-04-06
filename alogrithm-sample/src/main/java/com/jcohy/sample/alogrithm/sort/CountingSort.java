@@ -20,7 +20,7 @@ public class CountingSort {
         if (data.length == 0) {
             return;
         }
-        //找出待排序的数组中最大和最小的元素；
+        //找出待排序的数组中最大和最小的元素;
         int max = data[0];
         int min = data[0];
         for (int i = 0; i < data.length; i++) {

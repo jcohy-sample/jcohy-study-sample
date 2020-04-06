@@ -1,5 +1,5 @@
 [[java-8-feature]]
-= Java8新特性
+= Java8 新特性
 
 - 速度更快
 - 代码更少（增加了新的语法Lambda 表达式）
@@ -8,7 +8,7 @@
 - 最大化减少空指针异常Optional
 
 [[java-8-feature-lambda]]
-== Lambda表达式
+== Lambda 表达式
 
 Lambda 是一个匿名函数，我们可以把Lambda 表达式理解为是一段可以传递的代码（将代码像数据一样进行传递）。可以写出更简洁、更灵活的代码。作为一种更紧凑的代码风格，使Java的语言表达能力得到了提升。
 
@@ -244,7 +244,7 @@ public void calculate(Long num,Long num2,Func2<Long,Long> myFun){
 [[java-8-feature-function-inside-sample-sonsumer]]
 ==== Consumer<T>：消费型接口
 
-**void accept(T t)**；
+**void accept(T t)**;
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java
@@ -445,7 +445,7 @@ public void calculate(Long num,Long num2,Func2<Long,Long> myFun){
 [[java-8-feature-stream-overview]]
 === 了解 Stream
 
-Java8 中有两大最为重要的改变。第一个是 Lambda 表达式；另外一个则是 **Stream API(java.util.stream.*)。**
+Java8 中有两大最为重要的改变。第一个是 Lambda 表达式;另外一个则是 **Stream API(java.util.stream.*)。**
 
 Stream 是 Java8 中处理集合的关键抽象概念，它可以指定你希望对集合进行的操作，可以执行非常复杂的查找、过滤和映射数据等操作。使用 Stream API 对集合数据进行操作，就类似于使用SQL 执行的数据库查询。也可以使用Stream API 来并行执行操作。简而言之，Stream API 提供了一种高效且易于使用的处理数据的方式。
 

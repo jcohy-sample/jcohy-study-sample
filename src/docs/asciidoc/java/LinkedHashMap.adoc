@@ -163,7 +163,7 @@
 [[java-linkedhashmap-sort]]
 ==  排序模式
 
-`LinkedHashMap` 定义了排序模式 `accessOrder`，该属性为 `boolean` 型变量，对于访问顺序，为 `true`；对于插入顺序，则为 `false`。
+`LinkedHashMap` 定义了排序模式 `accessOrder`，该属性为 `boolean` 型变量，对于访问顺序，为 `true`;对于插入顺序，则为 `false`。
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java

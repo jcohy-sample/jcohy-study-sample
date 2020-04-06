@@ -179,7 +179,7 @@ image::images/java-hashmap2.png[]
 
 有了上面存储时的hash 算法作为基础，理解起来这段代码就很容易了。从上面的源代码中可以看出：从 `HashMap` 中 `get` 元素时，首先计算 `key` 的 `hashCode`，找到数组中对应 位置的某一元素，然后通过 `key` 的 `equals` 方法在对应位置的链表中找到需要的元素。
 归纳起来简单地说，`HashMap` 在底层将 key-value 当成一个整体进行处理，这个整体 就是一个 `Entry` 对象。`HashMap` 底层采用一个 `Entry[]` 数组来保存所有的 key-value 对，当
-需要存储一个 `Entry` 对象时，会根据 `hash` 算法来决定其在数组中的存储位置，在根据 `equals`方法决定其在该数组位置上的链表中的存储位置；当需要取出一个Entry 时，也会根据 `hash` 算法找到其在数组中的存储位置，再根据 `equals` 方法从该位置上的链表中取出该 `Entry`
+需要存储一个 `Entry` 对象时，会根据 `hash` 算法来决定其在数组中的存储位置，在根据 `equals`方法决定其在该数组位置上的链表中的存储位置;当需要取出一个Entry 时，也会根据 `hash` 算法找到其在数组中的存储位置，再根据 `equals` 方法从该位置上的链表中取出该 `Entry`
 
 [[java-hashmap-resize]]
 ==  HashMap的resize（rehash）
@@ -206,7 +206,7 @@ initialCapacity：`HashMap` 的最大容量，即为底层数组的长度。
 loadFactor：负载因子 `loadFactor` 定义为：散列表的实际元素数目(n)/ 散列表的容量(m)。
 
 负载因子衡量的是一个散列表的空间的使用程度，负载因子越大表示散列表的装填程度越 高，反之愈小。对于使用链表法的散列表来说，查找一个元素的平均时间是 `O(1+a)`，因此
-如果负载因子越大，对空间的利用更充分，然而后果是查找效率的降低；如果负载因子太小， 那么散列表的数据将过于稀疏，对空间造成严重浪费。
+如果负载因子越大，对空间的利用更充分，然而后果是查找效率的降低;如果负载因子太小， 那么散列表的数据将过于稀疏，对空间造成严重浪费。
 
 `HashMap` 的实现中，通过 `threshold` 字段来判断 `HashMap` 的最大容量：
 
@@ -264,23 +264,18 @@ loadFactor：负载因子 `loadFactor` 定义为：散列表的实际元素数�
 ====
 注意，迭代器的快速失败行为不能得到保证，一般来说，存在非同步的并发修改时，不可能作出任何坚决的保证。快速失败迭代器尽最大努力抛出 `ConcurrentModificationException`。因此，编写依赖于此异常的程序的做法是错误的，正确做法是：迭代器的快速失败行为应该仅用于检测程序错误。
 ====
-####
 
 [[java-hashmap-qa]]
 ==  Q&A
-
-*  例子一</br>
-Q:当两个对象的hashcode相同会发生什么？</br>
-A:因为hashcode相同，所以它们的bucket位置相同，‘碰撞’会发生。因为HashMap使用链表存储对象，这个Entry(包含有键值对的Map.Entry对象)会存储在链表中。</br>
-*  例子二</br>
-Q:如果两个键的hashcode相同，你如何获取值对象？</br>
-A:当我们调用get()方法，HashMap会使用键对象的hashcode找到bucket位置，找到bucket位置之后，会调用keys.equals()方法去找到链表中正确的节点，最终找到要找的值对象。</br>
-*  例子三</br>
-Q:重新调整HashMap大小存在什么问题吗？</br>
-A:可能产生条件竞争(race condition)。因为如果两个线程都发现HashMap需要重新调整大小了，它们会同时试着调整大小。在调整大小的过程中，存储在链表中的元素的次序会反过来，因为移动到新的bucket位置的时候，HashMap并不会将元素放在链表的尾部，而是放在头部，这是为了避免尾部遍历(tail traversing)。如果条件竞争发生了，那么就死循环了。</br>
-*  例子四</br>
-Q:为什么String, Interger这样的wrapper类适合作为键？</br>
-A:因为String是不可变的，也是final的，而且已经重写了equals()和hashCode()方法了。其他的wrapper类也有这个特点。不可变性是必要的，因为为了要计算hashCode()，就要防止键值改变，如果键值在放入时和获取时返回不同的hashcode的话，那么就不能从HashMap中找到你想要的对象。不可变性还有其他的优点如线程安全。</br>
+[qanda]
+当两个对象的hashcode相同会发生什么？::
+    因为hashcode相同，所以它们的bucket位置相同，‘碰撞’会发生。因为HashMap使用链表存储对象，这个Entry(包含有键值对的Map.Entry对象)会存储在链表中。
+如果两个键的hashcode相同，你如何获取值对象？::
+    当我们调用get()方法，HashMap会使用键对象的hashcode找到bucket位置，找到bucket位置之后，会调用keys.equals()方法去找到链表中正确的节点，最终找到要找的值对象。
+重新调整HashMap大小存在什么问题吗？::
+    可能产生条件竞争(race condition)。因为如果两个线程都发现HashMap需要重新调整大小了，它们会同时试着调整大小。在调整大小的过程中，存储在链表中的元素的次序会反过来，因为移动到新的bucket位置的时候，HashMap并不会将元素放在链表的尾部，而是放在头部，这是为了避免尾部遍历(tail traversing)。如果条件竞争发生了，那么就死循环了。
+为什么String, Interger这样的wrapper类适合作为键？::
+    因为String是不可变的，也是final的，而且已经重写了equals()和hashCode()方法了。其他的wrapper类也有这个特点。不可变性是必要的，因为为了要计算hashCode()，就要防止键值改变，如果键值在放入时和获取时返回不同的hashcode的话，那么就不能从HashMap中找到你想要的对象。不可变性还有其他的优点如线程安全。
 
 [[java-hashmap-extend]]
 ==  扩展

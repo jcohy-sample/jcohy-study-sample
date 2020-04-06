@@ -12,3 +12,7 @@
 :docinfo: shared,private
 :revnumber: {version}
 :revdate: {localdate}
+
+:base-sample: ../../../
+:design-pattern-sample: ${base-sample}design-pattern-sample/src/main/java/com/jcohy/sample/designpattern
+
