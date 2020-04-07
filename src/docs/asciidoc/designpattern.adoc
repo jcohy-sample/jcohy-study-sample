@@ -2,6 +2,8 @@
 = 概述
 include::attributes.adoc[]
 
+image::images/design-overview.png[]
+
 * [设计原则]
 ** [单一职责原则]
 ** [里氏替换原则]
