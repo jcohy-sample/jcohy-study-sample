@@ -7,7 +7,7 @@
 JDK 13于2019年9月17日正式发布。
 本文主要针对 Java 13 中的新特性展开介绍，让您快速了解 Java 13 带来的变化。
 
-资料来源： http://openjdk.java.net/projects/jdk/13/
+资料来源:  http://openjdk.java.net/projects/jdk/13/
 
 [[java-13-feature-overview-tbl]]
 .Java13 新特性一览
@@ -20,19 +20,19 @@ JDK 13于2019年9月17日正式发布。
 
 | 353: [Reimplement the Legacy Socket API](http://openjdk.java.net/jeps/353)|重新实现旧版套接字API
 
-| 354: [Switch Expressions (Preview)](http://openjdk.java.net/jeps/354)|switch表达式（预览）
+| 354: [Switch Expressions (Preview)](http://openjdk.java.net/jeps/354)|switch表达式(预览)
 
-| 355: [Text Blocks (Preview)](http://openjdk.java.net/jeps/355)|文字块（预览）
+| 355: [Text Blocks (Preview)](http://openjdk.java.net/jeps/355)|文字块(预览)
 |===
 
 [[java-13-feature-switch]]
-== switch表达式（预览）
+== switch表达式(预览)
 
 在JDK 12中引入了 Switch 表达式作为预览特性。JDK 13 提出了第二个 `switch` 表达式预览。JEP 354 修改了这个特性，它引入了 `yield` 语句，用于返回值。这意味着，`switch` 表达式(返回值)应该使用 `yield`, `switch` 语句(不返回值)应该使用 `break`。
 
-在 JDK 12 中有一个，但是要进行一个更改：要从 `switch` 表达式中生成一个值 `break`，要删除 with value 语句以支持 `yield` 声明。目的是扩展，switch 以便它可以用作语句或表达式，因此两个表单既可以使用 `case ... :` 带有连贯符号的传统标签，也可以使用新 **case … ->** 标签，而不需要通过，还有一个新的语句用于从 `switch` 表达式中产生值。这些更改将简化编码并为 https://openjdk.java.net/jeps/305[模式匹配] 做好准备。
+在 JDK 12 中有一个，但是要进行一个更改: 要从 `switch` 表达式中生成一个值 `break`，要删除 with value 语句以支持 `yield` 声明。目的是扩展，switch 以便它可以用作语句或表达式，因此两个表单既可以使用 `case ... :` 带有连贯符号的传统标签，也可以使用新 **case … ->** 标签，而不需要通过，还有一个新的语句用于从 `switch` 表达式中产生值。这些更改将简化编码并为 https://openjdk.java.net/jeps/305[模式匹配] 做好准备。
 
-在以前，我们想要在 `switch` 中返回内容，还是比较麻烦的，一般语法如下：
+在以前，我们想要在 `switch` 中返回内容，还是比较麻烦的，一般语法如下:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java8
@@ -56,7 +56,7 @@ public void testSwitch1(){
 }
 ----
 
-在JDK13中使用以下语法：
+在JDK13中使用以下语法:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java13
@@ -95,12 +95,12 @@ public void testSwitch3() {
 }
 ----
 
-在这之后，`switch` 中就多了一个关键字用于跳出 `switch` 块了，那就是 `yield`，他用于返回一个值。和 `return` 的区别在于：`return` 会直接跳出当前循环或者方法，而 `yield` 只会跳出当前 `switch` 块。
+在这之后，`switch` 中就多了一个关键字用于跳出 `switch` 块了，那就是 `yield`，他用于返回一个值。和 `return` 的区别在于: `return` 会直接跳出当前循环或者方法，而 `yield` 只会跳出当前 `switch` 块。
 
 [[java-13-feature-block]]
-== 文本块（预览）
+== 文本块(预览)
 
-在 JDK 12 中引入了 Raw String Literals 特性，但在发布之前就放弃了。这个 JEP 与引入多行字符串文字（text block）在意义上是类似的。
+在 JDK 12 中引入了 Raw String Literals 特性，但在发布之前就放弃了。这个 JEP 与引入多行字符串文字(text block)在意义上是类似的。
 
 这条新特性跟 Kotlin 里的文本块是类似的。
 
@@ -139,7 +139,7 @@ public void testSwitch3() {
 
 使用 `"""""""` 作为文本块的开始符和结束符，在其中就可以放置多行的字符串，不需要进行任何转义。看起来就十分清爽了。
 
-如常见的SQL语句：
+如常见的SQL语句:
 
 ```sql
 select employee_id,last_name,salary,department_id
@@ -173,10 +173,10 @@ String newQuery = """
 ==== 基本使用
 * 文本块是Java语言中的一种新文字。它可以用来表示任何字符串，并且提供更大的表现力和更少的复杂性。
 * 文本块由零个或多个字符组成，由开始和结束分隔符括起来。
-** 开始分隔符是由三个双引号字符（`"""`），后面可以跟零个或多个空格，最终以行终止符结束。文本块内容以开始分隔符的行终止符后的第一个字符开始。
-** 结束分隔符也是由三个双引号字符（`"""`）表示，文本块内容以结束分隔符的第一个双引号之前的最后一个字符结束。
+** 开始分隔符是由三个双引号字符(`"""`)，后面可以跟零个或多个空格，最终以行终止符结束。文本块内容以开始分隔符的行终止符后的第一个字符开始。
+** 结束分隔符也是由三个双引号字符(`"""`)表示，文本块内容以结束分隔符的第一个双引号之前的最后一个字符结束。
 * 文本块中的内容可以直接使用 `"`，`"`，但不是必需的。
-* 文本块中的内容可以直接包括行终止符。允许在文本块中使用 `\n`，但不是必需的。例如，文本块：
+* 文本块中的内容可以直接包括行终止符。允许在文本块中使用 `\n`，但不是必需的。例如，文本块:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java13
@@ -196,7 +196,7 @@ line3
 "line1\1 nline2\nline3\n"
 ----
 
-或者一个连接的字符串：
+或者一个连接的字符串:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java8
@@ -206,7 +206,7 @@ line3
 "line3\n"
 ----
 
-如果字符串末尾不需要行终止符，则结束分隔符可以放在最后一行内容上。例如：
+如果字符串末尾不需要行终止符，则结束分隔符可以放在最后一行内容上。例如:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java13
@@ -225,7 +225,7 @@ line3"""
 "line1\nline2\nline3"
 ----
 
-文本块可以表示空字符串，但不建议这样做，因为它需要两行源代码：
+文本块可以表示空字符串，但不建议这样做，因为它需要两行源代码:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java13
@@ -234,7 +234,7 @@ String empty = """
 """;
 ----
 
-以下示例是错误格式的文本块：
+以下示例是错误格式的文本块:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java13
@@ -245,7 +245,7 @@ String c = """
 "; // 没有结束分隔符
 String d = """
 abc \ def
-"""; // 含有未转义的反斜线（请参阅下面的转义处理）
+"""; // 含有未转义的反斜线(请参阅下面的转义处理)
 ----
 
 在运行时，文本块将被实例化为 String 的实例，就像字符串一样。从文本块派生的 String 实例与从字符串派生的实例是无法区分的。具有相同内容的两个文本块将引用相同的 String 实例，就像字符串一样。
@@ -266,7 +266,7 @@ String html = """
 ..............""";
 ----
 
-多余的空格还会出现在每一行的结尾，特别是当你从其他地方复制过来时，更容易出现这种情况，比如下面的代码：
+多余的空格还会出现在每一行的结尾，特别是当你从其他地方复制过来时，更容易出现这种情况，比如下面的代码:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java13
@@ -283,7 +283,7 @@ String html = """
 这些多余的空格对于程序员来说是看不到的，但是他又是实际存在的，所以如果编译器不做处理，可能会导致程序员看到的两个文本块内容是一样的，但是这两个文本块却因为存在这种多余的空格而导致差异，比如哈希值不相等。
 
 ==== 转义字符
-允许开发人员使用 `\n`，`\f` 和 `\r` 来进行字符串的垂直格式化，使用 `\b` 和 `\t` 进行水平格式化。比如下面的代码是合法的：
+允许开发人员使用 `\n`，`\f` 和 `\r` 来进行字符串的垂直格式化，使用 `\b` 和 `\t` 进行水平格式化。比如下面的代码是合法的:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java13
@@ -313,7 +313,7 @@ in rather a scornful tone, "it means just what I
     """;
 ----
 
-但是，三个 `"` 字符的序列需要进行转义至少一个 `"` 以避免模仿结束分隔符：
+但是，三个 `"` 字符的序列需要进行转义至少一个 `"` 以避免模仿结束分隔符:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java13
@@ -329,7 +329,7 @@ String code =
 
 ==== 文本块连接
 
-可以在任何可以使用字符串的地方使用文本块。例如，文本块和字符串可以相互连接：
+可以在任何可以使用字符串的地方使用文本块。例如，文本块和字符串可以相互连接:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java
@@ -341,7 +341,7 @@ String code = "public void print(Object o) {" +
 """;
 ----
 
-但是，涉及文本块的连接可能变得相当笨重。以下面文本块为基础：
+但是，涉及文本块的连接可能变得相当笨重。以下面文本块为基础:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java
@@ -353,7 +353,7 @@ String code = """
 """;
 ----
 
-假设我们想把上面的 Object 改为来自某一变量，我们可能会这么写：
+假设我们想把上面的 Object 改为来自某一变量，我们可能会这么写:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java13
@@ -366,7 +366,7 @@ String code = """
 """;
 ----
 
-可以发现这种写法可读性是非常差的，更简洁的替代方法是使用 `String::replace` 或 `String::format`，比如：另一个方法是使用 `String::formatted`，这是一个新方法，比如：
+可以发现这种写法可读性是非常差的，更简洁的替代方法是使用 `String::replace` 或 `String::format`，比如: 另一个方法是使用 `String::formatted`，这是一个新方法，比如:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java13
@@ -388,7 +388,7 @@ String code = String.format("""
                             """, type);
 ----
 
-另一个方法是使用 `String::formatted`，这是一个新方法，比如：
+另一个方法是使用 `String::formatted`，这是一个新方法，比如:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java13
@@ -401,18 +401,18 @@ String source = """
 ----
 
 [[java-13-feature-cds]]
-== 动态CDS档案（动态类数据共享归档）
+== 动态CDS档案(动态类数据共享归档)
 
 CDS，是 java 12 的特性了，可以让不同 Java 进程之间共享一份类元数据，减少内存占用，它还能加快应用的启动速度。而 JDK13 的这个特性支持在 Java application 执行之后进行动态 archive。存档类将包括默认的基础层 CDS 存档中不存在的所有已加载的应用程序和库类。也就是说，在 Java 13 中再使用 `AppCDS` 的时候，就不再需要这么复杂了。
 
 该提案处于目标阶段，旨在提高 `AppCDS` 的可用性，并消除用户进行试运行以创建每个应用程序的类列表的需要。
 
-使用示例：
+使用示例:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java13
 ----
-# JVM退出时动态创建共享归档文件：导出jsa
+# JVM退出时动态创建共享归档文件: 导出jsa
 java -XX:ArchiveClassesAtExit=hello.jsa -cp hello.jar Hello
 # 用动态创建的共享归档文件运行应用:使用jsa
 java -XX:SharedArchiveFile=hello.jsa -cp hello.jar Hello
@@ -424,7 +424,7 @@ java -XX:SharedArchiveFile=hello.jsa -cp hello.jar Hello
 [[java-13-feature-zgc-history]]
 === G1 和 Shenandoah
 
-JVM的GC释放的内存会还给操作系统吗？
+JVM的GC释放的内存会还给操作系统吗?
 
 GC 后的内存如何处置，其实是取决于不同的垃圾回收器。因为把内存还给OS，意味着要调整JVM的堆大小，这个过程是比较耗费资源的。
 
@@ -438,7 +438,7 @@ HotSpot 的 G1 和 Shenandoah 这两个 GC 已经提供了这种能力，并且�
 
 在JDK 11中，Java引入了ZGC，这是一款可伸缩的低延迟垃圾收集器，但是当时只是实验性的。号称不管你开了多大的堆内存，它都能保证在 10 毫秒内释放 JVM ，不让它停顿在那。但是，当时的设计是它不能把内存归还给操作系统。对于比较关心内存占用的应用来说，肯定希望进程不要占用过多的内存空间了，所以这次增加了这个特性。
 
-在Java 13中，JEP 351再次对ZGC做了增强，将没有使用的堆内存归还给操作系统。ZGC当前不能把内存归还给操作系统，即使是那些很久都没有使用的内存，也只进不出。这种行为并不是对任何应用和环境都是友好的，尤其是那些内存占用敏感的服务，例如：
+在Java 13中，JEP 351再次对ZGC做了增强，将没有使用的堆内存归还给操作系统。ZGC当前不能把内存归还给操作系统，即使是那些很久都没有使用的内存，也只进不出。这种行为并不是对任何应用和环境都是友好的，尤其是那些内存占用敏感的服务，例如:
 
 * 按需付费使用的容器环境;
 * 应用程序可能长时间闲置，并且和很多其他应用共享和竞争资源的环境;
@@ -448,12 +448,12 @@ HotSpot 的 G1 和 Shenandoah 这两个 GC 已经提供了这种能力，并且�
 === 使用细节
 
 ZGC 的堆由若干个 `Region` 组成，每个 `Region` 被称之为 `ZPage`。每个 `Zpage` 与数量可变的已提交内存相关联。当ZGC压缩堆的时候，`ZPage` 就会释放，然后进入 page cache，即 `ZPageCache`。这些在 page cache 中的 `ZPage` 集合就表示没有使用部分的堆，
-这部分内存应该被归还给操作系统。回收内存可以简单的通过从page cache中逐出若干个选好的 `ZPage` 来实现，由于 page cache 是以 `LRU`（Least recently used，最近最少使用）顺序保存 `ZPage` 的，并且按照尺寸（小，中，大）进行隔离，
+这部分内存应该被归还给操作系统。回收内存可以简单的通过从page cache中逐出若干个选好的 `ZPage` 来实现，由于 page cache 是以 `LRU`(Least recently used，最近最少使用)顺序保存 `ZPage` 的，并且按照尺寸(小，中，大)进行隔离，
 因此逐出 `ZPage` 机制和回收内存相对简单了很多，主要挑战是设计关于何时从page cache中逐出 `ZPage` 的策略。
 
 一个简单的策略就是设定一个超时或者延迟值，表示 `ZPage` 被驱逐前，能在page cache中驻留多长时间。这个超时时间会有一个合理的默认值，也可以通过 JVM 参数覆盖它。Shenandoah GC用了一个类型的策略，默认超时时间是5分钟，可以通过参数 `-XX:ShenandoahUncommitDelay=milliseconds` 覆盖默认值。
 
-像上面这样的策略可能会运作得相当好。但是，用户还可以设想更复杂的策略：不需要添加任何新的命令行选项。例如，基于 GC 频率或某些其他数据找到合适超时值的启发式算法。JDK13将使用哪种具体策略目前尚未确定。可能最初只提供一个简单的超时策略，使用 `-XX:ZUncommitDelay=seconds` 选项，以后的版本会添加更复杂、更智能的策略（如果可以的话）。
+像上面这样的策略可能会运作得相当好。但是，用户还可以设想更复杂的策略: 不需要添加任何新的命令行选项。例如，基于 GC 频率或某些其他数据找到合适超时值的启发式算法。JDK13将使用哪种具体策略目前尚未确定。可能最初只提供一个简单的超时策略，使用 `-XX:ZUncommitDelay=seconds` 选项，以后的版本会添加更复杂、更智能的策略(如果可以的话)。
 
 `uncommit` 能力默认是开启的，但是无论指定何种策略，ZGC都不能把堆内存降到低于 `Xms`。这就意味着，如果 `Xmx` 和 `Xms` 相等的话，这个能力就失效了。`-XX:-ZUncommit` 这个参数也能让这个内存管理能力失效。
 

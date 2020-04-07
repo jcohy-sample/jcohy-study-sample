@@ -4,7 +4,7 @@ import java.util.Vector;
 
 /**
  * 表示主人翁状态的类
- * @author jiachao
+ * @author jcohy
  */
 public class Memento {
 	int money;

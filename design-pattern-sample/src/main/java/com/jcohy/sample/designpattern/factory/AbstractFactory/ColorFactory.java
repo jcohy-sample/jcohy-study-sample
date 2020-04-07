@@ -2,9 +2,10 @@ package com.jcohy.sample.designpattern.factory.AbstractFactory;
 
 
 /**
- * @author jiachao
+ * @author jcohy
  *
  */
+// tag::code[]
 public class ColorFactory extends AbstractFactory{
 
 	@Override
@@ -26,5 +27,5 @@ public class ColorFactory extends AbstractFactory{
 		}
 		return null;
 	}
-
 }
+// end::code[]

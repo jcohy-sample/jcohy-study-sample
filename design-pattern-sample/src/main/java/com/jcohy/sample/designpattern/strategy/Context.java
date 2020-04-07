@@ -1,5 +1,5 @@
 package com.jcohy.sample.designpattern.strategy;
-
+// tag::code[]
 public class Context {
 	Strategy sta;
 	public Context(Strategy sta) {
@@ -9,3 +9,4 @@ public class Context {
 		sta.method();
 	}
 }
+// end::code[]

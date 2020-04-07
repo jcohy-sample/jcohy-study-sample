@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Created by jiac on 2018/9/4.
+ * Created by jcohy on 2018/9/4.
  * ClassName  : com.jcohy.study.java8.lambda
  * Description  :
  */

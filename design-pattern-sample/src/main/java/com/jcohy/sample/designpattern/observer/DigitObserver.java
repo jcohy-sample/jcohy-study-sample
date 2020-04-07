@@ -1,8 +1,9 @@
 package com.jcohy.sample.designpattern.observer;
 
+// tag::code[]
 /**
- * 实现Observer接口,以“数字”来表示观察到的数值
- * @author jiachao
+ * 实现Observer接口,以 "数字" 来表示观察到的数值
+ * @author jcohy
  */
 public class DigitObserver implements Observer{
 
@@ -16,5 +17,5 @@ public class DigitObserver implements Observer{
 			e.printStackTrace();
 		}
 	}
-
 }
+// end::code[]

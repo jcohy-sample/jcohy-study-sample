@@ -1,8 +1,9 @@
 package com.jcohy.sample.designpattern.state;
 
+// tag::code[]
 /**
  * 白天状态的类
- * @author jiachao
+ * @author jcohy
  *
  */
 public class DayState implements State {
@@ -25,17 +26,17 @@ public class DayState implements State {
 	@Override
 	public void doUse(Context context) {
 		//使用金库
-		context.recordLog("使用金库（白天）");
+		context.recordLog("使用金库(白天)");
 	}
 
 	@Override
 	public void doAlarm(Context context) {
-		context.callSecurityCenter("警铃（白天）");
+		context.callSecurityCenter("警铃(白天)");
 	}
 
 	@Override
 	public void doPhone(Context context) {
-		context.callSecurityCenter("一般通话（白天）");
+		context.callSecurityCenter("一般通话(白天)");
 	}
 
 	@Override
@@ -44,3 +45,4 @@ public class DayState implements State {
 	}
 
 }
+// end::code[]

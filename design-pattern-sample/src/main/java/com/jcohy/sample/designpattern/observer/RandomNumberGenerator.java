@@ -2,9 +2,10 @@ package com.jcohy.sample.designpattern.observer;
 
 import java.util.Random;
 
+// tag::code[]
 /**
  * 产生随机数
- * @author jiachao
+ * @author jcohy
  */
 public class RandomNumberGenerator extends NumberGenerator {
 	Random rd = new Random();
@@ -21,5 +22,5 @@ public class RandomNumberGenerator extends NumberGenerator {
 			notifyObservers();
 		}
 	}
-
 }
+// end::code[]

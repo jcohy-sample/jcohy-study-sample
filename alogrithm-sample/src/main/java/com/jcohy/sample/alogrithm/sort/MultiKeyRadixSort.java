@@ -3,13 +3,13 @@ package com.jcohy.sample.alogrithm.sort;
 import java.util.Arrays;
 
 /**
- * Created by jiac on 2019/2/15.
+ * Created by jcohy on 2019/2/15.
  * ClassName  : com.jcohy.study.sort
  * Description  :    基数排序
  */
 public class MultiKeyRadixSort {
 	public static void radixSort(int[] data, int radix, int d) {
-		System.out.println("开始排序：");
+		System.out.println("开始排序: ");
 		int arrayLength = data.length;
 		int[] temp = new int[arrayLength];
 		int[] buckets = new int[radix];
@@ -29,7 +29,7 @@ public class MultiKeyRadixSort {
 				int subKey = (temp[m] / rate) % radix;
 				data[--buckets[subKey]] = temp[m];
 			}
-			System.out.println("对" + rate + "位上子关键字排序："
+			System.out.println("对" + rate + "位上子关键字排序: "
 					+ Arrays.toString(data));
 			rate *= radix;
 		}
@@ -37,8 +37,8 @@ public class MultiKeyRadixSort {
 
 	public static void main(String[] args) {
 		int[] data = { 1100, 192, 221, 12, 13 };
-		System.out.println("排序之前：\n" + Arrays.toString(data));
+		System.out.println("排序之前: \n" + Arrays.toString(data));
 		radixSort(data, 10, 4);
-		System.out.println("排序之后：\n" + Arrays.toString(data));
+		System.out.println("排序之后: \n" + Arrays.toString(data));
 	}
 }

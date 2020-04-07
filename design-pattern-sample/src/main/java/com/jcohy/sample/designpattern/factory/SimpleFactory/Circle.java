@@ -3,7 +3,7 @@ package com.jcohy.sample.designpattern.factory.SimpleFactory;
 
 
 /**
- * @author jiachao
+ * @author jcohy
  *
  */
 public class Circle implements Shape {

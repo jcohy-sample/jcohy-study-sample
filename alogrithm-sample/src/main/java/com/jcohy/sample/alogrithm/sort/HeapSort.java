@@ -1,7 +1,7 @@
 package com.jcohy.sample.alogrithm.sort;
 
 /**
- * Created by jiac on 2019/2/15.
+ * Created by jcohy on 2019/2/15.
  * ClassName  : com.jcohy.study.sort
  * Description  : 堆排序
  */
@@ -21,7 +21,7 @@ public class HeapSort {
 
 	// 对data数组从0到lastIndex建大顶堆
 	private static void builMaxdHeap(int[] data, int lastIndex) {
-		// 从lastIndex处节点（最后一个节点）的父节点开始
+		// 从lastIndex处节点(最后一个节点)的父节点开始
 		for (int i = (lastIndex - 1) / 2; i >= 0; i--) {
 			// k保存当前正在判断的节点
 			int k = i;
@@ -61,8 +61,8 @@ public class HeapSort {
 
 	public static void main(String[] args) {
 		int[] data = {9,-16,21,23,-30,-49,21,30,30};
-		System.out.println("排序之前：\n" + java.util.Arrays.toString(data));
+		System.out.println("排序之前: \n" + java.util.Arrays.toString(data));
 		heapSort(data);
-		System.out.println("排序之后：\n" + java.util.Arrays.toString(data));
+		System.out.println("排序之后: \n" + java.util.Arrays.toString(data));
 	}
 }

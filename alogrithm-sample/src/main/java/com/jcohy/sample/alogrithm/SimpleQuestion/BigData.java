@@ -2,7 +2,7 @@ package com.jcohy.sample.alogrithm.SimpleQuestion;
 
 /**
  * 
- * @author jiachao
+ * @author jcohy
  *	大数的加减
  */
 public class BigData {  

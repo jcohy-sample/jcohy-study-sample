@@ -3,9 +3,10 @@ package com.jcohy.sample.designpattern.observer;
 import java.util.Iterator;
 import java.util.Vector;
 
+// tag::code[]
 /**
  * 产生数值的抽象类，notifyObservers告诉所有的Observers内容改变。
- * @author jiachao
+ * @author jcohy
  */
 public abstract class NumberGenerator {
 	private Vector<Observer> observers = new Vector<Observer>();
@@ -29,3 +30,4 @@ public abstract class NumberGenerator {
 	public abstract int getNum() ;
 	public abstract void excuteNum();
 }
+// end::code[]

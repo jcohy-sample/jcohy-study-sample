@@ -4,9 +4,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+// tag::code[]
 /**
  * 顾问类
- * @author jiachao
+ * @author jcohy
  *
  */
 public class LoginFrame extends Frame implements ActionListener,Mediator{
@@ -107,3 +108,4 @@ public class LoginFrame extends Frame implements ActionListener,Mediator{
 	}
 
 }
+// end::code[]

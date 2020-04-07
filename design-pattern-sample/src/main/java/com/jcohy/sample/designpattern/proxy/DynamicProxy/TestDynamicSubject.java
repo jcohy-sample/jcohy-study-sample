@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
 /**
- * @author jiachao
+ * @author jcohy
  * Proxy.newProxyInstance(ClassLoader loader, Class<?>[] interfaces,  InvocationHandler handler)
  *	loader:一个ClassLoader对象，定义了由哪个ClassLoader对象来对生成的代理对象进行加载
  *	interfaces:一个Interface对象的数组，表示的是我将要给我需要代理的对象提供一组什么接口，
@@ -20,7 +20,7 @@ public class TestDynamicSubject {
 //		System.out.println("handler.getClass:"+clazz);
 //		System.out.println("Clazz.getClassLoader:"+clazz.getClassLoader());
 //		System.out.println("realsubject.getIntterfce:"+realsubject.getClass().getInterfaces());
-		subject sub = (subject) Proxy.newProxyInstance(clazz.getClassLoader(),realsubject.getClass().getInterfaces(),handler );
+		Subject sub = (Subject) Proxy.newProxyInstance(clazz.getClassLoader(),realsubject.getClass().getInterfaces(),handler );
 //		System.out.println(sub.getClass());
 		sub.Request();
 		sub.rent();

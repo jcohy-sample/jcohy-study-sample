@@ -6,7 +6,7 @@ import java.util.Comparator;
 
 /**
  * 输入一个数组，输出由数组中的这些数字 组成的最小的数字
- * @author jiachao
+ * @author jcohy
  *
  */
 public class GetMin {

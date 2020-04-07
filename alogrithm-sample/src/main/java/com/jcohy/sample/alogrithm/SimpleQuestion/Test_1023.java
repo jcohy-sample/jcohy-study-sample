@@ -3,7 +3,7 @@ package com.jcohy.sample.alogrithm.SimpleQuestion;
 import java.util.Scanner;
 
 /**
- * 	例如：
+ * 	例如:
  *   1 2 3
  *   4 5 6
  *   9 8 7

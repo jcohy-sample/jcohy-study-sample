@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.Scanner;
 
 /**
- * Created by jiac on 2018/12/4.
+ * Created by jcohy on 2018/12/4.
  * ClassName  : com.jcohy.study
  * Description  :
  */

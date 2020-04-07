@@ -3,7 +3,7 @@ package com.jcohy.sample.alogrithm.stack;
 import java.util.Stack;
 
 /*
- * 用两个栈实现一个队列，支持队列的基本操作（add，poll，peek）
+ * 用两个栈实现一个队列，支持队列的基本操作(add，poll，peek)
  */
 public class TwoStackQueue {
 	private Stack<Integer> stackPush;

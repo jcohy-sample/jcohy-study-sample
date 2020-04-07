@@ -6,13 +6,14 @@ import java.awt.event.*;
 
 /**
  * Copyright  : 2017- www.jcohy.com
- * Created by jiac on 23:48 2018/8/7
+ * Created by jcohy on 23:48 2018/8/7
  * Email: jia_chao23@126.com
  * Description:
  **/
+// tag::code[]
 /**
  * 简单的绘图软件，移动鼠标时自动绘制一个红点，按下clear 清除所有
- * @author jiachao
+ * @author jcohy
  */
 public class Client extends JFrame implements ActionListener,MouseMotionListener,WindowListener{
 
@@ -42,40 +43,48 @@ public class Client extends JFrame implements ActionListener,MouseMotionListener
 		setVisible(true);
 	}
 
+	@Override
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void windowClosing(WindowEvent e) {
 		System.exit(0);
 	}
 
+	@Override
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void mouseDragged(MouseEvent e) {
 		Command cmd = new DrawCommand(drawCanvas,e.getPoint());
 
@@ -85,10 +94,12 @@ public class Client extends JFrame implements ActionListener,MouseMotionListener
 
 	}
 
+	@Override
 	public void mouseMoved(MouseEvent e) {
 
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == cleanButton) {
 			history.clear();
@@ -99,3 +110,4 @@ public class Client extends JFrame implements ActionListener,MouseMotionListener
 		new Client("Command Pattern Sample");
 	}
 }
+// end::code[]

@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Created by jiac on 2018/9/5.
+ * Created by jcohy on 2018/9/5.
  * ClassName  : com.jcohy.study.java8.stream
  * Description  :
  */
@@ -27,8 +27,8 @@ public class TestStream4 {
     );
 
     /*
-	  	1.	给定一个数字列表，如何返回一个由每个数的平方构成的列表呢？
-		，给定【1，2，3，4，5】， 应该返回【1，4，9，16，25】。
+	  	1.	给定一个数字列表，如何返回一个由每个数的平方构成的列表呢?
+		，给定[1，2，3，4，5]， 应该返回[1，4，9，16，25]。
 	 */
     @Test
     public void test1(){
@@ -40,7 +40,7 @@ public class TestStream4 {
     }
 
     /*
-	 2.	怎样用 map 和 reduce 方法数一数流中有多少个Employee呢？
+	 2.	怎样用 map 和 reduce 方法数一数流中有多少个Employee呢?
 	 */
 
     @Test

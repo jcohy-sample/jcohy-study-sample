@@ -1,8 +1,8 @@
 package com.jcohy.sample.designpattern.responsibility;
 
-
+// tag::code[]
 /**
- * 解决问题具体类（解决特殊号码的问题）
+ * 解决问题具体类(解决特殊号码的问题)
  */
 public class SpecialSupport extends Support {
 
@@ -19,5 +19,5 @@ public class SpecialSupport extends Support {
         }
         return false;
     }
-
 }
+// end::code[]

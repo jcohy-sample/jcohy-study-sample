@@ -1,0 +1,78 @@
+[[design-template]]
+= 模板方法模式
+
+[[design-template-overview]]
+== 概述
+
+模板方法模式:定义一个操作中的算法的骨架，而将一些步骤延迟到子类中，模板方法使得子类可以不改变算法的结构即可重定义算法的某些特定步骤。
+
+[[design-template-role]]
+== 模板方法模式的角色
+
+image::images/design-template-method.png[]
+
+*  AbstractClass:声明模板方法所使用的抽象方法，这个抽象方法由子类ConcreteClass实现。
+*  ConcreteClass:实现AbstractClass以完成算法中与特定子类相关的步骤。
+*  Client
+
+[[design-template-sign]]
+== 适用性
+
+* 一次性实现一个算法的不变的部分，并将可变的行为留给子类来实现。
+* 各子类中公共的行为应被提取出来并集中到一个公共父类中以避免代码重复。
+* 控制子类扩展。
+
+[[design-template-impl]]
+== 模板方法模式的实现
+
+本例反复输出5次同一字符串或者字符
+
+1.定义抽象类，AbstractDisplay，声明三个抽象方法，使用了抽象方法的display方法就是模板方法。
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.AbstractDisplay
+----
+include::{design-pattern-code}/templatemethod/AbstractDisplay.java[tag=code]
+----
+
+2.实现
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.CharDisplay
+----
+include::{design-pattern-code}/templatemethod/CharDisplay.java[tag=code]
+----
+.StringDisplay
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{design-pattern-code}/templatemethod/StringDisplay.java[tag=code]
+----
+
+3.Client
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Client
+----
+include::{design-pattern-code}/templatemethod/Client.java[tag=code]
+----
+
+4.result
+
+[source,shell script]
+----
+                           <<aaaaa>>
+                           +-----------+
+                           |Hello world|
+                           |Hello world|
+                           |Hello world|
+                           |Hello world|
+                           |Hello world|
+                           +-----------+
+----
+
+[[design-template-java]]
+== Java语言中模板方法模式
+
+*  java.io.InputStream, java.io.OutputStream, java.io.Reader 和java.io.Writer 的所有非抽象方法
+*  java.util.AbstractList, java.util.AbstractSet 和 java.util.AbstractMap 的所有非抽象方法
+*  javax.servlet.http.HttpServlet#doXXX()

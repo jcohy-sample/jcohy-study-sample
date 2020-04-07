@@ -6,9 +6,9 @@ import java.util.LinkedList;
  * 有一个整型数组和一个大小为w的窗口从数组的最左边滑倒最右边，窗口每次向右移动
  * 一个位置。
  * 如果数组长度为n，窗口大小为w，则一共产生n-w+1个窗口的最大值。请实现一个函数
- * 输入：整型数组arr，窗口大小w
- * 输出：一个长度为n-w+1的数组res，res[i]表示每一组窗口状态下的最大值
- * @author jiachao
+ * 输入: 整型数组arr，窗口大小w
+ * 输出: 一个长度为n-w+1的数组res，res[i]表示每一组窗口状态下的最大值
+ * @author jcohy
  *
  */
 public class MaxWindow {

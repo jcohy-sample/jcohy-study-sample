@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * Created by jiac on 2018/9/5.
+ * Created by jcohy on 2018/9/5.
  * ClassName  : com.jcohy.study.java8.stream
  * Description  :
  */

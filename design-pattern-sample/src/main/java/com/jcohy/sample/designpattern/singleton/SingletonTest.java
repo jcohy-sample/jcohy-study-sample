@@ -3,8 +3,8 @@ package com.jcohy.sample.designpattern.singleton;
 import java.util.Vector;
 
 /**
- *： 采用" 影子实例"的办法为单例对象的属性同步更新
- * @author jiachao
+ *:  采用" 影子实例"的办法为单例对象的属性同步更新
+ * @author jcohy
  *
  */
 public class SingletonTest {

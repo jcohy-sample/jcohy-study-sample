@@ -1,7 +1,7 @@
 package com.jcohy.sample.alogrithm.SimpleQuestion;
 
 /**
- * Created by jiac on 2019/3/25.
+ * Created by jcohy on 2019/3/25.
  * ClassName  : com.study.demo
  * Description  :
  */

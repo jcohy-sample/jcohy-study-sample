@@ -11,7 +11,7 @@ public class matrixMultiply {
     private static void MatrixMultiply(int[][] arrA, int[][] arrB, int[][] arrC, int m,
             int n, int p) {
         if(m<=0||n<=0||p<=0){
-            System.out.println("输入错误：n，m，p必须大于0");
+            System.out.println("输入错误: n，m，p必须大于0");
             return;
         }
         for(int i=0;i<m;i++){

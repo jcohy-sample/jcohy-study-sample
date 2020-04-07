@@ -1,7 +1,7 @@
 package com.jcohy.sample.alogrithm.sort;
 // =============== Program Description ===============
-// 程序名称： CH08_06.java                               
-// 程序目的：快速排序法
+// 程序名称:  CH08_06.java
+// 程序目的: 快速排序法
 // ===================================================
 
 import java.util.Random;
@@ -16,7 +16,7 @@ public class QuickSort2 extends Object
 	{
 		QuickSort2 test = new QuickSort2();
 		
-//		System.out.print("请输入数组大小(100以下)：");
+//		System.out.print("请输入数组大小(100以下): ");
 //		try{
 //			InputStreamReader isr = new InputStreamReader(System.in);
 //			BufferedReader br = new BufferedReader(isr);
@@ -24,13 +24,13 @@ public class QuickSort2 extends Object
 //		}catch(Exception e){}
 		
 //		test.inputarr ();
-//		System.out.print("原始数据是：");
+//		System.out.print("原始数据是: ");
 //		test.showdata ();
 		int[] datas = {9, -16, 21, 23, -30, -49, 21, 30, 30};
-		System.out.println("排序之前：\n" + java.util.Arrays.toString(datas));
+		System.out.println("排序之前: \n" + java.util.Arrays.toString(datas));
 		test.quick(datas,datas.length,0,datas.length-1);
-//		System.out.print("\n排序结果：");
-		System.out.println("排序之后：\n" + java.util.Arrays.toString(datas));
+//		System.out.print("\n排序结果: ");
+		System.out.println("排序之后: \n" + java.util.Arrays.toString(datas));
 //		test.showdata();
 	}	
 	

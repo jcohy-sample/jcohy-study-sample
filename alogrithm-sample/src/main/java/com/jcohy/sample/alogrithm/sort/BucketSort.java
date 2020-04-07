@@ -3,7 +3,7 @@ package com.jcohy.sample.alogrithm.sort;
 import java.util.Arrays;
 
 /**
- * Created by jiac on 2019/2/15.
+ * Created by jcohy on 2019/2/15.
  * ClassName  : com.jcohy.study.sort
  * Description  : 桶排序
  */
@@ -30,8 +30,8 @@ public class BucketSort {
 	public static void main(String[] args) {
         BucketSort bucketSort = new BucketSort();
         int[] data = {9,5,-1,8,5,7,3,-3,1,3};
-		System.out.println("排序之前：\n" + Arrays.toString(data));
+		System.out.println("排序之前: \n" + Arrays.toString(data));
         bucketSort.bucketSort(data, -3, 10);
-		System.out.println("排序之后：\n" + Arrays.toString(data));
+		System.out.println("排序之后: \n" + Arrays.toString(data));
 	}
 }

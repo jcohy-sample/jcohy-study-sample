@@ -1,3 +1,94 @@
-[overview]
+[design-overview]
 = 概述
 include::attributes.adoc[]
+
+image::images/design-observer.png[]
+
+* [设计原则]
+** [单一职责原则]
+** [里氏替换原则]
+** [依赖倒转原则]
+** [接口隔离原则]
+** [迪米特法则]
+** [合成复用原则]
+* 设计模式
+**  创建型模式(5种)
+*** <<design-factory,工厂模式(Factory Method)>>
+*** <<design-abstra,抽象工厂模式(Abstra)>>
+*** <<design-singleton,单例模式(Singleton)>>
+*** <<design-builder,建造者模式(Builder)>>
+*** <<design-prototype,原型模式(Prototype)>>
+**  结构型模式(7种)
+*** <<design-adapter,适配器模式(Adapter)>>
+*** <<design-decorator,装饰模式(Decorator)>>
+*** <<design-proxy,代理模式(Proxy)>>
+*** <<design-facade,外观模式(Facade)>>
+*** <<design-bridge,桥接模式(Bridge)>>
+*** <<design-composite,组合模式(Composite)>>
+*** <<design-flyweight,亨元模式(Flyweight)>>
+**  关系型模式(11种)
+*** <<design-strategy,策略模式(Strategy)>>
+*** <<design-template,模板方法模式(Template Method)>>
+*** <<design-observer,观察者模式(Observer)>>
+*** <<design-iterator,迭代器模式(Iterator)>>
+*** <<design-responsibility,责任链模式(Chain Of Responsibility)>>
+*** <<design-command,命令模式(Command)>>
+*** <<design-memento,备忘录模式(Memento)>>
+*** <<design-state,状态模式(State)>>
+*** <<design-visitor,访问者模式(Visitor)>>
+*** <<design-mediator,中介者模式(Mediator)>>
+*** <<design-interpreter,解释器模式(Interpreter)>>
+
+适配器模式、装饰模式、代理模式、外观模式、桥接模式、组合模式、享元模式。其中对象的适配器模式是各种模式的起源，我们看下面的图:
+
+image::images/design-structure.png[]
+
+策略模式、模板方法模式、观察者模式、迭代子模式、责任链模式、命令模式、备忘录模式、状态模式、访问者模式、中介者模式、解释器模式。大致分为四类关系:
+
+image::images/design-real.png[]
+
+include::designpattern/Factory.adoc[leveloffset=+1]
+
+include::designpattern/AbstractFactory.adoc[leveloffset=+1]
+
+include::designpattern/Singleton.adoc[leveloffset=+1]
+
+include::designpattern/Builder.adoc[leveloffset=+1]
+
+include::designpattern/Prototype.adoc[leveloffset=+1]
+
+include::designpattern/Adapter.adoc[leveloffset=+1]
+
+include::designpattern/Decorator.adoc[leveloffset=+1]
+
+include::designpattern/Proxy.adoc[leveloffset=+1]
+
+include::designpattern/Facade.adoc[leveloffset=+1]
+
+include::designpattern/Bridge.adoc[leveloffset=+1]
+
+include::designpattern/Composite.adoc[leveloffset=+1]
+
+include::designpattern/Flyweight.adoc[leveloffset=+1]
+
+include::designpattern/Strategy.adoc[leveloffset=+1]
+
+include::designpattern/TemplateMethod.adoc[leveloffset=+1]
+
+include::designpattern/Observer.adoc[leveloffset=+1]
+
+include::designpattern/Iterator.adoc[leveloffset=+1]
+
+include::designpattern/Responsibility.adoc[leveloffset=+1]
+
+include::designpattern/Command.adoc[leveloffset=+1]
+
+include::designpattern/Memento.adoc[leveloffset=+1]
+
+include::designpattern/State.adoc[leveloffset=+1]
+
+include::designpattern/Visitor.adoc[leveloffset=+1]
+
+include::designpattern/Mediator.adoc[leveloffset=+1]
+
+include::designpattern/Interpreter.adoc[leveloffset=+1]

@@ -1,5 +1,6 @@
 package com.jcohy.sample.designpattern.state;
 
+// tag::code[]
 public interface State {
 	//设定时间
 	public abstract void doClock(Context context, int hour);
@@ -10,3 +11,4 @@ public interface State {
 	//普通电话
 	public abstract void doPhone(Context context);
 }
+// end::code[]

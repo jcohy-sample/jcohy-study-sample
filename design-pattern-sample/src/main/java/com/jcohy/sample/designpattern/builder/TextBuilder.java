@@ -3,10 +3,11 @@ package com.jcohy.sample.designpattern.builder;
 
 /**
  * Copyright  : 2017- www.jcohy.com
- * Created by jiac on 23:48 2018/8/7
+ * Created by jcohy on 23:48 2018/8/7
  * Email: jia_chao23@126.com
  * Description:
  **/
+// tag::code[]
 /**
  *
  * 是Builder的子类，以一般文本格式建立文件，以String返回字符串。
@@ -23,7 +24,8 @@ public class TextBuilder extends Builder{
 
     @Override
     public void makeString(String str) {
-        buffer.append("*"+str+"\n");//带*的字符串
+        //带*的字符串
+        buffer.append("*"+str+"\n");
         buffer.append("\n");
     }
 
@@ -42,3 +44,4 @@ public class TextBuilder extends Builder{
         return buffer.toString();
     }
 }
+// end::code[]

@@ -6,10 +6,11 @@ import java.util.Vector;
 
 /**
  * Copyright  : 2017- www.jcohy.com
- * Created by jiac on 23:48 2018/8/7
+ * Created by jcohy on 23:48 2018/8/7
  * Email: jia_chao23@126.com
  * Description:
  **/
+// tag::code[]
 public class Directory extends Entry {
 	
 	private String name;
@@ -47,5 +48,5 @@ public class Directory extends Entry {
 		directory.add(entry);
 		return this;
 	}
-	
 }
+// end::code[]

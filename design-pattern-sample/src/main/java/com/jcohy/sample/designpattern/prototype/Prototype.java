@@ -1,4 +1,5 @@
 package com.jcohy.sample.designpattern.prototype;
+// tag::code[]
 /**
  * 
  * @author admin
@@ -24,3 +25,4 @@ public class Prototype implements Cloneable{
 		}
 	}
 }
+// end::code[]

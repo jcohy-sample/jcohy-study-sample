@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+// tag::code[]
 public class SafeFrame extends Frame implements ActionListener,Context{
 
 	//输出现在时间
@@ -50,7 +51,7 @@ public class SafeFrame extends Frame implements ActionListener,Context{
 
 	@Override
 	public void setClock(int hour) {
-		String clockString="现在时间是：";
+		String clockString="现在时间是: ";
 		if(hour<10) {
 			clockString +="0"+hour+":00";
 		}else {
@@ -93,3 +94,4 @@ public class SafeFrame extends Frame implements ActionListener,Context{
 		}
 	}
 }
+// end::code[]

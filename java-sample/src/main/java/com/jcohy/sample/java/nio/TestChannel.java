@@ -16,16 +16,16 @@ import java.time.Duration;
 import java.time.Instant;
 
 /**
- * Created by jiac on 2018/12/3.
+ * Created by jcohy on 2018/12/3.
  * ClassName  : com.jcohy.study
  * Description  :
  */
 
 /**
- * 一、通道（Channel）：用于源节点与目标节点的连接。在 Java NIO 中负责缓冲区中数据的传输。Channel 本身不存储数据，因此需要配合缓冲区进行传输。
+ * 一、通道(Channel): 用于源节点与目标节点的连接。在 Java NIO 中负责缓冲区中数据的传输。Channel 本身不存储数据，因此需要配合缓冲区进行传输。
  *
  * 二、通道的主要实现类
- * 	java.nio.channels.Channel 接口：
+ * 	java.nio.channels.Channel 接口:
  * 		|--FileChannel
  * 		|--SocketChannel
  * 		|--ServerSocketChannel
@@ -33,11 +33,11 @@ import java.time.Instant;
  *
  * 三、获取通道
  * 1. Java 针对支持通道的类提供了 getChannel() 方法
- * 		本地 IO：
+ * 		本地 IO:
  * 		FileInputStream/FileOutputStream
  * 		RandomAccessFile
  *
- * 		网络IO：
+ * 		网络IO:
  * 		Socket
  * 		ServerSocket
  * 		DatagramSocket
@@ -50,12 +50,12 @@ import java.time.Instant;
  * transferTo()
  *
  * 五、分散(Scatter)与聚集(Gather)
- * 分散读取（Scattering Reads）：将通道中的数据分散到多个缓冲区中
- * 聚集写入（Gathering Writes）：将多个缓冲区中的数据聚集到通道中
+ * 分散读取(Scattering Reads): 将通道中的数据分散到多个缓冲区中
+ * 聚集写入(Gathering Writes): 将多个缓冲区中的数据聚集到通道中
  *
- * 六、字符集：Charset
- * 编码：字符串 -> 字节数组
- * 解码：字节数组  -> 字符串
+ * 六、字符集: Charset
+ * 编码: 字符串 -> 字节数组
+ * 解码: 字节数组  -> 字符串
  */
 public class TestChannel {
 
@@ -113,7 +113,7 @@ public class TestChannel {
         inChannel.close();
         outChannel.close();
     }
-    //利用通道完成文件的复制（非直接缓冲区）
+    //利用通道完成文件的复制(非直接缓冲区)
     @Test
     public void test1() {
         Instant start = Instant.now();

@@ -3,10 +3,11 @@ package com.jcohy.sample.designpattern.composite;
 
 /**
  * Copyright  : 2017- www.jcohy.com
- * Created by jiac on 23:48 2018/8/7
+ * Created by jcohy on 23:48 2018/8/7
  * Email: jia_chao23@126.com
  * Description:
  **/
+// tag::code[]
 public class Client {
 	public static void main(String[] args) {
 		
@@ -24,6 +25,6 @@ public class Client {
 		binDirectory.add(new File("late.txt",100));
 		
 		rootDirectory.printList();
-		
 	}
 }
+// end::code[]

@@ -1,5 +1,6 @@
 package com.jcohy.sample.designpattern.responsibility;
 
+// tag::code[]
 public class Client {
     public static void main(String[] args) {
         Support alice = new NoSupport("alice");
@@ -14,6 +15,6 @@ public class Client {
         for(int i=0;i<500;i+=33) {
             alice.support(new Trouble(i));
         }
-
     }
 }
+// end::code[]

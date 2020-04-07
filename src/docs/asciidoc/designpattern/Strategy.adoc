@@ -1,0 +1,83 @@
+[[design-strategy]]
+= 策略模式
+
+[[design-strategy-overview]]
+== 策略模式
+
+##  概述
+
+它定义了算法家族，分别封装起来，让他们之间可以相互替换。此模式让算法的变化，不会影响到使用算法的客户。
+
+[[design-strategy-role]]
+== 策略模式的角色
+
+image::images/design-strategy.png[]
+
+*  Context:Context上下文，用一个ConcreteStrategy来配置，维护一个对Strategy对象的引用。
+*  Strategy:策略类，定义所有支持的算法的公共接口
+*  ConcreteStrategy(A,B,C,....):具体策略类，封装了具体的算法和行为。继承Strategy。
+
+[[design-strategy-sign]]
+== 适用性
+
+[[design-strategy-impl]]
+== 策略模式的实现
+
+1.定义接口
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Strategy
+----
+include::{design-pattern-code}/strategy/Strategy.java[tag=code]
+----
+                   
+2.Context
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Context
+----
+include::{design-pattern-code}/strategy/Context.java[tag=code]
+----
+                    
+3.StrategyImpl
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.StrategyImplA
+----
+include::{design-pattern-code}/strategy/StrategyImplA.java[tag=code]
+----
+.StrategyImplB
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{design-pattern-code}/strategy/StrategyImplB.java[tag=code]
+----
+.StrategyImplC
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{design-pattern-code}/strategy/StrategyImplC.java[tag=code]
+----
+
+4.Client
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Client
+----
+include::{design-pattern-code}/strategy/Test.java[tag=code]
+----
+
+5.result
+
+[source,shell script]
+----
+                    这是A的算法实现
+                    这是B的算法实现
+                    这是C的算法实现
+----
+
+
+[[design-strategy-java]]
+== Java语言中策略模式
+       
+*  java.util.Comparator#compare()
+*  javax.servlet.http.HttpServlet
+*  javax.servlet.Filter#doFilter()

@@ -24,7 +24,7 @@ public class TestForkJoinPool {
 		
 		Instant end = Instant.now();
 		
-		System.out.println("耗费时间为：" + Duration.between(start, end).toMillis());//166-1996-10590
+		System.out.println("耗费时间为: " + Duration.between(start, end).toMillis());//166-1996-10590
 	}
 	
 	@Test
@@ -41,7 +41,7 @@ public class TestForkJoinPool {
 		
 		Instant end = Instant.now();
 		
-		System.out.println("耗费时间为：" + Duration.between(start, end).toMillis());//35-3142-15704
+		System.out.println("耗费时间为: " + Duration.between(start, end).toMillis());//35-3142-15704
 	}
 	
 	//java8 新特性
@@ -57,7 +57,7 @@ public class TestForkJoinPool {
 		
 		Instant end = Instant.now();
 		
-		System.out.println("耗费时间为：" + Duration.between(start, end).toMillis());//1536-8118
+		System.out.println("耗费时间为: " + Duration.between(start, end).toMillis());//1536-8118
 	}
 
 }

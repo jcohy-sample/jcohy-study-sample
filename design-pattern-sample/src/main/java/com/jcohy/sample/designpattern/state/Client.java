@@ -1,5 +1,7 @@
 package com.jcohy.sample.designpattern.state;
 
+
+// tag::code[]
 /**
  * 金库安保系统，
  * 有1个金库，金库跟保安中心联机。
@@ -10,10 +12,10 @@ package com.jcohy.sample.designpattern.state;
  * 在白天使用金库时，保安中心会保存使用记录。
  * 若晚间使用金库，保安中心会接到发生异常现象的通知。
  * 警铃24小时都可以使用，一旦使用警铃，保安中心会接收到警铃通知。
- * 一般通话用的电话是24小时均可使用（但晚间只有录音机服务）。
+ * 一般通话用的电话是24小时均可使用(但晚间只有录音机服务)。
  * 在白天使用电话机，会调用保安中心。
  * 在晚间使用电话机，会调用保安中心的录音机。
- * @author jiachao
+ * @author jcohy
  *
  */
 public class Client {
@@ -32,3 +34,4 @@ public class Client {
         }
     }
 }
+// end::code[]

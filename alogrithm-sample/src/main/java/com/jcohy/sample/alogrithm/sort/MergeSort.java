@@ -2,7 +2,7 @@ package com.jcohy.sample.alogrithm.sort;
 
 
 /**
- * Created by jiac on 2019/2/15.
+ * Created by jcohy on 2019/2/15.
  * ClassName  : com.jcohy.study.sort
  * Description  : 归并排序
  */
@@ -50,8 +50,8 @@ public class MergeSort {
 
 	public static void main(String[] args) {
         int[] data = {9,-16,21,23,-30,-49,21,30,30};
-		System.out.println("排序之前：\n" + java.util.Arrays.toString(data));
+		System.out.println("排序之前: \n" + java.util.Arrays.toString(data));
 		mergeSort(data);
-		System.out.println("排序之后：\n" + java.util.Arrays.toString(data));
+		System.out.println("排序之后: \n" + java.util.Arrays.toString(data));
 	}
 }

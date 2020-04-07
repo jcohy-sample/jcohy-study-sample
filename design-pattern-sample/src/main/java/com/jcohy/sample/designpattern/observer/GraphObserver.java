@@ -1,8 +1,9 @@
 package com.jcohy.sample.designpattern.observer;
 
+// tag::code[]
 /**
- * 实现Observer接口,以“*”来表示观察到的数值
- * @author jiachao
+ * 实现Observer接口,以 "*" 来表示观察到的数值
+ * @author jcohy
  */
 public class GraphObserver implements Observer {
 
@@ -21,5 +22,5 @@ public class GraphObserver implements Observer {
 			e.printStackTrace();
 		}
 	}
-
 }
+// end::code[]

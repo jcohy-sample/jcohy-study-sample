@@ -3,7 +3,7 @@ package com.jcohy.sample.java.juc;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * Created by jiac on 2018/10/19.
+ * Created by jcohy on 2018/10/19.
  * ClassName  : com.jcohy.study.juc
  * Description  :
  */
@@ -41,7 +41,7 @@ public class CountDownLatchTest {
             latch.countDown();
             one.join();other.join();
 
-            String result = "第" + i + "次 (" + x + "," + y + "）";
+            String result = "第" + i + "次 (" + x + "," + y + ")";
             if(x == 0 && y == 0) {
                 System.err.println(result);
                 break;

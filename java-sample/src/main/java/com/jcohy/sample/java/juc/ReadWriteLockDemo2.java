@@ -8,7 +8,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Copyright  : 2017- www.jcohy.com
- * Created by jiac on 10:59 2019/4/18
+ * Created by jcohy on 10:59 2019/4/18
  * Email: jia_chao23@126.com
  * ClassName: ReadWriteLockDemo2
  * Description:
@@ -42,7 +42,7 @@ class MyCache{
             System.out.println(Thread.currentThread().getName()+"\t 正在读取: "+key);
             try { TimeUnit.MICROSECONDS.sleep(300); } catch (InterruptedException e) { e.printStackTrace(); }
             Object result = map.get(key);
-            System.out.println(Thread.currentThread().getName()+"\t 读取完成： "+result);
+            System.out.println(Thread.currentThread().getName()+"\t 读取完成:  "+result);
         }catch (Exception e){
             e.printStackTrace();
         }finally {
@@ -54,11 +54,11 @@ class MyCache{
 /**
  * 多个线程同时读一个资源类时没有问题,所以为了满足并发量，读取共享资源应该可以同时进行
  * 但是如果一个线程想去写共享资源，就不应该再有其他线程可以对该资源进行读或者写
- * 总结：
+ * 总结:
  *      读-读 共存
  *      读-写 不能共存
  *      写-写 不能共存
- *      写操作：原子+独占
+ *      写操作: 原子+独占
  */
 
 public class ReadWriteLockDemo2 {

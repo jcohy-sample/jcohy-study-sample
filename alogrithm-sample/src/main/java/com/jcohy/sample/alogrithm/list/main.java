@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class main implements Serializable{
 
 	/**
-	 * @author jiachao
+	 * @author jcohy
 	 */
 	private static final long serialVersionUID = 5371551559742984912L;
 	

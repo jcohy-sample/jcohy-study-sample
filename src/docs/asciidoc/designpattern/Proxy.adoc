@@ -1,0 +1,78 @@
+[[design-proxy]]
+= 代理模式
+
+[[design-proxy-overview]]
+== 概述
+
+代理模式: 为其他对象提供一种代理以控制对这个对象的访问。
+
+[[design-proxy-role]]
+== 代理模式的角色
+
+image::images/design-proxy.png[]
+
+*  Subject:定义了RealSubject和Proxy的公共接口，这样就可以在任何使用RealSubject的地方可以使用Proxy
+*  RealSubject:定义Proxy代表的真实实体。
+*  Proxy: 保存一个引用使得代理可以访问实体，并提供一个与Subject接口相同的接口，这样代理就可以用来代替实体。
+*  Client:
+
+[[design-proxy-sort]]
+== 代理模式的分类
+
+*  远程代理:为一个对象在不同的地址空间，提供局部代表。这样可以隐藏一个对象存在于不同地址空间的事实.例如，WebService在.Net中的应用。
+*  虚拟代理:根据需要创建开销很大的对象，通过他来存放实例化需要很长时间的对象。例如，你打开了一个网页，里面有很多文字和图片。此时，你所看到的是所有文字，图片只有 在下载后才能看到。那些未打开的图片框，就是通过虚拟代理代替了真实的图片，存储了真是图片的路径和尺寸。
+*  安全代理:用来控制真是对象的访问权限。一般用于对象拥有不同的访问权限。
+*  智能代理:是指当调用真是对象的时候，代理处理另外一些事。
+
+[[design-proxy-sign]]
+== 适用性
+
+[[design-proxy-impl]]
+== 代理模式的实现
+
+1.定义接口
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Subject
+----
+include::{design-pattern-code}/proxy/example2/Subject.java[tag=code]
+----
+
+2.RealSubject
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.RealSubject
+----
+include::{design-pattern-code}/proxy/example2/RealSubject.java[tag=code]
+----
+
+3.Proxy
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Proxy
+----
+include::{design-pattern-code}/proxy/example2/Proxy.java[tag=code]
+----
+
+4.Client
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Client
+----
+include::{design-pattern-code}/proxy/example2/Client.java[tag=code]
+----
+
+5.result
+
+[source,shell script]
+----
+                Hello Moring
+                afternoon
+                Good Night!
+----
+
+[[design-proxy-java]]
+== Java语言中代理模式
+        
+*  java.lang.reflect.Proxy
+*  java.rmi.*

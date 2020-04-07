@@ -6,8 +6,8 @@ import java.util.Vector;
 
 /**
  * 表示进行游戏的主人翁的类，这个类有手边的金钱总额，水果和随机产生器，水果名称。
- * 整个游戏的核心玩法就是下注（bet），只要主人没破产，这个方法就一直掷骰子。
- * @author jiachao
+ * 整个游戏的核心玩法就是下注(bet)，只要主人没破产，这个方法就一直掷骰子。
+ * @author jcohy
  */
 public class Gamer {
 	public int money;

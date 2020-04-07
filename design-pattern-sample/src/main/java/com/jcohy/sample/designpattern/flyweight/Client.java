@@ -3,10 +3,11 @@ package com.jcohy.sample.designpattern.flyweight;
 
 /**
  * Copyright  : 2017- www.jcohy.com
- * Created by jiac on 23:48 2018/8/7
+ * Created by jcohy on 23:48 2018/8/7
  * Email: jia_chao23@126.com
  * Description:
  **/
+// tag::code[]
 public class Client {
 	public static void main(String[] args) {
 		if(args.length==0) {
@@ -18,3 +19,4 @@ public class Client {
 		bs.print();
 	}
 }
+// end::code[]

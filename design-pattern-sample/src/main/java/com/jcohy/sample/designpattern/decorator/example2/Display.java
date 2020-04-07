@@ -4,10 +4,11 @@ package com.jcohy.sample.designpattern.decorator.example2;
 
 /**
  * Copyright  : 2017- www.jcohy.com
- * Created by jiac on 23:48 2018/8/7
+ * Created by jcohy on 23:48 2018/8/7
  * Email: jia_chao23@126.com
  * Description:
  **/
+// tag::code[]
 public abstract class Display {
 
 	public abstract int getColumns();//取得横向的字数
@@ -19,3 +20,4 @@ public abstract class Display {
 		}
 	}
 }
+// end::code[]

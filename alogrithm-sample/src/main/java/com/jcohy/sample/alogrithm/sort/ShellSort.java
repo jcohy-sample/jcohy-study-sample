@@ -1,7 +1,7 @@
 package com.jcohy.sample.alogrithm.sort;
 
 /**
- * Created by jiac on 2019/2/15.
+ * Created by jcohy on 2019/2/15.
  * ClassName  : com.jcohy.study.sort
  * Description  : 希尔排序
  */
@@ -16,7 +16,7 @@ public class ShellSort {
 			h = h * 3 + 1;
 		}
 		while (h > 0) {
-			System.out.println("增量h的值：" + h);
+			System.out.println("增量h的值: " + h);
 			for (int i = h; i < arrayLength; i++) {
                 int temp = data[i];
 				if (data[i] < data[i - h]) {
@@ -34,8 +34,8 @@ public class ShellSort {
 
 	public static void main(String[] args) {
         int[] data = {9,-16,21,23,-30,-49,21,30,30};
-		System.out.println("排序之前：\n" + java.util.Arrays.toString(data));
+		System.out.println("排序之前: \n" + java.util.Arrays.toString(data));
 		ShellSort(data);
-		System.out.println("排序之后：\n" + java.util.Arrays.toString(data));
+		System.out.println("排序之后: \n" + java.util.Arrays.toString(data));
 	}
 }

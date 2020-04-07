@@ -31,7 +31,7 @@ public class TestTransaction {
 		);
 	}
 	
-	//1. 找出2011年发生的所有交易， 并按交易额排序（从低到高）
+	//1. 找出2011年发生的所有交易， 并按交易额排序(从低到高)
 	@Test
 	public void test1(){
 		transactions.stream()
@@ -40,7 +40,7 @@ public class TestTransaction {
 				.forEach(System.out::println);
 	}
 	
-	//2. 交易员都在哪些不同的城市工作过？
+	//2. 交易员都在哪些不同的城市工作过?
 	@Test
 	public void test2(){
 		transactions.stream()
@@ -96,7 +96,7 @@ public class TestTransaction {
 
 	}
 //
-//	//5. 有没有交易员是在米兰工作的？
+//	//5. 有没有交易员是在米兰工作的?
 	@Test
 	public void test5(){
 		boolean milan = transactions.stream()

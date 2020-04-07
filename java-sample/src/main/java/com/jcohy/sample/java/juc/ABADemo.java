@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicStampedReference;
 
 /**
  * Copyright  : 2017- www.jcohy.com
- * Created by jiac on 21:38 2019/4/17
+ * Created by jcohy on 21:38 2019/4/17
  * Email: jia_chao23@126.com
  * ClassName: ABADemo
  * Description:
@@ -54,7 +54,7 @@ public class ABADemo {
             //暂停3秒钟t4，保证上面的t3线程完成一次ABA操作
             try { TimeUnit.SECONDS.sleep(3); } catch (InterruptedException e) { e.printStackTrace(); }
             boolean result = atomicStampedReference.compareAndSet(100, 2019, stamp, stamp + 1);
-            System.out.println(Thread.currentThread().getName()+"\t 是否修改成功:"+result+"当前最新实际版本号："+atomicStampedReference.getStamp());
+            System.out.println(Thread.currentThread().getName()+"\t 是否修改成功:"+result+"当前最新实际版本号: "+atomicStampedReference.getStamp());
             System.out.println(Thread.currentThread().getName()+"\t 当前最新值"+atomicStampedReference.getReference());
         },"t4").start();
     }

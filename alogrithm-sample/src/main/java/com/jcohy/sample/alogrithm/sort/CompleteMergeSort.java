@@ -1,9 +1,9 @@
 package com.jcohy.sample.alogrithm.sort;
 // =============== Program Description ===============
-// 程序名称： CH08_10.java                               
-// 程序目的：完整合并排序法
-//            数据文件名：datafile.txt
-//            合并后文件：sortdata.txt
+// 程序名称:  CH08_10.java
+// 程序目的: 完整合并排序法
+//            数据文件名: datafile.txt
+//            合并后文件: sortdata.txt
 // ===================================================
 import java.io.*;
 
@@ -35,13 +35,13 @@ public class CompleteMergeSort
 			System.out.print("数据处理完成!!\n");
 		}
 
-		System.out.print("原始文件datafile.txt数据内容为：\n");
+		System.out.print("原始文件datafile.txt数据内容为: \n");
 		showdata(fp);
-		System.out.print("\n分割文件sort1.txt数据内容为：\n");
+		System.out.print("\n分割文件sort1.txt数据内容为: \n");
 		showdata(fp1);
-		System.out.print("\n分割文件sort2.txt数据内容为：\n");
+		System.out.print("\n分割文件sort2.txt数据内容为: \n");
 		showdata(fp2);
-		System.out.print("\n排序后sortdata.txt数据内容为：\n");
+		System.out.print("\n排序后sortdata.txt数据内容为: \n");
 		showdata(fpa);
 	}
 	

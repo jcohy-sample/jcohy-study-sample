@@ -1,9 +1,9 @@
 package com.jcohy.sample.alogrithm.sort;
 // =============== Program Description ===============
-// 程序名称： CH08_09.java                               
-// 程序目的：直接合并排序法
-//            数据文件名：data1.txt,data2.txt，
-//            合并后文件：data.txt
+// 程序名称:  CH08_09.java
+// 程序目的: 直接合并排序法
+//            数据文件名: data1.txt,data2.txt，
+//            合并后文件: data.txt
 // ===================================================
 
 import java.io.*;
@@ -31,7 +31,7 @@ public class DirectlyMergeSort {
             System.out.print("数据处理完成!!\n");
         }
 
-        System.out.print("data1.txt数据内容为：\n");
+        System.out.print("data1.txt数据内容为: \n");
         char str;
         int str1;
         while (true) {
@@ -42,7 +42,7 @@ public class DirectlyMergeSort {
             System.out.print("[" + str + "]");
         }
         System.out.print("\n");
-        System.out.print("data2.txt数据内容为：\n");
+        System.out.print("data2.txt数据内容为: \n");
         while (true) {
             str1 = pfile2.read();
             str = (char) str1;
@@ -51,7 +51,7 @@ public class DirectlyMergeSort {
             System.out.print("[" + str + "]");
         }
         System.out.print("\n");
-        System.out.print("排序后data.txt数据内容为：\n");
+        System.out.print("排序后data.txt数据内容为: \n");
         while (true) {
             str1 = pfile.read();
             str = (char) str1;

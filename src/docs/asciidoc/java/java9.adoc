@@ -4,13 +4,13 @@
 [[java-9-feature-overview]]
 == Java9 新特性一览
 Java 9 正式发布于 2017 年 9 月 21 日 。作为 Java8 之后 3 年半才发布的新版本，Java 9 带 来了很多重大的变化。其中最重要的改动是 Java 平台模块系统的引入。除此之外，还有一些新的特性。 本文对 Java9 中包含的新特性做了概括性的介绍，可以帮助你快速了解 Java 9。
-java 9 提供了超过150项新功能特性，包括备受期待的模块化系统、可交互的 REPL 工具：jshell，JDK 编译工具，Java 公共 API 和私有代码，以及安全增强、扩展提升、性能管理改善等。可以说Java 9是一个庞大的系统工程，完全做了一个整体改变。
+java 9 提供了超过150项新功能特性，包括备受期待的模块化系统、可交互的 REPL 工具: jshell，JDK 编译工具，Java 公共 API 和私有代码，以及安全增强、扩展提升、性能管理改善等。可以说Java 9是一个庞大的系统工程，完全做了一个整体改变。
 
 
-此版本为 "功能性" 版本，并非长期支持版本。Oracle 宣布这些版本只有短期支持（六个月）。目前最新的 LTC 版本为 java11。目前官网已经不提供 java9 的下载。
+此版本为 "功能性" 版本，并非长期支持版本。Oracle 宣布这些版本只有短期支持(六个月)。目前最新的 LTC 版本为 java11。目前官网已经不提供 java9 的下载。
 详情参考 <<java-11-feature>>
 
-资料来源： http://openjdk.java.net/projects/jdk9/
+资料来源:  http://openjdk.java.net/projects/jdk9/
 
 [[beans-factory-tbl]]
 .Java9 新特性一览
@@ -223,13 +223,13 @@ Java 平台模块系统，也就是 Project Jigsaw，把模块化开发实践引
 
 模块化开发的实践在软件开发领域并不是一个新的概念。Java 开发社区已经使用这样的模块化实践有相当长的一段时间。主流的构建工具，包括 `Apache Maven` 和 `Gradle` 都支持把一个大的项目划分成若干个子项目。子项目之间通过不同的依赖关系组织在一起。每个子项目在构建之后都会产生对应的 JAR 文件。 在 Java9 中 ，已有的这些项目可以很容易的升级转换为 Java 9 模块 ，并保持原有的组织结构不变。
 
-Java 9 模块的重要特征是在其工件（artifact）的根目录中包含了一个描述模块的 module-info.class 文 件。 工件的格式可以是传统的 JAR 文件或是 Java 9 新增的 JMOD 文件。这个文件由根目录中的源代码文件 module-info.java 编译而来。该模块声明文件可以描述模块的不同特征。模块声明文件中可以包含的内容如下：
+Java 9 模块的重要特征是在其工件(artifact)的根目录中包含了一个描述模块的 module-info.class 文 件。 工件的格式可以是传统的 JAR 文件或是 Java 9 新增的 JMOD 文件。这个文件由根目录中的源代码文件 module-info.java 编译而来。该模块声明文件可以描述模块的不同特征。模块声明文件中可以包含的内容如下:
 
-- 模块导出的包：使用 `exports` 可以声明模块对其他模块所导出的包。包中的 `public` 和 `protected` 类型，以及这些类型的 `public` 和 `protected` 成员可以被其他模块所访问。没有声明为导出的包相当于模块中的私有成员，不能被其他模块使用。
+- 模块导出的包: 使用 `exports` 可以声明模块对其他模块所导出的包。包中的 `public` 和 `protected` 类型，以及这些类型的 `public` 和 `protected` 成员可以被其他模块所访问。没有声明为导出的包相当于模块中的私有成员，不能被其他模块使用。
 
-- 模块的依赖关系：使用 `requires` 可以声明模块对其他模块的依赖关系。使用 `requires transitive` 可以把一个模块依赖声明为传递的。传递的模块依赖可以被依赖当前模块的其他模块所读取。 如果一个模块所导出的类型的型构中包含了来自它所依赖的模块的类型，那么对该模块的依赖应该声明为传递的。
+- 模块的依赖关系: 使用 `requires` 可以声明模块对其他模块的依赖关系。使用 `requires transitive` 可以把一个模块依赖声明为传递的。传递的模块依赖可以被依赖当前模块的其他模块所读取。 如果一个模块所导出的类型的型构中包含了来自它所依赖的模块的类型，那么对该模块的依赖应该声明为传递的。
 
-- 服务的提供和使用：如果一个模块中包含了可以被 `ServiceLocator` 发现的服务接口的实现 ，需要使用 `provides with` 语句来声明具体的实现类;如果一个模块需要使用服务接口，可以使用 `uses` 语句来声明。
+- 服务的提供和使用: 如果一个模块中包含了可以被 `ServiceLocator` 发现的服务接口的实现 ，需要使用 `provides with` 语句来声明具体的实现类;如果一个模块需要使用服务接口，可以使用 `uses` 语句来声明。
 
 [[java-9-feature-jigsaw-use]]
 === 使用
@@ -258,7 +258,7 @@ module com.jcohy.sample {
 
 * 222: jshell: The Java Shell (Read-Eval-Print Loop)
 
-`jshell` 是 Java 9 新增的一个实用工具。`jshell` 为 Java 增加了类似 NodeJS 和 Python 中的读取-求值-打印循环（ Read-Evaluation-Print Loop ） 。 在 `jshell` 中 可以直接 输入表达式并查看其执行结果。当需要测试一个方法的运行效果，或是快速的对表达式进行求值时，`jshell` 都非常实用。
+`jshell` 是 Java 9 新增的一个实用工具。`jshell` 为 Java 增加了类似 NodeJS 和 Python 中的读取-求值-打印循环( Read-Evaluation-Print Loop ) 。 在 `jshell` 中 可以直接 输入表达式并查看其执行结果。当需要测试一个方法的运行效果，或是快速的对表达式进行求值时，`jshell` 都非常实用。
 只需要通过 `jshell` 命令启动 `jshell`，然后直接输入表达式即可。每个表达式的结果会被自动保存下来 ，以数字编号作为引用，类似 `$1` 和 `$2` 这样的名称 。可以在后续的表达式中引用之前语句的运行结果。 在 `jshell` 中 ，除了表达式之外，还可以创建 Java 类和方法。`jshell` 也有基本的代码完成功能。
 
 
@@ -326,12 +326,12 @@ jshell> /methods
 ```shell
 jshell> /open E:\hello.java
 ```
-11、没有受检异常（编译时异常）
+11、没有受检异常(编译时异常)
 ```shell
 jshell> URL url = new URL("http://www.baidu.com");
 url ==> http://www.baidu.com
 ```
-说明：本来应该强迫我们捕获一个 `IOException`，但却没有出现。因为 `jShell` 在后台为我们隐藏了。
+说明: 本来应该强迫我们捕获一个 `IOException`，但却没有出现。因为 `jShell` 在后台为我们隐藏了。
 12、退出Jshell
 ```shell
 jshell> /exit
@@ -346,7 +346,7 @@ jshell> /exit
 
 * 238: Multi-Release JAR Files
 
-当一个新版本的Java出现的时候，你的库用户要花费数年时间才会切换到这个新的版本。这就意味着库得去向后兼容你想要支持的最老的Java版本（许多情况下就是Java 6 或者 Java7）。这实际上意味着未来的很长一段时间，你都不能在库中运用Java 9所提供的新特性。幸运的是，多版本兼容jar功能能让你创建仅在特定版本的Java环境中运行库程序选择使用的class版本。
+当一个新版本的Java出现的时候，你的库用户要花费数年时间才会切换到这个新的版本。这就意味着库得去向后兼容你想要支持的最老的Java版本(许多情况下就是Java 6 或者 Java7)。这实际上意味着未来的很长一段时间，你都不能在库中运用Java 9所提供的新特性。幸运的是，多版本兼容jar功能能让你创建仅在特定版本的Java环境中运行库程序选择使用的class版本。
 
 [[java-9-feature-jar-overview]]
 === 概述
@@ -368,7 +368,7 @@ jar root
            - A.class
 ----
 
-说明：
+说明:
 在上述场景中， `root.jar` 可以在 Java 9 中使用, 不过 A或B 类使用的不是顶层的 `root.A` 或 `root.B` 这两个 class, 而是处在 `META-INF/versions/9` 下面的这两个。这是特别为 Java 9 准备的 class 版本，可以运用 Java 9 所提供的特性和库。在将来的支持 Java 10 JDK上，它将看到A的jdk 10特定版本和B的jdk 9特定版本;同时，在早期的 Java 诸版本中使用这个 JAR 也是能运行的，因为较老版本的 Java 只会看到顶层的A类或 B 类。
 
 [[java-9-feature-jar-use]]
@@ -381,7 +381,7 @@ jar root
 ----
 import java.util.Set;
 /**
- * Created by jiac on 2017/12/28 0028.
+ * Created by jcohy on 2017/12/28 0028.
  */
 public class Generator {
 
@@ -450,7 +450,7 @@ Java 8中规定接口中的方法除了抽象方法之外，还可以定义静�
 [[java-9-feature-grammar-diamond]]
 === 钻石操作符
 
-我们将能够与匿名实现类共同使用钻石操作符（diamond operator）,在java 8中如下的操作是会报错的：
+我们将能够与匿名实现类共同使用钻石操作符(diamond operator),在java 8中如下的操作是会报错的:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java8
@@ -464,12 +464,12 @@ Java 8中规定接口中的方法除了抽象方法之外，还可以定义静�
     }
 ----
 
-编译报错信息：`'<>'` cannot be used with anonymous classes
+编译报错信息: `'<>'` cannot be used with anonymous classes
 
 [[java-9-feature-grammar-try]]
 === try语句
 
-在 java 8 之前，我们习惯于这样处理资源的关闭：
+在 java 8 之前，我们习惯于这样处理资源的关闭:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java8
@@ -492,7 +492,7 @@ try{
 }
 ----
 
-java 8 中，可以实现资源的自动关闭，但是要求执行后必须关闭的所有资源必须在 try 子句中初始化，否则编译不通过。如下例所示：
+java 8 中，可以实现资源的自动关闭，但是要求执行后必须关闭的所有资源必须在 try 子句中初始化，否则编译不通过。如下例所示:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java8
@@ -504,7 +504,7 @@ try(InputStreamReader reader = new InputStreamReader(System.in)){
 }
 ----
 
-java 9 中，用资源语句编写 `try` 将更容易，我们可以在 `try` 子句中使用已经初始化过的资源，此时的资源是 `final` 的：
+java 9 中，用资源语句编写 `try` 将更容易，我们可以在 `try` 子句中使用已经初始化过的资源，此时的资源是 `final` 的:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java9
@@ -523,9 +523,9 @@ public void test3(){
 ----
 
 [[java-9-feature-grammar-underscope]]
-=== UnderScope（下划线使用的限制）
+=== UnderScope(下划线使用的限制)
 
-在 java 8 中，标识符可以独立使用 `_` 来命名：
+在 java 8 中，标识符可以独立使用 `_` 来命名:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java8
@@ -547,13 +547,13 @@ System.out.println(_);
 [[java-9-feature-string-motivation]]
 === 动机
 
-String 类的在 jdk8 之前的实现是采用的 char 数组来存储的，每个字符使用两个字节（十六位）。然而， 从许多不同的应用程序收集到的数据表明，字符串是堆使用的主要组成部分，而且，大多数 String 对象仅包含 Latin-1 这样的拉丁字符。 这样的字符仅需要一个字节的存储空间，因此此类 String 对象的内部char数组中的一半空间都没有使用。
+String 类的在 jdk8 之前的实现是采用的 char 数组来存储的，每个字符使用两个字节(十六位)。然而， 从许多不同的应用程序收集到的数据表明，字符串是堆使用的主要组成部分，而且，大多数 String 对象仅包含 Latin-1 这样的拉丁字符。 这样的字符仅需要一个字节的存储空间，因此此类 String 对象的内部char数组中的一半空间都没有使用。
 
 [[java-9-feature-string-impl]]
 === 实现
 
-我们建议将 String 类的内部表示形式从 UTF-16 字符数组更改为字节数组，再加上一个 `encoding-flag` 字段。新的 String 类将存储基于字符串内容编码为 `ISO-8859-1/Latin-1`（每个字符一个字节）或 UTF-16（每个字符两个字节）的字符。`encoding-flag` 字段将指示使用哪种编码。
-与字符串相关的类（例如 `AbstractStringBuilder`，`StringBuilder` 和 `StringBuffer`）将更新为使用相同的表示形式，HotSpot VM的固有字符串操作也将使用相同的表示形式。
+我们建议将 String 类的内部表示形式从 UTF-16 字符数组更改为字节数组，再加上一个 `encoding-flag` 字段。新的 String 类将存储基于字符串内容编码为 `ISO-8859-1/Latin-1`(每个字符一个字节)或 UTF-16(每个字符两个字节)的字符。`encoding-flag` 字段将指示使用哪种编码。
+与字符串相关的类(例如 `AbstractStringBuilder`，`StringBuilder` 和 `StringBuffer`)将更新为使用相同的表示形式，HotSpot VM的固有字符串操作也将使用相同的表示形式。
 这纯粹是实现更改，不更改现有的公共接口。没有计划添加任何新的公共API或其他接口。
 
 [[java-9-feature-collections]]
@@ -636,9 +636,9 @@ public void testStream() throws Exception {
 * 251: Multi-Resolution Images
 * 263: HiDPI Graphics on Windows and Linux
 
-在 `Mac` 上，JDK已经支持视网膜显示，但在 `Linux` 和 `Windows` 上，它并没有。在那里，Java程序在当前的高分辨率屏幕上可能看起来很小，不能使用它们。这是因为像素用于这些系统的大小计算（无论像素实际有多大）。毕竟，高分辨率显示器的有效部分是像素非常小。
+在 `Mac` 上，JDK已经支持视网膜显示，但在 `Linux` 和 `Windows` 上，它并没有。在那里，Java程序在当前的高分辨率屏幕上可能看起来很小，不能使用它们。这是因为像素用于这些系统的大小计算(无论像素实际有多大)。毕竟，高分辨率显示器的有效部分是像素非常小。
 
-JEP 263 以这样的方式扩展了JDK，即 `Windows` 和 `Linux` 也考虑到像素的大小。为此，使用比现在更多的现代 API：Direct2D for Windows和GTK +，而不是 Xlib for Linux。图形，窗口和文本由此自动缩放。
+JEP 263 以这样的方式扩展了JDK，即 `Windows` 和 `Linux` 也考虑到像素的大小。为此，使用比现在更多的现代 API: Direct2D for Windows和GTK +，而不是 Xlib for Linux。图形，窗口和文本由此自动缩放。
 
 JEP 251 还提供处理多分辨率图像的能力，即包含不同分辨率的相同图像的文件。根据相应屏幕的DPI度量，然后以适当的分辨率使用图像。
 
@@ -646,7 +646,7 @@ JEP 251 还提供处理多分辨率图像的能力，即包含不同分辨率的
 === 使用
 
 * 新的API定义在 `java.awt.image` 包下
-* 将不同分辨率的图像封装到一张（多分辨率的）图像中，作为它的变体
+* 将不同分辨率的图像封装到一张(多分辨率的)图像中，作为它的变体
 * 获取这个图像的所有变体
 * 获取特定分辨率的图像变体-表示一张已知分辨率单位为 DPI 的特定尺寸大小的逻辑图像，并且这张图像是最佳的变体。
 * 基于当前屏幕分辨率大小和运用的图像转换算法，`java.awt.Graphics` 类可以从接口 `MultiResolutionImage` 获取所需的变体。
@@ -660,9 +660,9 @@ JEP 251 还提供处理多分辨率图像的能力，即包含不同分辨率的
 
 * 110: HTTP 2 Client
 
-HTTP/1.1 和 HTTP/2 的主要区别是如何在客户端和服务器之间构建和传输数据。HTTP/1.1 依赖于请求/响应周期。 HTTP/2 允许服务器 "push" 数据：它可以发送比客户端请求更多的数据。 这使得它可以优先处理并发送对于首先加载网页至关重要的数据。
+HTTP/1.1 和 HTTP/2 的主要区别是如何在客户端和服务器之间构建和传输数据。HTTP/1.1 依赖于请求/响应周期。 HTTP/2 允许服务器 "push" 数据: 它可以发送比客户端请求更多的数据。 这使得它可以优先处理并发送对于首先加载网页至关重要的数据。
 
-Java 9中有新的方式来处理HTTP调用。它提供了一个新的HTTP客户端（`HttpClient`），它将替代仅适用于 blocking 模式的 `HttpURLConnection` （`HttpURLConnection` 是在HTTP 1.0的时代创建的，并使用了协议无关的方法），并提供对 WebSocket 和 HTTP/2 的支持。
+Java 9中有新的方式来处理HTTP调用。它提供了一个新的HTTP客户端(`HttpClient`)，它将替代仅适用于 blocking 模式的 `HttpURLConnection` (`HttpURLConnection` 是在HTTP 1.0的时代创建的，并使用了协议无关的方法)，并提供对 WebSocket 和 HTTP/2 的支持。
 
 此外，HTTP 客户端还提供 API 来处理 HTTP/2 的特性，比如流和服务器推送等功能。
 
@@ -707,9 +707,9 @@ JDK 9 还更新了javac 编译器以便能够将 java 9 代码编译运行在低
 * 158: Unified JVM Logging
 * 271: Unified GC Logging
 
-日志是解决问题的唯一有效途径：曾经很难知道导致JVM性能问题和导致JVM崩溃的根本原因。不同的JVM日志的碎片化和日志选项（例如：JVM组件对于日志使用的是不同的机制和规则），这使得JVM难以进行调试。
+日志是解决问题的唯一有效途径: 曾经很难知道导致JVM性能问题和导致JVM崩溃的根本原因。不同的JVM日志的碎片化和日志选项(例如: JVM组件对于日志使用的是不同的机制和规则)，这使得JVM难以进行调试。
 
-解决该问题最佳方法：对所有的JVM组件引入一个单一的系统，这些JVM组件支持细粒度的和易配置的JVM日志。
+解决该问题最佳方法: 对所有的JVM组件引入一个单一的系统，这些JVM组件支持细粒度的和易配置的JVM日志。
 
 Java 9 中 ，JVM 有了统一的日志记录系统，可以使用新的命令行选项-Xlog 来控制 JVM 上 所有组件的日志记录。该日志记录系统可以设置输出的日志消息的标签、级别、修饰符和输出目标等。Java 9 移除了在 Java 8 中 被废弃的垃圾回收器配置组合，
 同时 把 G1 设为默认的垃圾回收器实现。另外，CMS 垃圾回收器已经被声明为废弃。Java 9 也增加了很多可以通过 `jcmd` 调用的诊断命令。
@@ -723,12 +723,12 @@ Java 9 中 ，JVM 有了统一的日志记录系统，可以使用新的命令�
 * 224: HTML5 Javadoc
 * 225: Javadoc Search
 
-jdk 8 ：生成的java帮助文档是在HTML 4 中，而HTML 4 已经是很久的标准了。
+jdk 8 : 生成的java帮助文档是在HTML 4 中，而HTML 4 已经是很久的标准了。
 
-jdk 9 ：javadoc的输出，现在符合兼容HTML 5 标准。
+jdk 9 : javadoc的输出，现在符合兼容HTML 5 标准。
 
 [[java-9-feature-nashorn]]
-== Javascript引擎升级：Nashorn
+== Javascript引擎升级: Nashorn
 
 [[java-9-feature-nashorn-feature]]
 === 官方Feature
@@ -753,14 +753,14 @@ Oracle 一直在努力提高 Java 启动和运行时性能，希望其能够在�
 
 简单说，这主要是因为 Java 编译产生的类文件是 Java 虚拟机可以理解的二进制代码，而不是真正的可执行的本地代码，需要 Java 虚拟机进行解释和编译，这带来了额外的开销。
 
-JIT（Just-in-time）编译器可以在运行时将热点编译成本地代码，速度很快。但是 Java 项目现在变得很大很复杂，因此 JIT 编译器需要花费较长时间才能热身完，而且有些 Java 方法还没法编译，性能方面也会下降。AoT 编译就是为了解决这些问题而生的。
+JIT(Just-in-time)编译器可以在运行时将热点编译成本地代码，速度很快。但是 Java 项目现在变得很大很复杂，因此 JIT 编译器需要花费较长时间才能热身完，而且有些 Java 方法还没法编译，性能方面也会下降。AoT 编译就是为了解决这些问题而生的。
 
-在 JDK 9 中， AOT（JEP 295: Ahead-of-Time Compilation）作为实验特性被引入进来，开发者可以利用新的 jaotc 工具将重点代码转换成类似类库一样的文件。虽然仍处于试验阶段，但这个功能使得 Java 应用在被虚拟机启动之前能够先将 Java 类编译为原生代码。此功能旨在改进小型和大型应用程序的启动时间，同时对峰值性能的影响很小。
+在 JDK 9 中， AOT(JEP 295: Ahead-of-Time Compilation)作为实验特性被引入进来，开发者可以利用新的 jaotc 工具将重点代码转换成类似类库一样的文件。虽然仍处于试验阶段，但这个功能使得 Java 应用在被虚拟机启动之前能够先将 Java 类编译为原生代码。此功能旨在改进小型和大型应用程序的启动时间，同时对峰值性能的影响很小。
 但是 Java 技术供应商 Excelsior 的营销总监 Dmitry Leskov 担心 AoT 编译技术不够成熟，希望 Oracle 能够等到 Java 10 时有个更稳定版本才发布。
 
-另外 JVMCI （JEP 243: Java-Level JVM Compiler Interface）等特性，对于整个编程语言的发展，可能都具有非常重要的意义，虽然未必引起了广泛关注。目前 Graal Core API 已经被集成进入 Java 9，虽然还只是初始一小步，但是完全用 Java 语言来实现的可靠的、高性能的动态编译器，似乎不再是遥不可及，这是 Java 虚拟机开发工程师的福音。
+另外 JVMCI (JEP 243: Java-Level JVM Compiler Interface)等特性，对于整个编程语言的发展，可能都具有非常重要的意义，虽然未必引起了广泛关注。目前 Graal Core API 已经被集成进入 Java 9，虽然还只是初始一小步，但是完全用 Java 语言来实现的可靠的、高性能的动态编译器，似乎不再是遥不可及，这是 Java 虚拟机开发工程师的福音。
 
-与此同时，随着 Truffle 框架和 Substrate VM 的发展，已经让个别信心满满的工程师高呼“One VM to Rule Them All!”， 也许就在不远的将来 Ploygot 以一种另类的方式成为现实。
+与此同时，随着 Truffle 框架和 Substrate VM 的发展，已经让个别信心满满的工程师高呼 "One VM to Rule Them All!" ， 也许就在不远的将来 Ploygot 以一种另类的方式成为现实。
 
 [[java-9-feature-ProcessHandle]]
 == 进程API
@@ -804,7 +804,7 @@ public class Main {
 [[java-9-feature-reactor]]
 == 响应式流
 
-响应式编程的思想最近得到了广泛的流行。 在 Java 平台上有流行的响应式库 `RxJava` 和 `Reactor`。响应式流规范的出发点是提供一个带非阻塞负压（ non-blocking backpressure ） 的异步流处理规范。响应式流规范的核心接口已经添加到了 Java9 中的 `java.util.concurrent.Flow` `类中。
+响应式编程的思想最近得到了广泛的流行。 在 Java 平台上有流行的响应式库 `RxJava` 和 `Reactor`。响应式流规范的出发点是提供一个带非阻塞负压( non-blocking backpressure ) 的异步流处理规范。响应式流规范的核心接口已经添加到了 Java9 中的 `java.util.concurrent.Flow` `类中。
 
 `Flow` 中包含了 `Flow.Publisher`、`Flow.Subscriber`、`Flow.Subscription` 和 `Flow.Processor` 等 4 个核心接口。Java 9 还提供了 `SubmissionPublisher` 作为 `Flow.Publisher` 的一个实现。RxJava 2 和 `Reactor` 都可以很方便的 与 `Flow` 类的核心接口进行互操作。
 
@@ -848,13 +848,13 @@ public class VarHandleTest {
 
 类 `java.lang.invoke.MethodHandles` 增加了更多的静态方法来创建不同类型的方法句柄。
 
-* arrayConstructor：创建指定类型的数组。
-* arrayLength：获取指定类型的数组的大小。
-* varHandleInvoker 和 varHandleExactInvoker：调用 VarHandle 中的访问模式方法。
-* zero：返回一个类型的默认值。
-* empty：返 回 MethodType 的返回值类型的默认值。
-* loop、countedLoop、iteratedLoop、whileLoop 和 doWhileLoop：创建不同类型的循环，包括 `for` 循环、`while` 循环 和 `do-while` 循环。
-* tryFinally：把对方法句柄的调用封装在 try-finally 语句中。
+* arrayConstructor: 创建指定类型的数组。
+* arrayLength: 获取指定类型的数组的大小。
+* varHandleInvoker 和 varHandleExactInvoker: 调用 VarHandle 中的访问模式方法。
+* zero: 返回一个类型的默认值。
+* empty: 返 回 MethodType 的返回值类型的默认值。
+* loop、countedLoop、iteratedLoop、whileLoop 和 doWhileLoop: 创建不同类型的循环，包括 `for` 循环、`while` 循环 和 `do-while` 循环。
+* tryFinally: 把对方法句柄的调用封装在 try-finally 语句中。
 
 在 下面代码中，我们使用 `iteratedLoop` 来创建一个遍历 String 类型迭代器的方法句柄，并计算所有字符串的长度的总和。
 
@@ -898,9 +898,9 @@ public class IteratedLoopTest {
 
 类 `java.io.InputStream` 中增加了新的方法来读取和复制 `InputStream` 中包含的数据。
 
-* `readAllBytes`：读取 `InputStream` 中的所有剩余字节。
-* `readNBytes`： 从 `InputStream` 中读取指定数量的字节到数组中。
-* `transferTo`：读取 `InputStream` 中的全部字节并写入到指定的 `OutputStream` 中 。
+* `readAllBytes`: 读取 `InputStream` 中的所有剩余字节。
+* `readNBytes`:  从 `InputStream` 中读取指定数量的字节到数组中。
+* `transferTo`: 读取 `InputStream` 中的全部字节并写入到指定的 `OutputStream` 中 。
 
 如下代码中给出了这些新方法的使用示例。
 

@@ -3,7 +3,7 @@ package com.jcohy.sample.designpattern.command.example2;
 import java.util.Arrays;
 
 /**
- * Created by jiac on 2019/3/20.
+ * Created by jcohy on 2019/3/20.
  * ClassName  : com.jcohy.study.command.example2
  * Description  : 调用者
  */

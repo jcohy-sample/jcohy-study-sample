@@ -2,14 +2,14 @@ package com.jcohy.sample.designpattern.callback;
 
 /**
  * 回调接口
- * @author jiachao
+ * @author jcohy
  *
  */
 public interface CallBack {
 	
 	/** 
      * 这就是Service回调Client的方法 
-     * @param result 回调时携带的参数（可选） 
+     * @param result 回调时携带的参数(可选)
      */  
     public void B(String result);
     

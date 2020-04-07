@@ -10,7 +10,7 @@ public class Test_1008 {
 		Scanner in= new Scanner(System.in);
 		String a=in.nextLine();
 		System.out.println("数字长度:"+a.length());
-		System.out.print("数字拆分：");
+		System.out.print("数字拆分: ");
 		for (int i = 0; i < a.length(); i++) {
 			System.out.print(a.charAt(i)+" ");
 		}

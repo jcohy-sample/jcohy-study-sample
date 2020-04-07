@@ -13,6 +13,6 @@
 :revnumber: {version}
 :revdate: {localdate}
 
-:base-sample: ../../../
-:design-pattern-sample: ${base-sample}design-pattern-sample/src/main/java/com/jcohy/sample/designpattern
+
+:design-pattern-code: ../../../../design-pattern-sample/src/main/java/com/jcohy/sample/designpattern
 

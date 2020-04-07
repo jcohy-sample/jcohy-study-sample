@@ -1,0 +1,188 @@
+[[design-abstract-factory]]
+= 抽象工厂模式
+
+[[design-abstract-factory-overview]]
+== 概述
+
+image::images/design-factory3.png[]
+
+* 抽象工厂模式(Abstract Factory Pattern);提供一个创建一系列相关或相互依赖对象的接口，而无需指定它们具体的类。
+* 优点: 当一个产品族中的多个对象被设计成一起工作时，它能保证客户端始终只使用同一个产品族中的对象。
+* 缺点: 产品族扩展非常困难，要增加一个系列的某一产品，既要在抽象的 Creator 里加代码，又要在具体的里面加代码。
+
+[[design-abstract-factory-sign]]
+== 适用性
+
+* 一个系统要独立于它的产品的创建、组合和表示时。
+* 一个系统要由多个产品系列中的一个来配置时。
+* 当你要强调一系列相关的产品对象的设计以便进行联合使用时。
+* 当你提供一个产品类库，而只想显示它们的接口而不是实现时。
+
+[[design-abstract-factory-impl]]
+=== 实现
+
+实现一个具有多种产品族的。提供产品的 Shape 和 Color 接口和实现这些接口的实体类。
+
+1.为形状创建一个接口。
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Shape
+----
+include::{design-pattern-code}/factory/AbstractFactory/Shape.java[tag=code]
+----
+
+2。创建实现接口的实体类。
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Rectangle
+----
+include::{design-pattern-code}/factory/AbstractFactory/Rectangle.java[tag=code]
+----
+.Square
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{design-pattern-code}/factory/AbstractFactory/Square.java[tag=code]
+----
+.Circle
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{design-pattern-code}/factory/AbstractFactory/Circle.java[tag=code]
+----
+
+3.为颜色创建一个接口。
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Color
+----
+include::{design-pattern-code}/factory/AbstractFactory/Color.java[tag=code]
+----
+
+4.创建实现接口的实体类。
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Red
+----
+include::{design-pattern-code}/factory/AbstractFactory/Red.java[tag=code]
+----
+.Green
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{design-pattern-code}/factory/AbstractFactory/Green.java[tag=code]
+----
+.Blue
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{design-pattern-code}/factory/AbstractFactory/Blue.java[tag=code]
+----
+
+5.为 Color 和 Shape 对象创建抽象类来获取工厂。
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.AbstractFactory
+----
+include::{design-pattern-code}/factory/AbstractFactory/AbstractFactory.java[tag=code]
+----
+
+6.创建扩展了 AbstractFactory 的工厂类，基于给定的信息生成实体类的对象。
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.ShapeFactory
+----
+include::{design-pattern-code}/factory/AbstractFactory/ShapeFactory.java[tag=code]
+----
+.ColorFactory
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{design-pattern-code}/factory/AbstractFactory/ColorFactory.java[tag=code]
+----
+
+7.创建一个工厂创造器/生成器类，通过传递形状或颜色信息来获取工厂。
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.FactoryProducer
+----
+include::{design-pattern-code}/factory/AbstractFactory/FactoryProducer.java[tag=code]
+----
+
+8.使用 FactoryProducer 来获取 AbstractFactory，通过传递类型信息来获取实体类的对象。
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.AbstractFactoryPatternDemo
+----
+include::{design-pattern-code}/factory/AbstractFactory/AbstractFactoryDemo.java[tag=code]
+----
+                
+9.结果
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.result
+----
+                Inside Circle::draw() method.
+                Inside Rectangle::draw() method.
+                Inside Square::draw() method.
+                Inside Red::fill() method.
+                Inside Green::fill() method.
+                Inside Blue::fill() method.
+----
+
+[[design-abstract-factory-summary]]
+== 总结
+                
+工厂方法模式和抽象工厂模式不好分清楚，他们的区别如下:
+
+* 工厂方法模式:
+** 一个抽象产品类，可以派生出多个具体产品类。
+** 一个抽象工厂类，可以派生出多个具体工厂类。
+** 每个具体工厂类只能创建一个具体产品类的实例。
+* 抽象工厂模式:
+** 多个抽象产品类，每个抽象产品类可以派生出多个具体产品类。
+** 一个抽象工厂类，可以派生出多个具体工厂类。
+** 每个具体工厂类可以创建多个具体产品类的实例，也就是创建的是一个产品线下的多个产品。
+* 区别:
+** 工厂方法模式只有一个抽象产品类，而抽象工厂模式有多个。
+** 工厂方法模式的具体工厂类只能创建一个具体产品类的实例，而抽象工厂模式可以创建多个。
+** 工厂方法创建 "一种" 产品，他的着重点在于"怎么创建"，也就是说如果你开发，你的大量代码很可能围绕着这种产品的构造，初始化这些细节上面。也因为如此，类似的产品之间有很多可以复用的特征，
+所以会和模版方法相随。
+** 抽象工厂需要创建一些列产品，着重点在于"创建哪些"产品上，也就是说，如果你开发，你的主要任务是划分不同差异的产品线，并且尽量保持每条产品线接口一致，从而可以从同一个抽象工厂继承。
+** 对于 java 来说，你能见到的大部分抽象工厂模式都是这样的: --- 它的里面是一堆工厂方法，每个工厂方法返回某种类型的对象。
+比如说工厂可以生产鼠标和键盘。那么抽象工厂的实现类(它的某个具体子类)的对象都可以生产鼠标和键盘，但可能工厂 A 生产的是罗技的键盘和鼠标，工厂 B 是微软的。
+这样 A 和 B 就是工厂，对应于抽象工厂;每个工厂生产的鼠标和键盘就是产品，对应于工厂方法;用了工厂方法模式，你替换生成键盘的工厂方法，就可以把键盘从罗技换到微软。但是用了抽象工厂模式，你只要换家工厂，就可以同时替换鼠标和键盘一套。如果你要的产品有几十个，当然用抽象工厂模
+式一次替换全部最方便(这个工厂会替你用相应的工厂方法)所以说抽象工厂就像工厂，而工厂方法则像是工厂的一种产品生产线。
+
+[[design-abstract-factory-qa]]
+== Q&A
+
+[qanda]
+有很多Java语言中的API提供一些返还新的Java对象的方法，能否举出两个这样的例子，请问他们是工厂方法模式吗?:: `toString()` 方法会返回一个 String 类型的对象，`clone()` 方法会返回与原对象类型相同的对象。但他们不是工厂方法模式，因为他们不能返还一个抽象类型。客户端事先都知道将要得到什么对象类型。
+工厂方法可不可以返还在另一个对象里实例化的一个对象?:: 不可以，工厂方法是创建型模式。其用意就是对对象创建过程的封装。虽然不一定每一次都返回一个新的对象 ，但是工厂方法所返回的都应该是在工厂角色中被实例化的对象
+
+[[design-abstract-factory-java]]
+== Java语言中的应用
+
+* 简单工厂模式
+** java.text.DateFormat#getDateInstance()
+* 工厂方法模式
+** java.lang.Class#newInstance()
+** java.lang.Integer#valueOf(String) (Boolean, Byte, Character,Short, Long,Float 和 Double 与之类似)
+** java.lang.Class#forName()
+** java.lang.reflect.Array#newInstance()
+** java.lang.reflect.Constructor#newInstance()
+* 抽象工厂模式
+** java.util.Calendar#getInstance()
+** java.util.Arrays#asList()
+** java.util.ResourceBundle#getBundle()
+** java.net.URL#openConnection()
+** java.sql.DriverManager#getConnection()
+** java.sql.Connection#createStatement()
+** java.sql.Statement#executeQuery()
+** java.text.NumberFormat#getInstance()
+** java.lang.management.ManagementFactory (所有 getXXX()方法)
+** java.nio.charset.Charset#forName()
+** javax.xml.parsers.DocumentBuilderFactory#newInstance()
+** javax.xml.transform.TransformerFactory#newInstance()
+** javax.xml.xpath.XPathFactory#newInstance()
+
+[[design-abstract-factory-expand]]
+== 扩展
+
+* 利用反射+工厂模式，可以解决避免分支判断的问题。
+* 工厂模式与单例模式，MVC模式，亨元模式，备忘录模式等的关系与其发挥的作用。

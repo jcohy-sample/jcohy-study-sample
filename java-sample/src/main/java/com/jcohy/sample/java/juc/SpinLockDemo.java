@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Copyright  : 2017- www.jcohy.com
- * Created by jiac on 10:32 2019/4/18
+ * Created by jcohy on 10:32 2019/4/18
  * Email: jia_chao23@126.com
  * ClassName: SpinLockDemo
  * Description:

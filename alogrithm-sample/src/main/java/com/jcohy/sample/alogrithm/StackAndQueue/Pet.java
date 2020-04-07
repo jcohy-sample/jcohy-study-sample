@@ -1,7 +1,7 @@
 package com.jcohy.sample.alogrithm.StackAndQueue;
 /**
  * 猫狗队列
- * @author jiachao
+ * @author jcohy
  *
  */
 public class Pet {

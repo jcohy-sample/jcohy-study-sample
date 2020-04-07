@@ -1,0 +1,119 @@
+[[design-decorator]]
+= 装饰器模式
+
+[[design-decorator-overview]]
+== 概述
+
+装饰器模式:动态的给一个对象添加一些额外的职责，就增加功能来说，装饰器模式比生产子类更加灵活。
+
+[[design-decorator-role]]
+== 装饰器模式的角色
+
+image::images/design-decorator1.png[]
+
+* Component:定义了一个对象接口，可以动态的给这些对象添加职责。
+* ConcreteComponent:ConcreteComponent定义了一个具体的对象，也可以给这个对象添加一些职责。
+* Decorator:Decorator，装饰的抽象类。继承了 Component，从外类来扩展 Component 的功能，但对于 Component 来说，是无需知道 Decorator 的存在的。
+* ConcreteDecorator:ConcreteDecorator 具体的装饰对象，给 Component 添加职责的功能。
+
+[[design-decorator-sign]]
+== 适用性
+
+* 需要扩展一个类的功能。
+* 动态的为一个对象增加功能，而且还能动态撤销。
+* 当不能采用生成子类的方法进行扩充时。一种情况是，可能有大量独立的扩展，为支持每一种组合将产生大量的子类，使得子类数目呈爆炸性增长。另一种情况可能是因为类定义被隐藏，或类定义不能用于生成子类。
+
+[[design-decorator-impl]]
+== 装饰器模式的实现
+
+本例演示一个在字符串周围装饰上外框在打印出来的程序。装饰外框是以 +，-，| 等字符组成的框线。
+
+[source,xml]
+----
++-----------------+
+|   hello world   |
++-----------------+
+----
+
+1.定义一个Display类，是打印多行字符串的抽象类
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Display
+----
+include::{design-pattern-code}/decorator/example2/Display.java[tag=code]
+----
+
+2.StringDisplay:打印整行字符串的实现类。
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.StringDisplay
+----
+include::{design-pattern-code}/decorator/example2/StringDisplay.java[tag=code]
+----
+
+3.Border: Border类表示装饰外框的抽象类。虽然定义为装饰外框的的类，但仍定义为打印字符串Display的子类。
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Border
+----
+include::{design-pattern-code}/decorator/example2/Border.java[tag=code]
+----
+  
+4.SideBorder: 是一种具体的外框，也是Border类的子类。
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.SideBorder
+----
+include::{design-pattern-code}/decorator/example2/SideBorder.java[tag=code]
+----
+
+5.FullBorder: 和SideBorder类一样。
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.FullBorder
+----
+include::{design-pattern-code}/decorator/example2/FullBorder.java[tag=code]
+----
+
+6.main
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Test
+----
+include::{design-pattern-code}/decorator/example2/Test.java[tag=code]
+----
+
+7.result
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Test
+----
+                d1:
+                Hello World
+                d2:
+                #Hello World#
+                d3:
+                +-------------+
+                |#Hello World#|
+                +-------------+
+                d4:
+                /+------------+/
+                /|+----------+|/
+                /||#+------+#||/
+                /||#|您好！|#||/
+                /||#+------+#||/
+                /|+----------+|/
+                /+------------+/
+----
+
+[[design-decorator-qa]]
+== Q&A
+
+[[design-decorator-java]]
+== java
+
+* java.io.BufferedInputStream(InputStream)
+* java.io.DataInputStream(InputStream)
+* java.io.BufferedOutputStream(OutputStream)
+* java.util.zip.ZipOutputStream(OutputStream)
+* java.util.Collections#checked[List|Map|Set|SortedSet|SortedMap]

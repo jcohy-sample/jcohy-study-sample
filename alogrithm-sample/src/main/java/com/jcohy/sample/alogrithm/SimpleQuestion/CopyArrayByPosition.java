@@ -6,7 +6,7 @@ import java.util.Scanner;
  * 第一个数组长度
  * 第二个数组的值
  * 第三个从第几个位置开始复制
- * @author jiachao
+ * @author jcohy
  *
  */
 public class CopyArrayByPosition {

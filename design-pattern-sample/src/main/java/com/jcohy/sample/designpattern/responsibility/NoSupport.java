@@ -1,8 +1,8 @@
 package com.jcohy.sample.designpattern.responsibility;
 
-
+// tag::code[]
 /**
- * 解决问题具体类（永远不处理）
+ * 解决问题具体类(永远不处理)
  */
 public class NoSupport extends Support {
 
@@ -14,5 +14,5 @@ public class NoSupport extends Support {
     protected boolean resolve(Trouble trouble) {
         return false;
     }
-
 }
+// end::code[]

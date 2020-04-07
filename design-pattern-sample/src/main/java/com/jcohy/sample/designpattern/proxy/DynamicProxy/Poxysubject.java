@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
  *来用。当然，这个 Dynamic Proxy 其实就是一个 Proxy，它不会替你作实质性的工作，
  *在生成它的实例时你必须提供一个 handler，由它接管实际的工作。
  *在使用动态代理类时，我们必须实现 InvocationHandler 接口
- * @author jiachao
+ * @author jcohy
  *
  */
 public class Poxysubject implements InvocationHandler {

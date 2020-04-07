@@ -3,7 +3,7 @@ package com.jcohy.sample.java.java8.forkjoin;
 import java.util.concurrent.RecursiveTask;
 
 /**
- * Created by jiac on 2018/9/5.
+ * Created by jcohy on 2018/9/5.
  * ClassName  : com.jcohy.study.java8.forkjoin
  * Description  :
  */

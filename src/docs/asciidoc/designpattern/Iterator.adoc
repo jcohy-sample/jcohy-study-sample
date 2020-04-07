@@ -1,0 +1,97 @@
+[[design-iterator]]
+= 迭代器模式
+
+[[design-iterator-overview]]
+== 概述
+
+迭代子模式: 提供一种方法顺序访问一个聚合对象中的各个元素，而又不暴露该对象的内部表示。
+
+[[design-iterator-role]]
+== 迭代器模式的角色
+
+image::images/design-iterator.png[]
+
+*  Aggregate:聚集抽象类
+*  ConcreteAggregate:具体聚集类，继承Aggregate
+*  Iterator:迭代抽象类，用于定义得到的开始对象，得到下一个对象，判断是否到结尾，当前对象等抽象方法，统一接口。
+*  ConcreteIterator:具体迭代类，继承Iterator，实现其中的方法。
+*  Client
+
+[[design-iterator-sign]]
+== 适用性
+
+* 访问一个聚合对象的内容而无需暴露它的内部表示。
+* 支持对聚合对象的多种遍历。
+* 为遍历不同的聚合结构提供一个统一的接口(即, 支持多态迭代)。
+
+[[design-iterator-impl]]
+== 迭代器模式的实现
+
+实现一个把书籍放到书架上，并依次输出书名。
+
+1、定义Book实体类
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Book
+----
+include::{design-pattern-code}/iterator/Book.java[tag=code]
+----
+
+2、定义接口
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Aggregate
+----
+include::{design-pattern-code}/iterator/Aggregate.java[tag=code]
+----
+
+3、实现
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.BookShelf
+----
+include::{design-pattern-code}/iterator/BookShelf.java[tag=code]
+----
+                    
+4、执行递增，遍历的接口
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Iterator
+----
+include::{design-pattern-code}/iterator/Iterator.java[tag=code]
+----
+
+5、实现
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.BookShelfIterator
+----
+include::{design-pattern-code}/iterator/BookShelfIterator.java[tag=code]
+----
+
+6.Client
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Client
+----
+include::{design-pattern-code}/iterator/Client.java[tag=code]
+----
+
+7.result
+
+[source,shell script]
+----
+                    Book [name=Effective Java]
+                    Book [name=Effective Python]
+                    Book [name=Effective C++]
+                    Book [name=Effective PHP]
+----
+
+[[design-iterator-qa]]
+== Q&A
+
+[[design-iterator-java]]
+== Java语言中迭代器模式
+
+*  java.util.Iterator
+*  java.util.Enumeration

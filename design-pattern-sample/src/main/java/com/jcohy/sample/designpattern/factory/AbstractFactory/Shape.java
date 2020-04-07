@@ -1,9 +1,11 @@
 package com.jcohy.sample.designpattern.factory.AbstractFactory;
 
 /**
- * @author jiachao
+ * @author jcohy
  *
  */
+// tag::code[]
 public interface Shape {
 	public void draw();
 }
+// end::code[]

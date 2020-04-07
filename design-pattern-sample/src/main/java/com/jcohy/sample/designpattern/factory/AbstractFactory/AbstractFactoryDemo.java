@@ -1,8 +1,9 @@
 package com.jcohy.sample.designpattern.factory.AbstractFactory;
 /**
- * @author jiachao
+ * @author jcohy
  *
  */
+// tag::code[]
 public class AbstractFactoryDemo {
 	public static void main(String[] args) {
 		//获取形状工厂
@@ -35,4 +36,4 @@ public class AbstractFactoryDemo {
 		color3.fill();
 	}
 }
-
+// end::code[]

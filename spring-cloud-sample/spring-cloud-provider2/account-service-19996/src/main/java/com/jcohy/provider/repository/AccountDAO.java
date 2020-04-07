@@ -4,7 +4,7 @@ import com.jcohy.provider.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * Description：
+ * Description:
  *
  * @author fangliangsheng
  * @date 2019/3/28

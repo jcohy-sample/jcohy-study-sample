@@ -1,0 +1,99 @@
+[[design-responsibility]]
+= 责任链模式
+
+[[design-responsibility-overview]]
+== 概述
+
+责任链模式:使多个对象都有机会处理请求，从而避免请求的发送者和接受者之间的耦合程度，将这个对象连成一个链，并沿着这条链处理请求，直到有一个对象能处理他为止。
+
+[[design-responsibility-role]]
+== 责任链模式的角色
+
+image::images/design-responsibility.png[]
+
+*  Handler:定义一个处理请求的接口
+*  ConcreteHandler(1，2。。。):具体处理者类，处理他所负责的请求，可访问他的后继者，如果可以处理此请求，就处理，反之，将他转发给他的后继者。
+*  Client
+
+[[design-responsibility-sign]]
+== 适用性
+
+* 有多个的对象可以处理一个请求，哪个对象处理该请求运行时刻自动确定。
+* 你想在不明确指定接收者的情况下，向多个对象中的一个提交一个请求。
+* 可处理一个请求的对象集合应被动态指定。
+
+[[design-responsibility-impl]]
+== 责任链模式的实现
+
+1.定义一个问题
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Trouble
+----
+include::{design-pattern-code}/responsibility/Trouble.java[tag=code]
+----
+
+2.解决问题的接口
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Support
+----
+include::{design-pattern-code}/responsibility/Support.java[tag=code]
+----
+
+3.具体解决者
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.NoSupport
+----
+include::{design-pattern-code}/responsibility/NoSupport.java[tag=code]
+----
+.OddSupport
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{design-pattern-code}/responsibility/OddSupport.java[tag=code]
+----
+.SpecialSupport
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{design-pattern-code}/responsibility/SpecialSupport.java[tag=code]
+----
+
+4.Client
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Client
+----
+include::{design-pattern-code}/responsibility/Client.java[tag=code]
+----
+
+5.result
+
+[source,shell script]
+----
+                                Trouble [number=0]is resolved bySupport [name=Bob]
+                                Trouble [number=33]is resolved bySupport [name=Bob]
+                                Trouble [number=66]is resolved bySupport [name=Bob]
+                                Trouble [number=99]is resolved bySupport [name=Bob]
+                                Trouble [number=132]is resolved bySupport [name=diana]
+                                Trouble [number=165]is resolved bySupport [name=diana]
+                                Trouble [number=198]is resolved bySupport [name=diana]
+                                Trouble [number=231]is resolved bySupport [name=elmo]
+                                Trouble [number=264]is resolved bySupport [name=fred]
+                                Trouble [number=297]is resolved bySupport [name=elmo]
+                                Trouble [number=330]cannot be resolved !
+                                Trouble [number=363]is resolved bySupport [name=elmo]
+                                Trouble [number=396]cannot be resolved !
+                                Trouble [number=429]is resolved bySupport [name=charlie]
+                                Trouble [number=462]cannot be resolved !
+                                Trouble [number=495]is resolved bySupport [name=elmo]
+----
+
+
+
+
+[[design-responsibility-java]]
+== Java语言中责任链模式
+
+*  java.util.logging.Logger#log()
+*  javax.servlet.Filter#doFilter()

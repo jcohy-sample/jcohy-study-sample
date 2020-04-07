@@ -1,7 +1,7 @@
 package com.jcohy.sample.designpattern.responsibility;
 
 /**
- * 解决问题具体类（解决小余指定号码的类）
+ * 解决问题具体类(解决小余指定号码的类)
  */
 public class LimitSupport extends Support {
     private int limit;//若小余次号码可解决

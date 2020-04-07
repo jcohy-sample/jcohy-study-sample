@@ -13,7 +13,7 @@ import java.util.Stack;
  * 1，游戏的第一个动作为左道中
  * 在走出最小步数过程中的任何时刻，四个动作只有一个动作不违反小压大河相邻不可逆原则，另外
  * 三个动作相反
- * @author jiachao
+ * @author jcohy
  *
  */
 public class Hano1 {

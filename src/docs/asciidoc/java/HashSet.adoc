@@ -4,13 +4,13 @@
 [[java-hashset-overview]]
 ==  概述
 
-`HashSet` 实现 `Set` 接口，由哈希表（实际上是一个 `HashMap` 实例）支持。它不保证 `set` 的 迭代顺序;特别是它不保证该顺序恒久不变。此类允许使用 `null` 元素。
+`HashSet` 实现 `Set` 接口，由哈希表(实际上是一个 `HashMap` 实例)支持。它不保证 `set` 的 迭代顺序;特别是它不保证该顺序恒久不变。此类允许使用 `null` 元素。
 
 
 [[java-hashset-impl]]
 ==  HashSet的实现
 
-对于 `HashSet` 而言，它是基于 `HashMap` 实现的，`HashSet` 底层使用 `HashMap` 来保存所有元素，因此 `HashSet` 的实现比较简单，相关 `HashSet` 的操作，基本上都是直接调用底    层 `HashMap` 的相关方法来完成， `HashSet` 的源代码如下：
+对于 `HashSet` 而言，它是基于 `HashMap` 实现的，`HashSet` 底层使用 `HashMap` 来保存所有元素，因此 `HashSet` 的实现比较简单，相关 `HashSet` 的操作，基本上都是直接调用底    层 `HashMap` 的相关方法来完成， `HashSet` 的源代码如下:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java
@@ -97,9 +97,9 @@
                     }
 
                     /**
-                     * 返回此 set 中的元素的数量（set 的容量）。
+                     * 返回此 set 中的元素的数量(set 的容量)。
                      *  底层实际调用 HashMap 的 size()方法返回 Entry 的数量，就得到该 Set 中元素的个数。
-                     *  @return 此 set 中的元素的数量（set 的容量）。
+                     *  @return 此 set 中的元素的数量(set 的容量)。
                      */
                     public int size() {
                         return map.size();
@@ -134,7 +134,7 @@
                      * 如果此 set 已包含该元素，则该调用不更改 set 并返回 false。
                      * 底层实际将将该元素作为 key 放入 HashMap。
                      * 由于 HashMap 的 put()方法添加 key-value 对时，当新放入 HashMap 的 Entry 中 key
-                     * 与集合中原有 Entry 的 key 相同（hashCode()返回值相等，通过 equals 比较也返回true），
+                     * 与集合中原有 Entry 的 key 相同(hashCode()返回值相等，通过 equals 比较也返回true)，
                      * 新添加的 Entry 的 value 会将覆盖原来 Entry 的 value，但 key 不会有任何改变，
                      * 因此如果向 HashSet 中添加一个已经存在的元素时，新添加的集合元素将不会被放入HashMap中，
                      * 原来的元素也不会有任何改变，这也就满足了 Set 中元素不重复的特性。
@@ -150,7 +150,7 @@
                      * 如果指定元素存在于此 set 中，则将其移除。
                      * 更确切地讲，如果此 set 包含一个满足(o==null ? e==null : o.equals(e))的元素e，
                      * 则将其移除。如果此 set 已包含该元素，则返回 true
-                     * （或者：如果此 set 因调用而发生更改，则返回 true）。（一旦调用返回，则此 set 不再包含该元素）。
+                     * (或者: 如果此 set 因调用而发生更改，则返回 true)。(一旦调用返回，则此 set 不再包含该元素)。
                      * 底层实际调用 HashMap 的 remove 方法删除指定 Entry。
                      * @param o 如果存在于此 set 中则需要将其移除的对象。
                      * @return 如果 set 包含指定元素，则返回 true。
@@ -168,7 +168,7 @@
                     }
 
                     /**
-                     * 返回此 HashSet 实例的浅表副本：并没有复制这些元素本身。
+                     * 返回此 HashSet 实例的浅表副本: 并没有复制这些元素本身。
                      * 底层实际调用 HashMap 的 clone()方法，获取 HashMap 的浅表副本，并设置到 HashSet 中。
                      *
                      * @return a shallow copy of this set
@@ -280,7 +280,7 @@
 
 
 
-*   相关 `HashMap` 的实现原理，请参考另一篇：<<java-hashmap>> 的实现原理。
+*   相关 `HashMap` 的实现原理，请参考另一篇: <<java-hashmap>> 的实现原理。
 *   对于 `HashSet` 中保存的对象，请注意正确重写其 `equals` 和 `hashCode` 方法，以保证放入的对象的唯一性.
 
 

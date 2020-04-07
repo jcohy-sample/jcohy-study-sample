@@ -1,5 +1,6 @@
 package com.jcohy.sample.designpattern.templatemethod;
 
+// tag::code[]
 public class StringDisplay extends AbstractDisplay {
 	
 	private String str;
@@ -31,3 +32,4 @@ public class StringDisplay extends AbstractDisplay {
 	}
 
 }
+// end::code[]

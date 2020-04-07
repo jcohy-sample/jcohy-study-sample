@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Copyright  : 2017- www.jcohy.com
- * Created by jiac on 19:15 2019/4/18
+ * Created by jcohy on 19:15 2019/4/18
  * Email: jia_chao23@126.com
  * ClassName: TestProductorAndConsumerForBlockQueue
  * Description:

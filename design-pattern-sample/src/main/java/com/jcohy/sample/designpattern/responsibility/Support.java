@@ -1,9 +1,10 @@
 package com.jcohy.sample.designpattern.responsibility;
 
+// tag::code[]
 /**
  * 解决问题的抽象类
  *
- * @author jiachao
+ * @author jcohy
  */
 public abstract class Support {
     // 问题解决者的名称
@@ -45,6 +46,5 @@ public abstract class Support {
     public String toString() {
         return "Support [name=" + name + "]";
     }
-
 }
-
+// end::code[]

@@ -2,7 +2,7 @@ package com.jcohy.sample.designpattern.callback;
 
 /**
  * 客户端
- * @author jiachao
+ * @author jcohy
  *
  */
 public class Client implements CallBack {
@@ -20,7 +20,7 @@ public class Client implements CallBack {
     }  
 	@Override
 	public void B(String result) {
-		 System.out.println("服务器回调我的方法返回的结果是："+result);  
+		 System.out.println("服务器回调我的方法返回的结果是: "+result);
 	}
 	/* 
 	 * 当你知道答案了再告诉我。

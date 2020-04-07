@@ -1,6 +1,6 @@
 package com.jcohy.sample.designpattern.templatemethod;
 
-
+// tag::code[]
 public class CharDisplay extends AbstractDisplay {
 	private char ch;
 	public CharDisplay(char ch) {
@@ -22,3 +22,4 @@ public class CharDisplay extends AbstractDisplay {
 	}
 
 }
+// end::code[]

@@ -43,7 +43,7 @@ public class TestStreamAPI3 {
 		System.out.println(op.get());
 	}
 	
-	//需求：搜索名字中 “六” 出现的次数
+	//需求: 搜索名字中  "六"  出现的次数
 //	@Test
 //	public void test2(){
 //		Optional<Integer> sum = emps.stream()

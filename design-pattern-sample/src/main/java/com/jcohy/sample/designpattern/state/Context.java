@@ -1,5 +1,6 @@
 package com.jcohy.sample.designpattern.state;
 
+// tag::code[]
 public interface Context {
 	//设定时间
 	public abstract void setClock(int hour);
@@ -10,3 +11,4 @@ public interface Context {
 	//保安中心保留记录
 	public abstract void recordLog(String msg);
 }
+// end::code[]

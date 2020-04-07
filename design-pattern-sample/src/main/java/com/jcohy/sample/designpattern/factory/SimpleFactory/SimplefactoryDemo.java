@@ -6,7 +6,7 @@ import java.util.Properties;
 
 
 /**
- * @author jiachao
+ * @author jcohy
  *
  */
 public class SimplefactoryDemo {
@@ -23,7 +23,7 @@ public class SimplefactoryDemo {
 //		//调用 Square 的 draw 方法
 //		shape3.draw();
 		//反射的利用
-//		Shape shape1=sf.getshape("com.jiachao.designpattern.Factory.SimpleFactory.Circle");
+//		Shape shape1=sf.getshape("com.jcohy.designpattern.Factory.SimpleFactory.Circle");
 //		shape1.draw();
 
 		Properties pro = new Properties();

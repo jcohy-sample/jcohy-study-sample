@@ -1,0 +1,79 @@
+[[design-flyweight]]
+= 亨元模式
+
+[[design-flyweight-overview]]
+== 概述
+
+利用共享技术有效的支持大量细粒度的对象。
+
+[[design-flyweight-role]]
+== 亨元模式的角色
+
+image::images/design-flyweight1.png[]
+
+*  FlyweightFactory:一个亨元工厂，用来创建并管理Flyweight对象，他主要是用来确保合理的共享Flyweight，当一个用户请求Flyweight时，FlyweightFactory对象提供一个已经创建好的实例或创建一个(当没有时)
+*  Flyweight:所有具体亨元类的超类或者接口，通过这个接口，Flyweight 可以接受并作用于外部状态。
+*  ConcreteFlyweight:继承或者实现Flyweight，并未内部状态增加存储空间。
+*  UnsharedConcreteFlyweight:指那些不需要共享的Flyweight子类，因为Flyweight接口共享成为可能，但他不强制要求共享 。
+*  Client
+
+[[design-flyweight-sign]]
+== 适用性
+
+* 如果一个应用程序使用了大量的对象，而这些对象造成了很大的存储开销。
+* 对象的大多数状态都可变为外部状态。如果删除对象的外部状态，那么可以用相对较少的共享对象取代很多组对象。
+* 应用程序不依赖于对象标识。由于 Flyweight 对象可以被共享，对于概念上明显有别的对象，标识测试将返回真值。
+
+[[design-flyweight-impl]]
+== 实现
+
+1、BigChar
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{design-pattern-code}/flyweight/BigChar.java[tag=code]
+----
+
+2、BigString
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{design-pattern-code}/flyweight/BigString.java[tag=code]
+----
+
+3、BigCharFactory
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{design-pattern-code}/flyweight/BigCharFactory.java[tag=code]
+----
+
+4、Client
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{design-pattern-code}/flyweight/Client.java[tag=code]
+----
+
+5、result
+
+[source,shell script]
+----
+Usage:java Main digits
+Example:java Main 1212123
+----
+
+[[design-flyweight-qa]]
+== Q&A
+
+[[design-flyweight-java]]
+== Java语言中亨元模式
+
+*  java.lang.Integer#valueOf(int)
+*  java.lang.Boolean#valueOf(boolean)
+*   java.lang.Byte#valueOf(byte)
+*  java.lang.Character#valueOf(char)

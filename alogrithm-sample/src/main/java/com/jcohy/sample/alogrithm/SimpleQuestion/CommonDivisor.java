@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 public class CommonDivisor {
 
 	/**
-	 * 题目：输入两个正整数m和n，求其最大公约数和最小公倍数。
+	 * 题目: 输入两个正整数m和n，求其最大公约数和最小公倍数。
 	 * 利用辗除法
 	 * @param args
 	 */
@@ -17,7 +17,7 @@ public class CommonDivisor {
 			int n = Integer.parseInt(br.readLine());
 //			System.out.println(commonDivisor(m,n));
 			int divisor  = commonDivisor(m, n);
-			System.out.println("最大公约数："+divisor+"\n"+"最大公倍数："+m*n/divisor);
+			System.out.println("最大公约数: "+divisor+"\n"+"最大公倍数: "+m*n/divisor);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

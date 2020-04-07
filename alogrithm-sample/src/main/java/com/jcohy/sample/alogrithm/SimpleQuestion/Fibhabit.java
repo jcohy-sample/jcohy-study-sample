@@ -1,10 +1,10 @@
 package com.jcohy.sample.alogrithm.SimpleQuestion;
 /**
  * 
- * @author jiachao
- *古典问题：有一对兔子，从出生后第3个月起每个月都生一对兔子
+ * @author jcohy
+ *古典问题: 有一对兔子，从出生后第3个月起每个月都生一对兔子
  *小兔子长到第四个月后每个月又生一对兔子，假如兔子都不
- *死，问每个月的兔子总数为多少？
+ *死，问每个月的兔子总数为多少?
  */
 public class Fibhabit {
 

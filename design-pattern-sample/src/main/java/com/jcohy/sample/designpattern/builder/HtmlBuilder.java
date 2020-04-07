@@ -7,10 +7,11 @@ import java.io.PrintWriter;
 
 /**
  * Copyright  : 2017- www.jcohy.com
- * Created by jiac on 23:48 2018/8/7
+ * Created by jcohy on 23:48 2018/8/7
  * Email: jia_chao23@126.com
  * Description:
  **/
+// tag::code[]
 public class HtmlBuilder extends Builder{
     /**
      * 将文本建立成HTML格式
@@ -48,6 +49,8 @@ public class HtmlBuilder extends Builder{
     public Object getResult() {
         printWriter.write("</body></html>");
         printWriter.close();
-        return fileName;//返回文件名
+        //返回文件名
+        return fileName;
     }
 }
+// end::code[]

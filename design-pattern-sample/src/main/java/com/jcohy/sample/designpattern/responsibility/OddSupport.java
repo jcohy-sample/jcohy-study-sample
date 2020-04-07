@@ -1,8 +1,8 @@
 package com.jcohy.sample.designpattern.responsibility;
 
-
+// tag::code[]
 /**
- * 解决问题具体类（解决奇数号码的问题）
+ * 解决问题具体类(解决奇数号码的问题)
  */
 public class OddSupport extends Support {
 
@@ -17,5 +17,5 @@ public class OddSupport extends Support {
         }
         return false;
     }
-
 }
+// end::code[]

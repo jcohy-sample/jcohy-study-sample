@@ -1,7 +1,7 @@
 package com.jcohy.sample.alogrithm.sort;
 
 /**
- * Created by jiac on 2019/2/15.
+ * Created by jcohy on 2019/2/15.
  * ClassName  : com.jcohy.study.sort
  * Description  : 折半插入排序
  */
@@ -25,7 +25,7 @@ public class BinaryInsertSort {
                 data[j] = data[j - 1];
             }
             data[low] = temp;
-            System.out.print("第" + i + "次比较：");
+            System.out.print("第" + i + "次比较: ");
             System.out.println(java.util.Arrays.toString(data));
         }
 
@@ -33,8 +33,8 @@ public class BinaryInsertSort {
     public static void main(String[] args) {
         BinaryInsertSort binaryInsertSort = new BinaryInsertSort();
         int[] data = {9,-16,21,23,-30,-49,21,30,30};
-        System.out.println("排序之前：\n" + java.util.Arrays.toString(data));
+        System.out.println("排序之前: \n" + java.util.Arrays.toString(data));
         binaryInsertSort.binaryInsertSort(data);
-        System.out.println("排序之后：\n" + java.util.Arrays.toString(data));
+        System.out.println("排序之后: \n" + java.util.Arrays.toString(data));
     }
 }

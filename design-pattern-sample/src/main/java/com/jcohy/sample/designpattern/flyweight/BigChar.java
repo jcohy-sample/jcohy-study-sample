@@ -6,10 +6,11 @@ import java.io.IOException;
 
 /**
  * Copyright  : 2017- www.jcohy.com
- * Created by jiac on 23:48 2018/8/7
+ * Created by jcohy on 23:48 2018/8/7
  * Email: jia_chao23@126.com
  * Description:
  **/
+// tag::code[]
 public class BigChar {
 	private char charname;
 	private String fontData;
@@ -37,3 +38,4 @@ public class BigChar {
 		System.out.println(fontData);
 	}
 }
+// end::code[]

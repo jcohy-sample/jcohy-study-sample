@@ -1,6 +1,6 @@
 package com.jcohy.sample.designpattern.callback;
 /**
- * @author jiachao
+ * @author jcohy
  *
  */
 public class You {

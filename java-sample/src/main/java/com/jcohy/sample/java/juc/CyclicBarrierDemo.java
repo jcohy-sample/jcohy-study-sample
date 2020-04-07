@@ -5,7 +5,7 @@ import java.util.concurrent.CyclicBarrier;
 
 /**
  * Copyright  : 2017- www.jcohy.com
- * Created by jiac on 15:37 2019/4/18
+ * Created by jcohy on 15:37 2019/4/18
  * Email: jia_chao23@126.com
  * ClassName: CyclicBarrierDemo
  * Description:

@@ -1,5 +1,6 @@
 package com.jcohy.sample.designpattern.templatemethod;
 
+// tag::code[]
 public abstract class AbstractDisplay {
 	public abstract void open();
 	public abstract void close();
@@ -12,3 +13,4 @@ public abstract class AbstractDisplay {
 		close();
 	}
 }
+// end::code[]

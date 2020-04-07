@@ -13,7 +13,7 @@ import java.util.Random;
 /**
  * Copyright: Copyright (c) 2019 http://www.jcohy.com
  *
- * @author jiac
+ * @author jcohy
  * @version v1.0.0
  * @Description: TODO 请添加该类的功能描述
  * @date 2019/7/12 9:31
@@ -21,7 +21,7 @@ import java.util.Random;
  * Modification History:
  * Date         Author          Version            Description
  * ----------------------------------------------------------------------------------*
- * 2019/7/12      jiac           v1.0.0               修改原因
+ * 2019/7/12      jcohy           v1.0.0               修改原因
  */
 
 

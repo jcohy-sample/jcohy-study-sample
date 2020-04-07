@@ -1,0 +1,90 @@
+[[design-state]]
+= 状态模式
+
+[[design-state-overview]]
+== 概述
+
+状态模式: 当一个对象的内部状态改变时，允许改变其行为，这个对象像是看起来改变了其类。
+
+[[design-state-role]]
+== 状态模式的角色
+
+image::images/design-state.png[]
+
+*  state:抽象状态类，定义一个接口以封装 与COntext的一个特定状态相关的行为。
+*  Context: 维护一个ConcreteState子类的实例，这个实例定义当前的状态。
+*  ConcreteState(A,B,C....): 具体状态，每一个子类实现一个与Context相关的状态的行为。
+
+[[design-state-sign]]
+== 适用性
+
+* 当一个对象的行为取决与他的状态时，并且他必须在运行时刻根据状态改变他的行为时，就可以考虑使用状态模式。
+* 一个操作中含有庞大的多分支的条件语句，且这些分支依赖于该对象的状态。这个状态通常用一个或多个枚举常量表示。通常, 有多个操作包含这一相同的条件结构。State 模式将每一个条件分支放入一个独立的类中。这使得你可以根据对象自身的情况将对象的状态作为一个对象，这一对象可以不依赖于其他对象而独立变化。
+
+
+[[design-state-impl]]
+== 状态模式的实现
+
+金库安保系统，
+* 有1个金库，金库跟保安中心联机。
+* 金库有警铃和一般通话用的电话。
+* 金库有时钟，监视目前的时间。
+* 白天是 9:00-16:59,晚间是17:00-23:59以及0:00-8:59。
+* 只有白天才能使用金库。
+* 在白天使用金库时，保安中心会保存使用记录。
+* 若晚间使用金库，保安中心会接到发生异常现象的通知。
+* 警铃24小时都可以使用，一旦使用警铃，保安中心会接收到警铃通知。
+* 一般通话用的电话是24小时均可使用(但晚间只有录音机服务)。
+* 在白天使用电话机，会调用保安中心。
+* 在晚间使用电话机，会调用保安中心的录音机。
+
+1、创建一个表示状态的接口
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.State
+----
+include::{design-pattern-code}/state/State.java[tag=code]
+----
+
+2、实现
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.DayState
+----
+include::{design-pattern-code}/state/DayState.java[tag=code]
+----
+.NightState
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{design-pattern-code}/state/NightState.java[tag=code]
+----
+
+3、Context
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Context
+----
+include::{design-pattern-code}/state/Context.java[tag=code]
+----
+
+4、SafeFrame
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.SafeFrame
+----
+include::{design-pattern-code}/state/SafeFrame.java[tag=code]
+----
+
+5、Client
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Client
+----
+include::{design-pattern-code}/state/Client.java[tag=code]
+----
+
+[[design-state-java]]
+== Java语言中状态模式
+
+*  java.util.Iterator
+*  javax.faces.lifecycle.LifeCycle#execute()

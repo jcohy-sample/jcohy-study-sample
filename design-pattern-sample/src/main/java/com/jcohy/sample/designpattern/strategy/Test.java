@@ -1,8 +1,6 @@
 package com.jcohy.sample.designpattern.strategy;
-
+// tag::code[]
 public class Test {
-
-	
 
 	public static void main(String[] args) {
 		Context ctx1 = new Context(new StrategyImplA());
@@ -14,3 +12,4 @@ public class Test {
 	}
 
 }
+// end::code[]

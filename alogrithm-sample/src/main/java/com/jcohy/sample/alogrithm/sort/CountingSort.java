@@ -3,7 +3,7 @@ package com.jcohy.sample.alogrithm.sort;
 import java.util.Arrays;
 
 /**
- * Created by jiac on 2019/2/15.
+ * Created by jcohy on 2019/2/15.
  * ClassName  : com.jcohy.study.sort
  * Description  :  计数排序
  */
@@ -11,9 +11,9 @@ public class CountingSort {
 
     public static void main(String[] args) {
         int[] data = {9, 5, -1, 8, 5, 7, 3, -3, 1, 3};
-        System.out.println("排序之前：\n" + Arrays.toString(data));
+        System.out.println("排序之前: \n" + Arrays.toString(data));
         countingSort(data);
-        System.out.println("排序之后：\n" + Arrays.toString(data));
+        System.out.println("排序之后: \n" + Arrays.toString(data));
     }
 
     public static void countingSort(int[] data) {

@@ -2,7 +2,7 @@ package com.jcohy.sample.alogrithm.StackAndQueue;
 
 /**
  * 常规玩法
- * @author jiachao
+ * @author jcohy
  *
  */
 public class HanoGenernal {

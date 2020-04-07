@@ -9,7 +9,7 @@ import org.springframework.http.codec.ServerCodecConfigurer;
 /**
  * Copyright: Copyright (c) 2019http://www.jcohy.com
  *
- * @author jiac
+ * @author jcohy
  * @version v1.0.0
  * @Description: TODO 请添加该类的功能描述
  * @date 2019/7/10 15:33
@@ -17,7 +17,7 @@ import org.springframework.http.codec.ServerCodecConfigurer;
  * Modification History:
  * Date         Author          Version            Description
  * ----------------------------------------------------------------------------------*
- * 2019/7/10      jiac           v1.0.0               修改原因
+ * 2019/7/10      jcohy           v1.0.0               修改原因
  */
 
 

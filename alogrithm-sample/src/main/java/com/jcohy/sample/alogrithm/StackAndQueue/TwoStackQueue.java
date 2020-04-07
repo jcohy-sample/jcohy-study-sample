@@ -4,7 +4,7 @@ import java.util.Stack;
 
 public class TwoStackQueue {
 	/**
-	 * 用两个栈实现一个队列,并且支持队列的基本操作（add，poll，peek）
+	 * 用两个栈实现一个队列,并且支持队列的基本操作(add，poll，peek)
 	 * @param args
 	 */
 	private Stack<Integer> stackPush;

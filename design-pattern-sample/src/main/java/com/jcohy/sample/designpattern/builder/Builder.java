@@ -3,13 +3,14 @@ package com.jcohy.sample.designpattern.builder;
 
 /**
  * Copyright  : 2017- www.jcohy.com
- * Created by jiac on 23:48 2018/8/7
+ * Created by jcohy on 23:48 2018/8/7
  * Email: jia_chao23@126.com
  * Description:
  **/
+// tag::code[]
 public abstract class Builder {
     /**
-     * 用建造模式建立“文件”的程序。文件构造如下：
+     * 用建造模式建立 "文件" 的程序。文件构造如下:
      * 1.含有一个标题
      * 2.含有一些字符串
      * 3.含有一些有项目符号的项目
@@ -21,3 +22,4 @@ public abstract class Builder {
     public abstract void makeItems(String[] items);
     public abstract Object getResult();
 }
+// end::code[]

@@ -1,0 +1,99 @@
+[[design-bridge]]
+= 桥接模式
+
+[[design-bridge-overview]]
+== 概述
+
+将抽象部分和他的实现部分分离，使他们都可以独立的变化。也就是说，实现系统可能有很多角度分类，每一种分类都有可能变化，那么就把这种多角度分离出来，
+
+让他们独立变化，减少他们之间的耦合
+
+[[design-bridge-role]]
+== 桥接模式的角色
+
+*  Abstraction() :抽象话给出一个定义，并保存一个对实现化的引用。
+*  RefinedAbstration :被提炼的抽象，扩展抽象化角色，改正和修正父类对抽象化的定义。
+*  Implementor:实现化角色，但不给出具体实现。
+*  ConcreteImplementor(A,B,C.....):具体化实现角色，这个角色给出实现化角色的具体实现。
+
+[[design-bridge-sign]]
+== 适用性
+
+*  如果一个系统需要在构件的抽象化角色和具体化角色之间增加更多的灵活性，避免在两个层次之间建立静态的关系
+*  设计要求实现化角色的任何变化不应当影响客户端，实现化角色的改变对客户端是透明的。
+*  一个构件有多余一个的抽象化角色和实现化角色。系统需要他们之间进行动态耦合。
+*  虽然系统中使用继承是没有问题的，但是由于抽象化角色和具体化角色需要独立的变化，设计要求需要独立管理这两者。
+
+[[design-bridge-impl]]
+== 桥接模式的实现
+
+模拟JDBC
+
+1.定义一个接口。Dirver
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Dirver
+----
+include::{design-pattern-code}/bridge/Dirver.java[tag=code]
+----
+
+2.接口实现
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.MysqlDirver
+----
+include::{design-pattern-code}/bridge/MysqlDirver.java[tag=code]
+----
+.OracleDirver
+[source,java,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{design-pattern-code}/bridge/OracleDirver.java[tag=code]
+----
+.SqlSerDirver
+[source,java,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{design-pattern-code}/bridge/SqlSerDirver.java[tag=code]
+----
+
+3.Briage
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.JDBC
+----
+include::{design-pattern-code}/bridge/JDBC.java[tag=code]
+----
+
+4.具体实现
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.MyBriage
+----
+include::{design-pattern-code}/bridge/DirverManange.java[tag=code]
+----
+
+5.Client
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Client
+----
+include::{design-pattern-code}/bridge/Client.java[tag=code]
+----
+
+5.result
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Client
+----
+implement mysql connection
+implement oracle connection
+implement sqlserver connection
+----
+
+[[design-bridge-qa]]
+== Q&A
+
+[[design-bridge-java]]
+== Java语言中桥接模式
+
+*  AWT (提供了抽象层映射于实际的操作系统)
+*  JDBC

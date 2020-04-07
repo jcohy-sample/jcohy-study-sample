@@ -95,7 +95,7 @@ public class TestStreamAPI2 {
 		System.out.println(op2.get());
 	}
 	
-	//注意：流进行了终止操作后，不能再次使用
+	//注意: 流进行了终止操作后，不能再次使用
 	@Test
 	public void test4(){
 		Stream<Employee> stream = emps.stream()

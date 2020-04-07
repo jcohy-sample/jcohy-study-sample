@@ -2,7 +2,7 @@ package com.jcohy.sample.alogrithm.SimpleQuestion;
 
 public class shuzi {
 	/**
-	 * 有1、2、3、4个数字，能组成多少个互不相同且无重复数字的三位数？都是多少？
+	 * 有1、2、3、4个数字，能组成多少个互不相同且无重复数字的三位数? 都是多少?
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -17,6 +17,6 @@ public class shuzi {
 				}
 			}
 		}
-		System.out.println("共有多少："+sum);
+		System.out.println("共有多少: "+sum);
 	}
 }

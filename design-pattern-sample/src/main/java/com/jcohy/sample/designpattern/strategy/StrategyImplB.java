@@ -1,5 +1,5 @@
 package com.jcohy.sample.designpattern.strategy;
-
+// tag::code[]
 public class StrategyImplB extends Strategy{
 
 	@Override
@@ -8,3 +8,4 @@ public class StrategyImplB extends Strategy{
 	}
 
 }
+// end::code[]

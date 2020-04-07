@@ -1,10 +1,10 @@
 package com.jcohy.sample.designpattern.proxy.DynamicProxy;
 
 /**
- * @author jiachao
+ * @author jcohy
  *
  */
-public class Realsubject implements subject {
+public class Realsubject implements Subject {
 
 	@Override
 	public void Request() {

@@ -3,9 +3,9 @@ package com.jcohy.sample.designpattern.callback;
 /**
  * /** 
  * 这个类代表我，因为你要告诉我答案所以要实现CallBack回调接口和接口中的回调方法的实现 
- * 我要向你提问所以有一个提问的方法askQqstion(),在提问的同时要向对方（你）注册回调接口，
+ * 我要向你提问所以有一个提问的方法askQqstion(),在提问的同时要向对方(你)注册回调接口，
  * 当你知道答案的时候调用我里面的接口实现方法，最后得到答案 
- * @author jiachao
+ * @author jcohy
  *
  */
 public class Me implements CallBack {

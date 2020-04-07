@@ -1,8 +1,9 @@
 package com.jcohy.sample.designpattern.responsibility;
 
+// tag::code[]
 /**
  * 表示发生问题的类，内有问题编号
- * @author jiachao
+ * @author jcohy
  */
 public class Trouble {
     private int number;//
@@ -25,3 +26,4 @@ public class Trouble {
     }
 
 }
+// end::code[]

@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.*;
 
 /**
- * Created by jiac on 2018/9/5.
+ * Created by jcohy on 2018/9/5.
  * ClassName  : com.jcohy.study.java8.anno
  * Description  :
  */

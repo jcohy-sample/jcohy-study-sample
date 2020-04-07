@@ -4,10 +4,11 @@ package com.jcohy.sample.designpattern.decorator.example2;
 
 /**
  * Copyright  : 2017- www.jcohy.com
- * Created by jiac on 23:48 2018/8/7
+ * Created by jcohy on 23:48 2018/8/7
  * Email: jia_chao23@126.com
  * Description:
  **/
+// tag::code[]
 public  class StringDisplay extends Display {
 
 	private String string;//打印的字符串
@@ -32,5 +33,5 @@ public  class StringDisplay extends Display {
 			return null;
 		}
 	}
-
 }
+// end::code[]

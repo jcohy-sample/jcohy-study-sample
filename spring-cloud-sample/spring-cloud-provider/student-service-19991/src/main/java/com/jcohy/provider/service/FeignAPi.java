@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * Copyright: Copyright (c) 2019 http://www.jcohy.com
  *
- * @author jiac
+ * @author jcohy
  * @version v1.0.0
  * @Description: TODO 请添加该类的功能描述
  * @date 2019/7/9 13:58
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * Modification History:
  * Date         Author          Version            Description
  * ----------------------------------------------------------------------------------*
- * 2019/7/9      jiac           v1.0.0               修改原因
+ * 2019/7/9      jcohy           v1.0.0               修改原因
  */
 
 @FeignClient(name = "github-client", url = "https://api.github.com", configuration = FeignServiceConfig.class)

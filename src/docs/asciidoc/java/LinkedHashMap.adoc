@@ -16,12 +16,12 @@
 [[java-linkedhashmap-impl]]
 ==  LinkedHashMap的实现
 
-对于 `LinkedHashMap` 而言，它继承与 `HashMap` 底层使用哈希表与双向链表来保存所有元素。其基本操作与父类 `HashMap` 相似，它通过重写父类相关的方法，来实现自己的链接列表特性。下面我们来分析 `LinkedHashMap` 的源代码：
+对于 `LinkedHashMap` 而言，它继承与 `HashMap` 底层使用哈希表与双向链表来保存所有元素。其基本操作与父类 `HashMap` 相似，它通过重写父类相关的方法，来实现自己的链接列表特性。下面我们来分析 `LinkedHashMap` 的源代码:
 
 [[java-linkedhashmap-entry]]
 ===  Entry元素
 
-`LinkedHashMap` 采用的 `hash` 算法和 `HashMap` 相同，但是它重新定义了数组中保存的元素 `Entry`，该 `Entry` 除了保存当前对象的引用外，还保存了其上一个元素 `before` 和下一个元素 `after` 的引用，从而在哈希表的基础上又构成了双向链接列表。看源代码：
+`LinkedHashMap` 采用的 `hash` 算法和 `HashMap` 相同，但是它重新定义了数组中保存的元素 `Entry`，该 `Entry` 除了保存当前对象的引用外，还保存了其上一个元素 `before` 和下一个元素 `after` 的引用，从而在哈希表的基础上又构成了双向链接列表。看源代码:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java
@@ -44,7 +44,7 @@
 [[java-linkedhashmap-init]]
 ===  初始化
 
-通过源代码可以看出，在 `LinkedHashMap` 的构造方法中，实际调用了父类 `HashMap` 的相关构造方法来构造一个底层存放的 `table` 数组。如：
+通过源代码可以看出，在 `LinkedHashMap` 的构造方法中，实际调用了父类 `HashMap` 的相关构造方法来构造一个底层存放的 `table` 数组。如:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java
@@ -171,7 +171,7 @@
             private final boolean accessOrder;
 ----
 
-一般情况下，不必指定排序模式，其迭代顺序即为默认为插入顺序。看 `LinkedHashMap` 的构造方法，如：
+一般情况下，不必指定排序模式，其迭代顺序即为默认为插入顺序。看 `LinkedHashMap` 的构造方法，如:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java
@@ -182,7 +182,7 @@
                     }
 ----
 
-这些构造方法都会默认指定排序模式为插入顺序。如果你想构造一个 `LinkedHashMap`， 并打算按从近期访问最少到近期访问最多的顺序（即访问顺序）来保存元素，那么请使用下面的构造方法构造 `LinkedHashMap`：
+这些构造方法都会默认指定排序模式为插入顺序。如果你想构造一个 `LinkedHashMap`， 并打算按从近期访问最少到近期访问最多的顺序(即访问顺序)来保存元素，那么请使用下面的构造方法构造 `LinkedHashMap`:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java
@@ -209,7 +209,7 @@
                     
 此方法通常不以任何方式修改映射，相反允许映射在其返回值的指引下进行自我修改。 如果用此映射构建 `LRU` 缓存，则非常方便，它允许映射通过删除旧条目来减少内存损耗。
 
-例如：重写此方法，维持此映射只保存 `100` 个条目的稳定状态，在每次添加新条目时删除最旧的条目。
+例如: 重写此方法，维持此映射只保存 `100` 个条目的稳定状态，在每次添加新条目时删除最旧的条目。
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java

@@ -1,5 +1,6 @@
 package com.jcohy.sample.designpattern.state;
 
+// tag::code[]
 public class NightState implements State {
 
 
@@ -22,7 +23,7 @@ public class NightState implements State {
 
 	@Override
 	public void doAlarm(Context context) {
-		context.callSecurityCenter("警铃（晚上）");
+		context.callSecurityCenter("警铃(晚上)");
 
 	}
 
@@ -36,3 +37,4 @@ public class NightState implements State {
 	}
 	
 }
+// end::code[]

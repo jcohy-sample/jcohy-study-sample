@@ -4,7 +4,7 @@ import java.util.Stack;
 
 /**
  * 用一个栈实现另一个栈的排序
- * @author jiachao
+ * @author jcohy
  *
  */
 public class SortStackByStack {

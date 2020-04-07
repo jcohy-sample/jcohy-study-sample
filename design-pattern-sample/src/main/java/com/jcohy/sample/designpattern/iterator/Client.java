@@ -2,13 +2,14 @@ package com.jcohy.sample.designpattern.iterator;
 
 /**
  * Copyright  : 2017- www.jcohy.com
- * Created by jiac on 23:48 2018/8/7
+ * Created by jcohy on 23:48 2018/8/7
  * Email: jia_chao23@126.com
  * Description:
  **/
+// tag::code[]
 /**
  * 把书籍放到书架上，并依次输出书名
- * @author jiachao
+ * @author jcohy
  */
 public class Client {
 	public static void main(String[] args) {
@@ -24,3 +25,4 @@ public class Client {
 		}
 	}
 }
+// end::code[]

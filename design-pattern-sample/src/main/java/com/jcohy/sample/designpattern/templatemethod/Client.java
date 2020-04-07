@@ -1,5 +1,6 @@
 package com.jcohy.sample.designpattern.templatemethod;
 
+// tag::code[]
 public class Client {
 	public static void main(String[] args) {
 		AbstractDisplay a = new CharDisplay('a');
@@ -8,3 +9,4 @@ public class Client {
 		b.dispay();
 	}
 }
+// end::code[]

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * Created by jiac on 2018/9/5.
+ * Created by jcohy on 2018/9/5.
  * ClassName  : com.jcohy.study.java8.stream
  * Description  :
  */
@@ -62,7 +62,7 @@ public class testStream1 {
 		distinct??筛选，通过流所生成元素的 hashCode() 和 equals() 去除重复元素
 	 */
 
-    //内部迭代：迭代操作 Stream API 内部完成
+    //内部迭代: 迭代操作 Stream API 内部完成
     @Test
     public void test2(){
         //所有的中间操作不会做任何的处理
@@ -72,7 +72,7 @@ public class testStream1 {
                     return e.getAge() <= 35;
                 });
 
-        //只有当做终止操作时，所有的中间操作会一次性的全部执行，称为“惰性求值”
+        //只有当做终止操作时，所有的中间操作会一次性的全部执行，称为"惰性求值"
         stream.forEach(System.out::println);
     }
 

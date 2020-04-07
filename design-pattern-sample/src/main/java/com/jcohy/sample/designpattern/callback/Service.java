@@ -1,7 +1,7 @@
 package com.jcohy.sample.designpattern.callback;
 
 /**
- * @author jiachao
+ * @author jcohy
  *
  */
 public class Service {
@@ -12,6 +12,6 @@ public class Service {
   
     public void A(Client client) {  
         this.callback = client;  
-        callback.B(result);//调用的是该接口的实现方法（即Client中的B）  
+        callback.B(result);//调用的是该接口的实现方法(即Client中的B)
     }  
 }

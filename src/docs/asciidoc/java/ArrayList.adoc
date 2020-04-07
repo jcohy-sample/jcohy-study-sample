@@ -95,7 +95,7 @@
 .Java
 ----
               // 将指定的元素插入此列表中的指定位置。
-              // 如果当前位置有元素，则向右移动当前位于该位置的元素以及所有后续元素（将其索引加 1）。
+              // 如果当前位置有元素，则向右移动当前位于该位置的元素以及所有后续元素(将其索引加 1)。
                     public void add(int index, E element) {
                         if (index > size || index < 0)
                             throw new IndexOutOfBoundsException("Index: "+index+", Size: "+size);
@@ -211,7 +211,7 @@
 
 [NOTE]
 ====
-注意：从数组中移除元素的操作，也会导致被移除的元素以后的所有元素的向左移动一个位置。
+注意: 从数组中移除元素的操作，也会导致被移除的元素以后的所有元素的向左移动一个位置。
 ====
 
 [[java-arraylist-resize]]
@@ -240,7 +240,7 @@
 际使用时，我们应该尽量避免数组容量的扩张。当我们可预知要保存的元素的多少时，要在构造 `ArrayList` 实例时，就指定其容量，以避免数组扩容的发生。或者根据实际需求，通过
 调用 `ensureCapacity` 方法来手动增加 `ArrayList` 实例的容量。
 
-`ArrayList` 还给我们提供了将底层数组的容量调整为当前列表保存的实际元素的大小的功能。它可以通过 `trimToSize` 方法来实现。代码如下：
+`ArrayList` 还给我们提供了将底层数组的容量调整为当前列表保存的实际元素的大小的功能。它可以通过 `trimToSize` 方法来实现。代码如下:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java

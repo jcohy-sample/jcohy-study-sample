@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * @author jiac <a href="http://www.jcohy.com"></a>
+ * @author jcohy <a href="http://www.jcohy.com"></a>
  * @since 1.0.0
  * Description  2020/4/2 14:03
  */

@@ -22,10 +22,10 @@ public class TotalCharAndNumber {
 				other++;  
 			}  
 		}  
-		System.out.println("英文字母个数："+charcount);
-		System.out.println("数字个数："+number);  
-		System.out.println("空格个数："+blank);  
-		System.out.println("其他字符个数："+other);          
+		System.out.println("英文字母个数: "+charcount);
+		System.out.println("数字个数: "+number);
+		System.out.println("空格个数: "+blank);
+		System.out.println("其他字符个数: "+other);
 	}  
 }  
 

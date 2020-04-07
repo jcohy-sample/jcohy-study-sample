@@ -1,4 +1,6 @@
 package com.jcohy.sample.designpattern.strategy;
+
+// tag::code[]
 /**
  * 
  * 定义支持所有算法的公共接口，context使用这个接口
@@ -10,3 +12,4 @@ public abstract class  Strategy {
 
 	public abstract void method();
 }
+// end::code[]

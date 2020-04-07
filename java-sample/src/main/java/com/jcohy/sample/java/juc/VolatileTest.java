@@ -1,7 +1,7 @@
 package com.jcohy.sample.java.juc;
 
 /**
- * Created by jiac on 2018/10/18.
+ * Created by jcohy on 2018/10/18.
  * ClassName  : com.jcohy.study.juc
  * Description  :
  */

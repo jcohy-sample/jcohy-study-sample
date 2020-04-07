@@ -8,12 +8,54 @@
 [[java-9-feature-jigsaw-Feature]]
 === 官方 Feature
 
+* <<,>>
+* <<,>>
+* <<,>>
+* <<,>>
+
+// tag::code[]
+// end::code[]
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{design-pattern-code}/adapter/Adaptee.java[tag=code]
+----
+
+[source,xml]
+----
+
+----
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{design-pattern-code}/adapter/Adaptee.java[tag=code]
+----
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java
 ----
 
 ----
+.Kotlin
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+
+----
+
+.具有手动分配的标识符的实体的基类
+====
+[source, java]
+----
+
+----
+<1>
+<2>
+<3>
+====
+
+
 
 [[java-12-feature-overview-tbl]]
 .jdk12新特性一览
@@ -40,18 +82,6 @@
 ====
 
 ====
-
-[source,java,indent=0,subs="verbatim,quotes",role="primary"]
-.Java
-----
-
-----
-.Kotlin
-[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
-----
-
-----
-
 
 footnote:[Clarification about this statement.]
 
