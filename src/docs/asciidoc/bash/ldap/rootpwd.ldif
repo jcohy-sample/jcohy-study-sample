@@ -1,0 +1,6 @@
+# tag::code[]
+dn: olcDatabase={0}config,cn=config
+changetype: modify
+add: olcRootPW
+olcRootPW: {SSHA}krOGXDmiCdSXuXocOf10F96LJO5ijdXo
+# end::code[]

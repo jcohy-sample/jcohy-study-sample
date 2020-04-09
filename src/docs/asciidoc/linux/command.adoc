@@ -1,21 +1,6 @@
 [[linux-command]]
 = Linux 常用命令
 
-##  Linux常用命令
-
->  *  [Linux常用命令](#changyong)
->  *  [Linux系统命令](#xitong)
->  *  [用户和组](#user)
->  *  [权限](#quanxian)
->  *  [文件夹属性](#wenjianjia)
->  *  [vim](#vim)
->  *  [安装软件](#ruanjian)
->  *  [查找](#chazhao)
->  *  [查找打包与压缩](#dabao)
->  *  [正则表达式](#zhengze)
->  *  [输入输出重定向和管道](#shuru)
->  *  [进程控制](#jincheng)
-
 [[linux-command-constantly]]
 == Linux 常用命令
 

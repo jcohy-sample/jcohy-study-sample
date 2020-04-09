@@ -1,20 +1,20 @@
 [[linux-base]]
-== Linux 基础教程
+= Linux 基础教程
 
 [[linux-base-mirror]]
-= Linux 镜像地址
+== Linux 镜像地址
 
-*  CentOS 官网：http://www.centos.org/
-*  CentOS 阿里云镜像：http://mirrors.aliyun.com/centos/
-*  CentOS 搜狐镜像：http://mirrors.sohu.com/centos/
-*  CentOS 网易镜像：http://mirrors.163.com/centos/
-*  CentOS 北京理工大学镜像：http://mirror.bit.edu.cn/centos/
+*  CentOS 官网：http://www.centos.org[http://www.centos.org]
+*  CentOS 阿里云镜像：http://mirrors.aliyun.com/centos[http://mirrors.aliyun.com/centos]
+*  CentOS 搜狐镜像：http://mirrors.sohu.com/centos[http://mirrors.sohu.com/centos]
+*  CentOS 网易镜像：http://mirrors.163.com/centos[http://mirrors.163.com/centos]
+*  CentOS 北京理工大学镜像：http://mirror.bit.edu.cn/centos[http://mirror.bit.edu.cn/centos]
 
 [[linux-base-dir]]
 == Linux 目录结构
 
 *  bin  (binaries)存放二进制可执行文件
-*  sbin  (super user binaries)存放二进制可执行文件，只有root才能访问
+*  sbin  (super user binaries)存放二进制可执行文件，只有 root 才能访问
 *  etc (etcetera)存放系统配置文件
 *  usr  (unix shared resources)用于存放共享的系统资源
 *  home 存放用户文件的根目录
@@ -32,46 +32,43 @@
 
 *  修改主机名
 
-[source,shell script,indent=0,subs="verbatim,quotes",role="primary"]
+[source,shell script]
 ----
-
-            vi /etc/sysconfig/network
-                    NETWORKING=yes
-                    HOSTNAME=username
+vi /etc/sysconfig/network
+    NETWORKING=yes
+    HOSTNAME=username
 ----
 
 *  修改ip地址
 
-[source,shell script,indent=0,subs="verbatim,quotes",role="primary"]
+[source,shell script]
 ----
-            vi /etc/sysconfig/network-scripts/ifcfg-eth0
-                    DEVICE=eth0
-                    TYPE=Ethernet
-                    ONBOOT=yes
-                    BOOTPROTO=static
-                    IPADDR=192.168.0.101
-                    NETMASK=255.255.255.0
-            service network restart
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
+    DEVICE=eth0
+    TYPE=Ethernet
+    ONBOOT=yes
+    BOOTPROTO=static
+    IPADDR=192.168.0.101
+    NETMASK=255.255.255.0
+service network restart
 ----
 
 
 *  修改ip地址和主机名的映射关系
 
-[source,shell script,indent=0,subs="verbatim,quotes",role="primary"]
+[source,shell script]
 ----
-                vi /etc/hosts
-                127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
-                ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-                192.168.0.101 username
+vi /etc/hosts
+    127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+    ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+192.168.0.101 username
 ----
 
+*  关闭 iptables 并设置其开机启动/不启动
 
-
-*  关闭iptables并设置其开机启动/不启动
-
-[source,shell script,indent=0,subs="verbatim,quotes",role="primary"]
+[source,shell script]
 ----
-            service iptables stop
-            chkconfig iptables on
-            chkconfig iptables off
+service iptables stop
+chkconfig iptables on
+chkconfig iptables off
 ----

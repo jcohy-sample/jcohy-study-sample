@@ -5,9 +5,60 @@
 |===
 | 模块 | 进度
 
+| jcohy-study-alogrithm
+| 0%
+
+| jcohy-study-ansyc
+| 0
+
 | jcohy-study-designpattern
 | 100%
 
+| jcohy-study-docker
+| 0%
+
+| jcohy-study-files
+| 0
+
+| jcohy-study-framework
+| 0%
+
 | jcohy-study-java
 | 100%
+
+| jcohy-study-linux
+| 80%
+
+| jcohy-study-nginx
+| 0%
+
+| jcohy-study-nosql
+| 0%
+
+| jcohy-study-quartz
+| 0%
+
+| jcohy-study-security
+| 0%
+
+| jcohy-study-spring
+| 0%
+
+| jcohy-study-springboot
+| 0%
+
+| jcohy-study-utils
+| 0%
+
+| jcohy-study-ViewGuide
+| 0%
+
+| jcohy-study-zookeeper
+| 0%
+
+| Swagger
+| 0%
+
+| website
+| 0%
 |===
