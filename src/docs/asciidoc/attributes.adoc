@@ -16,4 +16,3 @@
 
 :design-pattern-code: ../../../../design-pattern-sample/src/main/java/com/jcohy/sample/designpattern
 :algorithm-code: ../../../../algorithm-sample/src/main/java/com/jcohy/sample/algorithm
-

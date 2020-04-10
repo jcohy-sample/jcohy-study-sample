@@ -30,6 +30,10 @@
 
 | docker   | release | https://docs.docker.com/get-docker/[https://docs.docker.com/get-docker/] | 无
 
+| docker-compose| release| https://github.com/docker/compose/releases[https://github.com/docker/compose/releases] | 无
+
+| Harbor | release| https://github.com/goharbor/harbor/releases[https://github.com/goharbor/harbor/releases] | 无
+
 | jenkins  | release | https://jenkins.io/zh/download/[https://jenkins.io/zh/download/] | 无
 
 | gcc      | gcc-8.3.0.tar.gz |
@@ -42,6 +46,10 @@
 另外，本文档全部使用的是 `root` 权限。 如果没有，请自行添加 `sudo` 权限。
 ====
 
+[[linux-install-auto]]
+== 脚本安装
+
+<<linux-shell-install>>
 
 [[linux-install-jdk]]
 == JDK
@@ -53,30 +61,34 @@
 
 2.解压 jdk 到 `/usr/local` 目录。
 
-```shell
+[source,shell]
+----
 tar -zxvf jdk-8u221-linux-x64.tar.gz -C /usr/local/
-```
+----
 
 3.设置环境变量，在 `/etc/profile` 文件最后追加相关内容
 
-```shell
+[source,shell]
+----
 vi /etc/profile
 
 export JAVA_HOME=/usr/local/jdk1.8.0_221
 export PATH=$PATH:$JAVA_HOME/bin
-```
+----
 
 4.刷新环境变量
 
-```shell
+[source,shell]
+----
 source /etc/profile
-```
+----
 
 5.测试java命令是否可用
 
-```shell
+[source,shell]
+----
 java -version
-```
+----
 
 [[linux-install-tomcat]]
 == Tomcat
@@ -88,27 +100,31 @@ java -version
 
 2.解压 tomcat
 
-```shell
+[source,shell]
+----
 tar -zxvf apache-tomcat-7.0.94.tar.gz -C /usr/local/
-```
+----
 
 3.启动 tomcat
 
-```shell
+[source,shell]
+----
 /usr/local/apache-tomcat-7.0.94/bin/startup.sh
-```
+----
 
 4.查看 tomcat 进程是否启动
 
-```shell
+[source,shell]
+----
 jps
-```
+----
 
 5.查看 tomcat 进程端口
 
-```shell
+[source,shell]
+----
 netstat -anpt | grep 2465
-```
+----
 
 6.通过浏览器访问 tomcat
 
@@ -120,26 +136,29 @@ http://host:8080
 [[linux-install-mysql-usually]]
 === 常规安装
 
-1.用 FileZilla 或其他工具将下载好的安装包上传至 Linux 服务器。放置在 **/opt/software/** 目录下。这里使用的是 **mysql-8.0.16-2.el7.x86_64.rpm-bundle.tar**
+1.用 FileZilla 或其他工具将下载好的安装包上传至 Linux 服务器。放置在 **/opt/software/** 目录下。这里使用的是 **mysql-8.0.19-1.el7.x86_64.rpm-bundle.tar**
 
 2.解压 mysql
 
-```shell
+[source,shell]
+----
 mkdir -p /usr/local/mysql
-tar -xvf mysql-8.0.16-2.el7.x86_64.rpm-bundle.tar
-```
+tar -xvf mysql-8.0.19-1.el7.x86_64.rpm-bundle.tar
+----
 
 3.centos7 默认集成了 `MariaDB`，而安装 `mysql` 的话会和 `mariadb` 的文件冲突，所以需要先卸载掉 `mariadb`
 
-```shell
+[source,shell]
+----
 yum remove mariadb
 rpm -qa|grep mariadb-libs
 rpm -e mariadb-libs-5.5.60-1.el7_5.x86_64 --nodeps
-```
+----
 
 4.安装相关依赖
 
-```shell
+[source,shell]
+----
 yum search libaio  # 检索相关信息
 yum install -y libaio # 安装依赖包
 
@@ -150,48 +169,54 @@ yum search perl
 yum install -y perl
 
 yum install -y numactl
-```
+----
 
 5.mysql rpm 安装顺序
 
-```xml
-rpm -ivh mysql-community-common-8.0.16-2.el7.x86_64.rpm
-rpm -ivh mysql-community-libs-8.0.16-2.el7.x86_64.rpm
-rpm -ivh mysql-community-client-8.0.16-2.el7.x86_64.rpm
-rpm -ivh mysql-community-server-8.0.16-2.el7.x86_64.rpm
-```
+[source,xml]
+----
+rpm -ivh mysql-community-common-8.0.19-1.el7.x86_64.rpm
+rpm -ivh mysql-community-libs-8.0.19-1.el7.x86_64.rpm
+rpm -ivh mysql-community-client-8.0.19-1.el7.x86_64.rpm
+rpm -ivh mysql-community-server-8.0.19-1.el7.x86_64.rpm
+----
 
 6.设置开机启动
 
-```shell
+[source,shell]
+----
 systemctl enable mysqld
-```
+----
 
 7.启动mysql
 
-```shell
+[source,shell]
+----
 systemctl start mysqld
-```
+----
 
 8.mysql安装完成之后，在 `/var/log/mysqld.log` 文件中给root生成了一个默认密码。通过下面的方式找到 `root` 默认密码，然后登录 `mysql` 进行修改：
 
-```shell
+[source,shell]
+----
 grep 'temporary password' /var/log/mysqld.log
 
 mysql -uroot -p
-```
+----
 
 9.登录上去后，使用下列语句更新密码
 
-```shell
+[source,shell]
+----
  ALTER USER 'root'@'localhost' IDENTIFIED BY 'jia_chao23@126.com';
-```
+----
 
 10.修改密码加密方式
 
 mysql5.8 中默认的加密方式是 `caching_sha2_password` ,修改密码加密方式，改成 `mysql_native_password`,然后修改密码
 
-```shell
+[source,shell]
+----
 #查看密码加密方式
 use mysql
 select host,user,plugin  from mysql.user;
@@ -202,16 +227,17 @@ ALTER USER 'root'@'%' IDENTIFIED BY 'jia_chao23@126.com';
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'jia_chao23@126.com';
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'jia_chao23@126.com';
 flush privileges;
-```
+----
 
 11.修改密码策略
 
 mysql5.8 默认安装了密码安全检查插件(`validate_password`)，默认密码检查策略要求密码必须包含：大小写字母、数字和特殊符号，并且长度不能少于8位。否则会提示 ERROR 1819 (HY000): Your password does not satisfy the current policy requirements 错误。
 
-```shell
+[source,shell]
+----
 #查看密码策略的相关信息
 show variables like '%password%';
-```
+----
 
 如下图所示：
 
@@ -226,43 +252,48 @@ image::images/linux-install1.jpg[]
 
 上述参数是默认策略 **MEDIUM** 的密码检查规则
 
-```shell
+[source,shell]
+----
 set global validate_password_policy=0;
 select @@validate_password_length;
 set global validate_password_length=1;
-```
+----
 
 12.添加远程登录用户
 
-```shell
+[source,shell]
+----
 GRANT ALL PRIVILEGES ON *.* TO 'jiac'@'%' IDENTIFIED BY 'jiac0917!' WITH GRANT OPTION;
-```
+----
 
 13.配置默认编码为utf8
 
-```shell
+[source,shell]
+----
 #修改/etc/my.cnf配置文件，在[mysqld]下添加编码配置，如下所示：
 [mysqld]
 character_set_server=utf8
 init_connect='SET NAMES utf8'
-```
+----
 
 14.开启远程登录
 
-```shell
+[source,shell]
+----
 CREATE USER 'root'@'%' IDENTIFIED BY 'jiac0917!';
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
 flush privileges;
-```
+----
 
 15.开启端口访问
 
-```shell
+[source,shell]
+----
 firewall-cmd --permanent --zone=public --add-port=3306/tcp
 firewall-cmd --permanent --zone=public --add-port=3306/udp
 firewall-cmd --reload
 firewall-cmd --list-ports
-```
+----
 
 [[linux-install-redis]]
 == Redis
@@ -272,52 +303,57 @@ firewall-cmd --list-ports
 
 1.http://download.redis.io/releases/redis-5.0.5.tar.gz[下载] redis 安装包
 
-```shell
+[source,shell]
+----
 wget http://download.redis.io/releases/redis-5.0.5.tar.gz
 tar xzf redis-5.0.5.tar.gz
 cd redis-5.0.5
 make
-```
+----
 
 2.make 完后 redis-2.8.17 目录下会出现编译后的 redis 服务程序 redis-server,还有用于测试的客户端程序 redis-cli,两个程序位于安装目录 src 目录下：
 
 下面启动redis服务.
 
-```shell
+[source,shell]
+----
 cd src
 ./redis-server
-```
+----
 
 3.注意这种方式启动redis 使用的是默认配置。也可以通过启动参数告诉redis使用指定配置文件使用下面命令启动。
 
-```shell
+[source,shell]
+----
 cd src
 ./redis-server ../redis.conf
-```
+----
 
 4.**redis.conf** 是一个默认的配置文件。我们可以根据需要使用自己的配置文件。
 
 启动 redis 服务进程后，就可以使用测试客户端程序 redis-cli 和 redis 服务交互了。 比如：
 
-```shell
+[source,shell]
+----
 cd src
 ./redis-cli
 redis> set foo bar
 OK
 redis> get foo
 "bar"
-```
+----
 
 [[linux-install-redis-docker]]
 === docker 安装
 
 1.使用docker安装 http://www.runoob.com/docker/docker-install-redis.html[redis]
 
-```shell
+[source,shell]
+----
 docker pull redis
 mkdir -p /docker/redis/conf /docker/redis/data
 docker run --restart=always --privileged=true -p 6379:6379 -v /docker/redis/data:/data -v /docker/redis/conf/redis.conf:/etc/redis/redis.conf --name myredis -d redis redis-server --appendonly yes
-```
+----
 
 [[linux-install-nginx]]
 == nginx
@@ -327,114 +363,129 @@ docker run --restart=always --privileged=true -p 6379:6379 -v /docker/redis/data
 
 1.安装编译工具及库文件
 
-```shell
+[source,shell]
+----
 yum -y install make zlib zlib-devel gcc-c++ libtool  openssl openssl-devel
-```
+----
 
 2.首先要安装 PCRE
 
 - 下载 PCRE 安装包，下载地址： <http://downloads.sourceforge.net/project/pcre/pcre/8.35/pcre-8.35.tar.gz>
 
-```shell
+[source,shell]
+----
 cd /opt/software
 wget http://downloads.sourceforge.net/project/pcre/pcre/8.35/pcre-8.35.tar.gz
-```
+----
 
 - 解压安装包:
 
-```shell
+[source,shell]
+----
 [root@bogon src]# tar zxvf pcre-8.35.tar.gz
-```
+----
 
 - 进入安装包目录
 
-```shell
+[source,shell]
+----
 [root@bogon src]# cd pcre-8.35
-```
+----
 
 - 编译安装
 
-```shell
+[source,shell]
+----
 ./configure
 make && make install
-```
+----
 
 - 查看pcre版本
 
-```shell
+[source,shell]
+----
 pcre-config --version
-```
+----
 
 3.安装 Nginx
 
 - 下载 Nginx
 
-```shell
+[source,shell]
+----
 cd /opt/software
 wget http://nginx.org/download/nginx-1.6.2.tar.gz
-```
+----
 
 - 安装包
 
-```shell
+[source,shell]
+----
 tar zxvf nginx-1.6.2.tar.gz
-```
+----
 
 - 进入安装包目录
 
-```shell
+[source,shell]
+----
 cd nginx-1.6.2
-```
+----
 
 - 编译安装
 
-```shell
+[source,shell]
+----
 ./configure --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_ssl_module --with-pcre=//opt/software/pcre-8.35
 make && make install
-```
+----
 
 - 查看nginx版本
 
-```shell
+[source,shell]
+----
 /usr/local/nginx/sbin/nginx -v
-```
+----
 
 4.启动nginx
 
-```shell
+[source,shell]
+----
 /usr/local/nginx/sbin/nginx
-```
+----
 
 5.Nginx 其他命令
 
-```shell
+[source,shell]
+----
 /usr/local/nginx/sbin/nginx -s reload            # 重新载入配置文件
 /usr/local/nginx/sbin/nginx -s reopen            # 重启 Nginx
 /usr/local/nginx/sbin/nginx -s stop              # 停止 Nginx
-```
+----
 
 6.错误处理
 
-```
+[source]
+----
 src/core/ngx_murmurhash.c: In function ‘ngx_murmur_hash2’:
 
 原因，是将警告当成了错误处理，打开 `/usr/local/nginx-1.6.2/objs/Makefile`，
 去掉 `CFLAGS` 中的 `-Werror`
 再重新make
-```
+----
 
 [[linux-install-nginx-docker]]
 === docker 安装
 
 1.使用docker安装 http://www.runoob.com/docker/docker-install-nginx.html[nginx]
 
-```shell
+[source,shell]
+----
 docker pull nginx
 
 mkdir -p /docker/nginx/www /docker/nginx/logs /docker/nginx/conf
 
 docker run -d -p 80:80 --name nginx -v /docker/nginx/www:/usr/share/nginx/html -v /docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf -v /docker/nginx/logs:/var/log/nginx nginx
-```
+----
 
 [[linux-install-nginx-build]]
 === 使用编译后软件包安装
@@ -443,9 +494,10 @@ docker run -d -p 80:80 --name nginx -v /docker/nginx/www:/usr/share/nginx/html -
 
 https://software.jcohy.com/linux/nginx-1.6.2.build.tar.gz[下载地址]
 
-```
+[source,shell]
+----
 tar -zxvf nginx-1.6.2.build.tar.gz  -C /usr/local
-```
+----
 
 [[linux-install-rabbit]]
 == rabbit
@@ -455,40 +507,46 @@ tar -zxvf nginx-1.6.2.build.tar.gz  -C /usr/local
 
 1.由于RabbitMQ依赖Erlang， 所以需要先安装Erlang
 
-```shell
+[source,shell]
+----
 wget https://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm
 rpm -Uvh erlang-solutions-1.0-1.noarch.rpm
 yum install erlang
-```
+----
 
 2.安装
 
-```shell
+[source,shell]
+----
 wget http://www.rabbitmq.com/releases/rabbitmq-server/v3.6.6/rabbitmq-server-3.6.6-1.el7.noarch.rpm
 yum install rabbitmq-server-3.6.6-1.el7.noarch.rpm
-```
+----
 
 3.启动
 
-```shell
+[source,shell]
+----
 rabbitmq-server start
-```
+----
 
 4.开启web管理接口
 
-```shell
+[source,shell]
+----
 rabbitmq-plugins enable rabbitmq_management
-```
+----
 
 5.通过浏览器访问
 
-```shell
+[source,shell]
+----
 http://localhost:15672
-```
+----
 
 6.其他命令
 
-```shell
+[source,shell]
+----
 sudo chkconfig rabbitmq-server on  # 添加开机启动RabbitMQ服务
 /sbin/service rabbitmq-server start # 启动服务
 /sbin/service rabbitmq-server status  # 查看服务状态
@@ -514,7 +572,7 @@ rabbitmqctl set_permissions -p / username ".*" ".*" ".*"
 
 # 查看用户的权限
 rabbitmqctl list_user_permissions username
-```
+----
 
 [[linux-install-rabbit-docker]]
 === docker 安装
@@ -523,11 +581,12 @@ rabbitmqctl list_user_permissions username
 
 2.拉取镜像,我们选择带有 "mangement" 的版本（包含web管理页面）
 
-```shell
+[source,shell]
+----
 docker pull rabbitmq:3.7.16-management
 
 docker run --restart=always -d -p 5672:5672 -p 15672:15672 --name myrabbitmq 3f92e6354d11
-```
+----
 
 [[linux-install-git]]
 == git
@@ -535,10 +594,11 @@ docker run --restart=always -d -p 5672:5672 -p 15672:15672 --name myrabbitmq 3f9
 [[linux-install-git-usually]]
 === 常规安装
 
-```shell
+[source,shell]
+----
 yum -y install git-core
 git --version
-```
+----
 
 [[linux-install-gitlab]]
 == gitlab
@@ -548,7 +608,8 @@ git --version
 
 1.安装依赖
 
-```shell
+[source,shell]
+----
 yum install -y curl policycoreutils-python openssh-server
 systemctl enable sshd
 systemctl start sshd
@@ -559,33 +620,37 @@ systemctl reload firewalld
 yum install postfix
 systemctl enable postfix
 systemctl start postfix
-```
+----
 
 2.下载源码并安装
 
-```shell
+[source,shell]
+----
 curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.rpm.sh | bash
 
 EXTERNAL_URL="http://192.168.11.231:9090" yum install -y gitlab-ee
-```
+----
 
 3.修改 `gitlab` 配置文件指定服务器ip和自定义端口
 
-```
+[source]
+----
 vi  /etc/gitlab/gitlab.rb
 
 external_url -> 服务器http://IP:端口
-```
+----
 
 4.执行配置
 
-```
+[source]
+----
 gitlab-ctl reconfigure
-```
+----
 
 5.启动：gitlab-ctl start 出现如下说明成功
 
-```
+[source]
+----
 ok: run: alertmanager: (pid 7324) 0s
 ok: run: gitaly: (pid 7334) 0s
 ok: run: gitlab-monitor: (pid 7355) 1s
@@ -600,29 +665,32 @@ ok: run: redis: (pid 7492) 0s
 ok: run: redis-exporter: (pid 7496) 1s
 ok: run: sidekiq: (pid 7502) 0s
 ok: run: unicorn: (pid 7517) 0s
-```
+----
 
 6.修改储存位置
 
-```
+[source]
+----
 vi /etc/gitlab/gitlab.rb
 git_data_dirs -> 修改成目标位置
 gitlab-ctl reconfigure 配置执行
 重新启动
-```
+----
 
 [[linux-install-gitlab-docker]]
 === Docker 安装中文版
 
 1.下载镜像
 
-```shell
+[source,shell]
+----
 docker pull twang2218/gitlab-ce-zh
-```
+----
 
 2.运行
 
-```shell
+[source,shell]
+----
   docker run -d \
     --hostname 192.168.11.238 \
     -p 80:80 \
@@ -635,7 +703,7 @@ docker pull twang2218/gitlab-ce-zh
     -v /opt/gitlab/gitlab-logs:/var/log/gitlab \
     -v /opt/gitlab/gitlab-data:/var/opt/gitlab \
    	twang2218/gitlab-ce-zh
-```
+----
 
 3.数据存储
 
@@ -647,24 +715,27 @@ docker pull twang2218/gitlab-ce-zh
 
 4.配置GitLab
 
-```
+[source,shell]
+----
 docker exec -it gitlab /bin/bash
 docker exec -it gitlab vi /etc/gitlab/gitlab.rb
 
 #修改 external_url
 
 docker restart gitlab
-```
+----
 
 5.查看log
 
-```
+[source,shell]
+----
 docker logs -f gitlab
-```
+----
 
 6.配置邮箱
 
-```
+[source,shell]
+----
 gitlab_rails['smtp_enable'] = true
 gitlab_rails['smtp_address'] = "smtp.exmail.qq.com"
 gitlab_rails['smtp_port'] = 465
@@ -675,7 +746,7 @@ gitlab_rails['smtp_enable_starttls_auto'] = true
 gitlab_rails['smtp_tls'] = true
 gitlab_rails['gitlab_email_from'] = 'jia_chao23@126.com'
 gitlab_rails['smtp_domain'] = "exmail.qq.com"
-```
+----
 
 7.启动会花费一些时间，一般等个几个钟后就可以访问了，进入登录页
 
@@ -685,7 +756,8 @@ gitlab_rails['smtp_domain'] = "exmail.qq.com"
 
 8.常用操作
 
-```
+[source,shell]
+----
 //外部操作
 docker restart gitlab
 docker stop gitlab
@@ -699,7 +771,7 @@ gitlab-ctl restart
 gitlab-rake gitlab:incoming_email:check
 gitlab-rails console
 Notify.test_email('jia_chao23@126.com', 'Message Subject', 'Message Body').deliver_now
-```
+----
 
 [[linux-install-node]]
 == node
@@ -709,22 +781,25 @@ Notify.test_email('jia_chao23@126.com', 'Message Subject', 'Message Body').deliv
 
 1.下载并解压
 
-```shell
+[source,shell]
+----
 // 下载
 wget http://nodejs.org/dist/v10.16.0/node-v10.16.0.tar.gz
 // 解压
 tar -zxvf node-v10.16.0.tar.gz -C /usr/local/
-```
+----
 
 2.编译
 
-```shell
+[source,shell]
+----
 ./configure --prefix=/usr/local/node/v10.16.0
-```
+----
 
 报错 C++ compiler too old, need g++ 4.9.4 or clang++ 3.4.2 (CXX=g++)
 
-```shell
+[source,shell]
+----
 // 1.装 bzip2 解压工具
 yum -y install bzip2
 
@@ -778,19 +853,21 @@ export PATH=$PATH:/usr/local/bin
 // (2).这个应该更靠谱一点，要不然有时候sudo的时候会提示找不到gcc命令
 ln -s /usr/local/bin/gcc /usr/bin/gcc
 (建立/usr/bin/gcc到编译安装gcc的软链接)
-```
+----
 
 报错：
 
-```
+[source]
+----
 node: /usr/lib64/libstdc++.so.6: version `GLIBCXX_3.4.21' not found (required by node)
 node: /usr/lib64/libstdc++.so.6: version `GLIBCXX_3.4.15' not found (required by node)
 node: /usr/lib64/libstdc++.so.6: version `GLIBCXX_3.4.20' not found (required by node)
-```
+----
 
 `gcc` 的动态库还是旧版本的。说明出现这些问题，是因为升级 `gcc` 时，生成的动态库没有替换老版本 `gcc` 的动态库。
 
-```shell
+[source,shell]
+----
 //1.执行以下命令，查找编译gcc时生成的最新动态库：
 find / -name "libstdc++.so*"
 ...
@@ -808,12 +885,13 @@ cp /opt/software/gcc-build-7.3.0/x86_64-pc-linux-gnu/libstdc++-v3/src/.libs/libs
 cd /usr/lib64
 rm -rf libstdc++.so.6
 ln -s libstdc++.so.6.0.21 libstdc++.so.6
-```
+----
 
 [[linux-install-node-taobao]]
 === 淘宝镜像安装
 
-```shell
+[source,shell]
+----
 .cd  /usr/loacl/node/
 
 wget https://npm.taobao.org/mirrors/node/v0.10.16/node-v0.10.16-linux-x64.tar.gz
@@ -828,7 +906,7 @@ ln -s /usr/local/node/node-v0.10.16-linux-x64/bin/node /usr/local/bin/node
 
 
 npm -v
-```
+----
 
 <p id ="yapi">
 
@@ -844,10 +922,11 @@ npm -v
 . 确保安装了 git,运行 git --version 查看版本号
 . 确保安装了 node-gyp 环境,https://github.com/nodejs/node-gyp#on-unix[配置方法]
 
-```shell
+[source,shell]
+----
 npm install -g yapi-cli --registry https://registry.npm.taobao.org
 yapi server
-```
+----
 
 [[linux-install-mongodb]]
 == mongodb
@@ -855,10 +934,11 @@ yapi server
 [[linux-install-mongodb-usually]]
 === 常规安装
 
-```
+[source]
+----
 wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.0.6.tgz
 
-```
+----
 
 [[linux-install-docker]]
 == docker
@@ -866,38 +946,375 @@ wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.0.6.tgz
 [[linux-install-docker-usually]]
 === 常规安装
 
-```shell
-yum -y install docker
-systemctl daemon-reload
-systemctl restart docker.service
-```
+1.Docker 运行在 CentOS 7.X 之上 （不支持内核在 3.8 以下的老版本）
 
-https://docs.docker.com/install/
+通过以下命令查看您的 CentOS 内核
 
-报错：IPv4 forwarding is disabled. Networking will not work.
+[source,shell]
+----
+uname -r
+----
 
-```shell
-vim  /usr/lib/sysctl.d/00-system.conf
-#添加下面的内容
+2.移除非官方软件包
+
+[source,shell]
+----
+yum remove docker
+----
+
+3.卸载旧版本
+
+[source,shell]
+----
+yum remove docker \
+                  docker-common \
+                  docker-selinux \
+                  docker-engine
+----
+
+4.设置 Yum 源
+
+Docker 有多种安装方式，例如 Yum 安装、PRM 包安装、Shell安装等。以下以 Yum 安装方式进行, Docker 分 Docker EE 和 Docker CE 两种版本（EE：企业版，收费的；CE：社区版，不收费）。
+
+* 安装 yum-utils , 这样就能使用 yum-config-manager 工具设置 Yum 源。
+
+[source,shell]
+----
+yum install -y yum-utils \
+  device-mapper-persistent-data \
+  lvm2
+----
+
+* 执行以下命令，添加 Docker 的 Yum 源。
+
+[source,shell]
+----
+yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+----
+
+* [可选] 启用测试仓库。测试仓库包含在 docker.repo 文件中，但默认情况下禁用的。
+
+[source,shell]
+----
+ yum-config-manager --enable docker-ce-edge
+----
+
+[source,shell]
+----
+ yum-config-manager --enable docker-ce-test
+----
+
+* 如想要禁用测试仓库，可执行以下命令：
+
+[source,shell]
+----
+   yum-config-manager --disable docker-ce-edge
+----
+
+5.安装docker
+
+[source,shell]
+----
+yum makecache fast
+//安装最新版本的 Docker
+yum install docker-ce
+//在生产系统中，可能需要安装指定版本的 Docker ，而并不总是安装最新的版本。执行以下命令，即可列出可用的 Docker 版本
+yum list docker-ce --showduplicates | sort -r
+//列出 Docker 版本后，可使用以下命令安装指定版本的 Docker 。
+yum install
+//例如：
+yum -y install docker-ce-17.09.0.ce
+----
+
+6.启动docker
+
+[source,shell]
+----
+systemctl start docker
+----
+
+7.执行以下命令，验证安装是否正确
+
+[source,shell]
+----
+docker run hello-world
+----
+
+8.查看 Docker 版本
+
+[source,shell]
+----
+docker version
+----
+
+9.卸载docker
+
+[source,shell]
+----
+//卸载 Docker 软件包
+yum remove docker-ce
+//如需删除镜像、容器、卷以及自定义的配置文件，可执行以下命令
+sudo rm -rf /var/lib/docker
+----
+
+10.设置docker镜像加速
+
+国内访问 Docker Hub 的速度很不稳定，有时甚至出现连接不上的情况。为 Docker 配置镜像加速器，从而解决这个问题。目前国内很多云服务商都提供了镜像加速的服务。常用的镜像加速器有：
+
+阿里云加速器、DaoCloud加速器等。
+
+以阿里云加速器为例：
+. 注册阿里云账号，即可在阿里云控制台（https://cr.console.aliyun.com/#/accelerator）
+. 按照提示说明，即可配置镜像加速器。
+
+11.ipv4转向配置
+
+若启动docker的时候报错：WARNING IPv4 forwarding is disabled. Networking will not work
+
+解决方案：
+
+[source,shell]
+----
+vi /etc/sysctl.conf
+//添加配置
 net.ipv4.ip_forward=1
-systemctl restart network && systemctl restart docker
-```
+//重启
+systemctl restart network
+//查看是否成功
+sysctl net.ipv4.ip_forward
+
+//如果返回为net.ipv4.ip_forward = 1则表示成功了
+----
+
+[[linux-install-docker-compose]]
+== docker-compose
+
+[[linux-install-docker-compose-usually]]
+=== 常规安装
+
+[source,shell]
+----
+//指定版本安装：
+$ sudo curl -L https://get.daocloud.io/docker/compose/releases/download/1.23.1/\
+docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+
+//对二进制文件赋可执行权限
+$ sudo chmod +x /usr/local/bin/docker-compose
+----
+
+测试:
+
+[source,shell]
+----
+$ docker-compose --version
+docker-compose version 1.23.1, build 1719ceb
+----
+
+[[linux-install-docker-compose-yum]]
+=== yum源安装
+
+[source,shell]
+----
+yum -y install docker-compose
+----
+
+测试:
+
+[source,shell]
+----
+$ docker-compose --version
+docker-compose version 1.23.1, build 1719ceb
+----
+
+[[linux-install-harbor]]
+== Harbor
+
+[NOTE]
+====
+注意：Harbor的所有服务组件都是在Docker中部署的，所以官方安装使用Docker-compose快速部署，所以我们需要安装Docker、Docker-compose。由于Harbor是基于Docker Registry V2版本,
+所以就要求Docker版本不小于1.10.0，Docker-compose版本不小于1.6.0。
+====
+
+1.安装 Harbor
+
+[source,shell]
+----
+mkdir /opt/software
+cd /opt/software
+wget https://storage.googleapis.com/harbor-releases/release-1.6.0/harbor-offline-installer-v1.6.0.tgz
+tar xvzf harbor-offline-installer-v1.6.0.tgz -C /usr/local
+cd /usr/local/harbor
+vi harbor.cfg
+hostname = 192.168.11.239 //自行更改为服务器内部ip
+./install.sh
+----
+
+2.若需要修改配置
+
+[source,shell]
+----
+docker-compose down -v
+vim harbor.cfg
+prepare
+docker-compose up -d
+----
+
+3.重启
+
+[source,shell]
+----
+docker-compose stop
+docker-compose start
+----
+
+4.登录Harbor
+> 地址：http://192.168.11.239
+> 用户名：admin
+> 密码：Harbor12345
+
+5.测试推送
+
+注意，此处需要结合第4步，登录到控制台后创建 aix 项目。
+
+[source,shell]
+----
+//1.admin登录
+$ docker login 192.168.11.239
+Username: admin
+Password:
+Login Succeeded
+
+//2.给镜像打tag
+$ docker tag nginx 192.168.11.239/aix/nginx:latest
+$ docker images
+
+//3.push到仓库
+$ docker push 192.168.11.239/aix/nginx
+
+----
+
+6.开放2375端口
+
+注意：在外网开放有安全风险，只推荐在内网对外开放
+
+[source,shell]
+----
+vi /lib/systemd/system/docker.service
+//在[Service]节点下方增加
+ExecStart=
+ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix://var/run/docker.sock
+----
+
+[source,shell]
+----
+systemctl daemon-reload
+systemctl restart docker
+docker-compose stop
+docker-compose start
+firewall-cmd --add-port=2375/tcp --permanent
+service firewalld restart
+----
+
+7.maven配置
+
+[source,pom]
+----
+<pluginGroups>
+  <pluginGroup>com.spotify</pluginGroup>
+</pluginGroups>
+
+<server>
+  <id>192.168.11.239</id>
+  <username>admin</username>
+  <password>Harbor12345</password>
+  <configuration>
+    <email>smallchill@163.com</email>
+  </configuration>
+</server>
+----
+
+8.FAQ
+
+(1).配置并启动Harbor之后，本地执行登录操作，报错:
+
+[source,shell]
+----
+docker login 192.168.11.239
+Username: admin
+Password:
+Error response from daemon: Get https://192.168.11.239/v1/users/: dial tcp 192.168.11.239:443: getsockopt: connection refused
+----
+
+这是因为 `docker1.3.2` 版本开始默认 docker registry 使用的是 `https`，我们设置 Harbor 默认 `http` 方式，所以当执行用 docker `login`、`pull`、`push` 等命令操作非 `https` 的 docker regsitry 的时就会报错。
+
+解决办法：配置/etc/docker/daemon.json
+
+[source,shell]
+----
+vi /etc/docker/daemon.json
+
+{
+  "registry-mirrors": ["https://3dse7md.mirror.aliyuncs.com"]
+}
+//将其修改为：
+{
+  "registry-mirrors": ["https://3dse7md.mirror.aliyuncs.com"],
+  "insecure-registries":["192.168.11.239"]
+}
+
+//重启
+systemctl daemon-reload && systemctl restart docker
+----
+
+(2).使用非admin账户执行docker pull命令时，报错
+
+[source,shell]
+----
+$ docker pull 192.168.11.239/aix/nginx:latest
+Error response from daemon: repository 192.168.11.239/aix/nginx not found: does not exist or no pull access
+----
+
+这是原因可能有，一是Harbor仓库上 aix/nginx 确实不存在，二是项目未设置公开的时候，该账户未执行 docker login 192.168.11.239 登录操作，三是该账户对 192.168.11.239/aix 项目没有权限，需要在该项目下增加aix成员，并选择角色。
+
+(3).如果需要修改Harbor的配置文件 `harbor.cfg`，因为Harbor是基于 docker-compose 服务编排的，我们可以使用 docker-compose 命令重启 Harbor。不修改配置文件，重启Harbor命令：docker-compose `start` | `stop` | `restart`
+
+[source,shell]
+----
+//停止Harbor
+$ docker-compose down -v
+Stopping nginx ... done
+Stopping harbor-jobservice ... done
+......
+Removing harbor-log ... done
+Removing network harbor_harbor
+
+//启动Harbor
+$ docker-compose up -d
+Creating network "harbor_harbor" with the default driver
+Creating harbor-log ...
+......
+Creating nginx
+Creating harbor-jobservice ... done
+----
+
 
 [[linux-install-jenkins]]
-== docker
+== jenkins
 
 [[linux-install-jenkins-docker]]
-=== docker
+=== jenkins
 
 1.获取镜像
 
-```
+[source,shell]
+----
 docker pull jenkinsci/blueocean
-```
+----
 
 2.运行镜像
 
-```
+[source,shell]
+----
 docker run \
 -u root \
 -d  \
@@ -908,7 +1325,7 @@ docker run \
 -v /opt/jenkins/jenkins-data:/var/jenkins_home  \
 -v /opt/jenkins/run/docker.sock:/var/run/docker.sock  \
 jenkinsci/blueocean
-```
+----
 
 [[linux-install-gcc]]
 == 安装高版本gcc
@@ -921,82 +1338,92 @@ http://ftp.gnu.org/gnu/gcc/
 
 2.解压缩
 
-```shell
+[source,shell]
+----
 tar -zxvf gcc-8.3.0.tar.gz -C /usr/local
 yum install -y bzip2 glibc-headers gcc-c++
 yum install -y glibc-headers
 yum install -y gcc-c++
-```
+----
 
 3.下载依赖包
 
-```shell
+[source,shell]
+----
 cd /usr/local/gcc-8.3.0/
 ./contrib/download_prerequisites
-```
+----
 
 4.编译+安装
 
-```shell
+[source,shell]
+----
 mkdir ../gcc8.3.0build && cd ../gcc8.3.0build
 
 ../gcc-8.3.0/configure --prefix=/usr/local/gcc8.3.0build --enable-checking=release --enable-languages=c,c++ --disable-multilib
 make && make install
-```
+----
 
 5.之间已有低版本的gcc存在，先删除已建的软连接
 
-```shell
+[source,shell]
+----
 rm -rf /usr/bin/gcc
 rm -rf /usr/bin/g++
 ln -s /usr/local/gcc8.3.0build/bin/gcc /usr/bin/gcc
 ln -s /usr/local/gcc8.3.0build/bin/g++ /usr/bin/g++
-```
+----
 
 6.查看新版本
 
-```shell
+[source,shell]
+----
 gcc --version
-```
+----
 
 7.运行程序时可能会出现/lib64/libstdc++.so.6: version  `GLIBCXX_3.4.20' not found，是因为升级安装了gcc，生成的动态库没有替换老版本的gcc动态库导致的。
 
 查看包含最新的动态链接库的位置
 
-```shell
+[source,shell]
+----
 find / -name "libstdc++.so*"
-```
+----
 
 找到在/usr/local/gcc5/lib64/文件夹下
 
-```shell
+[source,shell]
+----
 cp /usr/local/gcc8.3.0build/lib64/libstdc++.so.6.0.25  /usr/lib64/libstdc++.so.6.0.25
 rm -f /usr/lib64/libstdc++.so.6
 ln /usr/lib64/libstdc++.so.6.0.25 /usr/lib64/libstdc++.so.6
 
-```
+----
 
 8.查看libstdc++.so.6链接包含的动态库
 
-```shell
+[source,shell]
+----
 strings /usr/lib64/libstdc++.so.6|grep GLIBC
-```
+----
 
 9.error 排除
 
 -  C++ preprocessor "/lib/cpp" fails sanity check
 
-```shell
+[source,shell]
+----
 yum install -y glibc-headers
 yum install -y gcc-c++
-```
+----
 
 [[linux-install-ldap]]
 == LDAP
 
 1.安装LDAP
 
-```shell
+[source,shell]
+----
 yum install -y openldap-servers openldap-clients
 #拷贝数据库配置文件,DB_CONIFG中主要是关于Berkeley DB的相关的一些配置
 cp /usr/share/openldap-servers/DB_CONFIG.example /var/lib/ldap/DB_CONFIG
@@ -1004,18 +1431,19 @@ cp /usr/share/openldap-servers/DB_CONFIG.example /var/lib/ldap/DB_CONFIG
 systemctl start slapd
 systemctl enable slapd
 systemctl status slapd
-```
+----
 
 2.**配置 ldap 服务**
 
 (1).生成管理员密码
 
-```shell
+[source,shell]
+----
 slappasswd
 New password:
 Re-enter new password:
 {SSHA}krOGXDmiCdSXuXocOf10F96LJO5ijdXo  #记住这个,下面会用到
-```
+----
 
 (2).新建一个 rootpwd.ldif (名称是自定义的)的文件:
 [source, shell]
@@ -1034,32 +1462,35 @@ include::../bash/ldap/rootpwd.ldif[tag=code]
 
 (3).下面使用 ldapadd 命令将上面的 rootpwd.ldif 文件写入 LDAP:
 
-```shell
+[source,shell]
+----
 ldapadd -Y EXTERNAL -H ldapi:/// -f rootpwd.ldif
 SASL/EXTERNAL authentication started
 SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
 SASL SSF: 0
 modifying entry "olcDatabase={0}config,cn=config"
-```
+----
 
 3.**导入schema**
 
 导入 schema，schema 包含为了支持特殊场景相关的属性，可根据选择导入，这里先全部导入:
 
-```shell
+[source,shell]
+----
 ls /etc/openldap/schema/*.ldif | while read f; do ldapadd -Y EXTERNAL -H ldapi:/// -f $f; done
-```
+----
 
 4.**设定默认域**
 
 (1).先使用 `slappasswd` 生成一个密码:
 
-```shell
+[source,shell]
+----
 slappasswd
 New password:
 Re-enter new password:
 {SSHA}OpMcf0c+pEqFLZm3i+YiI2qhId1G/yM3
-```
+----
 
 (2).新建一个 domain.ldif 的文件:
 
@@ -1077,7 +1508,9 @@ include::../bash/ldap/domain.ldif[tag=code]
 ====
 
 (3).写入
-```shell
+
+[source,shell]
+----
 ldapmodify -Y EXTERNAL -H ldapi:/// -f domain.ldif
 SASL/EXTERNAL authentication started
 SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
@@ -1091,7 +1524,7 @@ modifying entry "olcDatabase={2}hdb,cn=config"
 modifying entry "olcDatabase={2}hdb,cn=config"
 
 modifying entry "olcDatabase={2}hdb,cn=config"
-```
+----
 
 5.**添加基本目录**
 
@@ -1113,7 +1546,8 @@ include::../bash/ldap/basedir.ldif[tag=code]
 
 (2).写入
 
-```shell
+[source,shell]
+----
 ldapadd -x -D cn=Manager,dc=jiac,dc=cn -W -f basedir.ldif
 Enter LDAP Password:
 adding new entry "dc=jiac,dc=cn"
@@ -1123,11 +1557,12 @@ adding new entry "cn=Manager,dc=jiac,dc=cn"
 adding new entry "ou=People,dc=jiac,dc=cn"
 
 adding new entry "ou=Group,dc=jiac,dc=cn"
-```
+----
 
 6.测试
 
-```shell
+[source,shell]
+----
 ldapsearch -LLL -W -x -D "cn=Manager,dc=jiac,dc=cn" -H ldap://localhost -b "dc=jiac,dc=cn"
 Enter LDAP Password:
 dn: dc=jiac,dc=cn
@@ -1149,7 +1584,7 @@ ou: People
 dn: ou=Group,dc=jiac,dc=cn
 objectClass: organizationalUnit
 ou: Group
-```
+----
 
 7.可以在局域网内的 windows 电脑上下载 http://www.ldapadmin.org/download/ldapadmin.html[ldapadmin] 作为管理工具
 
@@ -1174,12 +1609,13 @@ https://www.cwiki.us/display/CONFLUENCEWIKI/Connecting+to+an+LDAP+Directory
 
 1.下载，不同的版本
 
-```shell
+[source,shell]
+----
 wget https://downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-6.12.1-x64.bin
 wget https://downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-6.7.1-x64.bin
 wget https://downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-6.9.1-x64.bin
 wget https://downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-6.13.0-x64.bin
-```
+----
 
 2.下载破解器
 
@@ -1187,11 +1623,12 @@ http://software.jcohy.com/windows/confluence%E7%A0%B4%E8%A7%A3%E5%B7%A5%E5%85%B7
 
 3.安装 confluence
 
-```shell
+[source,shell]
+----
 cd /opt
 chmod +x atlassian-confluence-6.12.1-x64.bin
 ./atlassian-confluence-6.12.1-x64.bin
-```
+----
 
 4.破解jar包
 
@@ -1201,9 +1638,10 @@ https://software.jcohy.com/windows/confluence%E7%A0%B4%E8%A7%A3%E5%B7%A5%E5%85%B
 
 - 1.备份jar包
 
-```shell
+[source,shell]
+----
 mv /opt/atlassian/confluence/confluence/WEB-INF/lib/atlassian-extras-decoder-v2-3.4.1.jar /opt/atlassian-extras-2.4.jar
-```
+----
 
 
 
@@ -1223,11 +1661,12 @@ image::images/confluence_keygen1.png[]
 
 5.重启服务
 
-```shell
+[source,shell]
+----
 chmod 777 atlassian-extras-decoder-v2-3.4.1.jar
 service confluence stop；
 service confluence start；
-```
+----
 
 6.访问 confluence
 
@@ -1245,17 +1684,19 @@ mysql设置问题：
 
 &characterEncoding = utf8
 
-```none
+[source,shell]
+----
 utf8_bin
-```
+----
 
 - 事务隔离级别
 
 	?sessionVariables=tx_isolation='READ-COMMITTED'
 
-```none
+[source,shell]
+----
 e.g. jdbc:mysql://127.0.0.1:3306/confdb?sessionVariables=tx_isolation='READ-COMMITTED'
-```
+----
 
 - MySQL存储引擎
 

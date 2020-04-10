@@ -1,0 +1,63 @@
+[[linux-shell]]
+= 常用脚本
+
+[[linux-shell-install]]
+== 常用软件安装脚本
+
+本提供了五个脚本，具体说明如下
+
+* deploy.sh : 主脚本
+* docker.sh : docker安装脚本
+* native.sh : 本地安装脚本
+* unnative.sh : 本地卸载脚本
+* undocker.sh : docker 卸载脚本
+
+脚本中涉及到的目录
+
+[[linux-shell-install-tbl]]
+.默认目录
+|===
+| 变量名 | 目录 | 说明
+
+| BASH_URL | https://software.jcohy.com/linux/ | 所有所需软件安装包所在的服务器(可以使用 httpd 或者 nginx 等服务器搭建)
+
+| BASE_DIR | /opt/software | 本地存放安装包的地址
+
+| DOCKER_DIR | /usr/local/docker | docker 安装软件的目录
+
+| INSTALL_DIR | /usr/local | 本地安装地址
+|===
+
+软件版本可查看 <<linux-install-tbl>>
+
+[NOTE]
+====
+注意,使用脚本安装软件之前,请替换自己的相关目录,确认脚本中的软件的版本和自己的匹配,可自行修改脚本。
+====
+
+[source,shell,indent=0,role="primary"]
+.deploy.sh
+----
+include::../bash/deploy/deploy.sh[tag=code]
+----
+.docker.sh
+[source,shell,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::../bash/deploy/docker.sh[tag=code]
+----
+.native.sh
+[source,shell,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::../bash/deploy/native.sh[tag=code]
+----
+.unnative.sh
+[source,shell,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::../bash/deploy/unnative.sh[tag=code]
+----
+.undocker.sh
+[source,shell,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::../bash/deploy/undocker.sh[tag=code]
+----
+

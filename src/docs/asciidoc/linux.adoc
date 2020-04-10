@@ -7,3 +7,5 @@ include::linux/base.adoc[leveloffset=+1]
 include::linux/command.adoc[leveloffset=+1]
 
 include::linux/install.adoc[leveloffset=+1]
+
+include::linux/shell.adoc[leveloffset=+1]
