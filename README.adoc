@@ -6,7 +6,7 @@
 | 模块 | 进度
 
 | jcohy-study-algorithm
-| 0%
+| 100%
 
 | jcohy-study-ansyc
 | 0
