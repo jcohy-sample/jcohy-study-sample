@@ -1,0 +1,10 @@
+[[algorithm-list]]
+= 链表
+
+== 最大滑动窗口
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/list/MaxWindow.java[tag=code]
+----

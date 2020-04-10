@@ -1,3 +1,23 @@
 [overview]
 = 概述
 include::attributes.adoc[]
+
+include::algorithm/sort.adoc[leveloffset=+1]
+
+include::algorithm/simple.adoc[leveloffset=+1]
+
+include::algorithm/recursive.adoc[leveloffset=+1]
+
+include::algorithm/array.adoc[leveloffset=+1]
+
+include::algorithm/list.adoc[leveloffset=+1]
+
+include::algorithm/stack.adoc[leveloffset=+1]
+
+include::algorithm/queue.adoc[leveloffset=+1]
+
+include::algorithm/tree.adoc[leveloffset=+1]
+
+include::algorithm/graph.adoc[leveloffset=+1]
+
+include::algorithm/other.adoc[leveloffset=+1]

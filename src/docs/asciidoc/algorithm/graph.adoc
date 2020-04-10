@@ -1,0 +1,10 @@
+[[algorithm-graph]]
+= 图
+
+== 迷宫问题
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/graph/TravresingGraph.java[tag=code]
+----

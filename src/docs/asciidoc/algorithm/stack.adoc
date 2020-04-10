@@ -1,0 +1,42 @@
+[[algorithm-stack]]
+= 栈
+
+== 汉诺塔问题
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/stack/Hano1.java[tag=code]
+----
+
+== 用两个栈实现一个队列
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/stack/TwoStackQueue.java[tag=code]
+----
+
+== 用一个栈实现另一个栈的排序
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/stack/SortStackByStack.java[tag=code]
+----
+
+== 利用递归函数实现一个栈的反转
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/stack/ReverseStack.java[tag=code]
+----
+
+== 实现获取最小数
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/stack/MyStack1.java[tag=code]
+----

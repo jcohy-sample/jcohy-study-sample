@@ -15,7 +15,7 @@ http://docs.jcohy.com[*http://docs.jcohy.com*]
 [horizontal]
 <<java.adoc#overview, Java基础>> :: java 基础，Java 新特性
 <<designpattern.adoc#overview, 设计模式>> :: Java设计模式
-<<alogrithm.adoc#overview, 算法>>  :: 算法精题
+<<algorithm.adoc#overview, 算法>>  :: 算法精题
 <<linux.adoc#overview, linux>>  :: Linux 介绍
 <<nosql.adoc#overview, nosql>>  :: nosql 介绍
 <<spring.adoc#overview, spring>>  :: spring全家桶

@@ -1,0 +1,26 @@
+[[algorithm-recursive]]
+= 递归
+
+== 汉诺塔问题
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/stack/HanoGenernal.java[tag=code]
+----
+
+== 汉诺塔问题升级
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/stack/Hano.java[tag=code]
+----
+
+== 兔子问题
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/SimpleQuestion/Fibhabit.java[tag=code]
+----

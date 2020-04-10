@@ -1,0 +1,63 @@
+[[algorithm-array]]
+= 数组
+
+== 两个矩阵相加
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/arrays/matrixAdd.java[tag=code]
+----
+
+== 矩阵相乘
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/arrays/matrixMultiply.java[tag=code]
+----
+
+== 矩阵转置
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/arrays/matrixZZ.java[tag=code]
+----
+
+== 稀疏矩阵
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/arrays/SparseMatrix.java[tag=code]
+----
+
+== 下三角矩阵
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/arrays/UpperTrangularMatrix.java[tag=code]
+----
+
+== 多项式表达
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/arrays/PolyAdd.java[tag=code]
+----
+
+== 迷宫问题
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/arrays/maze.java[tag=code]
+----
+.TraceRecord
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{algorithm-code}/arrays/TraceRecord.java[tag=code]
+----

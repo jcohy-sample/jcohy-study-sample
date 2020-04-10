@@ -1,0 +1,26 @@
+[[algorithm-other]]
+= 其他
+
+== 大数的加减
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/SimpleQuestion/BigData.java[tag=code]
+----
+
+== 猜拳游戏
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/SimpleQuestion/Guess.java[tag=code]
+----
+
+== 数组数字组成最小值
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+include::{algorithm-code}/SimpleQuestion/GetMin.java[tag=code]
+----

@@ -5,7 +5,7 @@
 |===
 | 模块 | 进度
 
-| jcohy-study-alogrithm
+| jcohy-study-algorithm
 | 0%
 
 | jcohy-study-ansyc
