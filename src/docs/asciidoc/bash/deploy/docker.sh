@@ -10,7 +10,7 @@ RES="\033[0m"
 #软件安装目录
 DOCKER_DIR=/usr/local/docker
 
-BASH_URL=https://software.jcohy.com/linux/
+BASH_CONFIG=https://software.jcohy.com/linux/
 #使用说明，用来提示输入参数
 usage() {
 	echo -e "${BLUE_COLOR}安装 elk 之前，请确保vm.max_map_count大小至少为 262144。执行${RES}"
@@ -19,13 +19,11 @@ usage() {
 	echo -e "${BLUE_COLOR}安装 api-nginx，请执行  ./docker.sh api-nginx${RES}"
 	echo -e "${BLUE_COLOR}安装 web-nginx，请执行  ./docker.sh web-nginx${RES}"
 	echo -e "${BLUE_COLOR}安装 redis-master，请执行  ./docker.sh redis${RES}"
-	echo -e "${BLUE_COLOR}安装 aix-rabbitmq，请执行  ./docker.sh rabbitmq${RES}"
+	echo -e "${BLUE_COLOR}安装 rabbitmq，请执行  ./docker.sh rabbitmq${RES}"
 	echo -e "${BLUE_COLOR}安装 zipkin，请执行  ./docker.sh zipkin${RES}"
 	echo -e "${BLUE_COLOR}安装 minio，请执行  ./docker.sh minio${RES}"
 	echo -e "${BLUE_COLOR}安装 elk，请执行  ./docker.sh elk${RES}"
 	echo -e "${BLUE_COLOR}启动基础模块，请执行  ./docker.sh base${RES}"
-	#echo -e "${BLUE_COLOR}启动监控模块，请执行  ./docker.sh monitor${RES}"
-	#echo -e "${BLUE_COLOR}启动程序模块，请执行  ./docker.sh modules${RES}"
 	echo -e "${BLUE_COLOR}关闭所有模块，请执行  ./docker.sh stop${RES}"
 	echo -e "${BLUE_COLOR}删除所有模块，请执行  ./docker.sh rm${RES}"
 	echo -e "${BLUE_COLOR}删除Tag为空的镜像，请执行  ./docker.sh rmiNoneTag${RES}"
@@ -230,17 +228,6 @@ echo -e "${RED_COLOR}>>>>>>>>>>>>>>>>>>>>>>>>>> Init The End   <<<<<<<<<<<<<<<<<
 echo -e "${BLUE_COLOR}=========================> Docker deploy Start <========================${RES}"
 #docker-compose up --build -d
 
-
-#启动监控模块
-monitor(){
-	docker-compose up -d aix-admin aix-turbine aix-zipkin
-}
-
-#启动程序模块
-modules(){
-	docker-compose up -d aix-gateway1 aix-gateway2 aix-auth1 aix-auth2 aix-user aix-desk aix-system aix-logger aix-flow aix-flow-design aix-resource
-}
-
 #关闭所有模块
 stop(){
 	docker-compose stop
@@ -275,7 +262,7 @@ case "$1" in
 	docker-compose up -d --build redis-master
 ;;
 "rabbitmq")
-	docker-compose up -d --build aix-rabbitmq
+	docker-compose up -d --build rabbitmq
 ;;
 "zipkin")
 	docker-compose up -d --build zipkin
@@ -287,7 +274,7 @@ case "$1" in
 	docker-compose up -d --build es-master es-slave1 es-slave2 es-head kibana filebeat logstash
 ;;
 "base")
-	docker-compose up -d  nacos sentinel api-nginx web-nginx redis-master aix-rabbitmq zipkin
+	docker-compose up -d  nacos sentinel api-nginx web-nginx redis-master rabbitmq zipkin
 ;;
 "stop")
 	stop

@@ -54,7 +54,7 @@
 | 0%
 
 | jcohy-study-zookeeper
-| 0%
+| 100%
 
 | Swagger
 | 0%

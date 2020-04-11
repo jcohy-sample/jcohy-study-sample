@@ -97,7 +97,7 @@ services:
 
   redis-master:
     image: redis:5.0.2-alpine
-    hostname: "aix-redis"
+    hostname: "redis"
     container_name: redis-master
     environment:
       - TZ=Asia/Shanghai
@@ -112,9 +112,9 @@ services:
     networks:
       - aix_net
 
-  aix-rabbitmq:
+  arabbitmq:
     image: rabbitmq:3.7.16-management
-    hostname: "aix-rabbitmq"
+    hostname: "rabbitmq"
     container_name: rabbitmq
     environment:
       - TZ=Asia/Shanghai

@@ -4,39 +4,45 @@
 [[linux-install-tbl]]
 .软硬件环境
 |===
-| 名称 | 版本 | 下载地址 | 编译后软件包
+| 名称 | 平台 | 版本 | 下载地址 | 编译后软件包
 
-| 操作系统 | CentOS Linux release 7.6| http://mirrors.aliyun.com/centos/7/isos/x86_64/CentOS-7-x86_64-DVD-1908.iso[http://mirrors.aliyun.com/centos/7/isos/x86_64/CentOS-7-x86_64-DVD-1908.iso] | 无
+| 操作系统   | CentOS Linux release 7.6 | CentOS Linux release 7.6| http://mirrors.aliyun.com/centos/7/isos/x86_64/CentOS-7-x86_64-DVD-1908.iso[http://mirrors.aliyun.com/centos/7/isos/x86_64/CentOS-7-x86_64-DVD-1908.iso] | 无
 
-| jdk      | jdk-8u221-linux-x64.tar.gz | https://software.jcohy.com/linux/jdk-8u221-linux-x64.tar.gz[https://software.jcohy.com/linux/jdk-8u221-linux-x64.tar.gz] | 无
+| jdk      | CentOS Linux release 7.6 | jdk-8u221-linux-x64.tar.gz | http://software.jcohy.com/linux/jdk-8u221-linux-x64.tar.gz[http://software.jcohy.com/linux/jdk-8u221-linux-x64.tar.gz] | 无
 
-| tomcat   | apache-tomcat-7.0.94.tar.gz | http://software.jcohy.com/linux/apache-tomcat-7.0.94.tar.gz[http://software.jcohy.com/linux/apache-tomcat-7.0.94.tar.gz] | 无
+| tomcat   | CentOS Linux release 7.6 | apache-tomcat-7.0.94.tar.gz | http://software.jcohy.com/linux/apache-tomcat-7.0.94.tar.gz[http://software.jcohy.com/linux/apache-tomcat-7.0.94.tar.gz] | 无
 
-| mysql    | mysql-8.0.19-1.el7.x86_64.rpm-bundle.tar | https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-8.0.19-1.el7.x86_64.rpm-bundle.tar[https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-8.0.19-1.el7.x86_64.rpm-bundle.tar] | 无
+| mysql    | CentOS Linux release 7.6 | mysql-8.0.19-1.el7.x86_64.rpm-bundle.tar | https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-8.0.19-1.el7.x86_64.rpm-bundle.tar[https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-8.0.19-1.el7.x86_64.rpm-bundle.tar] | 无
 
-| redis    | redis-5.0.5.tar.gz | http://download.redis.io/releases/redis-5.0.5.tar.gz[http://download.redis.io/releases/redis-5.0.5.tar.gz] | 无
+| redis    | CentOS Linux release 7.6 | redis-5.0.5.tar.gz | http://download.redis.io/releases/redis-5.0.5.tar.gz[http://download.redis.io/releases/redis-5.0.5.tar.gz] | 无
 
-| nginx    | nginx-1.6.2.tar.gz | http://nginx.org/download/nginx-1.6.2.tar.gz[http://nginx.org/download/nginx-1.6.2.tar.gz] | https://software.jcohy.com/linux/nginx-1.6.2.build.tar.gz[下载地址]
+| nginx    | CentOS Linux release 7.6 | nginx-1.6.2.tar.gz | http://nginx.org/download/nginx-1.6.2.tar.gz[http://nginx.org/download/nginx-1.6.2.tar.gz] | https://software.jcohy.com/linux/nginx-1.6.2.build.tar.gz[下载地址]
 
-| git      | release |  https://git-scm.com/download/win[https://git-scm.com/download/win] | 无
+| git      | CentOS Linux release 7.6 | release |  https://git-scm.com/download/win[https://git-scm.com/download/win] | 无
 
-| gitlab   | release | https://packages.gitlab.com/gitlab/gitlab-ce/[https://packages.gitlab.com/gitlab/gitlab-ce/] | 无
+| gitlab   | CentOS Linux release 7.6 | release | https://packages.gitlab.com/gitlab/gitlab-ce/[https://packages.gitlab.com/gitlab/gitlab-ce/] | 无
 
-| node     | node-v10.16.0.tar.gz | https://software.jcohy.com/linux/node-v10.16.0.tar.gz[https://software.jcohy.com/linux/node-v10.16.0.tar.gz] | 无
+| node     | CentOS Linux release 7.6 | node-v10.16.0.tar.gz | http://software.jcohy.com/linux/node-v10.16.0.tar.gz[http://software.jcohy.com/linux/node-v10.16.0.tar.gz] | 无
 
-| yapi     | release | https://github.com/YMFE/yapi/releases[https://github.com/YMFE/yapi/releases] | 无
+| yapi     | CentOS Linux release 7.6 | release | https://github.com/YMFE/yapi/releases[https://github.com/YMFE/yapi/releases] | 无
 
-| mongodb  | release | https://www.mongodb.com/download-center/community[https://www.mongodb.com/download-center/community] | 无
+| mongodb  | CentOS Linux release 7.6 | release | https://www.mongodb.com/download-center/community[https://www.mongodb.com/download-center/community] | 无
 
-| docker   | release | https://docs.docker.com/get-docker/[https://docs.docker.com/get-docker/] | 无
+| docker   | CentOS Linux release 7.6 | release | https://docs.docker.com/get-docker/[https://docs.docker.com/get-docker/] | 无
 
-| docker-compose| release| https://github.com/docker/compose/releases[https://github.com/docker/compose/releases] | 无
+| docker-compose| CentOS Linux release 7.6 | release| https://github.com/docker/compose/releases[https://github.com/docker/compose/releases] | 无
 
-| Harbor | release| https://github.com/goharbor/harbor/releases[https://github.com/goharbor/harbor/releases] | 无
+| Harbor   | CentOS Linux release 7.6 | release| https://github.com/goharbor/harbor/releases[https://github.com/goharbor/harbor/releases] | 无
 
-| jenkins  | release | https://jenkins.io/zh/download/[https://jenkins.io/zh/download/] | 无
+| jenkins  | CentOS Linux release 7.6 | release | https://jenkins.io/zh/download/[https://jenkins.io/zh/download/] | 无
 
-| gcc      | gcc-8.3.0.tar.gz |
+| gcc      | CentOS Linux release 7.6 | gcc-8.3.0.tar.gz | http://ftp.gnu.org/gnu/gcc/gcc-8.3.0/gcc-8.3.0.tar.gz[http://ftp.gnu.org/gnu/gcc/gcc-8.3.0/gcc-8.3.0.tar.gz] | https://jcohy-software.oss-cn-chengdu.aliyuncs.com/linux/gcc-8.3.0.build.tar.gz
+
+| LDAP      | CentOS Linux release 7.6 | release |  无 | 无
+
+| Confluence  | CentOS Linux release 7.6 | gcc-8.3.0.tar.gz | 无 | 无
+
+| zookeeper  | CentOS Linux release 7.6 | zookeeper-3.4.5.tar.gz | http://jcohy-software.oss-cn-chengdu.aliyuncs.com/linux/zookeeper-3.4.5.tar.gz[http://jcohy-software.oss-cn-chengdu.aliyuncs.com/linux/zookeeper-3.4.5.tar.gz] | 无
 |===
 
 [NOTE]
@@ -1332,9 +1338,8 @@ jenkinsci/blueocean
 
 1.下载高版本 gcc，这里使用的是 8.3.0
 
-http://ftp.gnu.org/gnu/gcc/
 
-如果使用编译后的 gcc 包，可解压后可直接从第5步开始：https://pan.baidu.com/s/159KLVjbaYALx6lrgibU-SQ
+如果使用编译后的 gcc 包，可解压后可直接从第5步开始：
 
 2.解压缩
 
@@ -1643,8 +1648,6 @@ https://software.jcohy.com/windows/confluence%E7%A0%B4%E8%A7%A3%E5%B7%A5%E5%85%B
 mv /opt/atlassian/confluence/confluence/WEB-INF/lib/atlassian-extras-decoder-v2-3.4.1.jar /opt/atlassian-extras-2.4.jar
 ----
 
-
-
 - 2.通 过FTP 将 atlassian-extras-2.4.jar 传到本地
 
 - 3.运行破解器 confluence_keygen.jar
@@ -1700,7 +1703,7 @@ e.g. jdbc:mysql://127.0.0.1:3306/confdb?sessionVariables=tx_isolation='READ-COMM
 
 - MySQL存储引擎
 
-  修改启动配置文件：default-storage-engine=INNODB
+修改启动配置文件：default-storage-engine=INNODB
 
 10.配置邮箱服务器
 
@@ -1710,9 +1713,112 @@ image::images/confluence_keygen2.png[]
 
 第一步:是找到 confluence 的安装目录，我的安装目录在 /opt/atlassian/;
 
-第二步:由于 confluence 把 tomcat 给改造了，所以 confluence 的应用并没有在 workapps 下,而是在 confluence 下面;我们的工程的配置文件在 classes 文件夹，于是我找到了 ``/opt/atlassian/confluence/confluence/WEB-INF/classes` 这个目录，
+第二步:由于 confluence 把 tomcat 给改造了，所以 confluence 的应用并没有在 workapps 下,而是在 confluence 下面;我们的工程的配置文件在 classes 文件夹，于是我找到了 `/opt/atlassian/confluence/confluence/WEB-INF/classes` 这个目录，
 查看这个目录下面有一个 `confluence-init.properties` 文件，感觉像是大概的配置文件，打开这个文件，发现最后面有一行代码: `confluence.home = /var/atlassian/application-data/confluence`
 
 第三步:进入 `confluence.home` 配置的文件夹，打开这个文件夹看到 有一个 `confluence.cfg.xml` 文件，打开这个文件，发现配置的数据库连接池一类的东西，真正的算是找到了，修改 `hibernate.connection.url` 的 `value` 为新的数据库地址 重新启动服务；
 
 `/var/atlassian/application-data/confluence` 下 `confluence.cfg.xml` 文件：
+
+[[linux-install-zookeeper]]
+== zookeeper
+
+机器部署
+
+1.用 FileZilla 或其他工具将下载好的安装包上传至 Linux 服务器。放置在 **/opt/software/** 目录下。这里使用的是 **zookeeper-3.4.5.tar.gz**
+
+2.下载解压
+
+[source,shell]
+----
+tar -zxvf zookeeper-3.4.5.tar.gz（解压）
+----
+
+
+3.重命名
+
+[source,shell]
+----
+mv zookeeper-3.4.5 zookeeper（重命名文件夹zookeeper-3.4.5为zookeeper）
+----
+
+
+4.修改环境变量.三台机器都要修改
+
+[source,shell]
+----
+
+vi /etc/profile(修改文件)
+
+export ZOOKEEPER_HOME=/home/user/zookeeper
+export PATH=$PATH:$ZOOKEEPER_HOME/bin
+
+source /etc/profile
+----
+
+5.修改配置文件
+
+[source,shell]
+----
+cd zookeeper/conf
+cp zoo_sample.cfg zoo.cfg
+
+#添加内容
+
+vi zoo.cfg
+dataDir=/home/user/zookeeper/data
+dataLogDir=/home/user/zookeeper/log
+server.1=slave1:2888:3888 (主机名, 心跳端口、数据端口)
+server.2=slave2:2888:3888
+server.3=slave3:2888:3888
+----
+
+6.创建文件夹：
+
+[source,shell]
+----
+cd /home/user/zookeeper/
+mkdir -m 755 data
+mkdir -m 755 log
+----
+
+7.在data文件夹下新建 `myid` 文件，`myid` 的文件内容为：
+
+[source,shell]
+----
+cd data
+vi myid
+
+添加内容：
+
+1
+----
+
+8.将集群下发到其他机器上
+
+[source,shell]
+----
+    scp -r /home/user/zookeeper user@slave2:/home/user/
+    scp -r /home/user/zookeeper user@slave3:/home/user/
+----
+
+
+9.修改其他机器的配置文件
+
+到slave2上：修改myid为：2
+
+到slave3上：修改myid为：3
+
+10.启动(每台机器)
+
+[source,shell]
+----
+zkServer.sh start
+----
+
+
+
+11.查看集群状态
+
+* jps（查看进程）
+* zkServer.sh status（查看集群状态，主从信息）

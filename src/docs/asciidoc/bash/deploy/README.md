@@ -49,7 +49,7 @@ docker 方式卸载，请执行 ./deploy.sh undocker
 安装 api-nginx，请执行  ./docker.sh api-nginx
 安装 web-nginx，请执行  ./docker.sh web-nginx
 安装 redis-master，请执行  ./docker.sh redis-master
-安装 aix-rabbitmq，请执行  ./docker.sh aix-rabbitmq
+安装 rabbitmq，请执行  ./docker.sh rabbitmq
 安装 elk，请执行  ./docker.sh elk
 启动基础模块，请执行  ./docker.sh base
 开启端口，请执行  ./docker.sh port

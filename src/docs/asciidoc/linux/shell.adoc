@@ -19,7 +19,9 @@
 |===
 | 变量名 | 目录 | 说明
 
-| BASH_URL | https://software.jcohy.com/linux/ | 所有所需软件安装包所在的服务器(可以使用 httpd 或者 nginx 等服务器搭建)
+| BASH_URL | http://software.jcohy.com/linux/ | 所有所需软件安装包所在的服务器(可以使用 httpd 或者 nginx 等服务器搭建)
+
+| BASH_CONFIG | http://software.jcohy.com/bash/ | 安装所需脚本和配置文件目录
 
 | BASE_DIR | /opt/software | 本地存放安装包的地址
 

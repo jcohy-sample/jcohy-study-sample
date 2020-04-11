@@ -10,7 +10,7 @@ YELLOW_COLOR="\033[33m"
 RES="\033[0m"
 
 #软件所在http服务器。
-BASE_URL=192.168.11.232/deploy
+BASE_URL=http://software.jcohy.com/linux/
 #软件下载目录
 BASE_DIR=/opt/software
 INSTALL_DIR=/usr/local
@@ -19,7 +19,7 @@ INSTALL_DIR=/usr/local
 JDK_PACKAGE=jdk-8u221-linux-x64.tar.gz
 TOMCAT_PACKAGE=apache-tomcat-7.0.94.tar.gz
 MYSQL_PACKAGE=mysql-8.0.19-1.el7.x86_64.rpm-bundle.tar
-GCC_PACKAGE=gcc-8.3.0.tar.gz
+GCC_PACKAGE=gcc-8.3.0.build.tar.gz
 NGINX_PACKAGE=nginx-1.6.2.build.tar.gz
 
 #使用说明，用来提示输入参数
