@@ -163,9 +163,11 @@ public void test5(){
 public interface Func1 {
     public String getValue(String str);
 }
-```
+----
 
-```java
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
 @Test
 public void test6(){
     String helloWorld = operation("Hello World", (str) -> str.toUpperCase());
@@ -188,9 +190,11 @@ public interface Func2<T,R> {
 
     R getValue(T t1,T t2);
 }
-```
+----
 
-```java
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
 @Test
 public void test7(){
     calculate(100L,200L,(a,b) -> a+b);
