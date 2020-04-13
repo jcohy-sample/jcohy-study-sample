@@ -5,16 +5,16 @@ include::attributes.adoc[]
 [[zookeeper-overview]]
 == 概述
 
-Zookeeper是一个分布式协调服务；就是为用户的分布式应用程序提供协调服务
+Zookeeper是一个分布式协调服务; 就是为用户的分布式应用程序提供协调服务
 
 
 *  zookeeper 是为别的分布式程序服务的
-*  Zookeeper 本身就是一个分布式程序（只要有半数以上节点存活，zk就能正常服务）
-*  Zookeeper 所提供的服务涵盖：主从协调、服务器节点动态上下线、统一配置管理、分布式共享锁、统一名称服务……
-*  虽然说可以提供各种服务，但是 zookeeper 在底层其实只提供了两个功能：管理(存储，读取)用户程序提交的数据； 并为用户程序提供数据节点监听服务；
+*  Zookeeper 本身就是一个分布式程序(只要有半数以上节点存活，zk就能正常服务)
+*  Zookeeper 所提供的服务涵盖: 主从协调、服务器节点动态上下线、统一配置管理、分布式共享锁、统一名称服务……
+*  虽然说可以提供各种服务，但是 zookeeper 在底层其实只提供了两个功能: 管理(存储，读取)用户程序提交的数据;  并为用户程序提供数据节点监听服务;
 
 
-Zookeeper 集群的角色：  Leader 和  follower  (Observer)
+Zookeeper 集群的角色:   Leader 和  follower  (Observer)
 
 只要集群中有半数以上节点存活，集群就能提供服务
 
@@ -28,9 +28,9 @@ Zookeeper 集群的角色：  Leader 和  follower  (Observer)
 
 === zookeeper特性
 
-1、Zookeeper：一个leader，多个follower组成的集群
+1、Zookeeper: 一个leader，多个follower组成的集群
 
-2、全局数据一致：每个server保存一份相同的数据副本，client无论连接到哪个server，数据都是一致的
+2、全局数据一致: 每个server保存一份相同的数据副本，client无论连接到哪个server，数据都是一致的
 
 3、分布式读写，更新请求转发，由leader实施
 
@@ -46,9 +46,9 @@ Zookeeper 集群的角色：  Leader 和  follower  (Observer)
 
 2、每个节点在zookeeper中叫做znode,并且其有一个唯一的路径标识
 
-3、节点Znode可以包含数据和子节点（但是EPHEMERAL类型的节点不能有子节点，下一页详细讲解）
+3、节点Znode可以包含数据和子节点(但是EPHEMERAL类型的节点不能有子节点，下一页详细讲解)
 
-4、客户端应用可以在节点上设置监视器（后续详细讲解）
+4、客户端应用可以在节点上设置监视器(后续详细讲解)
 
 === 数据结构的图
 
@@ -58,8 +58,8 @@ https://github.com/jiachao23/StudyNote/blob/master/src/img/zks.png[zks]
 
 . Znode有两种类型::
 
-    短暂（ephemeral）（断开连接自己删除）
-    持久（persistent）（断开连接不删除）
+    短暂(ephemeral)(断开连接自己删除)
+    持久(persistent)(断开连接不删除)
 
 . Znode有四种形式的目录节点(默认是persistent)
 
@@ -98,13 +98,13 @@ https://github.com/jiachao23/StudyNote/blob/master/src/img/zks.png[zks]
 
 那么，初始化的时候，是按照上述的说明进行选举的，但是 `当zookeeper` 运行了一段时间之后，有机器 `down` 掉，重新选举时，选举过程就相对复杂了。 需要加入数据 `id`,`leader`, `id` 和逻辑时钟。
 
-数据 `id`：数据新的 `id` 就大，数据每次更新都会更新 `id`。
+数据 `id`: 数据新的 `id` 就大，数据每次更新都会更新 `id`。
 
-Leader id：就是我们配置的 `myid` 中的值，每个机器一个。
+Leader id: 就是我们配置的 `myid` 中的值，每个机器一个。
 
-逻辑时钟：这个值从 `0` 开始递增,每次选举对应一个值,也就是说:  如果在同一次选举中,那么这个值应该是一致的 ;  逻辑时钟值越大,说明这一次选举 `leader` 的进程更新.
+逻辑时钟: 这个值从 `0` 开始递增,每次选举对应一个值,也就是说:  如果在同一次选举中,那么这个值应该是一致的 ;  逻辑时钟值越大,说明这一次选举 `leader` 的进程更新.
 
-选举的标准就变成：
+选举的标准就变成:
 
 1、逻辑时钟小的选举结果被忽略，重新投票
 
@@ -121,21 +121,21 @@ Leader id：就是我们配置的 `myid` 中的值，每个机器一个。
 
 https://github.com/jiachao23/StudyNote/blob/master/src/img/zkc.png[zkc]
 
-1、使用 `ls` 命令来查看当前 ZooKeeper 中所包含的内容：
+1、使用 `ls` 命令来查看当前 ZooKeeper 中所包含的内容:
 
 [source,shell]
 ----
 [zk: 202.115.36.251:2181(CONNECTED) 1] ls /
 ----
 
-2、创建一个新的 znode ，使用 `create` /zk myData 。这个命令创建了一个新的 znode 节点“ zk ”以及与它关联的字符串：
+2、创建一个新的 znode ，使用 `create` /zk myData 。这个命令创建了一个新的 znode 节点“ zk ”以及与它关联的字符串:
 
 [source,shell]
 ----
 [zk: 202.115.36.251:2181(CONNECTED) 2] create /zk "myData“
 ----
 
-3、我们运行 `get` 命令来确认 znode 是否包含我们所创建的字符串：
+3、我们运行 `get` 命令来确认 znode 是否包含我们所创建的字符串:
 
 [source,shell]
 ----
@@ -158,14 +158,14 @@ WatchedEvent state:SyncConnected type:NodeDataChanged path:/zk
 [zk: 202.115.36.251:2181(CONNECTED) 4] set /zk "zsl“
 ----
 
-5、下面我们将刚才创建的 znode 删除：
+5、下面我们将刚才创建的 znode 删除:
 
 [source,shell]
 ----
 [zk: 202.115.36.251:2181(CONNECTED) 5] delete /zk
 ----
 
-6、删除节点：`rmr`
+6、删除节点: `rmr`
 
 [source,shell]
 ----
@@ -232,18 +232,18 @@ public class SimpleDemo {
     }
     private void ZKOperations() throws IOException, InterruptedException, KeeperException
     {
-        System.out.println("/n1. 创建 ZooKeeper 节点 (znode ： zoo2, 数据： myData2 ，权限： OPEN_ACL_UNSAFE ，节点类型： Persistent");
+        System.out.println("/n1. 创建 ZooKeeper 节点 (znode :  zoo2, 数据:  myData2 ，权限:  OPEN_ACL_UNSAFE ，节点类型:  Persistent");
         zk.create("/zoo2", "myData2".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-        System.out.println("/n2. 查看是否创建成功： ");
+        System.out.println("/n2. 查看是否创建成功:  ");
         System.out.println(new String(zk.getData("/zoo2", false, null)));
         System.out.println("/n3. 修改节点数据 ");
         zk.setData("/zoo2", "shenlan211314".getBytes(), -1);
-        System.out.println("/n4. 查看是否修改成功： ");
+        System.out.println("/n4. 查看是否修改成功:  ");
         System.out.println(new String(zk.getData("/zoo2", false, null)));
         System.out.println("/n5. 删除节点 ");
         zk.delete("/zoo2", -1);
-        System.out.println("/n6. 查看节点是否被删除： ");
-        System.out.println(" 节点状态： [" + zk.exists("/zoo2", false) + "]");
+        System.out.println("/n6. 查看节点是否被删除:  ");
+        System.out.println(" 节点状态:  [" + zk.exists("/zoo2", false) + "]");
     }
     private void ZKClose() throws InterruptedException
     {
@@ -265,12 +265,12 @@ https://github.com/jiachao23/StudyNote/blob/master/src/img/zkworg.png[zkworg]
 
 监听器是一个接口，我们的代码中可以实现Wather这个接口，实现其中的process方法，方法中即我们自己的业务逻辑
 
-* 监听器的注册是在获取数据的操作中实现：
-** `getData(path,watch?)` 监听的事件是：节点数据变化事件
-** `getChildren(path,watch?)` 监听的事件是：节点下的子节点增减变化事件
+* 监听器的注册是在获取数据的操作中实现:
+** `getData(path,watch?)` 监听的事件是: 节点数据变化事件
+** `getChildren(path,watch?)` 监听的事件是: 节点下的子节点增减变化事件
 
 [[zookeeper-example]]
-== zookeeper 应用案例（分布式应用HA||分布式锁）
+== zookeeper 应用案例(分布式应用HA||分布式锁)
 
 [[zookeeper-example-ha]]
 === 实现分布式应用的(主节点HA)及客户端动态更新主节点状态

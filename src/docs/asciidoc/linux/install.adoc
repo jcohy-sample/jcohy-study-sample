@@ -47,7 +47,7 @@
 
 [NOTE]
 ====
-注意：您可以将软件包下载下来，利用 FileZilla 或者其他工具将下载好的安装包上传至 Linux 服务器。也可以在服务器上使用 wget 等 Linux 命令下载。 所有的安装软件安装包放置在 **/opt/software/**  目录下。
+注意: 您可以将软件包下载下来，利用 FileZilla 或者其他工具将下载好的安装包上传至 Linux 服务器。也可以在服务器上使用 wget 等 Linux 命令下载。 所有的安装软件安装包放置在 **/opt/software/**  目录下。
 
 另外，本文档全部使用的是 `root` 权限。 如果没有，请自行添加 `sudo` 权限。
 ====
@@ -201,7 +201,7 @@ systemctl enable mysqld
 systemctl start mysqld
 ----
 
-8.mysql安装完成之后，在 `/var/log/mysqld.log` 文件中给root生成了一个默认密码。通过下面的方式找到 `root` 默认密码，然后登录 `mysql` 进行修改：
+8.mysql安装完成之后，在 `/var/log/mysqld.log` 文件中给root生成了一个默认密码。通过下面的方式找到 `root` 默认密码，然后登录 `mysql` 进行修改:
 
 [source,shell]
 ----
@@ -237,7 +237,7 @@ flush privileges;
 
 11.修改密码策略
 
-mysql5.8 默认安装了密码安全检查插件(`validate_password`)，默认密码检查策略要求密码必须包含：大小写字母、数字和特殊符号，并且长度不能少于8位。否则会提示 ERROR 1819 (HY000): Your password does not satisfy the current policy requirements 错误。
+mysql5.8 默认安装了密码安全检查插件(`validate_password`)，默认密码检查策略要求密码必须包含: 大小写字母、数字和特殊符号，并且长度不能少于8位。否则会提示 ERROR 1819 (HY000): Your password does not satisfy the current policy requirements 错误。
 
 [source,shell]
 ----
@@ -245,16 +245,16 @@ mysql5.8 默认安装了密码安全检查插件(`validate_password`)，默认�
 show variables like '%password%';
 ----
 
-如下图所示：
+如下图所示:
 
 image::images/linux-install1.jpg[]
 
-* validate_password_policy：密码策略，默认为MEDIUM策略
-* validate_password_dictionary_file：密码策略文件，策略为STRONG才需要
-* validate_password_length：密码最少长度
-* validate_password_mixed_case_count：大小写字符长度，至少1个
-* validate_password_number_count ：数字至少1个
-* validate_password_special_char_count：特殊字符至少1个
+* validate_password_policy: 密码策略，默认为MEDIUM策略
+* validate_password_dictionary_file: 密码策略文件，策略为STRONG才需要
+* validate_password_length: 密码最少长度
+* validate_password_mixed_case_count: 大小写字符长度，至少1个
+* validate_password_number_count : 数字至少1个
+* validate_password_special_char_count: 特殊字符至少1个
 
 上述参数是默认策略 **MEDIUM** 的密码检查规则
 
@@ -276,7 +276,7 @@ GRANT ALL PRIVILEGES ON *.* TO 'jiac'@'%' IDENTIFIED BY 'jiac0917!' WITH GRANT O
 
 [source,shell]
 ----
-#修改/etc/my.cnf配置文件，在[mysqld]下添加编码配置，如下所示：
+#修改/etc/my.cnf配置文件，在[mysqld]下添加编码配置，如下所示:
 [mysqld]
 character_set_server=utf8
 init_connect='SET NAMES utf8'
@@ -317,7 +317,7 @@ cd redis-5.0.5
 make
 ----
 
-2.make 完后 redis-2.8.17 目录下会出现编译后的 redis 服务程序 redis-server,还有用于测试的客户端程序 redis-cli,两个程序位于安装目录 src 目录下：
+2.make 完后 redis-2.8.17 目录下会出现编译后的 redis 服务程序 redis-server,还有用于测试的客户端程序 redis-cli,两个程序位于安装目录 src 目录下:
 
 下面启动redis服务.
 
@@ -337,7 +337,7 @@ cd src
 
 4.**redis.conf** 是一个默认的配置文件。我们可以根据需要使用自己的配置文件。
 
-启动 redis 服务进程后，就可以使用测试客户端程序 redis-cli 和 redis 服务交互了。 比如：
+启动 redis 服务进程后，就可以使用测试客户端程序 redis-cli 和 redis 服务交互了。 比如:
 
 [source,shell]
 ----
@@ -376,7 +376,7 @@ yum -y install make zlib zlib-devel gcc-c++ libtool  openssl openssl-devel
 
 2.首先要安装 PCRE
 
-- 下载 PCRE 安装包，下载地址： <http://downloads.sourceforge.net/project/pcre/pcre/8.35/pcre-8.35.tar.gz>
+- 下载 PCRE 安装包，下载地址:  <http://downloads.sourceforge.net/project/pcre/pcre/8.35/pcre-8.35.tar.gz>
 
 [source,shell]
 ----
@@ -585,7 +585,7 @@ rabbitmqctl list_user_permissions username
 
 1.在docker官网查找 docker 镜像，https://hub.docker.com/
 
-2.拉取镜像,我们选择带有 "mangement" 的版本（包含web管理页面）
+2.拉取镜像,我们选择带有 "mangement" 的版本(包含web管理页面)
 
 [source,shell]
 ----
@@ -653,7 +653,7 @@ external_url -> 服务器http://IP:端口
 gitlab-ctl reconfigure
 ----
 
-5.启动：gitlab-ctl start 出现如下说明成功
+5.启动: gitlab-ctl start 出现如下说明成功
 
 [source]
 ----
@@ -773,7 +773,7 @@ docker rm gitlab
 //重新配置GitLab以使更改生效
 gitlab-ctl reconfigure
 gitlab-ctl restart
-//验证是否正确配置了所有内容：
+//验证是否正确配置了所有内容:
 gitlab-rake gitlab:incoming_email:check
 gitlab-rails console
 Notify.test_email('jia_chao23@126.com', 'Message Subject', 'Message Body').deliver_now
@@ -812,7 +812,7 @@ yum -y install bzip2
 / /2.下载 gcc 包
 
 wget https://ftp.gnu.org/gnu/gcc/gcc-7.3.0/gcc-7.3.0.tar.gz
-//3.安装依赖，自动下载可能会慢。建议手动下载，然后复制到安装目录下。需要下载以下四个包。下载地址：ftp://gcc.gnu.org/pub/gcc/infrastructure/
+//3.安装依赖，自动下载可能会慢。建议手动下载，然后复制到安装目录下。需要下载以下四个包。下载地址: ftp://gcc.gnu.org/pub/gcc/infrastructure/
 gmp-6.1.0.tar.bz2:
 mpfr-3.1.4.tar.bz2:
 mpc-1.0.3.tar.gz:
@@ -835,7 +835,7 @@ rpm -q gcc-c++
 
 删除已经安装低版本
 rpm -e [包名]
-包名为上一步中显示的包，形如：
+包名为上一步中显示的包，形如:
 gcc-4.8.5-16.el7_4.2.x86_64
 gcc-c++-4.8.5-16.el7_4.2.x86_64
 
@@ -852,7 +852,7 @@ which gcc
 /usr/local/bin/gcc -v
 
 //9.添加环境变量
-// (1).直接用export命令：
+// (1).直接用export命令:
 export PATH=$PATH:/usr/local/bin
 查看是否已经设好，可用命令export查看，或者直接echo $PATH
 
@@ -861,7 +861,7 @@ ln -s /usr/local/bin/gcc /usr/bin/gcc
 (建立/usr/bin/gcc到编译安装gcc的软链接)
 ----
 
-报错：
+报错:
 
 [source]
 ----
@@ -874,7 +874,7 @@ node: /usr/lib64/libstdc++.so.6: version `GLIBCXX_3.4.20' not found (required by
 
 [source,shell]
 ----
-//1.执行以下命令，查找编译gcc时生成的最新动态库：
+//1.执行以下命令，查找编译gcc时生成的最新动态库:
 find / -name "libstdc++.so*"
 ...
 /opt/software/gcc-build-7.3.0/prev-x86_64-pc-linux-gnu/libstdc++-v3/src/.libs/libstdc++.so.6.0.24
@@ -883,11 +883,11 @@ find / -name "libstdc++.so*"
 /opt/software/gcc-build-7.3.0/x86_64-pc-linux-gnu/libstdc++-v3/src/.libs/libstdc++.so.6.0.24
 ...
 
-//2.将上面的最新动态库 libstdc++.so.6.0.21 复制到 /usr/lib64 目录下：
+//2.将上面的最新动态库 libstdc++.so.6.0.21 复制到 /usr/lib64 目录下:
 
 cp /opt/software/gcc-build-7.3.0/x86_64-pc-linux-gnu/libstdc++-v3/src/.libs/libstdc++.so.6.0.24 /usr/lib64
 
-//3.复制后，修改系统默认动态库的指向，即：重建默认库的软连接。
+//3.复制后，修改系统默认动态库的指向，即: 重建默认库的软连接。
 cd /usr/lib64
 rm -rf libstdc++.so.6
 ln -s libstdc++.so.6.0.21 libstdc++.so.6
@@ -952,7 +952,7 @@ wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.0.6.tgz
 [[linux-install-docker-usually]]
 === 常规安装
 
-1.Docker 运行在 CentOS 7.X 之上 （不支持内核在 3.8 以下的老版本）
+1.Docker 运行在 CentOS 7.X 之上 (不支持内核在 3.8 以下的老版本)
 
 通过以下命令查看您的 CentOS 内核
 
@@ -980,7 +980,7 @@ yum remove docker \
 
 4.设置 Yum 源
 
-Docker 有多种安装方式，例如 Yum 安装、PRM 包安装、Shell安装等。以下以 Yum 安装方式进行, Docker 分 Docker EE 和 Docker CE 两种版本（EE：企业版，收费的；CE：社区版，不收费）。
+Docker 有多种安装方式，例如 Yum 安装、PRM 包安装、Shell安装等。以下以 Yum 安装方式进行, Docker 分 Docker EE 和 Docker CE 两种版本(EE: 企业版，收费的; CE: 社区版，不收费)。
 
 * 安装 yum-utils , 这样就能使用 yum-config-manager 工具设置 Yum 源。
 
@@ -1010,7 +1010,7 @@ yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/d
  yum-config-manager --enable docker-ce-test
 ----
 
-* 如想要禁用测试仓库，可执行以下命令：
+* 如想要禁用测试仓库，可执行以下命令:
 
 [source,shell]
 ----
@@ -1028,7 +1028,7 @@ yum install docker-ce
 yum list docker-ce --showduplicates | sort -r
 //列出 Docker 版本后，可使用以下命令安装指定版本的 Docker 。
 yum install
-//例如：
+//例如:
 yum -y install docker-ce-17.09.0.ce
 ----
 
@@ -1065,19 +1065,19 @@ sudo rm -rf /var/lib/docker
 
 10.设置docker镜像加速
 
-国内访问 Docker Hub 的速度很不稳定，有时甚至出现连接不上的情况。为 Docker 配置镜像加速器，从而解决这个问题。目前国内很多云服务商都提供了镜像加速的服务。常用的镜像加速器有：
+国内访问 Docker Hub 的速度很不稳定，有时甚至出现连接不上的情况。为 Docker 配置镜像加速器，从而解决这个问题。目前国内很多云服务商都提供了镜像加速的服务。常用的镜像加速器有:
 
 阿里云加速器、DaoCloud加速器等。
 
-以阿里云加速器为例：
-. 注册阿里云账号，即可在阿里云控制台（https://cr.console.aliyun.com/#/accelerator）
+以阿里云加速器为例:
+. 注册阿里云账号，即可在阿里云控制台(https://cr.console.aliyun.com/#/accelerator)
 . 按照提示说明，即可配置镜像加速器。
 
 11.ipv4转向配置
 
-若启动docker的时候报错：WARNING IPv4 forwarding is disabled. Networking will not work
+若启动docker的时候报错: WARNING IPv4 forwarding is disabled. Networking will not work
 
-解决方案：
+解决方案:
 
 [source,shell]
 ----
@@ -1100,7 +1100,7 @@ sysctl net.ipv4.ip_forward
 
 [source,shell]
 ----
-//指定版本安装：
+//指定版本安装:
 $ sudo curl -L https://get.daocloud.io/docker/compose/releases/download/1.23.1/\
 docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
 
@@ -1137,7 +1137,7 @@ docker-compose version 1.23.1, build 1719ceb
 
 [NOTE]
 ====
-注意：Harbor的所有服务组件都是在Docker中部署的，所以官方安装使用Docker-compose快速部署，所以我们需要安装Docker、Docker-compose。由于Harbor是基于Docker Registry V2版本,
+注意: Harbor的所有服务组件都是在Docker中部署的，所以官方安装使用Docker-compose快速部署，所以我们需要安装Docker、Docker-compose。由于Harbor是基于Docker Registry V2版本,
 所以就要求Docker版本不小于1.10.0，Docker-compose版本不小于1.6.0。
 ====
 
@@ -1174,9 +1174,9 @@ docker-compose start
 ----
 
 4.登录Harbor
-> 地址：http://192.168.11.239
-> 用户名：admin
-> 密码：Harbor12345
+> 地址: http://192.168.11.239
+> 用户名: admin
+> 密码: Harbor12345
 
 5.测试推送
 
@@ -1201,7 +1201,7 @@ $ docker push 192.168.11.239/aix/nginx
 
 6.开放2375端口
 
-注意：在外网开放有安全风险，只推荐在内网对外开放
+注意: 在外网开放有安全风险，只推荐在内网对外开放
 
 [source,shell]
 ----
@@ -1253,7 +1253,7 @@ Error response from daemon: Get https://192.168.11.239/v1/users/: dial tcp 192.1
 
 这是因为 `docker1.3.2` 版本开始默认 docker registry 使用的是 `https`，我们设置 Harbor 默认 `http` 方式，所以当执行用 docker `login`、`pull`、`push` 等命令操作非 `https` 的 docker regsitry 的时就会报错。
 
-解决办法：配置/etc/docker/daemon.json
+解决办法: 配置/etc/docker/daemon.json
 
 [source,shell]
 ----
@@ -1262,7 +1262,7 @@ vi /etc/docker/daemon.json
 {
   "registry-mirrors": ["https://3dse7md.mirror.aliyuncs.com"]
 }
-//将其修改为：
+//将其修改为:
 {
   "registry-mirrors": ["https://3dse7md.mirror.aliyuncs.com"],
   "insecure-registries":["192.168.11.239"]
@@ -1282,7 +1282,7 @@ Error response from daemon: repository 192.168.11.239/aix/nginx not found: does 
 
 这是原因可能有，一是Harbor仓库上 aix/nginx 确实不存在，二是项目未设置公开的时候，该账户未执行 docker login 192.168.11.239 登录操作，三是该账户对 192.168.11.239/aix 项目没有权限，需要在该项目下增加aix成员，并选择角色。
 
-(3).如果需要修改Harbor的配置文件 `harbor.cfg`，因为Harbor是基于 docker-compose 服务编排的，我们可以使用 docker-compose 命令重启 Harbor。不修改配置文件，重启Harbor命令：docker-compose `start` | `stop` | `restart`
+(3).如果需要修改Harbor的配置文件 `harbor.cfg`，因为Harbor是基于 docker-compose 服务编排的，我们可以使用 docker-compose 命令重启 Harbor。不修改配置文件，重启Harbor命令: docker-compose `start` | `stop` | `restart`
 
 [source,shell]
 ----
@@ -1339,7 +1339,7 @@ jenkinsci/blueocean
 1.下载高版本 gcc，这里使用的是 8.3.0
 
 
-如果使用编译后的 gcc 包，可解压后可直接从第5步开始：
+如果使用编译后的 gcc 包，可解压后可直接从第5步开始:
 
 2.解压缩
 
@@ -1602,7 +1602,7 @@ ou: Group
 [[linux-install-confluence]]
 == Confluence
 
-参考文档：
+参考文档:
 
 https://www.cnblogs.com/ios9/p/9045035.html#_label0
 
@@ -1667,8 +1667,8 @@ image::images/confluence_keygen1.png[]
 [source,shell]
 ----
 chmod 777 atlassian-extras-decoder-v2-3.4.1.jar
-service confluence stop；
-service confluence start；
+service confluence stop;
+service confluence start;
 ----
 
 6.访问 confluence
@@ -1681,7 +1681,7 @@ http://localhost:8090
 
 9.设置外部数据库
 
-mysql设置问题：
+mysql设置问题:
 
 - 数据库字符编码
 
@@ -1703,7 +1703,7 @@ e.g. jdbc:mysql://127.0.0.1:3306/confdb?sessionVariables=tx_isolation='READ-COMM
 
 - MySQL存储引擎
 
-修改启动配置文件：default-storage-engine=INNODB
+修改启动配置文件: default-storage-engine=INNODB
 
 10.配置邮箱服务器
 
@@ -1716,9 +1716,9 @@ image::images/confluence_keygen2.png[]
 第二步:由于 confluence 把 tomcat 给改造了，所以 confluence 的应用并没有在 workapps 下,而是在 confluence 下面;我们的工程的配置文件在 classes 文件夹，于是我找到了 `/opt/atlassian/confluence/confluence/WEB-INF/classes` 这个目录，
 查看这个目录下面有一个 `confluence-init.properties` 文件，感觉像是大概的配置文件，打开这个文件，发现最后面有一行代码: `confluence.home = /var/atlassian/application-data/confluence`
 
-第三步:进入 `confluence.home` 配置的文件夹，打开这个文件夹看到 有一个 `confluence.cfg.xml` 文件，打开这个文件，发现配置的数据库连接池一类的东西，真正的算是找到了，修改 `hibernate.connection.url` 的 `value` 为新的数据库地址 重新启动服务；
+第三步:进入 `confluence.home` 配置的文件夹，打开这个文件夹看到 有一个 `confluence.cfg.xml` 文件，打开这个文件，发现配置的数据库连接池一类的东西，真正的算是找到了，修改 `hibernate.connection.url` 的 `value` 为新的数据库地址 重新启动服务;
 
-`/var/atlassian/application-data/confluence` 下 `confluence.cfg.xml` 文件：
+`/var/atlassian/application-data/confluence` 下 `confluence.cfg.xml` 文件:
 
 [[linux-install-zookeeper]]
 == zookeeper
@@ -1731,7 +1731,7 @@ image::images/confluence_keygen2.png[]
 
 [source,shell]
 ----
-tar -zxvf zookeeper-3.4.5.tar.gz（解压）
+tar -zxvf zookeeper-3.4.5.tar.gz(解压)
 ----
 
 
@@ -1739,7 +1739,7 @@ tar -zxvf zookeeper-3.4.5.tar.gz（解压）
 
 [source,shell]
 ----
-mv zookeeper-3.4.5 zookeeper（重命名文件夹zookeeper-3.4.5为zookeeper）
+mv zookeeper-3.4.5 zookeeper(重命名文件夹zookeeper-3.4.5为zookeeper)
 ----
 
 
@@ -1773,7 +1773,7 @@ server.2=slave2:2888:3888
 server.3=slave3:2888:3888
 ----
 
-6.创建文件夹：
+6.创建文件夹:
 
 [source,shell]
 ----
@@ -1782,14 +1782,14 @@ mkdir -m 755 data
 mkdir -m 755 log
 ----
 
-7.在data文件夹下新建 `myid` 文件，`myid` 的文件内容为：
+7.在data文件夹下新建 `myid` 文件，`myid` 的文件内容为:
 
 [source,shell]
 ----
 cd data
 vi myid
 
-添加内容：
+添加内容:
 
 1
 ----
@@ -1805,9 +1805,9 @@ vi myid
 
 9.修改其他机器的配置文件
 
-到slave2上：修改myid为：2
+到slave2上: 修改myid为: 2
 
-到slave3上：修改myid为：3
+到slave3上: 修改myid为: 3
 
 10.启动(每台机器)
 
@@ -1820,5 +1820,5 @@ zkServer.sh start
 
 11.查看集群状态
 
-* jps（查看进程）
-* zkServer.sh status（查看集群状态，主从信息）
+* jps(查看进程)
+* zkServer.sh status(查看集群状态，主从信息)

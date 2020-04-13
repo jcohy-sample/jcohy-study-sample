@@ -11,44 +11,44 @@
 [[nginx-overview-conf-global]]
 == 全局块
 
-* 配置运行nginx服务器的用户（组）
+* 配置运行nginx服务器的用户(组)
 
-    语法:user  用户名;  （全局块）
+    语法:user  用户名;  (全局块)
 
 * 允许生成的 work process 数.worker_processes 是 Nginx 服务器实现并发处理服务的关键。
 
-    语法:worker_processes number|auto;    （全局块）
+    语法:worker_processes number|auto;    (全局块)
 
 * 配置全局的日志存放路径
 
-    语法:error_log  file|stderr [debug|info|notice|warn|error|crit|alert|emery];（全局块，http块，server块，location块）
+    语法:error_log  file|stderr [debug|info|notice|warn|error|crit|alert|emery];(全局块，http块，server块，location块)
 
 * nginx进程PID存放路径
 
-    语法:pid file；（全局块）
+    语法:pid file; (全局块)
 
 * 完成其他nginx配置或者第三方模块的配置引入
 
-     语法:include file;（任何地方）
+     语法:include file;(任何地方)
 
 [[nginx-overview-conf-events]]
 == events 块
 
 * 设置网络连接的序列化
 
-    语法:accept_mutex on|off;（events块）
+    语法:accept_mutex on|off;(events块)
 
 * 设置是否允许同事接收多个网络连接
 
-    语法:multi_accept on|off;（events块）
+    语法:multi_accept on|off;(events块)
 
 * 事件驱动模型的选择
 
-    语法:use [select|poll|kqueue|epoll|rtsig|/dev/poll|eventport];（events块）
+    语法:use [select|poll|kqueue|epoll|rtsig|/dev/poll|eventport];(events块)
 
 * 设置最大连接数，不能大于操作系统支持打开的最大文件句柄数量
 
-    语法:worker_connections  number; （events块）
+    语法:worker_connections  number; (events块)
 
 [[nginx-overview-conf-http]]
 == http 全局块
@@ -59,11 +59,11 @@
 
 * 定义了处理前端请求的MIME类型。默认为text/plain。
 
-    语法:default_type  application/octet-stream;（http块，server块，location块）
+    语法:default_type  application/octet-stream;(http块，server块，location块)
 
 * 服务日志的配置，只能在http块配置
 
-    语法:access_log path[format[buffer=size]]; （http块）
+    语法:access_log path[format[buffer=size]]; (http块)
     path:存放路径。format:可选项，自定义服务日志的格式字符串，联合log_format使用;
     log_format配置:
     语法:log_format name string...;
@@ -79,21 +79,21 @@
 
 * 配置允许sendfile方式传输文件
 
-    语法:sendfile on|off;（http块，server块，location块）
+    语法:sendfile on|off;(http块，server块，location块)
 
 * 配置每次传输的数据量最大值
 
-    语法:sendfile_max_chunk size;（http块，server块，location块）
+    语法:sendfile_max_chunk size;(http块，server块，location块)
 
 * 超时时间
 
-    语法:keepalive_timeout timeout[header_timeout];（http块，server块，location块）
+    语法:keepalive_timeout timeout[header_timeout];(http块，server块，location块)
           header_timeout可选，在应答报文头部的Keep-Alive域设置超时时间。
           keepalive_timeout  120s 100s;服务端保持120s，发给用户端的应答报文头部Keep-Alive域超时时间100s
 
 * 配置单连接请求数上限
 
-    语法:keepalive_requests number;（http块，server块，location块）
+    语法:keepalive_requests number;(http块，server块，location块)
 
 [[nginx-overview-conf-server]]
 == server 块
@@ -249,7 +249,7 @@
 
         ## 配置虚拟主机myserver1
         server {
-            ## 配置监听端口和主机名称（基于名称）
+            ## 配置监听端口和主机名称(基于名称)
             listen       8081;
             server_name  myserver1;
             ## 配置请求处理日志存放路径
@@ -273,7 +273,7 @@
 
          ## 配置虚拟主机myserver2
          server {
-             ## 配置监听端口和主机名称（基于名称）
+             ## 配置监听端口和主机名称(基于名称)
              listen       8082;
              server_name  192.168.1.3;
 

@@ -117,12 +117,12 @@ mysql(){
 		#pattern="^(?![A-Za-z0-9]+$)(?![a-z0-9\\W]+$)(?![A-Za-z\\W]+$)(?![A-Z0-9\\W]+$)[a-zA-Z0-9\\W]{8,}$"
 		#while [[ "$newPassword" =~ $pattern ]]
 		#do
-		read -p '准备修改mysql密码，请输入新密码：新密码必须包含大小写字母、数字和特殊符号，并且长度不能少于8位。' newPassword
+		read -p '准备修改mysql密码，请输入新密码: 新密码必须包含大小写字母、数字和特殊符号，并且长度不能少于8位。' newPassword
 		#done
 		# grep 'temporary password' /var/log/mysqld.log | sed -r 's/.*localhost: (.*)/\1/g'
 		cd ~
 		password=`grep 'temporary password' /var/log/mysqld.log|tail -n 1| awk '{print $NF}'`
-		echo "---------->>mysql 默认密码："$password
+		echo "---------->>mysql 默认密码: "$password
 		./sql.sh $password $newPassword
 		echo "====================== 开启端口访问======================"
 		#firewall-cmd --permanent --zone=public --add-port=3306/tcp

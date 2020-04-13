@@ -1,10 +1,10 @@
-## 一、调整内存：max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]（elasticsearch用户拥有的内存权限太小，至少需要262144）
+## 一、调整内存: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144](elasticsearch用户拥有的内存权限太小，至少需要262144)
 
 #### 1.修改配置sysctl.conf
 [root@localhost ~]# vi /etc/sysctl.conf
-#### 2.添加下面配置：
+#### 2.添加下面配置: 
 vm.max_map_count=262144
-#### 3.重新加载：
+#### 3.重新加载: 
 [root@localhost ~]# sysctl -p
 #### 4.最后重新启动elasticsearch，即可启动成功。
 
@@ -43,7 +43,7 @@ docker 方式卸载，请执行 ./deploy.sh undocker
 如果需要安装 nginx，请执行  ./native.sh nginx
 如果需要安装以上全部软件，请执行  ./native.sh all
 
-./docker.sh：使用docker方式安装软件
+./docker.sh: 使用docker方式安装软件
 安装 nacos，请执行  source ./docker.sh nacos
 安装 sentinel，请执行  ./docker.sh sentinel
 安装 api-nginx，请执行  ./docker.sh api-nginx

@@ -4,11 +4,11 @@
 [[linux-base-mirror]]
 == Linux 镜像地址
 
-*  CentOS 官网：http://www.centos.org[http://www.centos.org]
-*  CentOS 阿里云镜像：http://mirrors.aliyun.com/centos[http://mirrors.aliyun.com/centos]
-*  CentOS 搜狐镜像：http://mirrors.sohu.com/centos[http://mirrors.sohu.com/centos]
-*  CentOS 网易镜像：http://mirrors.163.com/centos[http://mirrors.163.com/centos]
-*  CentOS 北京理工大学镜像：http://mirror.bit.edu.cn/centos[http://mirror.bit.edu.cn/centos]
+*  CentOS 官网: http://www.centos.org[http://www.centos.org]
+*  CentOS 阿里云镜像: http://mirrors.aliyun.com/centos[http://mirrors.aliyun.com/centos]
+*  CentOS 搜狐镜像: http://mirrors.sohu.com/centos[http://mirrors.sohu.com/centos]
+*  CentOS 网易镜像: http://mirrors.163.com/centos[http://mirrors.163.com/centos]
+*  CentOS 北京理工大学镜像: http://mirror.bit.edu.cn/centos[http://mirror.bit.edu.cn/centos]
 
 [[linux-base-dir]]
 == Linux 目录结构

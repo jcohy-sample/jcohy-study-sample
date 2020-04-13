@@ -122,10 +122,10 @@
 
 *  添加一个tom用户，设置它属于users组，并添加注释信息
         
-        分步完成：useradd tom
+        分步完成: useradd tom
                 usermod -g users tom
 	            usermod -c "hr tom" tom
-        一步完成：useradd -g users -c "hr tom" tom
+        一步完成: useradd -g users -c "hr tom" tom
 
 *  设置tom用户的密码
 
@@ -214,7 +214,7 @@
         9 + G到第九行 = :9
         
         dd:删除一行
-        3dd：删除3行
+        3dd: 删除3行
         yy:复制一行
         3yy:复制3行
         p:粘贴
@@ -241,10 +241,10 @@
 [[linux-command-look]]
 == 查找
 
-*  查找可执行的命令：
+*  查找可执行的命令:
 
         which ls
-*  查找可执行的命令和帮助的位置：
+*  查找可执行的命令和帮助的位置:
     
         whereis ls
 *  查找文件(需要更新库:updatedb)
@@ -356,14 +356,14 @@
         
         grep 'hadoop$' /etc/passwd
         
-        规则：
+        规则:
         .  : 任意一个字符
         a* : 任意多个a(零个或多个a)
         a? : 零个或一个a
         a+ : 一个或多个a
         .* : 任意多个任意字符
         \. : 转义.
-        \<h.*p\> ：以h开头，p结尾的一个单词
+        \<h.*p\> : 以h开头，p结尾的一个单词
         o\{2\} : o重复两次
         
         grep '^i.\{18\}n$' /usr/share/dict/words
@@ -396,7 +396,7 @@
         find /etc -name passwd &> /tmp/log.txt
 *  追加>>
 
-*  将小写转为大写（输入重定向）
+*  将小写转为大写(输入重定向)
 
         tr "a-z" "A-Z" < /etc/passwd
 *  自动创建文件

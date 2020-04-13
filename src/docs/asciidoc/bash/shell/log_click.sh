@@ -54,7 +54,7 @@ smonth=`date --date=$day_01 +%m`
 sday=`date --date=$day_01 +%d`
 
 
-#读取日志文件的目录，判断是否有当日待处理的目录(如：2016-03-18)
+#读取日志文件的目录，判断是否有当日待处理的目录(如: 2016-03-18)
 files=`hadoop fs -ls $log_pre_output | grep $day_01 | wc -l`
 if [ $files -gt 0 ]; then
 #提交mr任务job运行
@@ -62,7 +62,7 @@ echo "running..    hadoop jar weblog.jar $click_pv_class $log_pre_output/$day_01
 hadoop jar weblog.jar $click_pv_class $log_pre_output/$day_01 $click_pvout/$day_01
 fi
 
-echo "pv处理运行结果： $?"
+echo "pv处理运行结果:  $?"
 if [ $? -eq 0 ];then
 #提交mr任务job运行
 echo "running..    hadoop jar weblog.jar $click_visit_class $click_pvout $day_01 $click_vstout/$day_01"

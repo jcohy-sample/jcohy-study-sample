@@ -11,7 +11,7 @@ export HADOOP_HOME=/home/hadoop/app/hadoop-2.6.4
 export PATH=${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:$PATH
 
 
-#版本1的问题：
+#版本1的问题:
 #虽然上传到Hadoop集群上了，但是原始文件还在。如何处理？
 #日志文件的名称都是xxxx.log1,再次上传文件时，因为hdfs上已经存在了，会报错。如何处理？
 
@@ -58,7 +58,7 @@ do
 	echo "toupload is in file:"$line
 	#将待上传文件列表willDoing改名为willDoing_COPY_
 	mv $log_toupload_dir$line $log_toupload_dir$line"_COPY_"
-	#读列表文件willDoing_COPY_的内容（一个一个的待上传文件名）  ,此处的line 就是列表中的一个待上传文件的path
+	#读列表文件willDoing_COPY_的内容(一个一个的待上传文件名)  ,此处的line 就是列表中的一个待上传文件的path
 	cat $log_toupload_dir$line"_COPY_" |while read line
 	do
 		#打印信息
