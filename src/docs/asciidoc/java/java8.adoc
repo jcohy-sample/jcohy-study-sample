@@ -1350,8 +1350,8 @@ Java8 中，接口中允许添加静态方法
 | plus,minus
 | 添加或减少一个Duration或Period
 
-| withDayOfMonth, <br/>withDayOfYear,<br/>withMonth,<br/>withYear
-| 将月份天数、年份天数、月份、年份修改为指定的值并返回新的LocalDate对象
+| withDayOfMonth, withDayOfYear,withMonth,withYear
+| 将月份天数、年份天数、月份、年份修改为指定的值并返回新的 `LocalDate` 对象
 
 | getDayOfMonth
 | 获得月份天数(1-31)
@@ -1360,10 +1360,10 @@ Java8 中，接口中允许添加静态方法
 | 获得年份天数(1-366)
 
 | getDayOfWeek
-| 获得星期几(返回一个DayOfWeek枚举值)
+| 获得星期几(返回一个 `DayOfWeek` 枚举值)
 
 | getMonth
-| 获得月份,返回一个Month枚举值
+| 获得月份,返回一个 `Month` 枚举值
 
 | getMonthValue
 | 获得月份(1-12)
@@ -1372,7 +1372,7 @@ Java8 中，接口中允许添加静态方法
 | 获得年份
 
 | until
-| 获得两个日期之间的Period对象，或者指定ChronoUnits的数字
+| 获得两个日期之间的 `Period` 对象，或者指定 `ChronoUnits` 的数字
 
 | isBefore,isAfter
 | 比较两个LocalDate

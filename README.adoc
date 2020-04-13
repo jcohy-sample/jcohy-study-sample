@@ -9,7 +9,7 @@
 | 100%
 
 | jcohy-study-ansyc
-| 0
+| 0%[暂不计划]
 
 | jcohy-study-designpattern
 | 100%
@@ -30,10 +30,10 @@
 | 80%
 
 | jcohy-study-nginx
-| 0%
+| 100%
 
 | jcohy-study-nosql
-| 0%
+| 100%
 
 | jcohy-study-quartz
 | 0%
