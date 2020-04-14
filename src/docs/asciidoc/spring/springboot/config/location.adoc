@@ -3,13 +3,10 @@
 
 springboot 启动会扫描以下位置的 `application.properties` 或者 `application.yml` 文件作为 Spring boot 的默认配置文件
 
-–file:./config/
-
-–file:./
-
-–classpath:/config/
-
-–classpath:/
+* –file:./config/
+* –file:./
+* –classpath:/config/
+* –classpath:/
 
 优先级由高到底，高优先级的配置会覆盖低优先级的配置;
 

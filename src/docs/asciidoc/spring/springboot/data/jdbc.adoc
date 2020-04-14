@@ -1,0 +1,86 @@
+[[springboot-base-access-jdbc]]
+= JDBC
+
+[source,xml]
+----
+<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+----
+
+[source,yaml]
+----
+spring:
+  datasource:
+    username: root
+    password: 123456
+    url: jdbc:mysql://192.168.15.22:3306/jdbc
+    driver-class-name: com.mysql.jdbc.Driver
+----
+
+效果:
+
+​默认是用 `org.apache.tomcat.jdbc.pool.DataSource` 作为数据源;
+
+​数据源的相关配置都在 `DataSourceProperties` 里面;
+
+自动配置原理:
+
+`org.springframework.boot.autoconfigure.jdbc`:
+
+1、参考 `DataSourceConfiguration`，根据配置创建数据源，默认使用Tomcat连接池; 可以使用 `spring.datasource.type` 指定自定义的数据源类型;
+
+2、SpringBoot 默认可以支持;
+
+[source]
+----
+org.apache.tomcat.jdbc.pool.DataSource、HikariDataSource、BasicDataSource、
+----
+
+3、自定义数据源类型
+
+[source,java]
+----
+/**
+ * Generic DataSource configuration.
+ */
+@ConditionalOnMissingBean(DataSource.class)
+@ConditionalOnProperty(name = "spring.datasource.type")
+static class Generic {
+
+   @Bean
+   public DataSource dataSource(DataSourceProperties properties) {
+       //使用DataSourceBuilder创建数据源，利用反射创建响应type的数据源，并且绑定相关属性
+      return properties.initializeDataSourceBuilder().build();
+   }
+
+}
+----
+
+4、**DataSourceInitializer: ApplicationListener**;
+
+​作用:
+
+​1)、runSchemaScripts();运行建表语句;
+
+​2)、runDataScripts();运行插入数据的sql语句;
+
+默认只需要将文件命名为:
+
+[source,properties]
+----
+schema-*.sql、data-*.sql
+默认规则: schema.sql，schema-all.sql;
+可以使用
+	schema:
+      - classpath:department.sql
+      指定位置
+----
+
+5、操作数据库: 自动配置了 JdbcTemplate 操作数据库

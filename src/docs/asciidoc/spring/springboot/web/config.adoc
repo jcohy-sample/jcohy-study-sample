@@ -1,0 +1,10 @@
+[[springboot-base-web-update]]
+= 如何修改 SpringBoot 的默认配置
+
+模式:
+
+​1)、SpringBoot在自动配置很多组件的时候，先看容器中有没有用户自己配置的(@Bean、@Component)如果有就用用户配置的，如果没有，才自动配置; 如果有些组件可以有多个(ViewResolver)将用户配置的和自己默认的组合起来;
+
+​2)、在SpringBoot中会有非常多的xxxConfigurer帮助我们进行扩展配置
+
+​3)、在SpringBoot中会有很多的xxxCustomizer帮助我们进行定制配置

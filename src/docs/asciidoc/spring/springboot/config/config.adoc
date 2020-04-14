@@ -7,7 +7,7 @@ SpringBoot 使用一个全局的配置文件，配置文件名是固定的
 
 * application.yml
 
-配置文件的作用: 修改 SpringBoot 自动配置的默认值; SpringBoo t在底层都给我们自动配置好;
+配置文件的作用: 修改 SpringBoot 自动配置的默认值; SpringBoot 在底层都给我们自动配置好;
 
 YAML(YAML Ain't Markup Language)
 

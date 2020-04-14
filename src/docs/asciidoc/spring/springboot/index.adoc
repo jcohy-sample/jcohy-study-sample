@@ -2,24 +2,25 @@
 
 本节讨论 Spring Boot 的入门知识。
 
-SpringBoot 中文翻译文档 {spring-boot-chinese-docs}.
+SpringBoot 中文翻译文档 {spring-boot-chinese-docs}/index.html.
 
 include::hello/index.adoc[leveloffset=+1]
 
-include::microservices.adoc[leveloffset=+1]
+include::config/index.adoc[leveloffset=+1]
 
-include::environment.adoc[leveloffset=+1]
+include::log/index.adoc[leveloffset=+1]
 
-include::[leveloffset=+1]
+include::web/index.adoc[leveloffset=+1]
 
-include::[leveloffset=+1]
+include::docker/index.adoc[leveloffset=+1]
 
-include::[leveloffset=+1]
+include::data/index.adoc[leveloffset=+1]
 
-include::[leveloffset=+1]
+include::principle/index.adoc[leveloffset=+1]
 
-include::[leveloffset=+1]
+include::starter/index.adoc[leveloffset=+1]
 
-include::[leveloffset=+1]
+[[springboot-base-sample]]
+== 更多 SpringBoot 整合示例
 
-include::[leveloffset=+1]
+https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples

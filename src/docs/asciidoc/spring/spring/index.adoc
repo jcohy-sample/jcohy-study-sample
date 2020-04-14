@@ -1,4 +1,3 @@
-[[spring-annotation]]
 = Spring Annotation 注解版
 
 [[spring-annotation-di]]

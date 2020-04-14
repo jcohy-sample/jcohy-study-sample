@@ -35,14 +35,14 @@ spring:
 
 == 3、激活指定profile
 
-1、在配置文件中指定  spring.profiles.active=dev
+* 在配置文件中指定  spring.profiles.active=dev
 
-2、命令行:
+* 命令行:
 
 java -jar spring-boot-02-config-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev;
 
 可以直接在测试的时候，配置传入命令行参数
 
-3、虚拟机参数;
+* 虚拟机参数;
 
 -Dspring.profiles.active=dev
