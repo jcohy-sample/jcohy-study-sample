@@ -1,0 +1,17 @@
+= 配置文件
+
+include::config.adoc[leveloffset=+1]
+
+include::yaml.adoc[leveloffset=+1]
+
+include::injection.adoc[leveloffset=+1]
+
+include::placeholder.adoc[leveloffset=+1]
+
+include::profile.adoc[leveloffset=+1]
+
+include::location.adoc[leveloffset=+1]
+
+include::order.adoc[leveloffset=+1]
+
+include::auto-configure.adoc[leveloffset=+1]

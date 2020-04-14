@@ -1,0 +1,77 @@
+[[springboot-base-hello]]
+= Spring Boot HelloWorld
+
+一个功能:浏览器发送hello请求，服务器接受请求并处理，响应Hello World字符串;
+
+1、创建一个maven工程; (jar)
+
+2、导入spring boot相关的依赖
+
+[source,xml]
+----
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.9.RELEASE</version>
+    </parent>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+----
+
+3、编写一个主程序; 启动Spring Boot应用
+
+[source,java]
+----
+
+/**
+ *  @SpringBootApplication 来标注一个主程序类，说明这是一个Spring Boot应用
+ */
+@SpringBootApplication
+public class HelloWorldMainApplication {
+
+    public static void main(String[] args) {
+
+        // Spring应用启动起来
+        SpringApplication.run(HelloWorldMainApplication.class,args);
+    }
+}
+----
+
+4、编写相关的Controller、Service
+
+[source,java]
+----
+@Controller
+public class HelloController {
+
+    @ResponseBody
+    @RequestMapping("/hello")
+    public String hello(){
+        return "Hello World!";
+    }
+}
+
+----
+
+5、运行主程序测试
+
+6、简化部署
+
+[source,xml]
+----
+ <!-- 这个插件，可以将应用打包成一个可执行的jar包; -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+----
+
+将这个应用打成jar包，直接使用java -jar的命令进行执行;

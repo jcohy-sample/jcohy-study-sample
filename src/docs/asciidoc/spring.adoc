@@ -1,8 +1,8 @@
-[[spring-overview]]
+[[spring]]
 = 概述
 include::attributes.adoc[]
 :include-dir: spring
 
-include::{include-dir}/spring/annotation.adoc[leveloffset=+1]
+include::{include-dir}/spring/index.adoc[leveloffset=+1]
 
 include::{include-dir}/springboot/index.adoc[leveloffset=+1]
