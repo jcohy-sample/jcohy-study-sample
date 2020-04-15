@@ -1,0 +1,1117 @@
+[[spring-security]]
+= Spring Boot Security
+
+当引入 spring security 时，默认开启安全验证。想要关闭可以在配置文件中写：`security.basic.enabled = false`
+
+[source,java]
+----
+@Configuration
+public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        // 表单登录配置项
+//       http.formLogin()
+        //默认弹出框验证
+        http.httpBasic()
+               .and()
+               .authorizeRequests()
+               .anyRequest()
+               .authenticated();
+    }
+}
+----
+
+[[spring-security-authenticate-pattern]]
+== Spring Security 支持的认证模式
+
+=== Basic：
+
+Basic 认证是HTTP 中非常简单的认证方式，因为简单，所以不是很安全，不过仍然非常常用。
+
+当一个客户端向一个需要认证的HTTP服务器进行数据请求时，如果之前没有认证过，HTTP服务器会返回401状态码，要求客户端输入用户名和密码。用户输入用户名和密码后，用户名和密码会经过BASE64加密附加到请求信息中再次请求HTTP服务器，HTTP服务器会根据请求头携带的认证信息，决定是否认证成功及做出相应的响应。
+
+=== Digest
+
+http://www.faqs.org/rfcs/rfc2617.html[Digest]
+
+摘要认证(Digest authentication)是一个简单的认证机制，最初是为HTTP协议开发的，因而也常叫做HTTP摘要，在[RFC2617](http://www.faqs.org/rfcs/rfc2617.html)中描述。其身份验证机制很简单，它采用杂凑式（hash）加密方法，以避免用明文传输用户的口令。
+
+摘要认证就是要核实，参与通信的双方，都知道双方共享的一个秘密（即口令）。
+
+=== x.509:
+
+数字证书的格式遵循 https://baike.baidu.com/item/X.509%E6%A0%87%E5%87%86[X.509标准]。X.509是由 https://baike.baidu.com/item/%E5%9B%BD%E9%99%85%E7%94%B5%E4%BF%A1%E8%81%94%E7%9B%9F/502493[国际电信联盟](ITU-T)制定的数字证书标准。
+
+=== LDAP:
+
+LDAP是轻量 https://baike.baidu.com/item/%E7%9B%AE%E5%BD%95%E8%AE%BF%E9%97%AE%E5%8D%8F%E8%AE%AE[目录访问协议]，英文全称是Lightweight Directory Access Protocol，一般都简称为LDAP。它是基于X.500标准的，但是简单多了并且可以根据需要定制。与X.500不同，LDAP支持TCP/IP，这对访问Internet是必须的。LDAP的核心规范在RFC中都有定义，所有与LDAP相关的RFC都可以在LDAPman RFC网页中找到。
+
+=== Form:
+
+表单认证
+
+image::images/spring-spring-security3.jpg[]
+
+=== Spring Security 过滤器链
+
+image::images/spring-spring-security4.jpg[]
+
+==== SecurityContextPersistenceFilter
+
+`SecurityContextPersistenceFilter` 主要是在 `SecurityContextRepository` 中保存更新一个 `securityContext`，并将 `securityContext` 给以后的过滤器使用
+
+​本质上就是在session中生成一个 `securityContext`—— `httpSession.setAttribute(springSecurityContextKey, context)`;
+
+它的逻辑是这样的
+
+SecurityContextPersistenceFilter：
+
+[source,java]
+----
+public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+			throws IOException, ServletException {
+		HttpServletRequest request = (HttpServletRequest) req;
+		HttpServletResponse response = (HttpServletResponse) res;
+
+		if (request.getAttribute(FILTER_APPLIED) != null) {
+			// ensure that filter is only applied once per request
+			chain.doFilter(request, response);
+			return;
+		}
+
+		final boolean debug = logger.isDebugEnabled();
+
+		request.setAttribute(FILTER_APPLIED, Boolean.TRUE);
+
+		if (forceEagerSessionCreation) {
+			HttpSession session = request.getSession();
+		}
+
+		HttpRequestResponseHolder holder = new HttpRequestResponseHolder(request,
+				response);
+
+    	//获取SecurityContext
+		SecurityContext contextBeforeChainExecution = repo.loadContext(holder);
+
+		try {
+
+            //将securiryContext放入SecurityContextHolder中
+			SecurityContextHolder.setContext(contextBeforeChainExecution);
+			//执行下面的过滤器chain.doFilter(holder.getRequest(), holder.getResponse());
+			chain.doFilter(holder.getRequest(), holder.getResponse());
+
+		}
+		finally {
+			SecurityContext contextAfterChainExecution = SecurityContextHolder
+					.getContext();
+			//清空SecurityContextHolder中的securityContext
+			SecurityContextHolder.clearContext();
+            //，并将securityContext（这个securityContext保存有后面过滤器生成的数据）放入SecurityContextRepository中，也就是执行SecurityContextRepository.saveContext()；
+			repo.saveContext(contextAfterChainExecution, holder.getRequest(),
+					holder.getResponse());
+			request.removeAttribute(FILTER_APPLIED);
+		}
+	}
+----
+HttpSessionSecurityContextRepository：
+
+[source,java]
+----
+public SecurityContext loadContext(HttpRequestResponseHolder requestResponseHolder) {
+		HttpServletRequest request = requestResponseHolder.getRequest();
+		HttpServletResponse response = requestResponseHolder.getResponse();
+		HttpSession httpSession = request.getSession(false);
+
+    	/*判断session是否存在，如果存在先尝试从session中
+    	 * httpSession.getAttribute(springSecurityContextKey）获取securityContext，获取不		    *到或则session不存在，返回null
+    	 */
+		SecurityContext context = readSecurityContextFromSession(httpSession);
+		//判断securityContext是否为null，为null则新建一个securityContextImpl
+		if (context == null) {
+			context = generateNewContext();
+		}
+		//将当前的securityContext的信息备份到SaveToSessionResponseWrapper，用户在后面的saveContext进行比较处理
+		SaveToSessionResponseWrapper wrappedResponse = new SaveToSessionResponseWrapper(
+				response, request, httpSession != null, context);
+		requestResponseHolder.setResponse(wrappedResponse);
+
+		if (isServlet3) {
+			requestResponseHolder.setRequest(new Servlet3SaveToSessionRequestWrapper(
+					request, wrappedResponse));
+		}
+		//返回一个securityContext
+		return context;
+	}
+
+protected void saveContext(SecurityContext context) {
+			final Authentication authentication = context.getAuthentication();
+			HttpSession httpSession = request.getSession(false);
+			//判断SecurityContext中的authentication是否为空或者是不是Anonymous角色，
+    		//这个的作用是如果你的权限过期了或者不具有权限，那么session就不不应该还存在securityContext
+			if (authentication == null || trustResolver.isAnonymous(authentication)) {
+				//如果是的话再判断session是否存在，如果session存在并且securityContext不为空的话，就从session将securityContext删除
+				if (httpSession != null && authBeforeExecution != null) {
+
+					httpSession.removeAttribute(springSecurityContextKey);
+				}
+				return;
+			}
+
+			if (httpSession == null) {
+				httpSession = createNewSessionIfAllowed(context);
+			}
+//判断session是否为空，如果不为空，则比较securityContext是否有更新过（会与SaveToSessionResponseWrapper中的securityContext内容作比较），有的话，就更新下一下httpSession.setAttribute(springSecurityContextKey, context);
+			if (httpSession != null) {
+				if (contextChanged(context)
+						|| httpSession.getAttribute(springSecurityContextKey) == null){
+					httpSession.setAttribute(springSecurityContextKey, context);
+
+
+				}
+			}
+		}
+
+----
+
+==== LogoutFilter
+
+用来处理url为 “/logout” 的请求，LogoutFilter 首先把请求交给 `SecurityContextLogoutHandler` 来处理, 而 `SecurityContextLogoutHandler` 只做以下处理
+
+. 把当前session无效化
+. 从 SecurityContext 里注销当前授权用户
+. 重定向到注销成功页面
+
+LogoutFilter：
+
+[source,java]
+----
+
+public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+		throws IOException, ServletException {
+	HttpServletRequest request = (HttpServletRequest) req;
+	HttpServletResponse response = (HttpServletResponse) res;
+
+	if (requiresLogout(request, response)) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Logging out user '" + auth + "' and transferring to logout destination");
+		}
+
+		// 此处的handler是一个SecurityContextLogoutHandler的实例
+		for (LogoutHandler handler : handlers) {
+			handler.logout(request, response, auth);
+		}
+
+		// logoutSuccessHandler就是在<logout>标签里指定的自定义handler
+		logoutSuccessHandler.onLogoutSuccess(request, response, auth);
+
+		return;
+	}
+
+	chain.doFilter(request, response);
+}
+----
+
+SecurityContextLogoutHandler：
+
+[source,java]
+----
+public void logout(HttpServletRequest request, HttpServletResponse response,
+      Authentication authentication) {
+   Assert.notNull(request, "HttpServletRequest required");
+   if (invalidateHttpSession) {
+      HttpSession session = request.getSession(false);
+      if (session != null) {
+         logger.debug("Invalidating session: " + session.getId());
+         session.invalidate();
+      }
+   }
+
+   if (clearAuthentication) {
+      SecurityContext context = SecurityContextHolder.getContext();
+      context.setAuthentication(null);
+   }
+
+   SecurityContextHolder.clearContext();
+}
+----
+
+==== AbstractAuthenticationProcessingFilter
+
+​AbstractAuthenticationProcessingFilter 是处理form登录的过滤器。 与form登录有关的所有从操作都在里面进行的
+
+==== DefaultLoginPageGeneratingFilter
+
+​用来生成一个默认的登录页面
+
+==== BasicAuthenticationFilter
+
+​用来进行Basic认证
+
+==== SecurityContextHolderAwareRequestFilter
+
+​用来包装客户的请求，并提供一些额外的数据
+
+==== RememberMeAuthenticationFilter
+
+​实现RemenberMe功能
+
+==== AnonymousAuthenticationFilter
+
+​匿名用户
+
+==== ExceptionTranslationFilter
+
+​异常
+
+==== SessionManagementFilter
+
+​为了防御会话伪造攻击
+
+==== FilterSecurityIntercptor
+
+. 用过用户尚未登录，抛出尚未认证的异常
+. 用过用户尚已登录，但没有访问当前资源的权限，抛出拒绝访问的异常
+. 用过用户尚已登录，并且有访问当前资源的权限则通过
+
+[[spring-security-authenticate-customize]]
+== 自定义用户认证逻辑
+
+. 处理用户信息获取逻辑 UserDetailsService
++
+[source,java]
+----
+@Component
+public class MyUserDetailsService implements UserDetailsService, SocialUserDetailsService {
+
+	private Logger logger = LoggerFactory.getLogger(getClass());
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.springframework.security.core.userdetails.UserDetailsService#
+	 * loadUserByUsername(java.lang.String)
+	 */
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		logger.info("表单登录用户名:" + username);
+		return buildUser(username);
+	}
+
+	@Override
+	public SocialUserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
+		logger.info("设计登录用户Id:" + userId);
+		return buildUser(userId);
+	}
+
+	private SocialUserDetails buildUser(String userId) {
+		// 根据用户名查找用户信息
+		//根据查找到的用户信息判断用户是否被冻结
+		String password = passwordEncoder.encode("123456");
+		logger.info("数据库密码是:"+password);
+		return new SocialUser(userId, password,
+				true, true, true, true,
+				AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
+	}
+
+}
+----
+
+. 处理用户校验逻辑 UserDetails
++
+[source,java]
+----
+
+----
+
+. 处理密码加密解密 `PasswordEncoder`
+
+[source,java]
+----
+@Bean
+public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+}
+----
+
+[[spring-security-personality]]
+== 个性化用户认证流程
+
+* 自定义登录页面 http.formLogin().loginPage("/singIn.html")
+* 自定义登录成功处理 AuthenticationSuccessHandler
+* 自定义登录失败处理 AuthenticationFailureHandler
+
+[[spring-security-source]]
+== 认证流程源码分析
+
+认证处理流程说明
+
+SpringBoot 的过滤器链
+
+image::images/spring-spring-security1.jpg[]
+
+image::images/spring-spring-security2.jpg[]
+
+首先进入 `UserNamePasswordAuthenticationFilter` 过滤器来处理表单登录请求。
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.UserNamePasswordAuthenticationFilter
+----
+public Authentication attemptAuthentication(HttpServletRequest request,
+			HttpServletResponse response) throws AuthenticationException {
+		if (postOnly && !request.getMethod().equals("POST")) {
+			throw new AuthenticationServiceException(
+					"Authentication method not supported: " + request.getMethod());
+		}
+
+		String username = obtainUsername(request);
+		String password = obtainPassword(request);
+
+		if (username == null) {
+			username = "";
+		}
+
+		if (password == null) {
+			password = "";
+		}
+
+		username = username.trim();
+    //构建UsernamePasswordAuthenticationToken，继承AbstractAuthenticationToken，而AbstractAuthenticationToken实现了Authentication
+    //Authentication接口封装了用户认证信息
+		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
+				username, password);
+
+		// Allow subclasses to set the "details" property
+     //把请求的一些信息设置到UsernamePasswordAuthenticationToken
+		setDetails(request, authRequest);
+    //调用getAuthenticationManager，本身并不进行认证，用来管理AuthenticationProvider,
+		return this.getAuthenticationManager().authenticate(authRequest);
+	}
+----
+
+UsernamePasswordAuthenticationToken
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.UsernamePasswordAuthenticationToken
+----
+public UsernamePasswordAuthenticationToken(Object principal, Object credentials) {
+//调用父类AbstractAuthenticationToken的构造方法，需要传入一组权限，由于还没进行用户认证，不知道权限是什么。所以传false、
+super(null);
+    this.principal = principal;
+    this.credentials = credentials;
+//代表我传进去的身份信息是否经过验证。
+    setAuthenticated(false);
+}
+----
+
+AbstractAuthenticationToken
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.UsernamePasswordAuthenticationToken
+----
+public AbstractAuthenticationToken(Collection<? extends GrantedAuthority> authorities) {
+    if (authorities == null) {
+        this.authorities = AuthorityUtils.NO_AUTHORITIES;
+        return;
+    }
+
+    for (GrantedAuthority a : authorities) {
+        if (a == null) {
+            throw new IllegalArgumentException(
+                    "Authorities collection cannot contain any null elements");
+        }
+    }
+    ArrayList<GrantedAuthority>temp = new ArrayList<GrantedAuthority>(
+            authorities.size());
+    temp.addAll(authorities);
+    this.authorities = Collections.unmodifiableList(temp);
+}
+----
+
+ProviderManager：实现了 `AuthenticationManager`。程序会进入 `authenticate()` 方法中，获取 `AuthenticationProvider`：真正的校验逻辑处理
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+public Authentication authenticate(Authentication authentication)
+        throws AuthenticationException {
+//以表单登录为例：此处的toTest应为UsernamePasswordAuthenticationToken
+//此外，第三方登录SocialAuthenticationToken
+    Class toTest = authentication.getClass();
+    AuthenticationException lastException = null;
+    Authentication result = null;
+    boolean debug = logger.isDebugEnabled();
+//拿到所有的AuthenticationProvider接口。真正的校验逻辑是写在AuthenticationProvider里的。不同的登录方式对应的校验逻辑不一样
+    for (AuthenticationProvider provider : getProviders()) {
+   //判断当前的provider是否支持当前Authentication的类型
+        if (!provider.supports(toTest)) {
+            continue;
+        }
+
+        if (debug) {
+            logger.debug("Authentication attempt using "
+                    + provider.getClass().getName());
+        }
+
+        try {
+    //真正的认证处理。调用DaoAuthenticationProvider.authenticate(authentication)
+            result = provider.authenticate(authentication);
+
+            if (result != null) {
+                copyDetails(authentication, result);
+                break;
+            }
+        }
+        catch (AccountStatusException e) {
+            prepareException(e, authentication);
+            // SEC-546: Avoid polling additional providers if auth failure is due to
+            // invalid account status
+            throw e;
+        }
+        catch (InternalAuthenticationServiceException e) {
+            prepareException(e, authentication);
+            throw e;
+        }
+        catch (AuthenticationException e) {
+            lastException = e;
+        }
+    }
+
+    if (result == null && parent != null) {
+        // Allow the parent to try.
+        try {
+            result = parent.authenticate(authentication);
+        }
+        catch (ProviderNotFoundException e) {
+            // ignore as we will throw below if no other exception occurred prior to
+            // calling parent and the parent
+            // may throw ProviderNotFound even though a provider in the child already
+            // handled the request
+        }
+        catch (AuthenticationException e) {
+            lastException = e;
+        }
+    }
+
+    if (result != null) {
+        if (eraseCredentialsAfterAuthentication
+                && (result instanceof CredentialsContainer)) {
+            // Authentication is complete. Remove credentials and other secret data
+            // from authentication
+            ((CredentialsContainer) result).eraseCredentials();
+        }
+
+        eventPublisher.publishAuthenticationSuccess(result);
+        return result;
+    }
+
+    // Parent was null, or didn't authenticate (or throw an exception).
+
+    if (lastException == null) {
+        lastException = new ProviderNotFoundException(messages.getMessage(
+                "ProviderManager.providerNotFound",
+                new Object[] { toTest.getName() },
+                "No AuthenticationProvider found for {0}"));
+    }
+
+    prepareException(lastException, authentication);
+
+    throw lastException;
+}
+----
+
+DaoAuthenticationProvider:继承自 `AbstractUserDetailsAuthenticationProvider` 校验逻辑主要写在抽象类中的 `authenticate(authentication)`
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+public Authentication authenticate(Authentication authentication)
+			throws AuthenticationException {
+		Assert.isInstanceOf(UsernamePasswordAuthenticationToken.class, authentication,
+				messages.getMessage(
+						"AbstractUserDetailsAuthenticationProvider.onlySupports",
+						"Only UsernamePasswordAuthenticationToken is supported"));
+
+		// Determine username 获取用户对象
+		String username = (authentication.getPrincipal() == null) ? "NONE_PROVIDED"
+				: authentication.getName();
+
+		boolean cacheWasUsed = true;
+    // 获取用户对象
+		UserDetails user = this.userCache.getUserFromCache(username);
+
+		if (user == null) {
+			cacheWasUsed = false;
+
+			try {
+        //调用我们提供的UserDetailService的实现的loadUserByUsername获取User
+				user = retrieveUser(username,
+						(UsernamePasswordAuthenticationToken) authentication);
+			}
+			catch (UsernameNotFoundException notFound) {
+				logger.debug("User '" + username + "' not found");
+
+				if (hideUserNotFoundExceptions) {
+					throw new BadCredentialsException(messages.getMessage(
+							"AbstractUserDetailsAuthenticationProvider.badCredentials",
+							"Bad credentials"));
+				}
+				else {
+					throw notFound;
+				}
+			}
+
+			Assert.notNull(user,
+					"retrieveUser returned null - a violation of the interface contract");
+		}
+
+		try {
+      //预检查，主要检查用户，也就是UserDetail中的四个boolean值的三个是否锁定，过期，可用
+			preAuthenticationChecks.check(user);
+      //附加检查，主要对密码进行检查
+			additionalAuthenticationChecks(user,
+					(UsernamePasswordAuthenticationToken) authentication);
+		}
+		catch (AuthenticationException exception) {
+			if (cacheWasUsed) {
+				// There was a problem, so try again after checking
+				// we're using latest data (i.e. not from the cache)
+				cacheWasUsed = false;
+				user = retrieveUser(username,
+						(UsernamePasswordAuthenticationToken) authentication);
+				preAuthenticationChecks.check(user);
+				additionalAuthenticationChecks(user,
+						(UsernamePasswordAuthenticationToken) authentication);
+			}
+			else {
+				throw exception;
+			}
+		}
+    //后检查，检查四个boolean中最后一个。
+		postAuthenticationChecks.check(user);
+
+		if (!cacheWasUsed) {
+			this.userCache.putUserInCache(user);
+		}
+
+		Object principalToReturn = user;
+
+		if (forcePrincipalAsString) {
+			principalToReturn = user.getUsername();
+		}
+    //如果认证成功。就创建authentication
+		return createSuccessAuthentication(principalToReturn, authentication, user);
+	}
+----
+
+additionalAuthenticationChecks:附加检查
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+protected void additionalAuthenticationChecks(UserDetails userDetails,
+        UsernamePasswordAuthenticationToken authentication)
+        throws AuthenticationException {
+    Object salt = null;
+
+    if (this.saltSource != null) {
+        salt = this.saltSource.getSalt(userDetails);
+    }
+
+    if (authentication.getCredentials() == null) {
+        logger.debug("Authentication failed: no credentials provided");
+
+        throw new BadCredentialsException(messages.getMessage(
+                "AbstractUserDetailsAuthenticationProvider.badCredentials",
+                "Bad credentials"));
+    }
+
+    String presentedPassword = authentication.getCredentials().toString();
+//密码加解密器，是否匹配
+    if (!passwordEncoder.isPasswordValid(userDetails.getPassword(),
+            presentedPassword, salt)) {
+        logger.debug("Authentication failed: password does not match stored value");
+
+        throw new BadCredentialsException(messages.getMessage(
+                "AbstractUserDetailsAuthenticationProvider.badCredentials",
+                "Bad credentials"));
+    }
+}
+----
+
+createSuccessAuthentication
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+protected Authentication createSuccessAuthentication(Object principal,
+        Authentication authentication, UserDetails user) {
+    // Ensure we return the original credentials the user supplied,
+    // so subsequent attempts are successful even with encoded passwords.
+    // Also ensure we return the original getDetails(), so that future
+    // authentication events after cache expiry contain the details
+//重新new了一次UsernamePasswordAuthenticationToken。调用的是有三个参数的构造函数，而不是之前的两个参数的构造函数
+    UsernamePasswordAuthenticationToken result = new UsernamePasswordAuthenticationToken(
+            principal, authentication.getCredentials(),
+            authoritiesMapper.mapAuthorities(user.getAuthorities()));
+    result.setDetails(authentication.getDetails());
+
+    return result;
+}
+----
+
+当用户校验通过后，会调用一个 `successfulAuthentication(request,response,chain,authResult)` 方法，使用我们自定义的那个 `AuthenticationSuccessHandler` 成功的处理器来处理
+
+当用户校验过程中某一项不通过时，会调用一个 `unsuccessfulAuthentication(request,response,failed)` 方法，使用我们自定义的那个 `AuthenticationFailedHandler` 失败的处理器来处理
+
+认证结果如何在多个请求之间共享
+
+首先来看用户认证通过后会进入到 `AbstractAuthenticationProcessingFilter` 的 `successfulAuthentication`
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+protected void successfulAuthentication(HttpServletRequest request,
+        HttpServletResponse response, FilterChain chain, Authentication authResult)
+        throws IOException, ServletException {
+
+    if (logger.isDebugEnabled()) {
+        logger.debug("Authentication success. Updating SecurityContextHolder to contain: "
+                + authResult);
+    }
+//SecurityContextHolder实际上是ThreadLocal的封装，把当前认证放到一个线程里去，以供后续的SecurityContextPersistenceFilter使用，
+//此过滤器链位于整个过滤器的最前面，请求进来检查Session中是否有SecurityContext，如果有，就把SecurityContext拿出来放到线程里。 返回时，检查线程，如果线程有SecurityContext，就放到session中去
+    SecurityContextHolder.getContext().setAuthentication(authResult);
+
+    rememberMeServices.loginSuccess(request, response, authResult);
+
+    // Fire event
+    if (this.eventPublisher != null) {
+        eventPublisher.publishEvent(new InteractiveAuthenticationSuccessEvent(
+                authResult, this.getClass()));
+    }
+//调用我们自己定义的成功处理器
+    successHandler.onAuthenticationSuccess(request, response, authResult);
+}
+----
+
+获取认证用户信息
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Java
+----
+@GetMapping("/me")
+public Object getCurrentUser(Authentication authentication){
+    return authentication;
+}
+@GetMapping("/me")
+public Object getCurrentUser(@AuthenticationPrincipal authentication){
+    return authentication;
+}
+----
+
+[[spring-security-oauth2]]
+== Security Oauth2.0
+
+http://www.rfcreader.com/#rfc6749[OAuth 2.0 协议官方文档]
+
+http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html[OAuth 2.0 协议简介]
+
+image::images/spring-spring-security-oauth1.png[]
+
+[[spring-security-oauth2-impl]]
+=== 实现
+
+SpringBoot 实现认证服务器(SpringBoot自带的认证实现)只需要两个注解 `@Configuration` 和 `@EnableAuthorizationServer`
+
+[source,java]
+----
+@Configuration
+@EnableAuthorizationServer
+public class ImoocAuthorizationServerConfig{
+
+}
+----
+
+. 首先，需要请求获取授权码。请求地址：`oauth/authorize`。需要传递几个参数
++
+[[spring-security-oauth2-impl-tbl]]
+.参数
+|===
+| 参数 | 是否必须 | 描述
+
+| response_type | 是 | 值必须为code
+
+| client_id | 是 | 此值在 Springboot 启动过程中在控制台打印
+
+| redirect_url | 可选 | 重定向的地址
+
+| scope | 可选 | 授权范围，可有自己定义
+
+| state | 可选 | 授权范围，可有自己定义
+|===
++
+`client_id` 和 `client_secret` 可由 `security.0auth2.client.clientId` 和 `security.0auth2.client.secret` 在配置文件中指定
+
+. 拿到授权码后，需要到 `/oauth/token` 换取令牌，需要传递几个参数
+
+需要在头部加入：`authorization`:将 `id` 和 `secret` 填进去
+
+[[spring-security-oauth2-impl-param-tbl]]
+.参数
+|===
+| 请求头 | 是否可选 | 描述
+
+| grant_type | 必填 | authorization_code
+
+| code | 必填 | 获取到的授权码
+
+| redirect_url | 必填 |
+
+| client_id | 必填 |
+|===
+
+SpringBoot 实现资源服务器(SpringBoot自带的资源实现)只需要两个注解 `@Configuration` 和 `@EnableResourceService`
+
+[[spring-security-oauth2-source]]
+=== 源码分析
+
+下图中绿色代表实体类,蓝色代表接口
+
+image::images/spring-spring-security-oauth2.png[]
+
+* TokenEndPoint:整个流程的入口点，可以理解为一个Controller
+* ClientDetails:封装了请求中应用的信息
+* TokenRequest:封装了请求中其他参数的信息，同时也包括ClientDetails
+* ClientDetailsService:读取地方应用的信息，这些信息都会被读取到ClientDetails中
+* TokenGranter:令牌生产者，对应四种不同授权模式的实现
+* OAuth2Request:ClientDetails和TokenRequest的整合
+* Authentication:封装当前授权用户的一些信息
+* Oauth2Authentication:
+* AuthorizationServerTokenServices:生成令牌
+* OAuth2AccessToken:
+
+下面来分析下具体源码的实现，从 `TokenEndPoint` 开始
+
+[source, java]
+----
+public class TokenEndpoint extends AbstractEndpoint {
+
+	.....
+
+	@RequestMapping(value = "/oauth/token", method=RequestMethod.POST)
+	public ResponseEntity<OAuth2AccessToken> postAccessToken(Principal principal, @RequestParam
+	Map<String, String> parameters) throws HttpRequestMethodNotSupportedException {
+
+		if (!(principal instanceof Authentication)) {
+			throw new InsufficientAuthenticationException(
+					"There is no client authentication. Try adding an appropriate authentication filter.");
+		}
+		 //首先获取clientId
+		String clientId = getClientId(principal);
+		 //获取第三方应用的详细信息
+		ClientDetails authenticatedClient = getClientDetailsService().loadClientByClientId(clientId);
+		//创建TokenRequest
+		TokenRequest tokenRequest = getOAuth2RequestFactory().createTokenRequest(parameters, authenticatedClient);
+
+		if (clientId != null && !clientId.equals("")) {
+			// Only validate the client details if a client authenticated during this
+			// request.
+			if (!clientId.equals(tokenRequest.getClientId())) {
+				// double check to make sure that the client ID in the token request is the same as that in the
+				// authenticated client
+				throw new InvalidClientException("Given client ID does not match authenticated client");
+			}
+		}
+		if (authenticatedClient != null) {
+			oAuth2RequestValidator.validateScope(tokenRequest, authenticatedClient);
+		}
+		if (!StringUtils.hasText(tokenRequest.getGrantType())) {
+			throw new InvalidRequestException("Missing grant type");
+		}
+		 //是否是简化模式，不支持
+		if (tokenRequest.getGrantType().equals("implicit")) {
+			throw new InvalidGrantException("Implicit grant type not supported from token endpoint");
+		}
+
+		if (isAuthCodeRequest(parameters)) {
+			// The scope was requested or determined during the authorization step
+			if (!tokenRequest.getScope().isEmpty()) {
+				logger.debug("Clearing scope of incoming token request");
+				tokenRequest.setScope(Collections.<String> emptySet());
+			}
+		}
+
+		if (isRefreshTokenRequest(parameters)) {
+			// A refresh token has its own default scopes, so we should ignore any added by the factory here.
+			tokenRequest.setScope(OAuth2Utils.parseParameterList(parameters.get(OAuth2Utils.SCOPE)));
+		}
+
+		OAuth2AccessToken token = getTokenGranter().grant(tokenRequest.getGrantType(), tokenRequest);
+		if (token == null) {
+			throw new UnsupportedGrantTypeException("Unsupported grant type: " + tokenRequest.getGrantType());
+		}
+
+		return getResponse(token);
+
+	}
+
+	/**
+	 * @param principal the currently authentication principal
+	 * @return a client id if there is one in the principal
+	 */
+	protected String getClientId(Principal principal) {
+		Authentication client = (Authentication) principal;
+		if (!client.isAuthenticated()) {
+			throw new InsufficientAuthenticationException("The client is not authenticated.");
+		}
+		String clientId = client.getName();
+		if (client instanceof OAuth2Authentication) {
+			// Might be a client and user combined authentication
+			clientId = ((OAuth2Authentication) client).getOAuth2Request().getClientId();
+		}
+		return clientId;
+	}
+
+}
+----
+
+`OAuth2AccessToken` 的实现类 `DefaultOAuth2AccessToken` 就是最终在控制台得到的 token 序列化之前的原始类
+
+[source, java]
+----
+public class DefaultOAuth2AccessToken implements Serializable, OAuth2AccessToken {
+
+    private static final long serialVersionUID = 914967629530462926L;
+
+    private String value;
+
+    private Date expiration;
+
+    private String tokenType = BEARER_TYPE.toLowerCase();
+
+    private OAuth2RefreshToken refreshToken;
+
+    private Set<String> scope;
+
+    private Map<String, Object> additionalInformation = Collections.emptyMap();
+
+    //getter,setter
+}
+
+
+@org.codehaus.jackson.map.annotate.JsonSerialize(using = OAuth2AccessTokenJackson1Serializer.class)
+@org.codehaus.jackson.map.annotate.JsonDeserialize(using = OAuth2AccessTokenJackson1Deserializer.class)
+@com.fasterxml.jackson.databind.annotation.JsonSerialize(using = OAuth2AccessTokenJackson2Serializer.class)
+@com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = OAuth2AccessTokenJackson2Deserializer.class)
+
+public interface OAuth2AccessToken {
+
+    public static String BEARER_TYPE = "Bearer";
+
+    public static String OAUTH2_TYPE = "OAuth2";
+
+    /**
+     * The access token issued by the authorization server. This value is REQUIRED.
+     */
+    public static String ACCESS_TOKEN = "access_token";
+
+    /**
+     * The type of the token issued as described in <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-22#section-7.1">Section 7.1</a>. Value is case insensitive.
+     * This value is REQUIRED.
+     */
+    public static String TOKEN_TYPE = "token_type";
+
+    /**
+     * The lifetime in seconds of the access token. For example, the value "3600" denotes that the access token will
+     * expire in one hour from the time the response was generated. This value is OPTIONAL.
+     */
+    public static String EXPIRES_IN = "expires_in";
+
+    /**
+     * The refresh token which can be used to obtain new access tokens using the same authorization grant as described
+     * in <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-22#section-6">Section 6</a>. This value is OPTIONAL.
+     */
+    public static String REFRESH_TOKEN = "refresh_token";
+
+    /**
+     * The scope of the access token as described by <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-22#section-3.3">Section 3.3</a>
+     */
+    public static String SCOPE = "scope";
+
+    ...
+}
+----
+
+一个典型的样例 token 响应,如下所示，就是上述类序列化后的结果：
+
+[source, java]
+----
+{
+    "access_token":"950a7cc9-5a8a-42c9-a693-40e817b1a4b0",
+    "token_type":"bearer",
+    "refresh_token":"773a0fcd-6023-45f8-8848-e141296cb3cb",
+    "expires_in":27036,
+    "scope":"select"
+}
+----
+
+TokenGranter:``TokenGranter`` 的设计思路是使用 `CompositeTokenGranter` 管理一个 `List` 列表，每一种 `grantType` 对应一个具体的真正授权者，在 debug 过程中可以发现 `CompositeTokenGranter` 内部就是在循环调用五种 `TokenGranter` 实现类的 `grant` 方法，
+而 `granter` 内部则是通过 `grantType` 来区分是否是各自的授权类型。
+
+CompositeTokenGranter
+
+[source, java]
+----
+public class CompositeTokenGranter implements TokenGranter {
+
+	private final List<TokenGranter> tokenGranters;
+
+	public CompositeTokenGranter(List<TokenGranter> tokenGranters) {
+		this.tokenGranters = new ArrayList<TokenGranter>(tokenGranters);
+	}
+
+	public OAuth2AccessToken grant(String grantType, TokenRequest tokenRequest) {
+		for (TokenGranter granter : tokenGranters) {
+			OAuth2AccessToken grant = granter.grant(grantType, tokenRequest);
+			if (grant!=null) {
+				return grant;
+			}
+		}
+		return null;
+	}
+
+	public void addTokenGranter(TokenGranter tokenGranter) {
+		if (tokenGranter == null) {
+			throw new IllegalArgumentException("Token granter is null");
+		}
+		tokenGranters.add(tokenGranter);
+	}
+
+}
+----
+
+五种类型分别是：
+
+* ResourceOwnerPasswordTokenGranter ==> password密码模式
+* AuthorizationCodeTokenGranter ==> authorization_code授权码模式
+* ClientCredentialsTokenGranter ==> client_credentials客户端模式
+* ImplicitTokenGranter ==> implicit简化模式
+* RefreshTokenGranter ==>refresh_token 刷新token专用
+
+AuthorizationServerTokenServices
+
+[source, java]
+----
+public interface AuthorizationServerTokenServices {
+    //创建token
+    OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException;
+    //刷新token
+    OAuth2AccessToken refreshAccessToken(String refreshToken, TokenRequest tokenRequest)
+            throws AuthenticationException;
+    //获取token
+    OAuth2AccessToken getAccessToken(OAuth2Authentication authentication);
+
+}
+----
+
+在默认的实现类 `DefaultTokenServices` 中，可以看到 token 是如何产生的，并且了解了框架对 token 进行哪些信息的关联。
+
+[source, java]
+----
+@Transactional
+public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
+
+    OAuth2AccessToken existingAccessToken = tokenStore.getAccessToken(authentication);
+    OAuth2RefreshToken refreshToken = null;
+    if (existingAccessToken != null) {
+        if (existingAccessToken.isExpired()) {
+            if (existingAccessToken.getRefreshToken() != null) {
+                refreshToken = existingAccessToken.getRefreshToken();
+                // The token store could remove the refresh token when the
+                // access token is removed, but we want to
+                // be sure...
+                tokenStore.removeRefreshToken(refreshToken);
+            }
+            tokenStore.removeAccessToken(existingAccessToken);
+        }
+        else {
+            // Re-store the access token in case the authentication has changed
+            tokenStore.storeAccessToken(existingAccessToken, authentication);
+            return existingAccessToken;
+        }
+    }
+
+    // Only create a new refresh token if there wasn't an existing one
+    // associated with an expired access token.
+    // Clients might be holding existing refresh tokens, so we re-use it in
+    // the case that the old access token
+    // expired.
+    if (refreshToken == null) {
+        refreshToken = createRefreshToken(authentication);
+    }
+    // But the refresh token itself might need to be re-issued if it has
+    // expired.
+    else if (refreshToken instanceof ExpiringOAuth2RefreshToken) {
+        ExpiringOAuth2RefreshToken expiring = (ExpiringOAuth2RefreshToken) refreshToken;
+        if (System.currentTimeMillis() > expiring.getExpiration().getTime()) {
+            refreshToken = createRefreshToken(authentication);
+        }
+    }
+
+    OAuth2AccessToken accessToken = createAccessToken(authentication, refreshToken);
+    tokenStore.storeAccessToken(accessToken, authentication);
+    // In case it was modified
+    refreshToken = accessToken.getRefreshToken();
+    if (refreshToken != null) {
+        tokenStore.storeRefreshToken(refreshToken, authentication);
+    }
+    return accessToken;
+
+}
+----
+
+简单总结一下 `AuthorizationServerTokenServices` 的作用，他提供了创建 token，刷新 token，获取 token 的实现。
+在创建token时，他会调用 tokenStore 对产生的 token 和相关信息存储到对应的实现类中，可以是 redis，数据库，内存，jwt。
+
+image::images/spring-spring-security-oauth3.png[]
+
+无论使用那种登录方法，校验成功后都会进入到AuthenticationSuccessfulHandler的实现类里面，而我们要做的是在这个实现类中调用TokenService去产生令牌当作一个返回。
+
+[[spring-security-social]]
+== 第三方登录
+
+三个角色：服务提供商（Provider），资源所有者（Resource Owner），第三方应用（Client）
+
+image::images/spring-spring-security-oauth5.jpg[]
+
+在标准的OAuth2协议中，1-6步都是固定，只有最后一步，不通的服务提供商返回的用户信息是不同的。Spring Social已经为我们封装好了1-6步。
+
+OAuth协议中的授权模式
+
+* 授权码模式（authorization code）
+* 密码模式（resource owner password credentials）
+* 客户端模式(client credentials)
+* 简化模式(implicit)
+
+第三方应用授权码模式流程
+
+image::images/spring-spring-security-oauth6.jpg[]
+
+[[spring-security-social-source]]
+=== Spring Social 原理
+
+SpringSocial使用 `SocialAuthenticationFilter` 过滤器实现上图的流程，并将这个过滤器加到 SpringSecurity 的过滤器链上
+
+ServiceProvider：针对每一个服务提供商，都必须提供一个 `ServiceProvider`，继承 `AbstractOAuth2ServiceProvider` 这个抽象类，里面实现了最基本的功能
+
+image::images/spring-spring-security-oauth7.jpg[]
+
+第三方登陆涉及到的类和接口
+
+image::images/spring-spring-security-oauth4.jpg[]

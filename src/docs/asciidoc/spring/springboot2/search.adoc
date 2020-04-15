@@ -1,0 +1,211 @@
+[[spring-advanced-search]]
+= SpringBoot 之检索
+
+[[spring-advanced-search-overview]]
+== SpringBoot 之检索
+
+我们的应用经常需要添加检索功能，开源的 https://www.elastic.co/[ElasticSearch] 是目前全文搜索引擎的首选。他可以快速的存储、搜索和分析海量数据。Spring Boot 通过整合 Spring Data ElasticSearch 为我们提供了非常便捷的检索功能支持；**Elasticsearch** 是一个分布式搜索服务，
+提供Restful API，底层基于Lucene，采用多shard（分片）的方式保证数据安全，并且提供自动 resharding 的功能，github 等大型的站点也是采用了 ElasticSearch 作为其搜索服务。
+
+* 以员工文档 的形式存储为例：一个文档代表一个员工数据。存储数据到 ElasticSearch 的行为叫做 索引 ，但在索引一个文档之前，需要确定将文档存储在哪里。
+* 一个 ElasticSearch 集群可以 包含多个 索引 ，相应的每个索引可以包含多个 类型 。 这些不同的类型存储着多个 文档 ，每个文档又有 多个 属性 。
+* 类似关系：
+** 索引-数据库
+** 类型-表
+** 文档-表中的记录
+** 属性-列
+
+image::images/spring-spring-boot34.png[]
+
+[[spring-advanced-search-install]]
+== 安装
+
+<<linux-install-elasticsearch>>
+
+[[spring-advanced-search-integration]]
+== 整合 ElasticSearch 测试
+
+. 引入依赖
++
+[source,pom]
+----
+	<!-- 注意版本适配问题 https://github.com/spring-projects/spring-data-elasticsearch-->
+	<dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+    </dependency>
+----
++
+[source,pom]
+----
+<!-- https://mvnrepository.com/artifact/io.searchbox/jest -->
+<dependency>
+    <groupId>io.searchbox</groupId>
+    <artifactId>jest</artifactId>
+    <version>6.3.1</version>
+</dependency>
+
+----
+
+. application.yml配置 (分别对应Jest，SpringData)
++
+[source,yaml]
+----
+spring.elasticsearch.jest.uris=http://localhost:9200
+----
++
+[source,yaml]
+----
+spring.data.elasticsearch.cluster-name=elasticsearch
+spring.data.elasticsearch.cluster-nodes=http://localhost:9301
+----
+
+. 测试
+
+Jest
+
+[source,java]
+----
+    @Autowired
+    private JestClient jestClient;
+
+     @Test
+    public void contextLoad(){
+         //给ES中索引保存一个文档
+         Article article = new Article();
+         //setter
+         //构建一个索引功能
+         Index index = new Index.Builder(article).index("jcohy").type("news").build();
+         try {
+             //执行
+             jestClient.execute(index);
+         } catch (IOException e) {
+             e.printStackTrace();
+         }
+     }
+
+     //测试搜索
+     @Test
+     public void search(){
+         String json = "";
+         //构建搜索功能
+         Search search = new Search.Builder(json).addIndex("jcohy").addType("news").build();
+         //执行
+         try {
+             SearchResult searchResult = jestClient.execute(search);
+             System.out.println(searchResult.getJsonString());
+         } catch (IOException e) {
+             e.printStackTrace();
+         }
+     }
+----
+
+SpringData
+
+编写ElasticSearchRepository
+
+[source,java]
+----
+public interface BookRepository extends ElasticsearchRepository<Book, String> {
+
+    	List<Book> findByNameAndPrice(String name, Integer price);
+
+        List<Book> findByNameOrPrice(String name, Integer price);
+
+        Page<Book> findByName(String name,Pageable page);
+
+        Page<Book> findByNameNot(String name,Pageable page);
+
+        Page<Book> findByPriceBetween(int price,Pageable page);
+
+        Page<Book> findByNameLike(String name,Pageable page);
+
+        @Query("{\"bool\" : {\"must\" : {\"term\" : {\"message\" : \"?0\"}}}}")
+        Page<Book> findByMessage(String message, Pageable pageable);
+}
+----
+
+Book
+
+[source,java]
+----
+@Document(indexName = "jcohy",type = "book")
+public class Book {
+
+    private Integer id;
+    private String name;
+    private String author;
+    private Integer price;
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Book{");
+        sb.append("id=").append(id);
+        sb.append(", price='").append(price).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", author='").append(author).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
+}
+
+----
+
+[source,java]
+----
+	@Autowired
+    private BookRepository bookRepository;
+
+    @Test
+    public void test2(){
+        Book book = new Book();
+        book.setId(1);
+        book.setName("jcohy");
+        book.setAuthor("jcohy");
+        bookRepository.index(book);
+    }
+----
+
+[[spring-advanced-search-auto]]
+== ElasticSearch 自动配置
+
+SpringBoot默认支持两种技术来和ES交互
+
+. Jest（默认不生效），需要导入jest的工具包（io.searchbox.client.JestClient）
+. SpringData ElasticSearch
+.. Client节点信息：Client ClusterNodes；ClusterNames
+.. ElasticSearchTemplate操作ES
+.. 编写一个ElasticSearchRepository的子接口来操作ES
+
+https://docs.spring.io/spring-data/elasticsearch/docs/3.0.9.RELEASE/reference/html/[文档链接]

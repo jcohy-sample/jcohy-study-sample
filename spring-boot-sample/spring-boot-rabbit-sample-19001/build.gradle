@@ -1,0 +1,12 @@
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter-web"
+    compile "org.springframework.boot:spring-boot-starter-amqp"
+    compile "org.springframework.boot:spring-boot-starter-logging"
+    compile "org.springframework.boot:spring-boot-starter-json"
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    compile "org.springframework.boot:spring-boot-starter-thymeleaf"
+}
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}

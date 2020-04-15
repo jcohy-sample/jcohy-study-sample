@@ -1,0 +1,76 @@
+[[validator]]
+= Hibernate Validator
+
+[[hibernate-validator-tbl]]
+.hibernate validator
+|===
+| 注解 | 描述
+
+| @NotNull | 值不能为空
+
+| @Null | 值必须为空
+| @Pattern(regex) | 字符串必须匹配正则表达式
+| @Size(min=,max=) | 集合的元素数量必须在 min 和 max 之间
+| @CreditCardNumber(ignoreNonDigitCharacters=) | 字符串必须是信用卡号(按美国的标准检验的)
+| @Email | 字符串必须是 Email 地址
+| @Length(min=,max=) | 检查字符串的长度
+| @NotBlack | 字符串必须有字符
+| @NotEmpty | 字符串不为 null, 集合有元素
+| @Range(min=,max=) | 数字必须大于等于 min,小于等于 max
+| @SafeHtml | 字符串是安全的 html
+| @URL | 字符串是合法的 URL
+| @AssertFalse | 值必须是 false
+| @AssertTrue | 值必须是 true
+| @DecimalMax(value=,inclusive=) | 值必须小于等于(inclusive=true)/小于(inclusive=false) value属性指定的值，可以注解在字符串类型的属性上。
+| @DecimalMin(value=,inclusive=) | 值必须大于等于(inclusive=true)/大于(inclusive=false) value属性指定的值，可以注解在字符串类型的属性上。
+| @Digits(integer=,fraction=) | 数字格式检查,integer 指定整数部分的最大长度，fraction指定小数部分的最大长度
+| @Future | 值必须是未来的日期
+| @Pass | 值必须是过去的日期
+| @Max(value=) | 值必须小于等于 value 指定的值,不能注解在字符串类型的属性上
+| @Min(value=) | 值必须大于等于 value 指定的值,不能注解在字符串类型的属性上
+|===
+
+[[validator-customize]]
+== 自定义校验
+
+声明自定义校验接口
+
+[source, java]
+----
+@Target({ElementType.METHOD, ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = MyConstraintValidator.class)
+public @interface MyConstraint {
+    //下面三个属性必写
+	String message();
+
+	Class[] groups() default { };
+
+	Class[] payload() default { };
+
+}
+----
+
+真正的校验逻辑在 `MyConstraintValidator` 类中
+
+[source, java]
+----
+public class MyConstraintValidator implements ConstraintValidator<MyConstraint, Object> {
+    //可以注入Spring容器中任何东西来执行校验逻辑
+	@Autowired
+	private HelloService helloService;
+
+	@Override
+	public void initialize(MyConstraint constraintAnnotation) {
+		System.out.println("my validator init");
+	}
+
+	@Override
+	public boolean isValid(Object value, ConstraintValidatorContext context) {
+		helloService.greeting("tom");
+		System.out.println(value);
+		return true;
+	}
+
+}
+----

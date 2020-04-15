@@ -70,6 +70,7 @@ ext {
     validationApiVersion = "2.0.1.Final"
     protostuffVersion = "1.6.0"
     curatorVersion = "4.0.1"
+    jacksonVersion = "2.10.2"
     jacksonDataformatYamlVersion="2.9.8"
 
     //================= test ====================
@@ -96,7 +97,7 @@ configure(allprojects ) { allprojects ->
     repositories {
 
         maven {
-            url 'http://maven.aliyun.com/nexus/content/groups/public/'
+            url 'https://maven.aliyun.com/nexus/content/groups/public/'
         }
 
         maven {

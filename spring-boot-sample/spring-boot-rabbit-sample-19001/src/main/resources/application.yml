@@ -1,0 +1,15 @@
+spring:
+  rabbitmq:
+    host: 192.168.11.231
+    port: 5672
+    username: xwAdmin
+    password: qwewsxzxc@123A
+    publisher-returns: true
+    publisher-confirms: true
+    listener:
+      simple:
+        acknowledge-mode: manual
+  thymeleaf:
+    cache: false
+server:
+  port: 19001

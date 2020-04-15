@@ -1,0 +1,108 @@
+[[spring-advanced-monitor]]
+= SpringBoot 之监控管理
+
+通过引入 `spring-boot-starter-actuator`，可以使用Spring Boot为我们提供的准生产环境下的应用监控和管理功能。我们可以通过HTTP，JMX，SSH协议来进行操作，自动得到审计、健康及指标信息等
+
+[[spring-advanced-monitor-integration]]
+== 整合
+
+. 引入spring-boot-starter-actuator
++
+[source,pom]
+----
+<dependency>
+       <groupId>org.springframework.boot</groupId>
+       <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+----
+
+. 修改配置application.yml
++
+[source,yaml]
+----
+management.security.enabled=false
+spring.redis.host=118.24.44.169
+info.app.id=hello
+info.app.version=1.0.0
+# endpoints.metrics.enabled=false
+endpoints.shutdown.enabled=true
+# endpoints.beans.id=mybean
+# endpoints.beans.path=/bean
+# endpoints.beans.enabled=false
+#
+# endpoints.dump.path=/du
+# \u5173\u95ED\u6240\u6709\u7AEF\u70B9\u8BBF\u95E
+# endpoints.enabled=false
+# endpoints.beans.enabled=true
+management.context-path=/manage
+management.port=8181
+----
+
+. 可进行 shutdown（POST 提交，此端点默认关闭）
+
+. 通过 http 方式访问监控端点
+
+[[spring-advanced-monitor-endpoint-tbl]]
+.监控端点
+|===
+| 端点名      | 描述
+
+| autoconfig  | 所有自动配置信息
+
+| auditevents | 审计事件
+
+| beans       | 所有Bean的信息
+
+| configprops | 所有配置属性
+
+| dump        | 线程状态信息
+
+| env         | 当前环境信息
+
+| health      | 应用健康状况
+
+| info        | 当前应用信息
+
+| metrics     | 应用的各项指标
+
+| mappings    | 应用@RequestMapping映射路径
+
+| shutdown    | 关闭当前应用（默认关闭）
+
+| trace       | 追踪信息（最新的http请求）
+|===
+
+[[spring-advanced-monitor-info]]
+== 定制端点信息
+
+* 定制端点一般通过endpoints+端点名+属性名来设置。
+* 修改端点id（endpoints.beans.id=mybeans）
+* 开启远程应用关闭功能（endpoints.shutdown.enabled=true）
+* 关闭端点（endpoints.beans.enabled=false）
+* 开启所需端点
+* endpoints.enabled=false
+* endpoints.beans.enabled=true
+* 定制端点访问根路径
+* management.context-path=/manage
+* 关闭http端点
+* management.port=-1
+
+[[spring-advanced-monitor-customize]]
+== 自定义 HealthIndicator
+
+. 编写一个指示器，实现 `HealthIndicator`
+. 指示器名字必须写 xxxHealthIndicator
+. 加入容器
+
+[source,java]
+----
+@Component
+public class MyAppHealthIndicator implatements HealthIndicator{
+    @Override
+    public Health health(){
+        //自定义检查方法
+        return Health.down().withDetail("").build;
+    }
+}
+----
+

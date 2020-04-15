@@ -13,15 +13,15 @@ http://docs.jcohy.com[*http://docs.jcohy.com*]
 ****
 
 [horizontal]
-<<java.adoc#overview, Java基础>> :: java 基础，Java 新特性
-<<designpattern.adoc#overview, 设计模式>> :: Java设计模式
-<<algorithm.adoc#overview, 算法>>  :: 算法精题
-<<linux.adoc#overview, linux>>  :: Linux 介绍
-<<nosql.adoc#overview, nosql>>  :: nosql 介绍
-<<spring.adoc#overview, spring>>  :: spring全家桶
-<<zookeeper.adoc#overview, zookeeper>>  :: zookeeper
-<<nginx.adoc#overview, nginx>>  :: nginx
-<<docker.adoc#overview, docker>>  :: docker
-<<go.adoc#overview, go>>  :: go
-<<guide.adoc#overview, 面试指南>>  :: 面试指南
-<<file.adoc#overview, 常用文件>>  :: 常用正则表达式，配置文件等
+<<java.adoc#java-overview, Java基础>> :: java 基础，Java 新特性
+<<designpattern.adoc#design-overview, 设计模式>> :: Java设计模式
+<<algorithm.adoc#algorithm-overview, 算法>>  :: 算法精题
+<<linux.adoc#linux-overview, linux>>  :: Linux 介绍
+<<nosql.adoc#nosql-overview, nosql>>  :: nosql 介绍
+<<spring.adoc#spring-overview, spring>>  :: spring全家桶
+<<zookeeper.adoc#zookeeper-overview, zookeeper>>  :: zookeeper
+<<nginx.adoc#nginx-overview, nginx>>  :: nginx
+<<docker.adoc#docker-overview, docker>>  :: docker
+<<go.adoc#go-overview, go>>  :: go
+<<guide.adoc#guide-overview, 面试指南>>  :: 面试指南
+<<file.adoc#file-overview, 常用文件>>  :: 常用正则表达式，配置文件等

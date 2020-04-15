@@ -1,0 +1,143 @@
+[[spring-advanced-cache]]
+= SpringBoot之缓存
+
+[[spring-advanced-cache-jsr107]]
+== JSR107
+
+Java Caching定义了5个核心接口，分别是 `CachingProvider`, `CacheManager`, `Cache`, `Entry` 和 `Expiry`。
+
+* CachingProvider定义了创建、配置、获取、管理和控制多个 `CacheManager`。一个应用可以在运行期访问多个 `CachingProvider`。
+
+* CacheManager定义了创建、配置、获取、管理和控制多个唯一命名的 Cache，这些 Cache 存在于 `CacheManager` 的上下文中。一个 `CacheManager` 仅被一个 `CachingProvider` 所拥有。
+
+* Cache是一个类似 Map 的数据结构并临时存储以 Key 为索引的值。一个 Cache 仅被一个 `CacheManager` 所拥有。
+
+* Entry是一个存储在 Cache 中的 `key-value` 对。
+
+* Expiry 每一个存储在Cache中的条目有一个定义的有效期。一旦超过这个时间，条目为过期的状态。一旦过期，条目将不可访问、更新和删除。缓存有效期可以通过 `ExpiryPolicy` 设置。
+
+缓存的类图
+
+image::images/spring-spring-boot26.png[缓存的类图]
+
+[[spring-advanced-cache-abstract]]
+== Spring 的缓存抽象
+
+Spring从3.1开始定义了 `org.springframework.cache.Cache` 和 `org.springframework.cache.CacheManager` 接口来统一不同的缓存技术；
+
+并支持使用JCache（JSR-107）注解简化我们开发
+
+* Cache 接口为缓存的组件规范定义，包含缓存的各种操作集合；
+* Cache 接口下 Spring 提供了各种 xxxCache 的实现；如 `RedisCache`，`EhCacheCache` , `ConcurrentMapCache` 等；
+* 每次调用需要缓存功能的方法时，Spring 会检查检查指定参数的指定的目标方法是否已经被调用过；如果有就直接从缓存中获取方法调用后的结果，如果没有就调用方法并缓存结果后返回给用户。下次调用直接从缓存中获取。
+* 使用Spring缓存抽象时我们需要关注以下两点；
+.. 确定方法需要被缓存以及他们的缓存策略
+.. 从缓存中读取之前缓存存储的数据
+
+[[spring-advanced-cache-concept]]
+== 几个重要概念&缓存注解
+
+* Cache :缓存接口，定义缓存操作。实现有：RedisCache、EhCacheCache、ConcurrentMapCache等
+* CacheManager :缓存管理器，管理各种缓存（Cache）组件
+* @Cacheable :主要针对方法配置，能够根据方法的请求参数对其结果进行缓存
+* @CacheEvict :清空缓存
+* @CachePut :保证方法被调用，又希望结果被缓存 .
+* @EnableCaching :开启基于注解的缓存
+* keyGenerator :缓存数据时key生成策略
+* serialize :缓存数据时value序列化策略
+
+
+[[spring-advanced-cache-concept-tbl]]
+.@Cacheable/@CachePut/@CacheEvict 主要的参数
+|===
+| value                       | 缓存的名称，在 spring 配置文件中定义，必须指定至少一个       | 例如：  @Cacheable(value=”mycache”) 或者   @Cacheable(value={”cache1”,”cache2”}
+
+| key                         | 缓存的 key，可以为空，如果指定要按照 SpEL 表达式编写，如果不指定，则缺省按照方法的所有参数进行组合 | 例如：  @Cacheable(value=”testcache”,key=”#userName”)
+
+| condition                   | 缓存的条件，可以为空，使用 SpEL 编写，返回 true 或者 false，只有为 true 才进行缓存/清除缓存，在调用方法之前之后都能判断 . | 例如：  @Cacheable(value=”testcache”,condition=”#userName.length()>2”)
+
+| allEntrie( (@CacheEvict ) ) | 是否清空所有缓存内容，缺省为 false，如果指定为 true，则方法调用后将立即清空所有缓存 | 例如：  @CachEvict(value=”testcache”,allEntries=true) P
+
+| beforeInvocation            | 是否在方法执行前就清空，缺省为 false                         | 例如：@CachEvict(value=”testcache”，beforeInvocation=true)
+
+| unless                      | 用于否决缓存的，不像condition，该表达式只在方法执行之后判断，此时可以拿到返回值result进行判断。条件为true不会缓存，fasle才缓存 | 例如：  @Cacheable(value=”testcache”,unless=”#result == null”) m
+|===
+
+[[spring-advanced-cache-principle]]
+== 缓存机制的原理
+
+1.自动配置类：CacheAutoConfiguration
+
+导入 `CacheConfigurationImportSelector` 这个类：
+
+[source,java]
+----
+static class CacheConfigurationImportSelector implements ImportSelector {
+
+		@Override
+		public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+			CacheType[] types = CacheType.values();
+			String[] imports = new String[types.length];
+			for (int i = 0; i < types.length; i++) {
+				imports[i] = CacheConfigurations.getConfigurationClass(types[i]);
+			}
+			return imports;
+		}
+
+	}
+----
+
+2.上面代码导入缓存的配置类，共有如下几种
+
+* org.springframework.boot.autoconfigure.cache.GenericCacheConfiguration
+* org.springframework.boot.autoconfigure.cache.JCacheCacheConfiguration
+* org.springframework.boot.autoconfigure.cache.EhCacheCacheConfiguration
+* org.springframework.boot.autoconfigure.cache.HazelcastCacheConfiguration
+* org.springframework.boot.autoconfigure.cache.InfinispanCacheConfiguration
+* org.springframework.boot.autoconfigure.cache.CouchbaseCacheConfiguration
+* org.springframework.boot.autoconfigure.cache.RedisCacheConfiguration
+* org.springframework.boot.autoconfigure.cache.CaffeineCacheConfiguration
+* org.springframework.boot.autoconfigure.cache.GuavaCacheConfiguration
+* org.springframework.boot.autoconfigure.cache.SimpleCacheConfiguration
+* org.springframework.boot.autoconfigure.cache.NoOpCacheConfiguration
+
+3.那些配置类会默认会生效呢？`SimpleCacheConfiguration`
+
+4.给容器中注册了一个 `CacheManager`:``ConcurrentMapCacheManager``
+
+5.可以获取和创建 `ConcurrentMapCache` 类型的缓存组件：他的作用将数据保存在 ConcurrentMap 中
+
+运行流程
+
+. 方法运行之前，先去查询Cache（缓存组件），暗战cacheNames指定的名字获取 （CacheManager先获取相应的缓存），第一次获取缓存如果没有Cache组件会自动创建
+. 去Cache中查找缓存的内容，使用一个key，默认的方法就是参数； key是按照某种策略生成的，默认使用SimpleKeyGenerator生成key
+. 没有查到缓存就调用目标方法
+. 将目标方法返回的结构，放进缓存中
+
+[[spring-advanced-cache-redis]]
+== 整合 redis
+
+1.引入 `spring-boot-starter-data-redis`
+
+2.`application.yml` 配置redis连接地址
+
+3.使用 RestTemplate 操作redis
+
+[source,java]
+----
+redisTemplate.opsForValue();//操作字符串
+redisTemplate.opsForHash();//操作hash
+redisTemplate.opsForList();//操作list
+redisTemplate.opsForSet();//操作set
+redisTemplate.opsForZSet();//操作有序set
+
+----
+
+4.配置缓存、CacheManagerCustomizers
+
+5.测试使用缓存、切换缓存、 CompositeCacheManager
+
+* 引入redis的starter,容器中保存的是RedisCacheManager，
+* RedisCacheManager帮我们创建RedisCache来作为缓存组件，RedisCache通过操作Redis缓存数据
+* 默认创建RedisCacheManager操作redis的时候使用的死RedisTemplate<Object,Object>。默认使用jdk的序列化机制
+* 自定义CacheManager

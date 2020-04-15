@@ -1,4 +1,4 @@
-[design-overview]
+[[design-overview]]
 = 概述
 include::attributes.adoc[]
 

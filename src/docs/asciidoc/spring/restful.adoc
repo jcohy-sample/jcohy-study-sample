@@ -1,0 +1,157 @@
+[[restful]]
+= RESTful
+
+一种软件架构风格、设计风格，而不是标准，只是提供了一组设计原则和约束条件。它主要用于客户端和服务器交互类的软件。
+
+image::images/restful1.jpg[]
+
+image::images/restful1.jpg[]
+
+http://www.ruanyifeng.com/blog/2014/05/restful_api.html[RESTful API 设计指南]
+
+[[restful-ansyc]]
+== 异步处理 Rest 服务
+
+* 使用runnable异步处理Rest服务
+
+[source, java]
+----
+@RequestMapping("/order")
+public Callable<String> order(){
+
+    Callable<String> result = new Callable<String>() {
+			@Override
+			public String call() throws Exception {
+				logger.info("副线程开始");
+				Thread.sleep(1000);
+				logger.info("副线程返回");
+				return "success";
+			}
+		};
+    logger.info("主线程返回");
+    return result;
+}
+----
+
+* 使用DeferredResult异步处理Rest服务 模拟一个订单请求，当placeOrder有值时，接到下单请求 completeOrder有值时，下单请求完成。
+
+image::images/restful-queue.jpg[]
+
+QueueListener:实现 `ApplicationListener<ContextRefreshedEvent>`。当初始化完成后开始监听
+
+[source,java,indent=0,subs="verbatim,quotes",role="primary"]
+.Controller
+----
+@RequestMapping("/order")
+	public DeferredResult<String> order() throws Exception {
+		logger.info("主线程开始");
+
+		String orderNumber = RandomStringUtils.randomNumeric(8);
+		mockQueue.setPlaceOrder(orderNumber);
+
+		DeferredResult<String> result = new DeferredResult<>();
+		deferredResultHolder.getMap().put(orderNumber, result);
+
+		return result;
+	}
+----
+.MockQueue
+[source,java,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+@Component
+public class MockQueue {
+
+	private String placeOrder;
+
+	private String completeOrder;
+
+	private Logger logger = LoggerFactory.getLogger(getClass());
+
+	public String getPlaceOrder() {
+		return placeOrder;
+	}
+
+	public void setPlaceOrder(String placeOrder) throws Exception {
+		new Thread(() -> {
+			logger.info("接到下单请求, " + placeOrder);
+			try {
+				Thread.sleep(1000);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			this.completeOrder = placeOrder;
+			logger.info("下单请求处理完毕," + placeOrder);
+		}).start();
+	}
+
+	public String getCompleteOrder() {
+		return completeOrder;
+	}
+
+	public void setCompleteOrder(String completeOrder) {
+		this.completeOrder = completeOrder;
+	}
+
+}
+----
+.DeferredResultHolder
+[source,java,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+@Component
+public class DeferredResultHolder {
+
+	private Map<String, DeferredResult<String>> map = new HashMap<String, DeferredResult<String>>();
+
+	public Map<String, DeferredResult<String>> getMap() {
+		return map;
+	}
+
+	public void setMap(Map<String, DeferredResult<String>> map) {
+		this.map = map;
+	}
+
+}
+----
+.QueueListener
+[source,java,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+@Component
+public class QueueListener implements ApplicationListener<ContextRefreshedEvent> {
+
+	@Autowired
+	private MockQueue mockQueue;
+
+	@Autowired
+	private DeferredResultHolder deferredResultHolder;
+
+	private Logger logger = LoggerFactory.getLogger(getClass());
+
+	@Override
+	public void onApplicationEvent(ContextRefreshedEvent event) {
+		new Thread(() -> {
+			while (true) {
+
+				if (StringUtils.isNotBlank(mockQueue.getCompleteOrder())) {
+
+					String orderNumber = mockQueue.getCompleteOrder();
+					logger.info("返回订单处理结果:"+orderNumber);
+					deferredResultHolder.getMap().get(orderNumber).setResult("place order success");
+					mockQueue.setCompleteOrder(null);
+
+				}else{
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+
+			}
+		}).start();
+	}
+}
+----
+
+* 异步处理配置
+
+重写 `WebMvcConfigAdapter` 中的 `ConfigureAsyncSupport` 方法

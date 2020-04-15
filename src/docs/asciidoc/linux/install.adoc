@@ -43,6 +43,8 @@
 | Confluence  | CentOS Linux release 7.6 | gcc-8.3.0.tar.gz | 无 | 无
 
 | zookeeper  | CentOS Linux release 7.6 | zookeeper-3.4.5.tar.gz | http://jcohy-software.oss-cn-chengdu.aliyuncs.com/linux/zookeeper-3.4.5.tar.gz[http://jcohy-software.oss-cn-chengdu.aliyuncs.com/linux/zookeeper-3.4.5.tar.gz] | 无
+
+| ElasticSearch  | CentOS Linux release 7.6 | release | 无 | 无
 |===
 
 [NOTE]
@@ -1723,6 +1725,8 @@ image::images/confluence_keygen2.png[]
 [[linux-install-zookeeper]]
 == zookeeper
 
+[[linux-install-zookeeper-cluster]]
+=== 集群安装
 机器部署
 
 1.用 FileZilla 或其他工具将下载好的安装包上传至 Linux 服务器。放置在 **/opt/software/** 目录下。这里使用的是 **zookeeper-3.4.5.tar.gz**
@@ -1822,3 +1826,42 @@ zkServer.sh start
 
 * jps(查看进程)
 * zkServer.sh status(查看集群状态，主从信息)
+
+[[linux-install-elasticsearch]]
+== ElasticSearch
+
+[[linux-install-elasticsearch-docker]]
+=== Docker 安装
+
+. 安装elasticsearch镜像，使用国内镜像加速
++
+[source,shell]
+----
+docker pull registry.docker-cn.com/library/elasticsearch
+----
+
+. 启动，需要配置占用内存大小，否则可能会出现问题
++
+[source,shell]
+----
+docker run -e ES_JAVA_OPTS="-Xms256m -Xmx256m" -d -p 9200:9200 -p 9300:9300 --name ES01 097d037f8ff8
+----
+
+. 测试，打开浏览器，输入 localhost:9200
+
+[source,json]
+----
+{
+    "name": "6bqyUpK",
+    "cluster_name": "elasticsearch",
+    "cluster_uuid": "RGsYd_O4R4G5hcwnsXO4rQ",
+    "version": {
+        "number": "5.6.11",
+        "build_hash": "bc3eef4",
+        "build_date": "2018-08-16T15:25:17.293Z",
+        "build_snapshot": false,
+        "lucene_version": "6.6.1"
+    },
+    "tagline": "You Know, for Search"
+}
+----

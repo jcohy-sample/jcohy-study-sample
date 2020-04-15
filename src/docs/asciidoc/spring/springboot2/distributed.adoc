@@ -1,0 +1,159 @@
+[[spring-advanced-distributed]]
+= SpringBoot 之分布式
+
+在分布式系统中，国内常用 zookeeper+dubbo 组合，而 Spring Boot 推荐使用全栈的 Spring,Spring Boot+Spring Cloud
+
+分布式系统：
+
+image::images/spring-spring-boot35.jpg[分布式]
+
+* 单一应用架构
+
+当网站流量很小时，只需一个应用，将所有功能都部署在一起，以减少部署节点和成本。此时，用于简化增删改查工作量的数据访问框架(ORM)是关键。
+
+* 垂直应用架构
+
+当访问量逐渐增大，单一应用增加机器带来的加速度越来越小，将应用拆成互不相干的几个应用，以提升效率。此时，用于加速前端页面开发的Web框架(MVC)是关键。
+
+* 分布式服务架构
+
+当垂直应用越来越多，应用之间交互不可避免，将核心业务抽取出来，作为独立的服务，逐渐形成稳定的服务中心，使前端应用能更快速的响应多变的市场需求。此时，用于提高业务复用及整合的分布式服务框架(RPC)是关键。
+
+* 流动计算架构
+
+当服务越来越多，容量的评估，小服务资源的浪费等问题逐渐显现，此时需增加一个调度中心基于访问压力实时管理集群容量，提高集群利用率。此时，用于提高机器利用率的资源调度和治理中心(SOA)是关键。
+
+[[spring-advanced-distributed-zookeeper]]
+== Zookeeper 和 Dubbo
+
+ZooKeeper
+
+ZooKeeper 是一个分布式的，开放源码的分布式应用程序协调服务。它是一个为分布式应用提供一致性服务的软件，提供的功能包括：配置维护、域名服务、分布式同步、组服务等。
+
+Dubbo
+
+Dubbo 是 Alibaba 开源的分布式服务框架，它最大的特点是按照分层的方式来架构，使用这种方式可以使各个层之间解耦合（或者最大限度地松耦合）。从服务模型的角度来看，Dubbo采用的是一种非常简单的模型，要么是提供方提供服务，要么是消费方消费服务，所以基于这一点可以抽象出服务提供方（Provider）和服务消费方（Consumer）两个角色。
+
+image::images/spring-spring-boot36.jpg[Dubbo]
+
+[[spring-advanced-distributed-integration]]
+== SpringBoot整合
+
+. 引入dubbo和zkclient依赖
++
+[source,pom]
+----
+<dependency>
+    <groupId>com.alibaba.boot</groupId>
+    <artifactId>dubbo-spring-boot-starter</artifactId>
+    <version>0.1.0</version>
+</dependency>
+
+<!--引入zookeeper的客户端工具-->
+<!-- https://mvnrepository.com/artifact/com.github.sgroschupf/zkclient -->
+<dependency>
+    <groupId>com.github.sgroschupf</groupId>
+    <artifactId>zkclient</artifactId>
+    <version>0.1</version>
+</dependency>
+----
+
+. 配置dubbo的扫描包和注册中心地址
+
+[source,properties]
+----
+dubbo.application.name=provider-ticket
+
+dubbo.registry.address=zookeeper://118.24.44.169:2181
+
+dubbo.scan.base-packages=com.atguigu.ticket.service
+----
+
+. 使用 `@Service` 发布服务
+
+. 使用 `@Reference` 引用服务
+
+[[spring-advanced-distributed-cloud]]
+== SpringCloud
+
+Spring Cloud 是一个分布式的整体解决方案。Spring Cloud 为开发者提供了在分布式系统（配置管理，服务发现，熔断，路由，微代理，控制总线，一次性token，全局琐，leader选举，分布式session，集群状态）中快速构建的工具，使用Spring Cloud的开发者可以快速的启动服务或构建应用、同时能够快速和云平台资源进行对接。
+
+**SpringCloud分布式开发五大常用组件**
+
+* 服务发现——Netflix Eureka
+* 客服端负载均衡——Netflix Ribbon
+* 断路器——Netflix Hystrix
+* 服务网关——Netflix Zuul
+* 分布式配置——Spring Cloud
+
+. 引入 Eureka-server
++
+[source,pom]
+----
+<dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-eureka-server</artifactId>
+</dependency>
+----
+. 配置Eureka信息
++
+[source,yaml]
+----
+server:
+  port: 8761
+eureka:
+  instance:
+    hostname: eureka-server  # eureka实例的主机名
+  client:
+    register-with-eureka: false #不把自己注册到eureka上
+    fetch-registry: false #不从eureka上来获取服务的注册信息
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+----
+. 使用 `@EnableEurekaServer` 注解开启服务
+
+. 测试
++
+localhost:8761 可以查看Eureka服务注册相关信息
+
+. 服务提供者配置
++
+[source,yaml]
+----
+server:
+  port: 8002
+spring:
+  application:
+    name: provider-ticket
+
+eureka:
+  instance:
+    prefer-ip-address: true # 注册服务的时候使用服务的ip地址
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+----
+. 服务消费者配置
+
+`@EnableDiscoveryClient` :开启发现服务功能
+
+添加RestTemplate
+
+[source,java]
+----
+@LoadBalanced
+@Bean
+public RestTemplate restTemplate(){
+	return new RestTemplate
+}
+----
+
+[source]
+----
+@Autowired
+RestTemplate restTemplate;
+public String buTicket(String name){
+    String forObject = restTemplate.getForObject("http://PROVIDER-RICKET/ticket",String.class);
+    return name+"购买了"+forObject；
+}
+----

@@ -1,0 +1,68 @@
+[[spring-advanced-security]]
+= SpringBoot 之安全
+
+Spring Security是针对Spring项目的安全框架，也是 Spring Boot 底层安全模块默认的技术选型。他可以实现强大的web安全控制。对于安全控制，我们仅需引入 `spring-boot-starter-security` 模块，进行少量的配置，即可实现强大的安全管理。
+
+几个类：
+
+**WebSecurityConfigurerAdapter**：自定义 Security 策略
+
+**AuthenticationManagerBuilder**：自定义认证策略
+
+**@EnableWebSecurity**：开启WebSecurity模式
+
+
+
+* 应用程序的两个主要区域是“认证”和“授权”（或者访问控制）。这两个主要区域是 Spring Security 的两个目标。
+* “认证”（Authentication），是建立一个他声明的主体的过程（一个“主体”一般是指用户，设备或一些可以在你的应用程序中执行动作的其他系统）。
+* “授权”（Authorization）指确定一个主体是否允许在你的应用程序执行一个动作的过程。为了抵达需要授权的店，主体的身份已经有认证过程建立。
+* 这个概念是通用的而不只在Spring Security中。
+
+[[spring-advanced-security-integration]]
+== SpringSecurity 整合
+
+. 引入SpringSecurity
++
+[source,pom]
+----
+	<dependency>
+	  <groupId>org.springframework.boot</groupId>
+	  <artifactId>spring-boot-starter-security</artifactId>
+	</dependency>
+----
+. 编写SpringSecurity的配置
+
+https://docs.spring.io/spring-security/site/docs/5.1.0.BUILD-SNAPSHOT/guides/html5/helloworld-boot.html[可参考官方文档]
+
+[source,java]
+----
+@EnableWebSecurity
+public class MySecurityConfig extends WebSecurityConfigurerAdapter{
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        //定制请求的授权规则
+        http.authorizeRequests().antMatchers("/").permitAll()
+                .antMatchers("level1/**").hasRole("VIP1")
+                .antMatchers("level2/**").hasRole("VIP2")
+                .antMatchers("level3/**").hasRole("VIP3");
+        //开启自动配置的登录功能，如果没有权限，就会来到登录页面
+        http.formLogin();
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication().withUser("zhangsan")
+                .password("123456")
+                .roles("VIP1","VIP2")
+                .and()
+                .withUser("lisi")
+                .password("123456")
+                .roles("VIP1","VIP3")
+                .and()
+                .withUser("lisi")
+                .password("123456")
+                .roles("VIP2","VIP3");
+    }
+}
+----
