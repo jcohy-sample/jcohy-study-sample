@@ -1309,8 +1309,13 @@ Creating harbor-jobservice ... done
 [[linux-install-jenkins]]
 == jenkins
 
+[[linux-install-jenkins-usually]]
+=== 本地安装
+
+详情请查看官方文档: https://jenkins.io/zh/doc/book/installing[Jenkins安装]
+
 [[linux-install-jenkins-docker]]
-=== jenkins
+=== Docker 安装
 
 1.获取镜像
 
@@ -1334,6 +1339,68 @@ docker run \
 -v /opt/jenkins/run/docker.sock:/var/run/docker.sock  \
 jenkinsci/blueocean
 ----
+
+[[linux-install-jenkins-question]]
+=== 常见问题
+
+* 您的jenkins处于离线模式
++
+在安装后打开网页时可能会出现这个问题，解决方法如下:
++
+. 解决方法1: 进入: `ip:端口/pluginManager/advanced`  修改升级站点中的地址，把 `https:` 改成 `http:` 并且点那个提交按钮。
++
+该文件为jenkins下载插件的源地址，改地址默认jenkins默认为: https://updates.jenkins.io/update-center.json，就是因为https的问题，此处我们将其改为http即可，之后重启jenkins服务即可。
++
+image::images/jenkins3.jpg[]
+
+. 解决方法2: 修改 `/var/lib/jenkins/updates/default.json`，所以图下的 `google` 改为 `www.baidu.com` 即可，更改完重启服务。
+
+jenkins在下载插件之前会先检查网络连接，其会读取这个文件中的网址。默认是访问谷歌
+
+image::images/jenkins4.jpg[]
+
+* connot find the symbol
++
+造成此问题的原因是因为此符文所在的文件或者依赖不存在，主要还是因为jar包因为出现问题，出现的原因主要有以下两种情况。
+
+. 此项目所依赖的服务版本未更新到最新版本或者未上传发布到私服中央仓库
++
+解决方法: 使用Jenkins重新构建项目所依赖的微服务，将其生成的jar包上传至仓库中。
++
+. 如果第一步解决不了，再来进行第二步。可能是因为本地缓存的原因造成的
++
+.. 登录到Jenkins服务器上
++
+.. 进入到目录，找到项目所依赖的微服务的本地缓存，然后删除
++
+[source,shell]
+----
+cd /var/lib/jenkins/.gradle/caches/modules-2/files-2.1
+----
++
+.. 然后重新构建项目
+
+* permission defined
+
+此问题是由于在执行脚本时，用户权限不足所造成的。需要在Jenkins的脚本文件中为当前命令添加所需要的权限
+
+解决方法:
+
+. 定位到所执行命令:
++
+[source,shell]
+----
+sh "./gradlew -Penv=${env.ENV} clean build"
+----
+. 给命令添加执行权限:
++
+[source,shell]
+----
+sh "chmod +x gradlew";
+sh "./gradlew -Penv=${env.ENV} clean build"
+----
+
+Jenkins 其他操作请查看 <<jenkins>>
 
 [[linux-install-gcc]]
 == 安装高版本gcc

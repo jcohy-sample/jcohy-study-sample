@@ -1,4 +1,10 @@
+= 概述
 
+本项目部分从 jcohy-study-sample 迁移过来。
+
+重新整理结构优化
+
+使用 Asciidoc 重新编写文档。
 
 [[plan-tbl]]
 .文档迁移计划
@@ -9,19 +15,19 @@
 | 100%
 
 | jcohy-study-ansyc
-| 0%[暂不计划]
+| 0%(暂不计划)
 
 | jcohy-study-designpattern
 | 100%
 
 | jcohy-study-docker
-| 0%
+| 0%(暂不计划)
 
 | jcohy-study-files
 | 0
 
 | jcohy-study-framework
-| 0%
+| 80%(已迁移，暂未整理)
 
 | jcohy-study-java
 | 100%
@@ -36,19 +42,19 @@
 | 100%
 
 | jcohy-study-quartz
-| 0%
+| 100%
 
 | jcohy-study-security
-| 0%
+| 0%(暂不迁移)
 
 | jcohy-study-spring
-| 0%
+| 70%(已迁移，暂未整理)
 
 | jcohy-study-springboot
-| 0%
+| 100%
 
 | jcohy-study-utils
-| 0%
+| 100%
 
 | jcohy-study-ViewGuide
 | 0%
@@ -57,8 +63,17 @@
 | 100%
 
 | Swagger
-| 0%
+| 100%
 
 | website
-| 0%
+| 100%
 |===
+
+== 文档构建
+
+[source,shell]
+----
+./gradlew clean asciidoctor
+----
+
+构建的文档在 `build/docs/ref-docs` 目录下。

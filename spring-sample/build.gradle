@@ -1,0 +1,9 @@
+dependencies {
+    compile "org.springframework:spring-context:${SpringVersion}"
+    compile "org.springframework:spring-aspects:${SpringVersion}"
+    compile "org.springframework:spring-jdbc:${SpringVersion}"
+    compile "c3p0:c3p0:${c3p0Version}"
+    compile "javax.inject:javax.inject:${injectVersion}"
+    compile "mysql:mysql-connector-java:${mysqlVersion}"
+    compile "javax.servlet:javax.servlet-api:${servletVersion}"
+}

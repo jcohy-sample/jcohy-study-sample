@@ -13,9 +13,10 @@ http://docs.jcohy.com[*http://docs.jcohy.com*]
 ****
 
 [horizontal]
-<<java.adoc#java-overview, Java基础>> :: java 基础，Java 新特性
-<<designpattern.adoc#design-overview, 设计模式>> :: Java设计模式
-<<algorithm.adoc#algorithm-overview, 算法>>  :: 算法精题
+<<java.adoc#java-overview, Java基础>> :: java 基础,Java 新特性
+<<designpattern.adoc#design-overview, 设计模式>> :: Java 23种设计模式
+<<algorithm.adoc#algorithm-overview, 算法>>  :: ACM 常见算法精题。各种排序算法
+<<other.adoc#other-overview, 其他组件>>  :: Quartz,Swagger,Jenkins,WenSite等
 <<linux.adoc#linux-overview, linux>>  :: Linux 介绍
 <<nosql.adoc#nosql-overview, nosql>>  :: nosql 介绍
 <<spring.adoc#spring-overview, spring>>  :: spring全家桶

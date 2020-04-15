@@ -30,16 +30,23 @@ ext {
     springCloudAlibabaVersion = "2.2.0.RELEASE"
     mybatisPlusStarterVersion = "3.3.1"
     txLcnVersion = "5.0.2.RELEASE"
+    quartzVersion = "2.3.2"
+    SpringVersion = "5.2.5.RELEASE"
+    injectVersion = "1"
+    servletVersion = "4.0.0"
 
     //================= Swagger =================
     swaggerModelsVersion = "1.5.21"
     swaggerVersion = "2.9.2"
     swaggerUIVersion = "1.9.4"
 
+
     //================= datasource ================
     flywayVersion = "6.0.8"
     druidStarterVersion = "1.1.21"
     mysqlConnectorJavaVersion = "8.0.16"
+    c3p0Version = "0.9.1.2"
+    mysqlVersion = "8.0.18"
 
     //=================json=======================
     fastjsonVersion = "1.2.62"

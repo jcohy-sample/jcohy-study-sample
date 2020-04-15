@@ -1,7 +1,7 @@
 [[spring-security]]
 = Spring Boot Security
 
-当引入 spring security 时，默认开启安全验证。想要关闭可以在配置文件中写：`security.basic.enabled = false`
+当引入 spring security 时，默认开启安全验证。想要关闭可以在配置文件中写: `security.basic.enabled = false`
 
 [source,java]
 ----
@@ -25,7 +25,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 [[spring-security-authenticate-pattern]]
 == Spring Security 支持的认证模式
 
-=== Basic：
+=== Basic:
 
 Basic 认证是HTTP 中非常简单的认证方式，因为简单，所以不是很安全，不过仍然非常常用。
 
@@ -65,7 +65,7 @@ image::images/spring-spring-security4.jpg[]
 
 它的逻辑是这样的
 
-SecurityContextPersistenceFilter：
+SecurityContextPersistenceFilter:
 
 [source,java]
 ----
@@ -114,7 +114,7 @@ public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 		}
 	}
 ----
-HttpSessionSecurityContextRepository：
+HttpSessionSecurityContextRepository:
 
 [source,java]
 ----
@@ -182,7 +182,7 @@ protected void saveContext(SecurityContext context) {
 . 从 SecurityContext 里注销当前授权用户
 . 重定向到注销成功页面
 
-LogoutFilter：
+LogoutFilter:
 
 [source,java]
 ----
@@ -214,7 +214,7 @@ public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 }
 ----
 
-SecurityContextLogoutHandler：
+SecurityContextLogoutHandler:
 
 [source,java]
 ----
@@ -433,14 +433,14 @@ public AbstractAuthenticationToken(Collection<? extends GrantedAuthority> author
 }
 ----
 
-ProviderManager：实现了 `AuthenticationManager`。程序会进入 `authenticate()` 方法中，获取 `AuthenticationProvider`：真正的校验逻辑处理
+ProviderManager: 实现了 `AuthenticationManager`。程序会进入 `authenticate()` 方法中，获取 `AuthenticationProvider`: 真正的校验逻辑处理
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java
 ----
 public Authentication authenticate(Authentication authentication)
         throws AuthenticationException {
-//以表单登录为例：此处的toTest应为UsernamePasswordAuthenticationToken
+//以表单登录为例: 此处的toTest应为UsernamePasswordAuthenticationToken
 //此外，第三方登录SocialAuthenticationToken
     Class toTest = authentication.getClass();
     AuthenticationException lastException = null;
@@ -738,7 +738,7 @@ public class ImoocAuthorizationServerConfig{
 }
 ----
 
-. 首先，需要请求获取授权码。请求地址：`oauth/authorize`。需要传递几个参数
+. 首先，需要请求获取授权码。请求地址: `oauth/authorize`。需要传递几个参数
 +
 [[spring-security-oauth2-impl-tbl]]
 .参数
@@ -760,7 +760,7 @@ public class ImoocAuthorizationServerConfig{
 
 . 拿到授权码后，需要到 `/oauth/token` 换取令牌，需要传递几个参数
 
-需要在头部加入：`authorization`:将 `id` 和 `secret` 填进去
+需要在头部加入: `authorization`:将 `id` 和 `secret` 填进去
 
 [[spring-security-oauth2-impl-param-tbl]]
 .参数
@@ -948,7 +948,7 @@ public interface OAuth2AccessToken {
 }
 ----
 
-一个典型的样例 token 响应,如下所示，就是上述类序列化后的结果：
+一个典型的样例 token 响应,如下所示，就是上述类序列化后的结果:
 
 [source, java]
 ----
@@ -996,7 +996,7 @@ public class CompositeTokenGranter implements TokenGranter {
 }
 ----
 
-五种类型分别是：
+五种类型分别是:
 
 * ResourceOwnerPasswordTokenGranter ==> password密码模式
 * AuthorizationCodeTokenGranter ==> authorization_code授权码模式
@@ -1086,7 +1086,7 @@ image::images/spring-spring-security-oauth3.png[]
 [[spring-security-social]]
 == 第三方登录
 
-三个角色：服务提供商（Provider），资源所有者（Resource Owner），第三方应用（Client）
+三个角色: 服务提供商（Provider），资源所有者（Resource Owner），第三方应用（Client）
 
 image::images/spring-spring-security-oauth5.jpg[]
 
@@ -1108,7 +1108,7 @@ image::images/spring-spring-security-oauth6.jpg[]
 
 SpringSocial使用 `SocialAuthenticationFilter` 过滤器实现上图的流程，并将这个过滤器加到 SpringSecurity 的过滤器链上
 
-ServiceProvider：针对每一个服务提供商，都必须提供一个 `ServiceProvider`，继承 `AbstractOAuth2ServiceProvider` 这个抽象类，里面实现了最基本的功能
+ServiceProvider: 针对每一个服务提供商，都必须提供一个 `ServiceProvider`，继承 `AbstractOAuth2ServiceProvider` 这个抽象类，里面实现了最基本的功能
 
 image::images/spring-spring-security-oauth7.jpg[]
 

@@ -5,20 +5,20 @@
 == 概述
 
 . 大多应用中，可通过消息服务中间件来提升系统异步通信、扩展解耦能力
-. 消息服务中两个重要概念： **消息代理(message broker)** 和 **目的地(destination)**
+. 消息服务中两个重要概念:  **消息代理(message broker)** 和 **目的地(destination)**
 +
 --
     当消息发送者发送消息以后，将由消息代理接管，消息代理保证消息传递到指定目的地。
 --
 . 消息队列主要有两种形式的目的地
-.. 队列（queue）：点对点消息通信（point-to-point）
-.. 主题（topic）：发布（publish）/订阅（subscribe）消息通信
-. 点对点式：
+.. 队列（queue）: 点对点消息通信（point-to-point）
+.. 主题（topic）: 发布（publish）/订阅（subscribe）消息通信
+. 点对点式:
 .. 消息发送者发送消息，消息代理将其放入一个队列中，消息接收者从队列中获取消息内容，消息读取后被移出队列
 .. 消息只有唯一的发送者和接受者，但并不是说只能有一个接收者
-. 发布订阅式：
+. 发布订阅式:
 .. 发送者（发布者）发送消息到主题，多个接收者（订阅者）监听（订阅）这个主题，那么就会在消息到达时同时收到消息
-. JMS（Java Message Service）JAVA消息服务：
+. JMS（Java Message Service）JAVA消息服务:
 .. 基于JVM消息代理的规范。ActiveMQ、HornetMQ是JMS实现
 . AMQP（Advanced Message Queuing Protocol）
 .. 高级消息队列协议，也是一个消息代理的规范，兼容JMS
@@ -59,7 +59,7 @@ RabbitMQ是一个由erlang开发的AMQP(Advanved Message Queue Protocol)的开�
 
 交换器，用来接收生产者发送的消息并将这些消息路由给服务器中的队列。
 
-Exchange有4种类型：direct(默认)，fanout, topic, 和headers，不同类型的Exchange转发消息的策略有所区别
+Exchange有4种类型: direct(默认)，fanout, topic, 和headers，不同类型的Exchange转发消息的策略有所区别
 
 [[spring-advanced-message-rabbitmq-overview-queue]]
 ==== Queue
@@ -111,7 +111,7 @@ image::images/spring-spring-boot29.png[]
 
 Exchange 类型
 
-Exchange分发消息时根据类型的不同分发策略有区别，目前共四种类型：`direct`、`fanout`、`topic`、`headers` 。`headers` 匹配 AMQP 消息的 header 而不是路由键， headers 交换器和 direct 交换器完全一致，但性能差很多，目前几乎用不到了，所以直接看另外三种类型：
+Exchange分发消息时根据类型的不同分发策略有区别，目前共四种类型: `direct`、`fanout`、`topic`、`headers` 。`headers` 匹配 AMQP 消息的 header 而不是路由键， headers 交换器和 direct 交换器完全一致，但性能差很多，目前几乎用不到了，所以直接看另外三种类型:
 
 image::images/spring-spring-boot30.png[direct]
 
@@ -123,7 +123,7 @@ image::images/spring-spring-boot31.png[fanout]
 
 image::images/spring-spring-boot32.png[topic]
 
-topic 交换器通过模式匹配分配消息的路由键属性，将路由键和某个模式进行匹配，此时队列需要绑定到一个模式上。它将路由键和绑定键的字符串切分成单词，这些单词之间用点隔开。它同样也会识别两个通配符：符号“#”和符号“*”。#匹配0个或多个单词，*匹配一个单词。
+topic 交换器通过模式匹配分配消息的路由键属性，将路由键和某个模式进行匹配，此时队列需要绑定到一个模式上。它将路由键和绑定键的字符串切分成单词，这些单词之间用点隔开。它同样也会识别两个通配符: 符号“#”和符号“*”。#匹配0个或多个单词，*匹配一个单词。
 
 [[spring-advanced-message-rabbitmq-integrated]]
 === RabbitMQ 整合
@@ -131,8 +131,8 @@ topic 交换器通过模式匹配分配消息的路由键属性，将路由键�
 . 引入 spring-boot-starter-amqp
 . application.yml配置
 . 测试RabbitMQ
-.. 1.AmqpAdmin：管理组件
-.. 2.RabbitTemplate：消息发送处理组件
+.. 1.AmqpAdmin: 管理组件
+.. 2.RabbitTemplate: 消息发送处理组件
 
 image::images/spring-spring-boot33.png[RabbitMQ]
 
@@ -143,7 +143,7 @@ image::images/spring-spring-boot33.png[RabbitMQ]
 . 有自动配置连接工厂ConnectionFactory
 . RabbitProperties封装了RabbitMQ的配置
 . RabbitTemplate:给RabbitMQ发送和接受消息
-. AmqpAdmin：RabbitMQ系统管理功能组件，创建和删除Queue，Exchange，Binding
+. AmqpAdmin: RabbitMQ系统管理功能组件，创建和删除Queue，Exchange，Binding
 +
 [source,java]
 ----
@@ -155,7 +155,7 @@ image::images/spring-spring-boot33.png[RabbitMQ]
         amqpAdmin.declareExchange(new DirectExchange(""));
     }
 ----
-. @EnableRabbit+@RabbitListenner：开启基于注解的RabbitMQ模式，监听消息队列
+. @EnableRabbit+@RabbitListenner: 开启基于注解的RabbitMQ模式，监听消息队列
 
 [source,java]
 ----

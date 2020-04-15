@@ -1,5 +1,6 @@
 dependencies {
     compile "org.junit.jupiter:junit-jupiter-api:${junit5Version}"
+    compile "org.quartz-scheduler:quartz:${quartzVersion}"
 }
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
