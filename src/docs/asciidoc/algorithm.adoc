@@ -1,6 +1,8 @@
 [[algorithm-overview]]
-= 概述
+= 算法和数据结构
 include::attributes.adoc[]
+
+include::algorithm/structure.adoc[leveloffset=+1]
 
 include::algorithm/sort.adoc[leveloffset=+1]
 
@@ -15,8 +17,6 @@ include::algorithm/list.adoc[leveloffset=+1]
 include::algorithm/stack.adoc[leveloffset=+1]
 
 include::algorithm/queue.adoc[leveloffset=+1]
-
-include::algorithm/tree.adoc[leveloffset=+1]
 
 include::algorithm/graph.adoc[leveloffset=+1]
 
