@@ -1,5 +1,6 @@
 package com.jcohy.rabbit.sample.producer;
 
+import com.jcohy.rabbit.sample.callback.RabbitCallback;
 import com.jcohy.rabbit.sample.config.RabbitConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ public class ProducerMessage implements RabbitTemplate.ConfirmCallback, RabbitTe
 
     private final RabbitTemplate rabbitTemplate;
 
+    private RabbitCallback rabbitCallback;
 
     @Autowired
     public ProducerMessage(RabbitTemplate rabbitTemplate) {
@@ -33,7 +35,8 @@ public class ProducerMessage implements RabbitTemplate.ConfirmCallback, RabbitTe
         rabbitTemplate.setMandatory(true);
     }
 
-    public void sendMsgToA(String content){
+    public void sendMsgToA(String content,RabbitCallback rabbitCallback){
+        this.rabbitCallback = rabbitCallback;
         CorrelationData correlationId = new CorrelationData(UUID.randomUUID().toString());
         rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_A, RabbitConfig.ROUTINGKEY_A,content,correlationId);
     }
@@ -60,9 +63,11 @@ public class ProducerMessage implements RabbitTemplate.ConfirmCallback, RabbitTe
     public void confirm(CorrelationData correlationData, boolean ack, String cause) {
         log.info("ConsumerA 消息确认的id： " + correlationData);
         if(ack){
+            rabbitCallback.returnCallBack("消息发送成功");
             log.info("消息发送成功");
             //发送成功 删除本地数据库存的消息
         }else{
+            rabbitCallback.returnCallBack("消息发送失败");
             log.info("消息发送失败：id {} | 消息发送失败的原因 {}",correlationData,cause);
             // 根据本地消息的状态为失败，可以用定时任务去处理数据
         }
@@ -74,6 +79,7 @@ public class ProducerMessage implements RabbitTemplate.ConfirmCallback, RabbitTe
      */
     @Override
     public void returnedMessage(Message message, int replyCode, String replyText, String exchange, String routingKey) {
+        rabbitCallback.returnCallBack("returnedMessage [消息从交换机到队列失败]");
         log.info("returnedMessage [消息从交换机到队列失败]  message："+message);
     }
 }
