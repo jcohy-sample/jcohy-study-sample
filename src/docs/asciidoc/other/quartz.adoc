@@ -52,7 +52,7 @@ OpenSymphony提供的强大的开源的任务调度框架
 
 * JobStore
 
-* Trigger（SimpleTrigger,CronTrigger）
+* Trigger(SimpleTrigger,CronTrigger)
 
 
 
@@ -60,7 +60,7 @@ OpenSymphony提供的强大的开源的任务调度框架
 
 - ThreadPool
 
-- Scheduler（start,stop,）
+- Scheduler(start,stop,)
 
 - Calendar: 一个Trigger可以和多个Calendar关联，以排除或包含某些时间点。
 

@@ -35,9 +35,9 @@ Basic 认证是HTTP 中非常简单的认证方式，因为简单，所以不是
 
 http://www.faqs.org/rfcs/rfc2617.html[Digest]
 
-摘要认证(Digest authentication)是一个简单的认证机制，最初是为HTTP协议开发的，因而也常叫做HTTP摘要，在[RFC2617](http://www.faqs.org/rfcs/rfc2617.html)中描述。其身份验证机制很简单，它采用杂凑式（hash）加密方法，以避免用明文传输用户的口令。
+摘要认证(Digest authentication)是一个简单的认证机制，最初是为HTTP协议开发的，因而也常叫做HTTP摘要，在[RFC2617](http://www.faqs.org/rfcs/rfc2617.html)中描述。其身份验证机制很简单，它采用杂凑式(hash)加密方法，以避免用明文传输用户的口令。
 
-摘要认证就是要核实，参与通信的双方，都知道双方共享的一个秘密（即口令）。
+摘要认证就是要核实，参与通信的双方，都知道双方共享的一个秘密(即口令)。
 
 === x.509:
 
@@ -107,7 +107,7 @@ public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 					.getContext();
 			//清空SecurityContextHolder中的securityContext
 			SecurityContextHolder.clearContext();
-            //，并将securityContext（这个securityContext保存有后面过滤器生成的数据）放入SecurityContextRepository中，也就是执行SecurityContextRepository.saveContext()；
+            //，并将securityContext(这个securityContext保存有后面过滤器生成的数据)放入SecurityContextRepository中，也就是执行SecurityContextRepository.saveContext()；
 			repo.saveContext(contextAfterChainExecution, holder.getRequest(),
 					holder.getResponse());
 			request.removeAttribute(FILTER_APPLIED);
@@ -124,7 +124,7 @@ public SecurityContext loadContext(HttpRequestResponseHolder requestResponseHold
 		HttpSession httpSession = request.getSession(false);
 
     	/*判断session是否存在，如果存在先尝试从session中
-    	 * httpSession.getAttribute(springSecurityContextKey）获取securityContext，获取不		    *到或则session不存在，返回null
+    	 * httpSession.getAttribute(springSecurityContextKey)获取securityContext，获取不		    *到或则session不存在，返回null
     	 */
 		SecurityContext context = readSecurityContextFromSession(httpSession);
 		//判断securityContext是否为null，为null则新建一个securityContextImpl
@@ -161,7 +161,7 @@ protected void saveContext(SecurityContext context) {
 			if (httpSession == null) {
 				httpSession = createNewSessionIfAllowed(context);
 			}
-//判断session是否为空，如果不为空，则比较securityContext是否有更新过（会与SaveToSessionResponseWrapper中的securityContext内容作比较），有的话，就更新下一下httpSession.setAttribute(springSecurityContextKey, context);
+//判断session是否为空，如果不为空，则比较securityContext是否有更新过(会与SaveToSessionResponseWrapper中的securityContext内容作比较)，有的话，就更新下一下httpSession.setAttribute(springSecurityContextKey, context);
 			if (httpSession != null) {
 				if (contextChanged(context)
 						|| httpSession.getAttribute(springSecurityContextKey) == null){
@@ -1086,7 +1086,7 @@ image::images/spring-spring-security-oauth3.png[]
 [[spring-security-social]]
 == 第三方登录
 
-三个角色: 服务提供商（Provider），资源所有者（Resource Owner），第三方应用（Client）
+三个角色: 服务提供商(Provider)，资源所有者(Resource Owner)，第三方应用(Client)
 
 image::images/spring-spring-security-oauth5.jpg[]
 
@@ -1094,8 +1094,8 @@ image::images/spring-spring-security-oauth5.jpg[]
 
 OAuth协议中的授权模式
 
-* 授权码模式（authorization code）
-* 密码模式（resource owner password credentials）
+* 授权码模式(authorization code)
+* 密码模式(resource owner password credentials)
 * 客户端模式(client credentials)
 * 简化模式(implicit)
 

@@ -33,7 +33,7 @@ public SpringApplication(Object... sources) {
 [source,java]
 ----
 private void initialize(Object[] sources) {
-    //初始化source（此为我们传进去的参数）
+    //初始化source(此为我们传进去的参数)
    if (sources != null && sources.length > 0) {
       this.sources.addAll(Arrays.asList(sources));
    }
@@ -674,7 +674,7 @@ public void refresh() throws BeansException, IllegalStateException {
          // 9.10 检查并注册监听器
          registerListeners();
 
-         // 9.11 实例化所有剩余（非延迟初始化）单例。
+         // 9.11 实例化所有剩余(非延迟初始化)单例。
          finishBeanFactoryInitialization(beanFactory);
 
          // 9.12 最后一步: 发布相应的事件。
@@ -815,7 +815,7 @@ protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
    beanFactory.ignoreDependencyInterface(ApplicationContextAware.class);
 
    // BeanFactory接口未在普通工厂中注册为可解析类型。
-   // MessageSource作为bean注册（并发现用于自动装配）。
+   // MessageSource作为bean注册(并发现用于自动装配)。
    beanFactory.registerResolvableDependency(BeanFactory.class, beanFactory);
    beanFactory.registerResolvableDependency(ResourceLoader.class, this);
    beanFactory.registerResolvableDependency(ApplicationEventPublisher.class, this);
@@ -824,7 +824,7 @@ protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
    // 注册早期的后处理器以检测内部bean作为ApplicationListeners。
    beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this));
 
-   // 检测到LoadTimeWeaver并准备编织（如果找到）。
+   // 检测到LoadTimeWeaver并准备编织(如果找到)。
    if (beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
       beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
       // Set a temporary ClassLoader for type matching.
@@ -1334,7 +1334,7 @@ public static void registerBeanPostProcessors(
    sortPostProcessors(internalPostProcessors, beanFactory);
    registerBeanPostProcessors(beanFactory, internalPostProcessors);
 
-   // 重新注册后处理器以检测内部bean作为ApplicationListeners，将其移动到处理器链的末尾（用于拾取代理等）。
+   // 重新注册后处理器以检测内部bean作为ApplicationListeners，将其移动到处理器链的末尾(用于拾取代理等)。
    beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(applicationContext));
 }
 ----
@@ -1426,7 +1426,7 @@ protected void initApplicationEventMulticaster() {
 
 ==== 9.9、在特定的上下文子类中初始化其他特殊bean。
 
-`ThemeSource`，`EmbeddedServletContainerFactory`(`TomcatEmbeddedServletContainerFactory`,`JettyEmbeddedServletContainerFactory`,`UndertowEmbeddedServletContainerFactory`）。
+`ThemeSource`，`EmbeddedServletContainerFactory`(`TomcatEmbeddedServletContainerFactory`,`JettyEmbeddedServletContainerFactory`,`UndertowEmbeddedServletContainerFactory`)。
 
 [source,java]
 ----
@@ -1531,7 +1531,7 @@ protected void registerListeners() {
 }
 ----
 
-==== 9.11 、实例化所有剩余（非延迟初始化）单例。
+==== 9.11 、实例化所有剩余(非延迟初始化)单例。
 
 创建 Bean 的实例并构建 Bean 的关系网。都在此方法中。
 

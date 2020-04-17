@@ -38,7 +38,7 @@ management.context-path=/manage
 management.port=8181
 ----
 
-. 可进行 shutdown（POST 提交，此端点默认关闭）
+. 可进行 shutdown(POST 提交，此端点默认关闭)
 
 . 通过 http 方式访问监控端点
 
@@ -67,18 +67,18 @@ management.port=8181
 
 | mappings    | 应用@RequestMapping映射路径
 
-| shutdown    | 关闭当前应用（默认关闭）
+| shutdown    | 关闭当前应用(默认关闭)
 
-| trace       | 追踪信息（最新的http请求）
+| trace       | 追踪信息(最新的http请求)
 |===
 
 [[spring-advanced-monitor-info]]
 == 定制端点信息
 
 * 定制端点一般通过endpoints+端点名+属性名来设置。
-* 修改端点id（endpoints.beans.id=mybeans）
-* 开启远程应用关闭功能（endpoints.shutdown.enabled=true）
-* 关闭端点（endpoints.beans.enabled=false）
+* 修改端点id(endpoints.beans.id=mybeans)
+* 开启远程应用关闭功能(endpoints.shutdown.enabled=true)
+* 关闭端点(endpoints.beans.enabled=false)
 * 开启所需端点
 * endpoints.enabled=false
 * endpoints.beans.enabled=true

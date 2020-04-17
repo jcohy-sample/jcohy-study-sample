@@ -11,16 +11,16 @@
     当消息发送者发送消息以后，将由消息代理接管，消息代理保证消息传递到指定目的地。
 --
 . 消息队列主要有两种形式的目的地
-.. 队列（queue）: 点对点消息通信（point-to-point）
-.. 主题（topic）: 发布（publish）/订阅（subscribe）消息通信
+.. 队列(queue): 点对点消息通信(point-to-point)
+.. 主题(topic): 发布(publish)/订阅(subscribe)消息通信
 . 点对点式:
 .. 消息发送者发送消息，消息代理将其放入一个队列中，消息接收者从队列中获取消息内容，消息读取后被移出队列
 .. 消息只有唯一的发送者和接受者，但并不是说只能有一个接收者
 . 发布订阅式:
-.. 发送者（发布者）发送消息到主题，多个接收者（订阅者）监听（订阅）这个主题，那么就会在消息到达时同时收到消息
-. JMS（Java Message Service）JAVA消息服务:
+.. 发送者(发布者)发送消息到主题，多个接收者(订阅者)监听(订阅)这个主题，那么就会在消息到达时同时收到消息
+. JMS(Java Message Service)JAVA消息服务:
 .. 基于JVM消息代理的规范。ActiveMQ、HornetMQ是JMS实现
-. AMQP（Advanced Message Queuing Protocol）
+. AMQP(Advanced Message Queuing Protocol)
 .. 高级消息队列协议，也是一个消息代理的规范，兼容JMS
 .. RabbitMQ 是 AMQP 的实现
 +
@@ -30,7 +30,7 @@ image::images/spring-spring-boot27.png[RabbitMQ]
 .. spring-rabbit提供了对AMQP的支持
 .. 需要 ConnectionFactory 的实现来连接消息代理
 .. 提供 JmsTemplate、RabbitTemplate 来发送消息
-.. @JmsListener（JMS）、@RabbitListener（AMQP）注解在方法上监听消息代理发布的消息
+.. @JmsListener(JMS)、@RabbitListener(AMQP)注解在方法上监听消息代理发布的消息
 .. @EnableJms、@EnableRabbit开启支持
 . Spring Boot自动配置
 .. JmsAutoConfiguration
@@ -47,7 +47,7 @@ RabbitMQ是一个由erlang开发的AMQP(Advanved Message Queue Protocol)的开�
 [[spring-advanced-message-rabbitmq-overview-message]]
 ==== Message
 
-消息，消息是不具名的，它由消息头和消息体组成。消息体是不透明的，而消息头则由一系列的可选属性组成，这些属性包括routing-key（路由键）、priority（相对于其他消息的优先权）、delivery-mode（指出该消息可能需要持久性存储）等。
+消息，消息是不具名的，它由消息头和消息体组成。消息体是不透明的，而消息头则由一系列的可选属性组成，这些属性包括routing-key(路由键)、priority(相对于其他消息的优先权)、delivery-mode(指出该消息可能需要持久性存储)等。
 
 [[spring-advanced-message-rabbitmq-overview-publisher]]
 ==== Publisher
@@ -115,7 +115,7 @@ Exchange分发消息时根据类型的不同分发策略有区别，目前共四
 
 image::images/spring-spring-boot30.png[direct]
 
-消息中的路由键（routing key）如果和 Binding 中的 binding key 一致， 交换器就将消息发到对应的队列中。路由键与队列名完全匹配，如果一个队列绑定到交换机要求路由键为“dog”，则只转发 routing key 标记为“dog”的消息，不会转发“dog.puppy”，也不会转发“dog.guard”等等。它是完全匹配、单播的模式。
+消息中的路由键(routing key)如果和 Binding 中的 binding key 一致， 交换器就将消息发到对应的队列中。路由键与队列名完全匹配，如果一个队列绑定到交换机要求路由键为“dog”，则只转发 routing key 标记为“dog”的消息，不会转发“dog.puppy”，也不会转发“dog.guard”等等。它是完全匹配、单播的模式。
 
 image::images/spring-spring-boot31.png[fanout]
 
@@ -163,7 +163,7 @@ image::images/spring-spring-boot33.png[RabbitMQ]
     private RabbitTemplate rabbitTemplate;
 
     /**
-     * 单播（点对点）
+     * 单播(点对点)
      */
     @Test
     public void contextLoad(){

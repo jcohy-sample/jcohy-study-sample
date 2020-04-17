@@ -1,0 +1,864 @@
+[[java-14-feature]]
+= Java14 新特性
+
+[[java-14-feature-overview]]
+== Java14 新特性一览
+
+旧版本回顾：
+
+image::images/java-14-2.png[]
+
+image::images/java-14-3.png[]
+
+2020 年 3 月 17 日,JDK/Java 14 正式 GA(General Available) 。这是自从Java 采用六个月一次的发布周期之后的第五次发布。
+
+image::images/java-14-1.png[]
+
+此版本包含的 JEP (Java/JDK Enhancement Proposals,JDK 增强提案) 比 Java 12 和 13 加起来的还要多。总共 16 个新特性，包括两个孵化器模块 、三个预览特性、两个弃用的功能以及两个删除的功能。
+
+* “孵化器模块”：将 尚未定稿的 API 和工具先交给开发者使用，以获得反馈，并用这些反馈 进一步改进 Java 平台的质量。
+
+* “预览特性”：是 规格已经成型、实现已经确定，但还未最终定稿的功能。它们 出现在 Java 中的目的是收集在真实世界中使用后的反馈信息，促进这些功能的最终定稿.这些特性可能会随时改变，根据反馈结果， 这些特性甚至可能会被移除，**但通常所有预览特性最后都会在 Java 中固定下来**
+
+资料来源:  http://openjdk.java.net/projects/jdk/14/
+
+[[java-14-feature-overview-tbl]]
+.Java14 新特性一览
+|===
+| 新特性 | 翻译
+
+| 305: https://openjdk.java.net/jeps/305[Pattern Matching for instanceof (Preview)] | instanceof 模式匹配 (预览特性)
+
+| 343: https://openjdk.java.net/jeps/343[Packaging Tool (Incubator)] | 打包工具(孵化器模块)
+
+| 345: http://openjdk.java.net/jeps/345[NUMA-Aware Memory Allocation for G1] | G1 的 NUMA Aware 的内存分配
+
+| 349: http://openjdk.java.net/jeps/349[JFR Event Streaming] | JFR 事件流
+
+| 352: http://openjdk.java.net/jeps/352[Non-Volatile Mapped Byte Buffers] | 非易失性映射字节缓冲区
+
+| 358: http://openjdk.java.net/jeps/358[Helpful NullPointerExceptions] | 非常实用的 NullPointerException
+
+| 359: http://openjdk.java.net/jeps/359[Records (Preview)] | Record (预览特性)
+
+| 361: http://openjdk.java.net/jeps/361[Switch Expressions (Standard)] | switch 表达式
+
+| 362: http://openjdk.java.net/jeps/362[Deprecate the Solaris and SPARC Ports] | 弃用 Solaris 和 SPARC 的 移植
+
+| 363: http://openjdk.java.net/jeps/363[Remove the Concurrent Mark Sweep (CMS) Garbage Collector] | 删除 CMS 垃圾回收器
+
+| 364: http://openjdk.java.net/jeps/364[ZGC on macOS] | ZGC on macOS
+
+| 365: http://openjdk.java.net/jeps/365[ZGC on Windows] | ZGC on windows
+
+| 366: http://openjdk.java.net/jeps/366[Deprecate the ParallelScavenge + SerialOld GC Combination] | 弃用 ParallelScavenge 和 SerialOld GC 组合
+
+| 367: http://openjdk.java.net/jeps/367[Remove the Pack200 Tools and API] | 删除 Pack200 工具和 API
+
+| 368: http://openjdk.java.net/jeps/368[Text Blocks (Second Preview)] | 文本块(预览第二版)
+
+| 370: http://openjdk.java.net/jeps/370[Foreign-Memory Access API (Incubator)] | 外部内存访问 API(孵化器模式)
+|===
+
+[[java-14-feature-environment]]
+== 环境安装
+
+* JDK下载地址:https:// www.oracle.com/java/technologies/javase downloads.html
+
+* 修改环境变量。
+
+* IDE:需要使用 Idea 2020.1 版本。或者其他支持 java14 的ide。
+
+* 项目设置
+
+image::images/java-14-4.png[]
+
+[[java-14-feature-instanceof]]
+== instanceof 模式匹配 (预览语言)
+
+=== 简介
+
+这个特性很有意思,通过对 `instanceof` 运算符进行模式匹配来增强Java编程语言。 他为通用的模式匹配打开了大门，模式匹配通过更为简便的语法基于一定的条件来抽取对象的组件。 这是JDK 14中的预览语言功能。
+
+有了该功能，可以减少 Java 程序中显式强制转换的数量，从而提高生产力，还能实现更精确、简洁的类型安全的代码。
+
+=== 动机
+
+几乎每个程序都包含某种逻辑，这些逻辑结合了对表达式是否具有某种类型或结构的判断，然后有条件地提取其状态的组件以进行进一步处理。 例如，以下是所有Java程序员都熟悉的一种惯用法：
+
+[source,java]
+----
+if (obj instanceof String) {
+    String s = (String) obj;
+    // use s
+}
+----
+
+这里做了三件事：
+
+. 判断 obj 是不是 String 类型的
+. 将 obj 转为 String
+. 声明一个新的局部变量，以便后续使用
+
+这种模式很简单，并且所有 Java 程序员都可以理解，但是由于一些原因，它不是最优的，并且很枯燥。当你在进行类型判断和转换只能能做什么？。到底需部需要进行类型判断和类型转换这个样板。尤其是 String 类型的三个出现，混淆了后面的更重要的逻辑。但最重要的是，重复为错误提供了机会，使错误不被察觉到程序中。
+
+我们认为 Java 是时候接受模式匹配了。模式匹配允许以简洁的语法表达对象所需的 “形式”(模式)，并允许各种语句和表达式针对其输入来判断 “形状”(匹配)。从 `Haskell` 到 `C#`，许多语言都接受了模式匹配。
+
+=== 描述
+
+这种模式匹配由两部分组成
+
+. 作用于目标对象的断言
+. 匹配成功后提取的一组绑定变量组合
+
+类型测试模式由指定类型的断言和单个绑定变量组成。
+
+扩展 `instanceof` 运算符以采用类型测试模式，而不仅仅是类型。 在下面的代码中，String s 是 类型测试模式：
+
+`instanceof` 运算符将目标 `obj` 与 类型测试模式 “匹配”，如下所示：如果 obj 是 String 的实例，则将其强制转换为 String 并分配给绑定变量 s。 绑定变量在 `if` 语句的 `true` 块中，而不在 `if` 语句的 `false` 块中。
+
+与局部变量的范围不同，绑定变量的范围由包含的表达式和语句的语义确定。 例如，在此代码中：
+
+[source,java]
+----
+if (!(obj instanceof String s)) {
+    .. s.contains(..) ..
+} else {
+    .. s.contains(..) ..
+}
+----
+
+`true` 块中的 `s` 表示封闭类中的字段，`false` 块中的 `s` 表示由 `instanceof` 运算符引入的绑定变量。
+
+当 `if` 语句的条件变得比单个 `instanceof` 更复杂时，绑定变量的范围也会相应地增长。 例如，在此代码中：
+
+[source,java]
+----
+if (obj instanceof String s && s.length() > 5) {.. s.contains(..) ..}
+----
+
+绑定变量 `s` 在 `&&` 运算符右侧以及 `true` 块中。 (仅当 `instanceof` 成功匹配时，才考虑到右边。)另一方面，在此代码中：
+
+[source,java]
+----
+if (obj instanceof String s || s.length() > 5) {.. s.contains(..) ..}
+----
+
+绑定变量 `s` 不在 `||` 右侧的范围内 运算符，也不在 `true` 块的范围内。 (在这些点上指的是封闭类中的一个字段。)
+
+目标为 `null` 时，`instanceof` 的工作方式没有任何变化。 也就是说，如果 `obj` 不为 `null`，则仅匹配模式，并且仅分配 `s`。
+
+在 `instanceof` 中使用模式匹配应大大减少 Java 程序中显式强制转换的总数。 此外，类型测试模式在编写相等方法时特别有用。 考虑以下选自 https://www.oreilly.com/library/view/effective-java-3rd/9780134686097/[Effective Java book] 第10条的相等方法：
+
+[source,java]
+----
+@Override public boolean equals(Object o) {
+    return (o instanceof CaseInsensitiveString) &&
+        ((CaseInsensitiveString) o).s.equalsIgnoreCase(s);
+}
+
+//使用类型测试模式意味着可以将其重写为更清晰的代码：
+
+@Override public boolean equals(Object o) {
+    return (o instanceof CaseInsensitiveString cis) &&
+        cis.s.equalsIgnoreCase(s);
+}
+----
+
+instanceof https://openjdk.java.net/jeps/305[语法] 会被相应的扩展
+
+RelationalExpression::
+    RelationalExpression instanceof ReferenceType
+::
+    RelationalExpression instanceof Pattern
+
+Pattern::
+    ReferenceType Identifier
+
+=== 未来规划
+
+未来的 JEP 将通过与其他语言特性(例如 switch 表达式和语句)进行模式匹配来增强Java编程语言。
+
+[[java-14-feature-packaging]]
+== 打包工具(孵化器模式)
+
+这个孵化器工具为开发者带来了一种打包 Java 应用的方式，目的在于创建一个简
+单的打包工具，可以用于构建 exe 、 pkg 、 dmg 、 deb 、 rpm 格式的安装文件 。
+
+JDK14 引入了 `jdk.incubator.jpackage.jmod` ，它基于 JavaFX javapackager tool 构建。
+
+[[java-14-feature-numa]]
+== G1 的 NUMA Aware 的内存分配
+
+该功能改进了 G1 垃圾回收器在非一致内存访问( NUMA )系统上的整体性能 。
+
+NUMA 就是非统一内存访问架构(英语： non uniform memory access ，简称 NUMA )，是一种为多处理器的电脑设计的内存架构，内存访问时间取决于内存相对于处理器的位置。
+
+image::images/java-14-7.png[]
+
+[[java-14-feature-streaming]]
+== JFR 事件流
+
+Java 为了更方便的了解运行的 JVM 情况，在之前的 JDK11 版本中引入了 JFR 特性，即 JDK Flight Recorder 。但是使用不太灵活。虽然 JVM 通过 JFR 暴露了超过 500 项数据，
+但是其中大部分数据只能通过解析 JFR 日志文件才能获取得到，而不是实时获取。用户想要使用 JFR 的数据的话，用户必须先开启 JFR 进行记录，然后停止记录，再将飞行记录的数据 Dump 到磁盘上，然后分析这个记录文件。
+
+举例：
+
+`jcmd <PID> JFR.start name=test duration=60s settings=template.jfcfilename=output.jfr`
+
+新特性中，可以 公开 JDK Flight Recorder JFR )的数据，用于持续监视 ，从而简化各种工具和应用程序对 JFR 数据的访问。
+
+[[java-14-feature-non-volatile]]
+== 非易失性映射字节缓冲区
+
+在 JEP 352 中，对 FileChannel API 进行了扩展，以允许创建 MappedByteBuffer 实例 。
+
+与易失性存储器(RAM )不同，它们在非易失性数据存储 NVM ，非易失性存储器上工作。但是，目标平台是 Linux x64 。
+
+非易失性内存能够持久保持数据，因此可以利用该特性来改进性能。
+
+[[java-14-feature-nullpointerexception]]
+== 非常实用的 NullPointerException
+
+=== 简介
+
+该特性改进了 NullPointerException 的可读性，能更准确地给出 null 变量的信息。
+
+* 该特性可以更好地提示哪个地方出现的空指针，需要 通过 `-XX:+ShowCodeDetailsInExceptionMessages` 开启
+* 在未来的版本中，这个特性可能会默认启用。
+* 这个增强特性不仅适用于方法调用，只要会导致 NullPointerException 的地方也都适用，包括字段的访问、数组的访问和赋值。
+
+=== 目标
+
+* 向开发人员和支持人员提供有关程序过早终止的有用信息。
+* 能清楚地将动态异常与静态程序代码相关联起来，以便提高对程序的理解。
+* 减少新开发人员经常对 `NullPointerExceptions` 产生的困惑和担忧。
+
+=== 动机
+
+每个Java开发人员都遇到过 `NullPointerExceptions`(NPE)。 由于 NPE 几乎可以出现在程序中的任何位置，因此尝试捕获和恢复它们通常是不切实际的。
+结果,开发人员只能依靠 JVM 查明 NPE 实际发生的时间。 例如，假设此代码中出现一个NPE：
+
+[source,java]
+----
+a.i = 99;
+----
+
+JVM 将打印出导致 NPE 的方法,文件名和行号：
+
+[source,java]
+----
+Exception in thread "main" java.lang.NullPointerException
+    at Prog.main(Prog.java:5)
+----
+
+在此报告中,开发人员可以找到 a.i = 99; 并推断 `a` 为空。 但是，对于更复杂的代码，如果不使用调试器就无法确定哪个变量为空。 假设此代码中出现一个NPE：
+
+[source,java]
+----
+a.b.c.i = 99;
+----
+
+文件名和行号不能精确指出哪个变量为空。 是 `a` 还是 `b` 或 `c`？
+
+数组访问和分配也会发生类似的问题。 假设此代码中出现一个NPE：
+
+[source,java]
+----
+a[i][j][k] = 99;
+----
+
+文件名和行号不能精确指出哪个数组组件为空。 是 `a` 还是 `a[i]` 或 `a[i][j]`？
+
+一行代码可能包含多个访问路径，每个访问路径都可能是 `NPE` 的来源。 假设此代码中出现一个NPE：
+
+[source,java]
+----
+a.i = b.j;
+----
+
+文件名和行号未查明有问题的访问路径。 是 `null` 还是 `b`？
+
+最后，`NPE` 可能源于方法调用。 假设此代码中出现一个NPE：
+
+[source,java]
+----
+x().y().i = 99;
+----
+
+文件名和行号不能指出哪个方法调用返回null。 是 `x()` 还是 `y()`？
+
+可以通过各种策略来缓解JVM缺乏精确定位的不足。 例如，面对NPE的开发人员可以通过分配给中间局部变量来破坏访问路径。 (在这里 `var` 关键字可能会有所帮助。)JVM 异常消息中会生成有关 `null` 变量的更准确的报告，但是重新格式化代码以跟踪异常是不可取的。 无论如何，大多数 NPE 都发生在生产环境中，在该环境中，观察 NPE 的支持工程师要从导致其原因的开发人员中删除许多步骤。
+
+如果 JVM 可以提供所需的信息以查明 NPE 的来源，然后确定其根本原因，而无需使用额外的工具或改代码，则整个 Java 生态系统都将受益。 自2006年以来，SAP 的商业 JVM 就已经做到了这一点，获得了开发人员和支持工程师的一致好评。
+
+=== 描述
+
+JVM 在程序试图取消 null 引用的地方抛出 NullPointerException (NPE)， 通过分析程序的字节码指令，JVM 将精确确定哪个变量为空，并在 NPE 中使用 null-detail 消息描述该变量(根据源代码)。 然后，null-detail 消息将显示在JVM的消息中，以及方法，文件名和行号。
+
+[NOTE]
+====
+注意：JVM 在与异常类型相同的行上显示异常消息，这可能会导致行很长。 为了在 Web 浏览器中保持可读性，此 JEP 在异常类型之后的第二行显示空详细信息。
+====
+例如，赋值语句中的 NPE a.i = 99; 将生成此消息：
+
+[source,java]
+----
+Exception in thread "main" java.lang.NullPointerException:
+        Cannot assign field "i" because "a" is null
+    at Prog.main(Prog.java:5)
+----
+
+如果更复杂的 `a.b.c.i = 99`; 抛出一个 NPE，异常消息将剖析该语句并通过显示导致空值的完整访问路径来查明原因：
+
+[source,java]
+----
+Exception in thread "main" java.lang.NullPointerException:
+        Cannot read field "c" because "a.b" is null
+    at Prog.main(Prog.java:5)
+----
+
+给出完整的访问路径比仅给出 `null` 字段的名称更为有用，因为它可以帮助开发人员浏览一行复杂的源代码，尤其是当该行代码多次使用相同的名称时。
+
+同样，如果数组访问和赋值语句 `a[i][j][k]=99`; 引发NPE：
+
+[source,java]
+----
+Exception in thread "main" java.lang.NullPointerException:
+        Cannot load from object array because "a[i][j]" is null
+    at Prog.main(Prog.java:5)
+----
+
+同样，如果 `a.i = b.j`; throws an NPE:
+
+[source,java]
+----
+Exception in thread "main" java.lang.NullPointerException:
+        Cannot read field "j" because "b" is null
+    at Prog.main(Prog.java:5)
+----
+
+在每个示例中，null-detail 消息与行号一起足以识别源代码中为空的表达式。理想情况下，null-detail 消息将显示实际的源代码，但是鉴于源代码和字节码指令之间对应关系的性质，这很难做到(请参阅下文)。
+另外，当表达式涉及数组访问时，null-detail 消息无法显示导致空元素的实际数组索引，例如当 a[i][j] 时 `i` 和 `j` 的运行时的值一片空白。这是因为数组索引存储在方法的操作数堆栈中，当抛出 NPE 时，该堆栈会丢失。
+
+只有由 JVM 直接创建并抛出的 NPE 才会包含 null-detail 消息。由 JVM 上运行的程序显式创建和/或显式抛出的 NPE 不受以下字节码分析和空细节消息创建的约束。另外，由隐藏方法中的代码引起的NPE的 null-detail 消息没有结果，这些方法是由JVM生成和调用的专用低级方法，
+例如，用于优化字符串连接。隐藏的方法没有文件名或行号，可以帮助查明 NPE 的来源，因此打印空详细信息将是徒劳的。
+
+=== 计算 null-detail 消息
+
+源代码，例如 `a.b.c.i = 99`; 被编译为几个字节码指令。 当引发 NPE 时，JVM 会确切知道哪种方法负责哪个字节码指令，并使用此信息来计算 null-detail 消息。 该消息分为两个部分：
+
+. 第一部分-无法读取字段 “c”-----是NPE的结果。 它说不能执行哪个动作，因为字节码指令从操作数堆栈中弹出空引用。
+. 第二部分-因为 “a.b” 为空-----是NPE的原因。 它重新创建源代码中将空引用推入操作数堆栈的部分。
+
+null-detail 消息的第一部分是根据弹出空值的字节码指令计算的，如表1所示：
+
+[[java-14-feature-record]]
+== Record (预览特性)
+
+=== 简介
+
+早在2019 年 2 月份， Java 语言架构师 Brian Goetz ，曾经 写过一篇文章，详尽的说明了并吐槽了 Java 语言，他和很多程序员一样抱怨 “Java 太啰嗦” 或有太多的 “繁文缛节 ”，他提到：开发人员想要创建纯数据载体类(plain data carriers)通常都必须编写大量低价值、
+重复的、容易出错的代码。如：构造函数、 `getter/setter`、 `equals()`、 `hashCode()` 以及 `toString()` 等 。
+
+以至于很多人选择使用 IDE 的功能来自动生成这些代码。还有一些开发会选择使用一些第三方类库，如 Lombok 等来生成这些方法，从而会导致了令人吃惊的表现( surprising behavior )和糟糕的可调试性 (poor debuggability) 。
+
+通过记录增强Java编程语言。 记录提供了一种紧凑的语法来声明类，效果类似 lombok 的 @Data 注解。Kotlin 中的 data class 。 它们的共同点是类的部分或全部状态可以直接在类头中描述 ，并且这个类中只 包含了纯数据而已。 这是JDK 14中的预览语言功能。
+
+=== 描述
+
+当你用 record 声明一个类时，该类将自动拥有以下功能：
+
+* 获取成员变量的简单方法，以上面代码为例 name () 和 partner() 。注意区别于我们平常 getter 的写法。
+* 一个 equals 方法的实现，执行比较时会比较该类的所有成员属性
+* 重写 equals 当然要重写 hashCode
+* 一个可以打印该类所有成员属性的 toString 方法。
+
+[NOTE]
+====
+请注意只会有一个构造方法
+====
+
+和枚举类型一样，记录也是类的一种受限形式。 作为回报，记录对象在简洁性方面提供了显著的好处 。
+
+还可以在 Record 声明的类中定义静态字段、静态方法、构造器或实例方法。
+
+不能在 Record 声明的类中定义实例字段；类不能声明为 abstract;不能声明显式的父类等。
+
+为了在 Java 14 中引入这种新类型，需要在 Java.lang.Class 对象中添加如下两个新方法：
+
+* RecordComponent[] getRecordComponents()
+* boolean isRecord
+
+[[java-14-feature-switch]]
+== switch 表达式
+
+=== 简介
+
+这是 JDK 12 和 JDK 13 中的预览特性，现在是正式特性了。扩展 switch 使其可以用作 语句 或 表达式使用，以便两种形式都可以使用传统的 case ... : labels (with fall through) or new case ... -> labels (with no fall through) ，还有另一个新语句，用于从 switch 表达式产生值。
+这可以简化日常的编码方式，也为本版本中预览的模式匹配(JEP 305)特性打下了基础。
+
+=== 描述
+
+==== 数组标签(Arrow labels)
+除了 switch 块中的传统 “case L：” 标签外，我们还定义了一种新的简化形式，带有 “case L ->” 标签。 如果标签匹配，则仅执行箭头右侧的表达式或语句；否则，将不执行任何操作。 没有失败。 例如，给定以下使用新标签形式的 switch 语句：
+
+[source,java]
+----
+static void howMany(int k) {
+    switch (k) {
+        case 1  -> System.out.println("one");
+        case 2  -> System.out.println("two");
+        default -> System.out.println("many");
+    }
+}
+----
+
+执行下面的代码：
+
+[source,java]
+----
+howMany(1);
+howMany(2);
+howMany(3);
+----
+
+结果：
+
+[source,java]
+----
+one
+two
+many
+----
+
+我们扩展 `switch` 语句，以便可以将其用作表达式。 例如，可以将上面的 `howMany` 方法重写为使用 switch 表达式，因此它仅使用单个 println。
+
+[source,java]
+----
+static void howMany(int k) {
+    System.out.println(
+        switch (k) {
+            case  1 -> "one";
+            case  2 -> "two";
+            default -> "many";
+        }
+    );
+}
+----
+
+在通常情况下，switch 表达式如下所示：
+
+[source,java]
+----
+T result = switch (arg) {
+    case L1 -> e1;
+    case L2 -> e2;
+    default -> e3;
+};
+----
+
+switch 表达式是聚合表达式； 如果目标类型已知，则将该类型推入每个 case。 switch 表达式的类型是其目标类型(如果已知)。 如果不是，则通过组合每个分支的类型来计算独立类型。
+
+==== 产生一个值(Yielding a value)
+
+大多数 switch 表达式在 “case L->” switch 标签的右侧都有一个表达式。 如果需要一个完整的块，我们引入一个新的 `yield` 语句来产生一个值，该值成为封闭的 switch 表达式的值。
+
+[source,java]
+----
+int j = switch (day) {
+    case MONDAY  -> 0;
+    case TUESDAY -> 1;
+    default      -> {
+        int k = day.toString().length();
+        int result = f(k);
+        yield result;
+    }
+};
+----
+
+像 switch 语句一样，switch 表达式也可以使用带有 “case L:” switch 标签的传统 switch 块(暗示着语义下降)。 在这种情况下，使用新的 `yield` 语句产生值：
+
+[source,java]
+----
+int result = switch (s) {
+    case "Foo":
+        yield 1;
+    case "Bar":
+        yield 2;
+    default:
+        System.out.println("Neither Foo nor Bar, hmmm...");
+        yield 0;
+};
+----
+
+`break`(带标签或不带标签)和 `yield` 这两个语句有助于在 switch 语句和 switch 表达式之间轻松进行歧义消除：是 switch 语句而不是 switch 表达式可以成为 `break` 语句的目标； 是 switch 表达式而不是 switch 语句可以成为 `yield` 语句的目标。
+
+`yield` 不是一个关键字，而是一个受限制的标识符(如 `var`)，这意味着名为 `yield` 的类是非法的。
+如果作用域中存在一元方法 `yield`，则表达式 `yield(x)` 将是不明确的(可以是方法调用，或者是操作数是括号表达式的 `yield` 语句)，并且解决了这种歧义，有利于 `yield` 声明。 如果首选方法调用，则应使用实例方法或静态方法的类名来限定该方法。
+
+==== 穷举(Exhaustiveness)
+
+switch 表达式的情况必须详尽无遗；对于所有可能的值，必须有一个匹配的 switch 标签。 (显然，switch语句不需要穷举。)
+
+实际上，这通常意味着需要一个默认子句。但是，对于涵盖所有已知常量的枚举 switch 表达式，编译器将插入默认子句以指示枚举定义已在编译时和运行时之间更改。依靠这种隐式默认子句的插入可以使代码更健壮。现在，当重新编​​译代码时，编译器将检查所有情况是否得到明确处理。
+如果开发人员插入了显式的默认子句(如今天的情况)，则可能的错误将被隐藏。
+
+此外，switch 表达式必须正常完成一个值，或者必须通过抛出异常来完成。这有许多后果。首先，编译器检查每个 switch 标签是否匹配，然后产生一个值。
+
+[source,java]
+----
+int i = switch (day) {
+    case MONDAY -> {
+        System.out.println("Monday");
+        // ERROR! Block doesn't contain a yield statement
+    }
+    default -> 1;
+};
+i = switch (day) {
+    case MONDAY, TUESDAY, WEDNESDAY:
+        yield 0;
+    default:
+        System.out.println("Second half of the week");
+        // ERROR! Group doesn't contain a yield statement
+};
+----
+
+进一步的结果是，控制语句 `break`，`yield`，`return` 和 `continue` 无法跳过 switch 表达式，例如以下所示：
+
+[source,java]
+----
+for (int i = 0; i < MAX_VALUE; ++i) {
+    int k = switch (e) {
+        case 0:
+            yield 1;
+        case 1:
+            yield 2;
+        default:
+            continue z;
+            // ERROR! Illegal jump through a switch expression
+    };
+...
+}
+----
+
+[[java-14-feature-solaris]]
+== 弃用 Solaris 和 SPARC 的 端口
+
+不建议使用 Solaris/SPARC，Solaris/x64 和 Linux/SPARC端口，以在将来的发行版中删除它们。
+
+放弃对这些端口的支持将使OpenJDK社区中的贡献者能够加速新功能的开发，这些新功能将推动平台向前发展。
+
+[[java-14-feature-cms]]
+== 删除 CMS 垃圾回收器
+
+该来的总会来，自从 G1 基于 Region 分代 )横空 出世后， CMS 在 JDK9 中就被标记为 Deprecate 了 (JEP 291: Deprecate the Concurrent Mark Sweep (CMS) Garbage Collector)
+CMS 的弊端
+. 会 产生内存碎片，导致并发清除后，用户线程可用的空间不足 。
+. 既然 强调了并发( Concurrent CMS 收集器 对 CPU 资源非常敏感
+. CMS 收集器无法处理浮动 垃圾
+
+上述的这些问题，尤其是碎片化问题，给你的 JVM 实例就像埋了一颗炸弹。说不定哪次就在你的业务高峰期来一次 FGC 。当 CMS 停止工作时，会把 Serial Old GC 作为备选方案，而 Serial Old GC 是 JVM 中性能最差的垃圾回收方式，停顿个几秒钟，上十秒都有可能 。
+
+移除了 CMS 垃圾收集器，如果在 JDK14 中使用 `-XX:+UseConcMarkSweepGC` 的话,JVM 不会报错，只是给出一个 warning 信息。
+
+[source,java]
+----
+Java HotSpot(TM) 64-Bit Server VM warning: Ignoring option UseConcMarkSweepGC; \
+support was removed in <version>
+----
+
+[[java-14-feature-macOS]]
+== ZGC on macOS && ZGC on windows
+
+ZGC 与 Shenandoah 目标高度相似，在尽可能对吞吐量影响不大的前提下，实现在任意堆内存 大小下 都可以把垃圾收集的停顿时间限制在十毫秒以内的低延迟。
+
+深入理解 Java 虚拟机 一书中这样定义 ZGC,ZGC 收集器是一款基于 Region 内存布局的，(暂时)不设分代的，使用了读屏障、染色指针和内存多重映射等技术来实现可并发的标记 压缩算法的， 以低延迟为首要目标的一款垃圾收集器。
+
+image::images/java-14-5.png[]
+
+image::images/java-14-6.png[]
+
+JDK14 之前， ZGC 仅 Linux 才支持 。
+尽管许多使用 ZGC 的用户都使用类 Linux 的环境，但在 Windows 和 macOS 上，人们也需要 ZGC 进行开发部署和测试。许多桌面应用也可以从 ZGC 中受益。因此， ZGC 特性被移植到了 Windows 和 macOS 上。
+
+现在 mac 或 Windows 上 也能使用 ZGC 了，示例如下：`-XX:+UnlockExperimentalVMOptions` `-XX:+UseZGC`
+[[java-14-feature-parallelscavenge]]
+== 弃用 ParallelScavenge 和 SerialOld GC 组合
+
+JDK 官方给出将这个 GC 组合标记为 Deprecate 的理由是：这个 GC 组合需要大量的代码维护工作，并且，这个 GC 组合很少被使用。因为它的使用场景应该是一个很大的 Young 区配合一个很小的 Old 区，这样的话， Old 区用 SerialOldGC 去收集时停顿时间我们才能勉强接受。
+
+实际上，这是一种非常罕见且危险的部署，因为年轻一代对象的活动性略有变化会导致 `OutOfMemoryException`，因为老一辈比小一辈要小得多。与针对年轻人和老年人使用并行GC算法相比，此组合的唯一优势是总内存使用量略低。我们认为，这种较小的内存占用优势(最多约为Java堆大小的3％)不足以超过维护此GC组合的成本。
+
+废弃了 parallel young generation GC 与 SerialOld GC 的组合 ( `-XX:+UseParallelGC` 与 `-XX:-UseParallelOldGC` 配合开启 ))，现在使用 `-XX:+UseParallelGC` `-XX:-UseParallelOldGC` 或者 `-XX:-UseParallelOldGC` 都会出现告警 如下：
+
+[source,java]
+----
+Java HotSpot(TM) 64 Bit Server VM warning: Option
+UseParallelOldGC was deprecated in version 14.0 and will likely
+be removed in a future release.
+----
+
+[[java-14-feature-pack200]]
+== 删除 Pack200 工具和 API
+
+删除软件包中的 `pack200` 和 `unpack200` 工具以及 `Pack200API` `java.util.jar`。不推荐在 Java SE 11 中删除这些工具和API ，并明确打算在将来的版本中删除它们。
+
+[[java-14-feature-text-blocks]]
+== 文本块(预览第二版)
+
+=== 简介
+
+将文本块添加到Java语言。 文本块是多行字符串文字，它避免了大多数转义的需要，以一种可预测的方式自动设置字符串的格式，并在需要时使开发人员可以控制格式。 这是 JDK 14中的预览语言功能。
+
+=== 目标
+
+* 简化跨越多行的字符串，避免对换行等特殊字符进行转义，简化编写 Java 程序。
+* 增强 Java 程序中用字符串表示的其他语言的代码的可读性
+* 通过规定任何新构造都可以表示与字符串文字相同的字符串集，解释相同的转义序列并以与字符串文字相同的方式进行操作，来支持从字符串文字的迁移。
+* 解析新的转义序列
+
+=== 描述
+
+此部分与本JEP的前身JEP 355中的同一部分相同，只是在新的转义序列上增加了该部分。
+
+文本块是 Java 语言中一种新型的文字。 它可以用来表示可能出现字符串文字的任何地方的字符串，但是可以提供更高的表现力和更少的意外复杂性。
+
+文本块由零个或多个内容字符组成，并由开头和结尾定界符括起来。
+
+开头定界符是一个由三个双引号字符(“”“)组成的序列，后跟零个或多个空格，后跟一个行终止符。内容从开头定界符的行终止符之后的第一个字符开始。
+
+结束定界符是三个双引号字符的序列。 内容在结束定界符的第一个双引号之前的最后一个字符处结束。
+
+与字符串文字中的字符不同，内容可以直接包含双引号字符。 允许在文本块中使用 `\“`，但不是必需的或不建议使用。`”` 选择了三引号定界符(“”“)，以便 `”` 字符可以显示为未转义的字符，还可以在视觉上区分文本块和字符串文字。
+
+与字符串文字中的字符不同，内容可以直接包含行终止符。 允许在文本块中使用 `\n`，但不是必需或不建议使用。 例如，文本块：
+
+[source,java]
+----
+"""
+line 1
+line 2
+line 3
+"""
+----
+
+相当于字符串文字:
+
+[source,java]
+----
+"line 1\nline 2\nline 3\n"
+----
+
+或字符串文字的串联：
+
+[source,java]
+----
+"line 1\n" +
+"line 2\n" +
+"line 3\n"
+----
+
+如果在字符串的末尾不需要行终止符，则可以将结束定界符放在内容的最后一行。 例如，文本块：
+
+[source,java]
+----
+"""
+line 1
+line 2
+line 3"""
+----
+
+相当于字符串文字:
+
+[source,java]
+----
+"line 1\nline 2\nline 3"
+----
+
+文本块可以表示空字符串，尽管不建议这样做，因为它需要两行源代码：
+
+[source,java]
+----
+String empty = """
+""";
+----
+
+以下是一些格式错误的文本块的示例：
+
+[source,java]
+----
+String a = """""";   // no line terminator after opening delimiter
+String b = """ """;  // no line terminator after opening delimiter
+String c = """
+           ";        // no closing delimiter (text block continues to EOF)
+String d = """
+           abc \ def
+           """;      // unescaped backslash (see below for escape processing)
+----
+
+=== 编译时处理
+
+文本块是 String 类型的常量表达式，就像字符串文字一样。但是，与字符串文字不同，Java 编译器通过三个不同的步骤处理文本块的内容
+
+* 内容中的行终止符将转换为 LF (\u000A)。这种转换的目的是在跨平台移动Java源代码时遵循 "最小惊讶原则"。
+* 删除了内容周围附带的空白，以匹配Java源代码的缩进。
+* 内容中的转义序列被解释。作为最后一步执行解释意味着开发人员可以编写转义序列，例如 `\n`，而无需通过较早的步骤进行修改或删除。
+
+处理的内容作为常量池中的 `CONSTANT_String_info` 记录在类文件中，就像字符串文字的字符一样。 该类文件不记录 `CONSTANT_String_info` 是从文本块还是字符串文字来的。
+
+在运行时，像字符串文字一样，将文本块转为 String 的实例。 从文本块派生的 String 实例与从字符串文字派生的实例没有区别。 具有相同处理内容的两个文本块由于进行内部处理而将引用 String 的相同实例，就像字符串文字一样。
+
+<<java-13-feature-block,文本块>>
+
+为了更好地控制换行符和空格的处理，我们引入了两个新的转义序列。
+
+首先，\ <line-terminator> 转义序列明确禁止插入换行符。
+
+例如，通常的做法是将很长的字符串文字拆分为较小的子字符串的串联，然后将结果字符串表达式包装到多行中：
+
+=== 新的转义序列
+
+JDK13 引入的 text blocks 进行第二轮 preview JDK14 的版本主要增加了两个 escape sequences ，分别是 \<line-terminator> 与 \s <escape-sequence>
+
+[source,java]
+----
+String literal = "Lorem ipsum dolor sit amet, consectetur adipiscing " +
+                 "elit, sed do eiusmod tempor incididunt ut labore " +
+                 "et dolore magna aliqua.";
+----
+
+使用 \<line-terminator> 转义序列，可以表示为：
+
+[source,java]
+----
+String text = """
+                Lorem ipsum dolor sit amet, consectetur adipiscing \
+                elit, sed do eiusmod tempor incididunt ut labore \
+                et dolore magna aliqua.\
+                """;
+----
+
+由于字符文字和传统字符串文字不允许嵌入换行符的简单原因，\<line-terminator> 转义序列仅适用于文本块。
+
+其次，新的 \s 转义序列仅转换为一个空格 (\u0020)。
+
+在此示例中，在每行末尾使用 `\s` 可以确保每行正好是六个字符长：
+
+[source,java]
+----
+String colors = """
+    red  \s
+    green\s
+    blue \s
+    """;
+----
+
+`\s` 转义序列可以在文本块和传统字符串文字中使用。
+
+=== 文本块的串联
+
+可以在可以使用字符串文字的任何地方使用文本块。例如，文本块和字符串文字可以互换使用：
+
+[source,java]
+----
+String code = "public void print(Object o) {" +
+              """
+                  System.out.println(Objects.toString(o));
+              }
+              """;
+----
+
+但是，涉及文本块的串联可能会变得很笨拙。以以下文本块为起点：
+
+[source,java]
+----
+String code = """
+              public void print(Object o) {
+                  System.out.println(Objects.toString(o));
+              }
+              """;
+----
+
+假设需要更改，以便 `o` 的类型来自变量。 使用串联，包含尾随代码的文本块将需要从新行开始。 不幸的是，如下所示，在程序中直接插入换行符会导致类型和以 `o` 开头的文本之间存在很大的空白：
+
+[source,java]
+----
+String code = """
+              public void print(""" + type + """
+                                                 o) {
+                  System.out.println(Objects.toString(o));
+              }
+              """;
+----
+
+可以手动删除空格，但这会损害引用代码的可读性：
+
+[source,java]
+----
+String code = """
+              public void print(""" + type + """
+               o) {
+                  System.out.println(Objects.toString(o));
+              }
+              """;
+----
+
+替代方法是使用 `String::replace` 或 `String::format`，如下所示：
+
+[source,java]
+----
+String code = """
+              public void print($type o) {
+                  System.out.println(Objects.toString(o));
+              }
+              """.replace("$type", type);
+String code = String.format("""
+              public void print(%s o) {
+                  System.out.println(Objects.toString(o));
+              }
+              """, type);
+----
+
+另一种选择是引入新的实例方法 `String::formatted`，该方法可以按如下方式使用：
+[source,java]
+----
+String source = """
+                public void print(%s object) {
+                    System.out.println(Objects.toString(object));
+                }
+                """.formatted(type);
+----
+
+=== 附加方法
+
+将添加以下方法来支持文本块
+
+* String::stripIndent()：用于从文本块内容中去除附带的空白
+* String::translateEscapes()：用于翻译转义序列
+* String::formatted(Object ... args)：简化文本块中的值替换
+
+[[java-14-feature-foreign-memory]]
+== 外部内存访问 API(孵化器模式)
+
+引入一个API，以允许 Java 程序安全有效地访问 Java 堆之外的外部内存。
+
+许多现有的Java库和程序都访问外部存储器，例如 https://apacheignite.readme.io/v1.0/docs/off-heap-memory[Ignite]，http://www.mapdb.org/[mapDB]，https://github.com/dustin/java-memcached-client[memcached] 和 Netty 的 https://netty.io/wiki/using-as-a-generic-library.html[ByteBuf] API。 这样，他们可以
+
+* 避免与垃圾回收相关的成本和不可预测性(尤其是在维护大型缓存时)
+* 跨多个进程共享内存，并且通过将文件映射到内存中(例如通过 https://en.wikipedia.org/wiki/Mmap[mmap])来序列化和反序列化内存内容。
+
+但是，Java API不能为访问外部内存提供令人满意的解决方案。
+
+Java 1.4中引入的 https://docs.oracle.com/en/java/javase/13/docs/api/java.base/java/nio/ByteBuffer.html[ByteBuffer] API允许创建直接字节缓冲区，这些缓冲区是按堆分配的，并允许用户直接从Java处理堆内存。 但是，直接缓冲区是有限的。 例如，由于 `ByteBuffer` API使用基于int的索引方案，因此无法创建大于 `2GB` 的缓冲区。 而且，使用直接缓冲区可能很麻烦，因为与直接缓冲区相关联的内存的重新分配留给了垃圾回收器。
+也就是说，只有在垃圾回收器认为直接缓冲区不可访问之后，才能释放关联的内存。 多年来，为了克服这些和其他局限性，已经提出了许多增强请求(例如，https://bugs.openjdk.java.net/browse/JDK-4496703[4496703]、https://bugs.openjdk.java.net/browse/JDK-6558368[6558368]、
+https://bugs.openjdk.java.net/browse/JDK-4837564[4837564] 和 https://bugs.openjdk.java.net/browse/JDK-5029431[5029431])。 这些限制中的许多限制是由于 `ByteBuffer` API不仅设计用于堆外内存访问，而且还用于批量数据的生产者/消费者交换，这对于例如字符集编码/解码和部分 I/O 操作至关重要。
+
+开发人员可以从Java代码访问外部内存的另一种常见途径是 `sun.misc.Unsafe` API。 `Unsafe` 公开了许多内存访问操作(例如 `Unsafe::getInt` 和 `putInt`)，这归功于聪明且相对通用的寻址模型，可用于堆内和堆外访问。 使用 `Unsafe` 访问内存非常高效：所有内存访问操作都定义为JVM内在函数，因此JIT会定期优化内存访问操作。
+不幸的是，根据定义，`Unsafe` API是不安全的-它允许访问任何内存位置(例如，`Unsafe::getInt` 需要很长的地址)。 如果访问某些已释放的内存位置，则 Java 程序可能会使 JVM 崩溃。 最重要的是，`Unsafe` API不是受支持的 Java API，并且强烈建议不要使用它。
+
+尽管也可以使用 JNI 访问内存，但是与该解决方案相关的固有成本使其在实践中很少适用。 整个开发流程很复杂，因为 JNI 要求开发人员编写和维护 C 代码段。 JNI 本质上也很慢，因为每次访问都需要 Java 到本地的转换。
+
+总而言之，在访问外部内存时，开发人员面临一个难题：开发人员应该使用安全但受限(可能效率较低)的路径(例如 `ByteBuffer`)，还是应该放弃安全保证并接受不受支持和危险的路径？ API不安全？
+
+该JEP引入了受支持的，安全且有效的外部内存访问 API。 通过为访问外部内存的问题提供有针对性的解决方案，开发人员将摆脱现有 API 的限制和危险。 由于新的API是从头开始设计的，并且考虑到JIT优化，因此他们还将享受改进的性能。

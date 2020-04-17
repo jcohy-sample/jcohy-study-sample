@@ -14,29 +14,29 @@ Java 在 2018 年 3 月 21 日发布了第十个大版本。为了更快地迭�
 |===
 | 新特性| 翻译
 
-| 286: [Local-Variable Type Inference](http://openjdk.java.net/jeps/286) | 局部变量类型推断
+| 286: http://openjdk.java.net/jeps/286[Local-Variable Type Inference] | 局部变量类型推断
 
-| 296: [Consolidate the JDK Forest into a Single Repository](http://openjdk.java.net/jeps/296) | 整合 JDK 代码仓库
+| 296: http://openjdk.java.net/jeps/296[Consolidate the JDK Forest into a Single Repository] | 整合 JDK 代码仓库
 
-| 304: [Garbage-Collector Interface](http://openjdk.java.net/jeps/304) | 统一的垃圾回收接口
+| 304: http://openjdk.java.net/jeps/304[Garbage-Collector Interface] | 统一的垃圾回收接口
 
-| 307: [Parallel Full GC for G1](http://openjdk.java.net/jeps/307) | 并行全垃圾回收器 G1
+| 307: http://openjdk.java.net/jeps/307[Parallel Full GC for G1] | 并行全垃圾回收器 G1
 
-| 310: [Application Class-Data Sharing](http://openjdk.java.net/jeps/310) | 应用程序类数据共享
+| 310: http://openjdk.java.net/jeps/310[Application Class-Data Sharing] | 应用程序类数据共享
 
-| 312: [Thread-Local Handshakes](http://openjdk.java.net/jeps/312) | 线程-局部管控
+| 312: http://openjdk.java.net/jeps/312[Thread-Local Handshakes] | 线程-局部管控
 
-| 313: [Remove the Native-Header Generation Tool (javah)](http://openjdk.java.net/jeps/313) | 移除 Native-Header 自动生成工具
+| 313: http://openjdk.java.net/jeps/313[Remove the Native-Header Generation Tool (javah)] | 移除 Native-Header 自动生成工具
 
-| 314: [Additional Unicode Language-Tag Extensions](http://openjdk.java.net/jeps/314) | 额外的 Unicode 语言标签扩展
+| 314: http://openjdk.java.net/jeps/314[Additional Unicode Language-Tag Extensions] | 额外的 Unicode 语言标签扩展
 
-| 316: [Heap Allocation on Alternative Memory Devices](http://openjdk.java.net/jeps/316) | 备用存储装置上的堆分配
+| 316: http://openjdk.java.net/jeps/316[Heap Allocation on Alternative Memory Devices] | 备用存储装置上的堆分配
 
-| 317: [Experimental Java-Based JIT Compiler](http://openjdk.java.net/jeps/317) | 基于 Java 的 实验性 JIT 编译器
+| 317: http://openjdk.java.net/jeps/317[Experimental Java-Based JIT Compiler] | 基于 Java 的 实验性 JIT 编译器
 
-| 319: [Root Certificates](http://openjdk.java.net/jeps/319) | 根证书认证
+| 319: http://openjdk.java.net/jeps/319[Root Certificates] | 根证书认证
 
-| 322: [Time-Based Release Versioning](http://openjdk.java.net/jeps/322) | 基于时间的版本发布模式 |
+| 322: http://openjdk.java.net/jeps/322[Time-Based Release Versioning] | 基于时间的版本发布模式 |
 |===
 
 [[java-10-feature-variable]]

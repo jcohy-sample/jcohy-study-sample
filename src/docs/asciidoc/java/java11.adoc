@@ -20,39 +20,39 @@ Java 11 已于 2018 年 9 月 25 日正式发布，之前在 Java 10 新特性�
 |===
 | 新特性| 翻译
 
-| 181: [Nest-Based Access Control](http://openjdk.java.net/jeps/181) | 基于嵌套的访问控制
+| 181: http://openjdk.java.net/jeps/181[Nest-Based Access Control] | 基于嵌套的访问控制
 
-| 309: [Dynamic Class-File Constants](http://openjdk.java.net/jeps/309) | 动态类文件常量
+| 309: http://openjdk.java.net/jeps/309[Dynamic Class-File Constants] | 动态类文件常量
 
-| 315: [Improve Aarch64 Intrinsics](http://openjdk.java.net/jeps/315) | 改善Aarch64本征
+| 315: http://openjdk.java.net/jeps/315[Improve Aarch64 Intrinsics] | 改善Aarch64本征
 
-| 318: [Epsilon: A No-Op Garbage Collector](http://openjdk.java.net/jeps/318) | Epsilon: 低开销垃圾回收器
+| 318: http://openjdk.java.net/jeps/318[Epsilon: A No-Op Garbage Collector] | Epsilon: 低开销垃圾回收器
 
-| 320: [Remove the Java EE and CORBA Modules](http://openjdk.java.net/jeps/320) | 删除Java EE和CORBA模块
+| 320: http://openjdk.java.net/jeps/320[Remove the Java EE and CORBA Modules] | 删除Java EE和CORBA模块
 
-| 321: [HTTP Client (Standard)](http://openjdk.java.net/jeps/321) | 标准 HTTP Client
+| 321: http://openjdk.java.net/jeps/321[HTTP Client (Standard)] | 标准 HTTP Client
 
-| 323: [Local-Variable Syntax for Lambda Parameters](http://openjdk.java.net/jeps/323) | 用于 Lambda 参数的局部变量语法
+| 323: http://openjdk.java.net/jeps/323[Local-Variable Syntax for Lambda Parameters] | 用于 Lambda 参数的局部变量语法
 
-| 324: [Key Agreement with Curve25519 and Curve448](http://openjdk.java.net/jeps/324) | Curve25519 和 Curve448的关键协议
+| 324: http://openjdk.java.net/jeps/324[Key Agreement with Curve25519 and Curve448] | Curve25519 和 Curve448 的关键协议
 
-| 327: [Unicode 10](http://openjdk.java.net/jeps/327) | Unicode 10
+| 327: http://openjdk.java.net/jeps/327[Unicode 10] | Unicode 10
 
-| 328: [Flight Recorder](http://openjdk.java.net/jeps/328) | 飞行记录器
+| 328: http://openjdk.java.net/jeps/328[Flight Recorder] | 飞行记录器
 
-| 329: [ChaCha20 and Poly1305 Cryptographic Algorithms](http://openjdk.java.net/jeps/329) | ChaCha20和Poly1305加密算法
+| 329: http://openjdk.java.net/jeps/329[ChaCha20 and Poly1305 Cryptographic Algorithms] | ChaCha20和Poly1305加密算法
 
-| 330: [Launch Single-File Source-Code Programs](http://openjdk.java.net/jeps/330) | 简化启动单个源代码文件
+| 330: http://openjdk.java.net/jeps/330[Launch Single-File Source-Code Programs] | 简化启动单个源代码文件
 
-| 331: [Low-Overhead Heap Profiling](http://openjdk.java.net/jeps/331) | 低开销的 Heap Profiling
+| 331: http://openjdk.java.net/jeps/331[Low-Overhead Heap Profiling] | 低开销的 Heap Profiling
 
-| 332: [Transport Layer Security (TLS) 1.3](http://openjdk.java.net/jeps/332) | 支持 TLS 1.3 协议
+| 332: http://openjdk.java.net/jeps/332[Transport Layer Security (TLS) 1.3] | 支持 TLS 1.3 协议
 
-| 333: [ZGC: A Scalable Low-Latency Garbage Collector(Experimental)](http://openjdk.java.net/jeps/333) | ZGC: 可伸缩低延迟垃圾收集器
+| 333: http://openjdk.java.net/jeps/333[ZGC: A Scalable Low-Latency Garbage Collector(Experimental)] | ZGC: 可伸缩低延迟垃圾收集器
 
-| 335: [Deprecate the Nashorn JavaScript Engine](http://openjdk.java.net/jeps/335) | 废除Nashorn javascript引擎
+| 335: http://openjdk.java.net/jeps/335[Deprecate the Nashorn JavaScript Engine] | 废除Nashorn javascript引擎
 
-| 336: [Deprecate the Pack200 Tools and API](http://openjdk.java.net/jeps/336) | 废除Pack200
+| 336: http://openjdk.java.net/jeps/336[Deprecate the Pack200 Tools and API] | 废除Pack200
 |===
 
 [[java-11-feature-access-control]]

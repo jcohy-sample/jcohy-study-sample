@@ -1,0 +1,179 @@
+[[guide-stream]]
+= java stream
+
+[[guide-stream-1]]
+== Java中如何实现序列化，有什么意义？
+
+序列化就是一种用来处理对象流的机制，所谓对象流也就是将对象的内容进行流化。可以对流化后的对象进行读写操作，也可将流化后的对象传输于网络之间。序列化是为了解决对象流读写操作时可能引发的问题(如果不进行序列化可能会存在数据乱序的问题)。
+要实现序列化，需要让一个类实现 `Serializable` 接口，该接口是一个标识性接口，标注该类对象是可被序列化的，然后使用一个输出流来构造一个对象输出流并通过 `writeObject(Object)` 方法就可以将实现对象写出(即保存其状态)；
+如果需要反序列化则可以用一个输入流建立对象输入流，然后通过 `readObject` 方法从流中读取对象。序列化除了能够实现对象的持久化之外，还能够用于对象的深度克隆。
+
+[[guide-stream-2]]
+== Java中有几种类型的流？
+
+字节流和字符流。
+
+字节流继承于 `InputStream`、`OutputStream`
+
+字符流继承于 `Reader`、`Writer`。
+
+在java.io 包中还有许多其他的流，主要是为了提高性能和使用方便。关于Java的I/O需要注意的有两点：
+
+* 一是两种对称性(输入和输出的对称性，字节和字符的对称性)；
+
+* 二是两种设计模式(适配器模式和装饰模式)。
+
+另外Java中的流不同于C#的是它只有一个维度一个方向。
+
+编程实现文件拷贝。(这个题目在笔试的时候经常出现，下面的代码给出了两种实现方案)
+
+[source,java]
+----
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+public final class MyUtil {
+    private MyUtil() {
+        throw new AssertionError();
+    }
+    public static void fileCopy(String source, String target) throws IOException {
+        try (InputStream in = new FileInputStream(source)) {
+            try (OutputStream out = new FileOutputStream(target)) {
+                byte[] buffer = new byte[4096];
+                int bytesToRead;
+                while((bytesToRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesToRead);
+                }
+            }
+        }
+    }
+    public static void fileCopyNIO(String source, String target) throws IOException {
+        try (FileInputStream in = new FileInputStream(source)) {
+            try (FileOutputStream out = new FileOutputStream(target)) {
+                FileChannel inChannel = in.getChannel();
+                FileChannel outChannel = out.getChannel();
+                ByteBuffer buffer = ByteBuffer.allocate(4096);
+                while(inChannel.read(buffer) != -1) {
+                    buffer.flip();
+                    outChannel.write(buffer);
+                    buffer.clear();
+                }
+            }
+        }
+    }
+}
+----
+
+注意：上面用到Java 7的TWR，使用TWR后可以不用在finally中释放外部资源，从而让代码更加优雅。
+
+[[guide-stream-3]]
+== 写一个方法，输入一个文件名和一个字符串，统计这个字符串在这个文件中出现的次数。
+
+[source,java]
+----
+import java.io.BufferedReader;
+import java.io.FileReader;
+public final class MyUtil {
+    // 工具类中的方法都是静态方式访问的因此将构造器私有不允许创建对象(绝对好习惯)
+    private MyUtil() {
+        throw new AssertionError();
+    }
+    /**
+	*统计给定文件中给定字符串的出现次数
+	*
+    * @param filename 文件名
+    * @param word 字符串
+    * @return 字符串在文件中出现的次数
+	*/
+    public static int countWordInFile(String filename, String word) {
+        int counter = 0;
+        try (FileReader fr = new FileReader(filename)) {
+            try (BufferedReader br = new BufferedReader(fr)) {
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    int index = -1;
+                    while (line.length() >= word.length() && (index = line.indexOf(word)) >= 0) {
+                        counter++;
+                        line = line.substring(index + word.length());
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return counter;
+    }
+}
+
+----
+
+[[guide-stream-4]]
+== 如何用Java代码列出一个目录下所有的文件？
+
+如果只要求列出当前文件夹下的文件，代码如下所示：
+
+[source,java]
+----
+import java.io.File;
+class Test12 {
+    public static void main(String[] args) {
+        File f = new File("/Users/Hao/Downloads");
+        for(File temp : f.listFiles()) {
+            if(temp.isFile()) {
+                System.out.println(temp.getName());
+            }
+        }
+    }
+}
+----
+
+如果需要对文件夹继续展开，代码如下所示：
+
+[source,java]
+----
+import java.io.File;
+class Test12 {
+    public static void main(String[] args) {
+        showDirectory(new File("/Users/Hao/Downloads"));
+    }
+    public static void showDirectory(File f) {
+        _walkDirectory(f, 0);
+    }
+    private static void _walkDirectory(File f, int level) {
+        if(f.isDirectory()) {
+            for(File temp : f.listFiles()) {
+                _walkDirectory(temp, level + 1);
+            }
+        }
+        else {
+            for(int i = 0; i < level - 1; i++) {
+                System.out.print("\t");
+            }
+            System.out.println(f.getName());
+        }
+    }
+}
+----
+
+在Java 7中可以使用NIO.2的API来做同样的事情，代码如下所示：
+
+[source,java]
+----
+class ShowFileTest {
+    public static void main(String[] args) throws IOException {
+        Path initPath = Paths.get("/Users/Hao/Downloads");
+        Files.walkFileTree(initPath, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                throws IOException {
+                System.out.println(file.getFileName().toString());
+                return FileVisitResult.CONTINUE;
+            }
+        });
+    }
+}
+----

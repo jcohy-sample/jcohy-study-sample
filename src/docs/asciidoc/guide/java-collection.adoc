@@ -39,26 +39,26 @@ Vector、Stack、HashTable、ConcurrentHashMap、Properties
 
 List以特定索引来存取元素，可以有重复元素。
 
-Set不能存放重复元素（用对象的 `equals()` 方法来区分元素是否重复）。
+Set不能存放重复元素(用对象的 `equals()` 方法来区分元素是否重复)。
 
-Map保存键值对（key-value pair）映射，映射关系可以是一对一或多对一。
+Map保存键值对(key-value pair)映射，映射关系可以是一对一或多对一。
 
-Set和Map容器都有基于哈希存储和排序树的两种实现版本，基于哈希存储的版本理论存取时间复杂度为 `O(1)`，而基于排序树版本的实现在插入或删除元素时会按照元素或元素的键（`key`）构成排序树从而达到排序和去重的效果。
+Set和Map容器都有基于哈希存储和排序树的两种实现版本，基于哈希存储的版本理论存取时间复杂度为 `O(1)`，而基于排序树版本的实现在插入或删除元素时会按照元素或元素的键(`key`)构成排序树从而达到排序和去重的效果。
 
 [[guide-collection-4]]
 == ArrayList、LinkedList、Vector的区别
 
 首先它们均是List接口的实现。
 
-ArrayList、LinkedList 的区别：
+ArrayList、LinkedList 的区别:
 
-. 随机存取：ArrayList是基于可变大小的数组实现，LinkedList是链接列表的实现。这也就决定了对于随机访问的get和set的操作，ArrayList要优于LinkedList，因为 LinkedList 要移动指针。
-. 插入和删除：LinkedList 要好一些，因为ArrayList要移动数据，更新索引。
+. 随机存取: ArrayList是基于可变大小的数组实现，LinkedList是链接列表的实现。这也就决定了对于随机访问的get和set的操作，ArrayList要优于LinkedList，因为 LinkedList 要移动指针。
+. 插入和删除: LinkedList 要好一些，因为ArrayList要移动数据，更新索引。
 . 内存消耗：LinkedList 需要更多的内存，因为需要维护指向后继结点的指针。
 
-Vector属于遗留容器（Java早期的版本中提供的容器，除此之外，`Hashtable`、`Dictionary`、`BitSet`、`Stack`、`Properties` 都是遗留容器），已经不推荐使用，但是由于 ArrayList 和 LinkedListed 都是非线程安全的，如果遇到多个线程操作同一个容器的场景，则可以通过工具类Collections中的synchronizedList方法将其转换成线程安全的容器后再使用（这是对装饰模式的应用，将已有对象传入另一个类的构造器中创建新的对象来增强实现）。
+Vector属于遗留容器(Java早期的版本中提供的容器，除此之外，`Hashtable`、`Dictionary`、`BitSet`、`Stack`、`Properties` 都是遗留容器)，已经不推荐使用，但是由于 ArrayList 和 LinkedListed 都是非线程安全的，如果遇到多个线程操作同一个容器的场景，则可以通过工具类Collections中的synchronizedList方法将其转换成线程安全的容器后再使用(这是对装饰模式的应用，将已有对象传入另一个类的构造器中创建新的对象来增强实现)。
 
-补充：遗留容器中的Properties类和Stack类在设计上有严重的问题，Properties是一个键和值都是字符串的特殊的键值对映射，在设计上应该是关联一个Hashtable并将其两个泛型参数设置为String类型，但是Java API中的Properties直接继承了Hashtable，这很明显是对继承的滥用。这里复用代码的方式应该是Has-A关系而不是Is-A关系，另一方面容器都属于工具类，继承工具类本身就是一个错误的做法，使用工具类最好的方式是Has-A关系（关联）或Use-A关系（依赖）。同理，Stack类继承Vector也是不正确的。Sun公司的工程师们也会犯这种低级错误，让人唏嘘不已。
+补充：遗留容器中的Properties类和Stack类在设计上有严重的问题，Properties是一个键和值都是字符串的特殊的键值对映射，在设计上应该是关联一个Hashtable并将其两个泛型参数设置为String类型，但是Java API中的Properties直接继承了Hashtable，这很明显是对继承的滥用。这里复用代码的方式应该是Has-A关系而不是Is-A关系，另一方面容器都属于工具类，继承工具类本身就是一个错误的做法，使用工具类最好的方式是Has-A关系(关联)或Use-A关系(依赖)。同理，Stack类继承Vector也是不正确的。Sun公司的工程师们也会犯这种低级错误，让人唏嘘不已。
 
 [[guide-collection-5]]
 == Map集合
@@ -94,13 +94,13 @@ ConcurrentHashMap 的结构：
 
 . 初始容量，默认16
 . 装载因子 装载因子用于rehash的判定，就是当ConcurrentHashMap中的元素大于装载因子*最大容量时进行扩容，默认0.75
-. 并发级别 这个值用来确定 Segment 的个数，Segment 的个数是大于等于 `concurrencyLevel` 的第一个2的n次方的数。比如，如果 concurrencyLevel 为 12，13，14，15，16 这些数，则 Segment 的数目为16(2的4次方)。默认值为static final int DEFAULT_CONCURRENCY_LEVEL = 16;。理想情况下ConcurrentHashMap的真正的并发访问量能够达到concurrencyLevel，因为有concurrencyLevel个Segment，假如有concurrencyLevel个线程需要访问Map，并且需要访问的数据都恰好分别落在不同的Segment中，则这些线程能够无竞争地自由访问（因为他们不需要竞争同一把锁），达到同时访问的效果。这也是为什么这个参数起名为“并发级别”的原因。默认16.
+. 并发级别 这个值用来确定 Segment 的个数，Segment 的个数是大于等于 `concurrencyLevel` 的第一个2的n次方的数。比如，如果 concurrencyLevel 为 12，13，14，15，16 这些数，则 Segment 的数目为16(2的4次方)。默认值为static final int DEFAULT_CONCURRENCY_LEVEL = 16;。理想情况下ConcurrentHashMap的真正的并发访问量能够达到concurrencyLevel，因为有concurrencyLevel个Segment，假如有concurrencyLevel个线程需要访问Map，并且需要访问的数据都恰好分别落在不同的Segment中，则这些线程能够无竞争地自由访问(因为他们不需要竞争同一把锁)，达到同时访问的效果。这也是为什么这个参数起名为“并发级别”的原因。默认16.
 
 初始化的一些动作：
 
-初始化segments数组（根据并发级别得到数组大小ssize），默认16
+初始化segments数组(根据并发级别得到数组大小ssize)，默认16
 
-初始化segmentShift和segmentMask（这两个全局变量在定位segment时的哈希算法里需要使用），默认情况下segmentShift为28，segmentMask为15
+初始化segmentShift和segmentMask(这两个全局变量在定位segment时的哈希算法里需要使用)，默认情况下segmentShift为28，segmentMask为15
 
 初始化每个Segment，这一步会确定Segment里HashEntry数组的长度.
 
@@ -108,12 +108,12 @@ put操作：
 
 . 判断 `value` 是否为 `null`，如果为 `null`，直接抛出异常。
 . key 通过一次 `hash` 运算得到一个 hash 值。将得到hash值向右按位移动 segmentShift 位，然后再与segmentMask做&运算得到 segment 的索引 j。即 segmentFor方 法
-. 使用Unsafe的方式从Segment数组中获取该索引对应的Segment对象。向这个Segment对象中put值，这个put操作也基本是一样的步骤（通过&运算获取HashEntry的索引，然后set）。
+. 使用Unsafe的方式从Segment数组中获取该索引对应的Segment对象。向这个Segment对象中put值，这个put操作也基本是一样的步骤(通过&运算获取HashEntry的索引，然后set)。
 
 get操作：
 
 . 和put操作一样，先通过key进行hash确定应该去哪个Segment中取数据。
-. 使用Unsafe获取对应的Segment，然后再进行一次&运算得到HashEntry链表的位置，然后从链表头开始遍历整个链表（因为Hash可能会有碰撞，所以用一个链表保存），如果找到对应的key，则返回对应的value值，如果链表遍历完都没有找到对应的key，则说明Map中不包含该key，返回null。
+. 使用Unsafe获取对应的Segment，然后再进行一次&运算得到HashEntry链表的位置，然后从链表头开始遍历整个链表(因为Hash可能会有碰撞，所以用一个链表保存)，如果找到对应的key，则返回对应的value值，如果链表遍历完都没有找到对应的key，则说明Map中不包含该key，返回null。
 
 定位Segment的hash算法：`(hash >>> segmentShift) & segmentMask`
 
@@ -170,7 +170,7 @@ HashMap 基于散列表来的实现，即使用 `hashCode()` 进行快速查询�
 [[guide-collection-13]]
 == 如何对一组对象进行排序
 
-如果需要对一个对象数组进行排序，我们可以使用 `Arrays.sort()` 方法。如果我们需要排序一个对象列表，我们可以使用 `Collections.sort()` 方法。排序时是默认根据元素的自然排序（使用 `Comparable`）或使用 `Comparator` 外部比较器。`Collections` 内部使用数组排序方法，所有它们两者都有相同的性能，只是 `Collections` 需要花时间将列表转换为数组。
+如果需要对一个对象数组进行排序，我们可以使用 `Arrays.sort()` 方法。如果我们需要排序一个对象列表，我们可以使用 `Collections.sort()` 方法。排序时是默认根据元素的自然排序(使用 `Comparable`)或使用 `Comparator` 外部比较器。`Collections` 内部使用数组排序方法，所有它们两者都有相同的性能，只是 `Collections` 需要花时间将列表转换为数组。
 
 [[guide-collection-14]]
 == HashMap和Hashtable的区别
@@ -189,7 +189,7 @@ HashMap 基于散列表来的实现，即使用 `hashCode()` 进行快速查询�
 
 `TreeSet` 要求存放的对象所属的类必须实现 `Comparable` 接口，该接口提供了比较元素的 `compareTo()` 方法，当插入元素时会回调该方法比较元素的大小。
 TreeMap 要求存放的键值对映射的键必须实现Comparable接口从而根据键对元素进行排序。`Collections` 工具类的 `sort` 方法有两种重载的形式，第一种要求传入的待排序容器中存放的对象比较实现 `Comparable` 接口以实现元素的比较;
-第二种不强制性的要求容器中的元素必须可比较，但是要求传入第二个参数，参数是 `Comparator` 接口的子类型（需要重写 `compare` 方法实现元素的比较），相当于一个临时定义的排序规则，其实就是通过接口注入比较元素大小的算法，也是对回调模式的应用（Java中对函数式编程的支持）。
+第二种不强制性的要求容器中的元素必须可比较，但是要求传入第二个参数，参数是 `Comparator` 接口的子类型(需要重写 `compare` 方法实现元素的比较)，相当于一个临时定义的排序规则，其实就是通过接口注入比较元素大小的算法，也是对回调模式的应用(Java中对函数式编程的支持)。
 例子1：
 
 [source,java]

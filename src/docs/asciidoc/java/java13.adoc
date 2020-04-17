@@ -14,15 +14,15 @@ JDK 13于2019年9月17日正式发布。
 |===
 | 新特性 | 翻译
 
-| 350: [Dynamic CDS Archives](http://openjdk.java.net/jeps/350) | 动态CDS档案
+| 350: http://openjdk.java.net/jeps/350[Dynamic CDS Archives] | 动态CDS档案
 
-| 351: [ZGC: Uncommit Unused Memory](http://openjdk.java.net/jeps/351)|ZGC:取消使用未使用的内存
+| 351: http://openjdk.java.net/jeps/351[ZGC: Uncommit Unused Memory] |ZGC:取消使用未使用的内存
 
-| 353: [Reimplement the Legacy Socket API](http://openjdk.java.net/jeps/353)|重新实现旧版套接字API
+| 353: http://openjdk.java.net/jeps/353[Reimplement the Legacy Socket API] |重新实现旧版套接字API
 
-| 354: [Switch Expressions (Preview)](http://openjdk.java.net/jeps/354)|switch表达式(预览)
+| 354: http://openjdk.java.net/jeps/354[Switch Expressions (Preview)] |switch表达式(预览)
 
-| 355: [Text Blocks (Preview)](http://openjdk.java.net/jeps/355)|文字块(预览)
+| 355: http://openjdk.java.net/jeps/355[Text Blocks (Preview)] |文字块(预览)
 |===
 
 [[java-13-feature-switch]]
@@ -252,7 +252,7 @@ abc \ def
 
 编译器在编译时会删除掉这些多余的空格。
 
-下面这段代码中，我们用 . 来表示我们代码中的的空格，而这些位置的空格就是多余的。
+下面这段代码中，我们用 `.` 来表示我们代码中的的空格，而这些位置的空格就是多余的。
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java13

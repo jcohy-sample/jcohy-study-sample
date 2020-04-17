@@ -32,7 +32,7 @@ ZooKeeper 是一个分布式的，开放源码的分布式应用程序协调服�
 
 Dubbo
 
-Dubbo 是 Alibaba 开源的分布式服务框架，它最大的特点是按照分层的方式来架构，使用这种方式可以使各个层之间解耦合（或者最大限度地松耦合）。从服务模型的角度来看，Dubbo采用的是一种非常简单的模型，要么是提供方提供服务，要么是消费方消费服务，所以基于这一点可以抽象出服务提供方（Provider）和服务消费方（Consumer）两个角色。
+Dubbo 是 Alibaba 开源的分布式服务框架，它最大的特点是按照分层的方式来架构，使用这种方式可以使各个层之间解耦合(或者最大限度地松耦合)。从服务模型的角度来看，Dubbo采用的是一种非常简单的模型，要么是提供方提供服务，要么是消费方消费服务，所以基于这一点可以抽象出服务提供方(Provider)和服务消费方(Consumer)两个角色。
 
 image::images/spring-spring-boot36.jpg[Dubbo]
 
@@ -76,7 +76,7 @@ dubbo.scan.base-packages=com.atguigu.ticket.service
 [[spring-advanced-distributed-cloud]]
 == SpringCloud
 
-Spring Cloud 是一个分布式的整体解决方案。Spring Cloud 为开发者提供了在分布式系统（配置管理，服务发现，熔断，路由，微代理，控制总线，一次性token，全局琐，leader选举，分布式session，集群状态）中快速构建的工具，使用Spring Cloud的开发者可以快速的启动服务或构建应用、同时能够快速和云平台资源进行对接。
+Spring Cloud 是一个分布式的整体解决方案。Spring Cloud 为开发者提供了在分布式系统(配置管理，服务发现，熔断，路由，微代理，控制总线，一次性token，全局琐，leader选举，分布式session，集群状态)中快速构建的工具，使用Spring Cloud的开发者可以快速的启动服务或构建应用、同时能够快速和云平台资源进行对接。
 
 **SpringCloud分布式开发五大常用组件**
 

@@ -6,4 +6,6 @@ include::guide/java-base.adoc[leveloffset=+1]
 
 include::guide/java-collection.adoc[leveloffset=+1]
 
+include::guide/java-javaweb.adoc[leveloffset=+1]
+
 include::guide/java-javaee.adoc[leveloffset=+1]

@@ -5,7 +5,7 @@
 == SpringBoot 之检索
 
 我们的应用经常需要添加检索功能，开源的 https://www.elastic.co/[ElasticSearch] 是目前全文搜索引擎的首选。他可以快速的存储、搜索和分析海量数据。Spring Boot 通过整合 Spring Data ElasticSearch 为我们提供了非常便捷的检索功能支持；**Elasticsearch** 是一个分布式搜索服务，
-提供Restful API，底层基于Lucene，采用多shard（分片）的方式保证数据安全，并且提供自动 resharding 的功能，github 等大型的站点也是采用了 ElasticSearch 作为其搜索服务。
+提供Restful API，底层基于Lucene，采用多shard(分片)的方式保证数据安全，并且提供自动 resharding 的功能，github 等大型的站点也是采用了 ElasticSearch 作为其搜索服务。
 
 * 以员工文档 的形式存储为例: 一个文档代表一个员工数据。存储数据到 ElasticSearch 的行为叫做 索引 ，但在索引一个文档之前，需要确定将文档存储在哪里。
 * 一个 ElasticSearch 集群可以 包含多个 索引 ，相应的每个索引可以包含多个 类型 。 这些不同的类型存储着多个 文档 ，每个文档又有 多个 属性 。
@@ -202,7 +202,7 @@ public class Book {
 
 SpringBoot默认支持两种技术来和ES交互
 
-. Jest（默认不生效），需要导入jest的工具包（io.searchbox.client.JestClient）
+. Jest(默认不生效)，需要导入jest的工具包(io.searchbox.client.JestClient)
 . SpringData ElasticSearch
 .. Client节点信息: Client ClusterNodes；ClusterNames
 .. ElasticSearchTemplate操作ES

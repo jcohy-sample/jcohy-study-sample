@@ -13,7 +13,7 @@ http://docs.jcohy.com[*http://docs.jcohy.com*]
 ****
 
 [horizontal]
-<<java.adoc#java-overview, Java基础>> :: java 基础,Java 新特性
+<<java.adoc#java-overview, Java基础>> :: java 基础,Java 8,9,10,11,12,13,14新特性
 <<designpattern.adoc#design-overview, 设计模式>> :: Java 23种设计模式
 <<algorithm.adoc#algorithm-overview, 算法>>  :: ACM 常见算法精题。各种排序算法
 <<other.adoc#other-overview, 其他组件>>  :: Quartz,Swagger,Jenkins,WenSite等
@@ -24,5 +24,5 @@ http://docs.jcohy.com[*http://docs.jcohy.com*]
 <<nginx.adoc#nginx-overview, nginx>>  :: nginx
 <<docker.adoc#docker-overview, docker>>  :: docker
 <<go.adoc#go-overview, go>>  :: go
-<<guide.adoc#guide-overview, 面试指南>>  :: 面试指南
+<<guide.adoc#guide, 面试指南>>  :: 面试指南
 <<file.adoc#file-overview, 常用文件>>  :: 常用正则表达式，配置文件等

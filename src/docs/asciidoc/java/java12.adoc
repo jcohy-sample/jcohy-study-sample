@@ -22,21 +22,21 @@ Java 12 早在 2018 年 12 月便进入了 Rampdown Phase One 阶段，这意味
 |===
 | 新特性 | 翻译
 
-| 189:  [Shenandoah: A Low-Pause-Time Garbage Collector (Experimental)](http://openjdk.java.net/jeps/189) |Shenandoah: 一个低停顿垃圾收集器(实验阶段)
+| 189: http://openjdk.java.net/jeps/189[Shenandoah: A Low-Pause-Time Garbage Collector (Experimental)] |Shenandoah: 一个低停顿垃圾收集器(实验阶段)
 
-| 230:  [Microbenchmark Suite](http://openjdk.java.net/jeps/230) |微基准套件
+| 230: http://openjdk.java.net/jeps/230[Microbenchmark Suite] |微基准套件
 
-| 325:[Switch Expressions (Preview)](http://openjdk.java.net/jeps/325) | Switch 表达式扩展
+| 325: http://openjdk.java.net/jeps/325[Switch Expressions (Preview)] | Switch 表达式扩展
 
-| 334:[JVM Constants API](http://openjdk.java.net/jeps/334) | 引入 JVM 常量 API
+| 334: http://openjdk.java.net/jeps/334[JVM Constants API] | 引入 JVM 常量 API
 
-| 340:[One AArch64 Port, Not Two](http://openjdk.java.net/jeps/340) | 只保留一个AArch64实现
+| 340: http://openjdk.java.net/jeps/340[One AArch64 Port, Not Two] | 只保留一个AArch64实现
 
-| 341:[Default CDS Archives](http://openjdk.java.net/jeps/341) | 默认类数据共享(CDS)存档
+| 341: http://openjdk.java.net/jeps/341[Default CDS Archives] | 默认类数据共享(CDS)存档
 
-| 344:[Abortable Mixed Collections for G1](http://openjdk.java.net/jeps/344) | 可中止的G1 Mixed GC
+| 344: http://openjdk.java.net/jeps/344[Abortable Mixed Collections for G1] | 可中止的G1 Mixed GC
 
-| 346:[Promptly Return Unused Committed Memory from G1](http://openjdk.java.net/jeps/346) | G1及时返回未使用的已分配内存
+| 346: http://openjdk.java.net/jeps/346[Promptly Return Unused Committed Memory from G1] | G1及时返回未使用的已分配内存
 |===
 
 [[java-12-feature-shenandoah]]

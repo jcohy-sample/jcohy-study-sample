@@ -86,7 +86,7 @@ Service:
 public class ScheduledService {
 
     /**
-     * second(秒)  minute（分）, hour（时）, day of month（日）, month（月）,and day of week.
+     * second(秒)  minute(分), hour(时), day of month(日), month(月),and day of week.
      * 0 * * * * MON-FRI
      * 【0 0/5 14,18 * * ?】每天14点整和18点整，每隔5分钟执行一次
      * 【0 15 10 ？ * 1-6】每个月的周一至周六10: 15分执行一次

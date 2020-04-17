@@ -4,8 +4,8 @@
 [[swagger-overview]]
 == Swagger 简介
 
-*  Swagger是全球最大的OpenAPI规范（OAS）API开发工具框架，支持从设计和文档到测试和部署的整个API生命周期的开发。提高服务端和前端以及移动端的对接效率。
-*  Swagger-editor: 在一个功能强大的编辑器中设计新的API或编辑现有的API，这种编辑器可以通过简洁，实时的反馈和错误处理直观地呈现OAS/Swagger定义。就是一个在线编辑文档说明文件（swagger.json或swagger.yaml文件）的工具，以方便生态中的其他小工具（swagger-ui）等使用。
+*  Swagger是全球最大的OpenAPI规范(OAS)API开发工具框架，支持从设计和文档到测试和部署的整个API生命周期的开发。提高服务端和前端以及移动端的对接效率。
+*  Swagger-editor: 在一个功能强大的编辑器中设计新的API或编辑现有的API，这种编辑器可以通过简洁，实时的反馈和错误处理直观地呈现OAS/Swagger定义。就是一个在线编辑文档说明文件(swagger.json或swagger.yaml文件)的工具，以方便生态中的其他小工具(swagger-ui)等使用。
 *  Swagger-ui:从OAS/Swagger定义中可视化您的API资源，并生成可在任何环境中托管的漂亮的交互式文档，从而使最终用户可以轻松开始使用API。就是用来显示Api文档接口的
 *  Swagger-Inspector: 是一款超快的API测试工具，可轻松调用和验证基于REST，GraphQL和SOAP的Web服务，以确保它们正常运行。类型是Redis最基本的数据类型，一个redis中字符串value最多可以是512M。就是用来测试文档的。
 *  Swagger-codegen: 通过将OAS / Swagger定义转换为代码，以40多种不同语言生成服务器存根和客户端库，从而快速构建API，从而实现开发和原型设计。就是代码生成器，脚手架。可以根据swagger.json或者swagger.yml文件生成指定的计算机语言指定框架的代码。
@@ -22,7 +22,7 @@
 
 *  @Api: 修饰整个类，描述Controller的作用
 *  @ApiOperation: 描述一个类的一个方法，或者说一个接口,表示一个http请求的操作。
-*  @ApiParam: 单个参数描述(用于方法，参数，字段说明)，表示对参数的添加元数据（说明或是否必填等）。
+*  @ApiParam: 单个参数描述(用于方法，参数，字段说明)，表示对参数的添加元数据(说明或是否必填等)。
 *  @ApiModel: 表示对类进行说明，用于参数用实体类接收。
 *  @ApiModelProperty: 用于方法，字段，表示对model属性的说明或者数据操作更改。
 *  @ApiIgnore: 用于类，方法，方法参数,表示这个方法或者类被忽略。
