@@ -22,7 +22,7 @@ public class HelloWorld {
 
 图示;
 
-image::images/spring-spring-boot-concrete-bindings.png[]
+image::http://study.jcohy.com/images/spring-spring-boot-concrete-bindings.png[]
 
 每一个日志的实现框架都有自己的配置文件。使用slf4j以后，**配置文件还是做成日志实现框架自己本身的配置文件; **
 
@@ -33,7 +33,7 @@ a(slf4j+logback): Spring(commons-logging)、Hibernate(jboss-logging)、MyBatis�
 
 统一日志记录，即使是别的框架和我一起统一使用slf4j进行输出？
 
-image::images/spring-spring-boot-legacy.png[]
+image::http://study.jcohy.com/images/spring-spring-boot-legacy.png[]
 
 **如何让系统中所有的日志都统一到slf4j; **
 

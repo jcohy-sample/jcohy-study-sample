@@ -9,7 +9,7 @@
 [[design-command-role]]
 == 命令模式的角色
 
-image::images/design-command1.png[]
+image::http://study.jcohy.com/images/design-command1.png[]
 
 *  Command:用来声明 执行操作的接口
 *  ConcreteCommand:将一个接受者对象绑定于一个动作，调用接受者相应的操作，以实现Excute。
@@ -72,7 +72,7 @@ include::{design-pattern-code}/command/Client.java[tag=code]
 
 7、result
 
-image::images/design-command2.png[]
+image::http://study.jcohy.com/images/design-command2.png[]
 
 [[design-command-qa]]
 == Q&A

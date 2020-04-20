@@ -62,7 +62,7 @@ public class Person {
 
 调整
 
-image::images/spring-spring-boot1.png[]
+image::http://study.jcohy.com/images/spring-spring-boot1.png[]
 
 == `@Value` 获取值和 `@ConfigurationProperties` 获取值比较
 

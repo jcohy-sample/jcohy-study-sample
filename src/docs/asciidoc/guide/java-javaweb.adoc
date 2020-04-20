@@ -212,7 +212,7 @@ DAO模式实际上包含了两个模式，一是Data Accessor(数据访问器)�
 
 Connection提供了事务处理的方法，通过调用setAutoCommit(false)可以设置手动提交事务；当事务完成后用commit()显式提交事务；如果在事务处理过程中发生异常则通过 `rollback()` 进行事务回滚。除此之外，从JDBC 3.0中还引入了 Savepoint(保存点)的概念，允许通过代码设置保存点并让事务回滚到指定的保存点。
 
-image::images/guide-2.jpg[]
+image::http://study.jcohy.com/images/guide-2.jpg[]
 
 [[guide-web-9]]
 == JDBC能否处理Blob和Clob？
@@ -949,7 +949,7 @@ EL的隐式对象包括：pageContext、initParam(访问上下文参数)、param
 
 Model 1是以页面为中心的Java Web开发，使用JSP+JavaBean技术将页面显示逻辑和业务逻辑处理分开，JSP实现页面显示，JavaBean对象用来保存数据和实现业务逻辑。Model 2是基于MVC(模型-视图-控制器，Model-View-Controller)架构模式的开发模型，实现了模型和视图的彻底分离，利于团队开发和代码复用，如下图所示。
 
-image::images/guide-3.jpg[]
+image::http://study.jcohy.com/images/guide-3.jpg[]
 
 [[guide-web-27]]
 == Servlet 3中的异步处理指的是什么？

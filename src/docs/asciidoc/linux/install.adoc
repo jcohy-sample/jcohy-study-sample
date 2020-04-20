@@ -249,7 +249,7 @@ show variables like '%password%';
 
 如下图所示:
 
-image::images/linux-install1.jpg[]
+image::http://study.jcohy.com/images/linux-install1.jpg[]
 
 * validate_password_policy: 密码策略，默认为MEDIUM策略
 * validate_password_dictionary_file: 密码策略文件，策略为STRONG才需要
@@ -1351,13 +1351,13 @@ jenkinsci/blueocean
 +
 该文件为jenkins下载插件的源地址，改地址默认jenkins默认为: https://updates.jenkins.io/update-center.json，就是因为https的问题，此处我们将其改为http即可，之后重启jenkins服务即可。
 +
-image::images/jenkins3.jpg[]
+image::http://study.jcohy.com/images/jenkins3.jpg[]
 
 . 解决方法2: 修改 `/var/lib/jenkins/updates/default.json`，所以图下的 `google` 改为 `www.baidu.com` 即可，更改完重启服务。
 
 jenkins在下载插件之前会先检查网络连接，其会读取这个文件中的网址。默认是访问谷歌
 
-image::images/jenkins4.jpg[]
+image::http://study.jcohy.com/images/jenkins4.jpg[]
 
 * connot find the symbol
 +
@@ -1723,7 +1723,7 @@ mv /opt/atlassian/confluence/confluence/WEB-INF/lib/atlassian-extras-decoder-v2-
 
   java -jar confluence_keygen.jar
 
-image::images/confluence_keygen1.png[]
+image::http://study.jcohy.com/images/confluence_keygen1.png[]
 
 - 4.点击 patch ，选择 atlassian-extras-2.4.ja r文件，点击打开，jar 文件破解成功
 
@@ -1776,7 +1776,7 @@ e.g. jdbc:mysql://127.0.0.1:3306/confdb?sessionVariables=tx_isolation='READ-COMM
 
 10.配置邮箱服务器
 
-image::images/confluence_keygen2.png[]
+image::http://study.jcohy.com/images/confluence_keygen2.png[]
 
 11.Confluence 修改数据库配置文件
 

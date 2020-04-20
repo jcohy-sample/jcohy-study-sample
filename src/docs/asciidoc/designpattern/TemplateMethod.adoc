@@ -9,7 +9,7 @@
 [[design-template-role]]
 == 模板方法模式的角色
 
-image::images/design-template-method.png[]
+image::http://study.jcohy.com/images/design-template-method.png[]
 
 *  AbstractClass:声明模板方法所使用的抽象方法，这个抽象方法由子类ConcreteClass实现。
 *  ConcreteClass:实现AbstractClass以完成算法中与特定子类相关的步骤。

@@ -1430,7 +1430,7 @@ private static BeanDefinition registerOrEscalateApcAsRequired(
 
 首先来看他的继承关系
 
-image::images/spring-annotation-AnnotationAwareAspectJAutoProxyCreator.jpg[]
+image::http://study.jcohy.com/images/spring-annotation-AnnotationAwareAspectJAutoProxyCreator.jpg[]
 
 **AnnotationAwareAspectJAutoProxyCreator**  关注两点，他实现了 **SmartInstantiationAwareBeanPostProcessor** 和 **BeanFactoryAware** 接口。关注后置处理器(在bean初始化完成前后做事情)、自动装配 BeanFactory。
 

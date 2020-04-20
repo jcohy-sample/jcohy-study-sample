@@ -15,7 +15,7 @@
 
 `HashMap` 实际上是一个 "链表散列" 的数据结构，即数组和链表的结合体。
 
-image::images/java-hashmap1.png[]
+image::http://study.jcohy.com/images/java-hashmap1.png[]
 
 从上图中可以看出，`HashMap` 底层就是一个数组结构，数组中的每一项又是一个链表。当新建一个 `HashMap` 的时候，就会初始化一个数组。
 

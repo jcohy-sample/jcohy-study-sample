@@ -9,7 +9,7 @@
 [[design-responsibility-role]]
 == 责任链模式的角色
 
-image::images/design-responsibility.png[]
+image::http://study.jcohy.com/images/design-responsibility.png[]
 
 *  Handler:定义一个处理请求的接口
 *  ConcreteHandler(1，2。。。):具体处理者类，处理他所负责的请求，可访问他的后继者，如果可以处理此请求，就处理，反之，将他转发给他的后继者。

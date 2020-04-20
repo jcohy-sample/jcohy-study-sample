@@ -31,7 +31,7 @@
 [[design-factory-role]]
 == 工厂模式的参与者
 
-image::images/design-factory4.png[]
+image::http://study.jcohy.com/images/design-factory4.png[]
 
 *  Product:定义工厂方法所创建的对象的接口。
 *  ConcreteProduct: 实现 Product 接口。
@@ -53,7 +53,7 @@ image::images/design-factory4.png[]
 [[design-factory-simple-impl]]
 === 实现
 
-image::images/design-factory1.png[]
+image::http://study.jcohy.com/images/design-factory1.png[]
 
 1.首先，创建共同的接口
 
@@ -116,7 +116,7 @@ include::{design-pattern-code}/factory/SimpleFactory/example2/FactoryTest.java[t
 
 *  工厂模式降低了客户端程序与产品对象的耦合度，使用多态。保持了简单工厂的有点，克服了他的缺点。但是由于每增加一个 一个产品，就需要加一个产品工厂的类，增加了额外的开销。
 
-image::images/design-factory2.png[]
+image::http://study.jcohy.com/images/design-factory2.png[]
 
 [[design-factory-template-impl]]
 === 实现

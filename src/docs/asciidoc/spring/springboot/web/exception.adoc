@@ -7,17 +7,17 @@
 
 1)、浏览器，返回一个默认的错误页面
 
-image::images/spring-spring-boot9.png[]
+image::http://study.jcohy.com/images/spring-spring-boot9.png[]
 
 浏览器发送请求的请求头:
 
-image::images/spring-spring-boot10.png[]
+image::http://study.jcohy.com/images/spring-spring-boot10.png[]
 
 ​2)、如果是其他客户端，默认响应一个json数据
 
-image::images/spring-spring-boot12.png[]
+image::http://study.jcohy.com/images/spring-spring-boot12.png[]
 
-image::images/spring-spring-boot11.png[]
+image::http://study.jcohy.com/images/spring-spring-boot11.png[]
 
 原理:
 
@@ -228,4 +228,4 @@ public class MyErrorAttributes extends DefaultErrorAttributes {
 
 最终的效果: 响应是自适应的，可以通过定制ErrorAttributes改变需要返回的内容，
 
-image::images/spring-spring-boot13.png[]
+image::http://study.jcohy.com/images/spring-spring-boot13.png[]

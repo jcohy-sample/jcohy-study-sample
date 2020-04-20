@@ -117,7 +117,7 @@ Hibernate 中通过 Session 的 `get()` 和 `load()` 方法从数据库中加载
 
 最新的Hibernate文档中为Hibernate对象定义了四种状态(原来是三种状态，面试的时候基本上问的也是三种状态)，分别是：瞬时态(new, or transient)、持久态(managed, or persistent)、游状态(detached)和移除态(removed，以前Hibernate文档中定义的三种状态中没有移除态)，如下图所示，就以前的Hibernate文档中移除态被视为是瞬时态。
 
-image::images/guide-4.jpg[]
+image::http://study.jcohy.com/images/guide-4.jpg[]
 
 * 瞬时态：当new一个实体对象后，这个对象处于瞬时态，即这个对象只是一个保存临时数据的内存区域，如果没有变量引用这个对象，则会被JVM的垃圾回收机制回收。这个对象所保存的数据与数据库没有任何关系，除非通过Session的save()、saveOrUpdate()、persist()、merge()方法把瞬时态对象与数据库关联，并把数据插入或者更新到数据库，这个对象才转换为持久态对象。
 * 持久态：持久态对象的实例在数据库中有对应的记录，并拥有一个持久化标识(ID)。对持久态对象进行delete操作后，数据库中对应的记录将被删除，那么持久态对象与数据库记录不再存在对应关系，持久态对象变成移除态(可以视为瞬时态)。持久态对象被修改变更后，不会马上同步到数据库，直到数据库事务提交。
@@ -1477,7 +1477,7 @@ public class DeptServiceImpl implements DeptService {
 [[guide-ee-31]]
 == Spring MVC的工作原理是怎样的？
 
-image::images/guide-5.jpg[]
+image::http://study.jcohy.com/images/guide-5.jpg[]
 
 . 客户端的所有请求都交给前端控制器 `DispatcherServlet` 来处理，它会负责调用系统的其他模块来真正处理用户的请求。
 . DispatcherServlet收到请求后，将根据请求的信息(包括URL、HTTP协议方法、请求头、请求参数、Cookie等)以及 `HandlerMapping` 的配置找到处理该请求的Handler(任何一个对象都可以作为请求的Handler)。
@@ -1762,7 +1762,7 @@ WebApplicationContext ctx =
 . 验证码；
 . 检查请求头中的Referer(前面提到防图片盗链接也是用的这种方式)。令牌和验证都具有一次消费性的特征，因此在原理上一致的，但是验证码是一种糟糕的用户体验，不是必要的情况下不要轻易使用验证码，目前很多网站的做法是如果在短时间内多次提交一个表单未获得成功后才要求提供验证码，这样会获得较好的用户体验。
 
-image::images/guide-6.jpg[]
+http://study.jcohy.com/images/guide-6.jpg[]
 
 补充：防火墙的架设是Web安全的重要保障，ModSecurity是开源的Web防火墙中的佼佼者。企业级防火墙的架设应当有两级防火墙，Web服务器和部分应用服务器可以架设在两级防火墙之间的DMZ，而数据和资源服务器应当架设在第二级防火墙之后。
 
@@ -1774,11 +1774,11 @@ image::images/guide-6.jpg[]
 
 贫血模型
 
-image::images/guide-7.jpg[]
+image::http://study.jcohy.com/images/guide-7.jpg[]
 
 充血模型
 
-image::images/guide-8.jpg[]
+image::http://study.jcohy.com/images/guide-8.jpg[]
 
 贫血模型下组织领域逻辑通常使用事务脚本模式，让每个过程对应用户可能要做的一个动作，每个动作由一个过程来驱动。也就是说在设计业务逻辑接口的时候，每个方法对应着用户的一个操作，这种模式有以下几个有点：
 

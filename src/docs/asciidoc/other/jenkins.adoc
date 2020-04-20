@@ -42,14 +42,14 @@ Jenkins可以轻松地在多台机器上分配工作，帮助更快速地跨多�
 
 1.手动部署
 
-image::images/jenkins1.jpg[]
+image::http://study.jcohy.com/images/jenkins1.jpg[]
 
 2.自动化部署
 
 “自动化” 的具体体现: 向版本库提交新的代码后，应用服务器上自动部署，用户
 或测试人员使用的马上就是最新的应用程序。
 
-image::images/jenkins2.jpg[]
+image::http://study.jcohy.com/images/jenkins2.jpg[]
 
 [[jenkins-install]]
 == 安装
@@ -61,39 +61,39 @@ image::images/jenkins2.jpg[]
 
 === 全局安全配置
 
-image::images/jenkins5.jpg[]
+image::http://study.jcohy.com/images/jenkins5.jpg[]
 
-image::images/jenkins6.jpg[]
+image::http://study.jcohy.com/images/jenkins6.jpg[]
 
 === 全局工具配置
 
-image::images/jenkins12.jpg[]
+image::http://study.jcohy.com/images/jenkins12.jpg[]
 
 配置下面这些工具时，请确保服务上已安装此工具。
 
-image::images/jenkins7.jpg[]
+image::http://study.jcohy.com/images/jenkins7.jpg[]
 
 * JDK
 
-image::images/jenkins8.jpg[]
+image::http://study.jcohy.com/images/jenkins8.jpg[]
 
 * Maven
 
-image::images/jenkins10.jpg[]
+image::http://study.jcohy.com/images/jenkins10.jpg[]
 
 * Gradle
 
-image::images/jenkins9.jpg[]
+image::http://study.jcohy.com/images/jenkins9.jpg[]
 
 * Git
 
-image::images/jenkins11.jpg[]
+image::http://study.jcohy.com/images/jenkins11.jpg[]
 
 === 安装插件
 
-image::images/jenkins13.jpg[]
+image::http://study.jcohy.com/images/jenkins13.jpg[]
 
-image::images/jenkins14.jpg[]
+image::http://study.jcohy.com/images/jenkins14.jpg[]
 
 安装插件时受到网络状况的时候可能会失败，可以多尝试几次。
 
@@ -107,35 +107,35 @@ http://www.cnblogs.com/imyalost/p/8781759.html[配置邮件发送]
 
 * 创建工程
 
-image::images/jenkins15.jpg[]
+image::http://study.jcohy.com/images/jenkins15.jpg[]
 
 * 指定工程名称和工程类型
 
-image::images/jenkins16.jpg[]
+image::http://study.jcohy.com/images/jenkins16.jpg[]
 
 * 源码管理
 
-image::images/jenkins17.jpg[]
+image::http://study.jcohy.com/images/jenkins17.jpg[]
 
 * 构建
 
-image::images/jenkins18.jpg[]
+image::http://study.jcohy.com/images/jenkins18.jpg[]
 
-image::images/jenkins20.jpg[]
+image::http://study.jcohy.com/images/jenkins20.jpg[]
 
 * 构建后操作
 
 构建后我们可以执行一些操作，例如将构建后的war包放到一个servlet容器中，执行shell等，我们之前配置了邮件服务器，就以发送为例。即构建完成后发送邮件给指定人。
 
-image::images/jenkins19.jpg[]
+image::http://study.jcohy.com/images/jenkins19.jpg[]
 
 * 保存，手动构建
 
-image::images/jenkins21.jpg[]
+image::http://study.jcohy.com/images/jenkins21.jpg[]
 
 * 构建状态
 
-image::images/jenkins22.jpg[]
+image::http://study.jcohy.com/images/jenkins22.jpg[]
 
 [[jenkins-webhook]]
 == 创建 webhook

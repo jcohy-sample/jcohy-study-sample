@@ -3,7 +3,7 @@
 
 JSP、Velocity、Freemarker、Thymeleaf
 
-image::images/spring-spring-boot-template-engine.png[]
+image::http://study.jcohy.com/images/spring-spring-boot-template-engine.png[]
 
 SpringBoot推荐的Thymeleaf;
 
@@ -82,7 +82,7 @@ public class ThymeleafProperties {
 
 ​	th: 任意html属性; 来替换原生属性的值
 
-image::images/spring-spring-boot6.png[]
+image::http://study.jcohy.com/images/spring-spring-boot6.png[]
 
 2)、表达式？
 

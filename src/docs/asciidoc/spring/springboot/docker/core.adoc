@@ -11,7 +11,7 @@ docker镜像(Images): 软件打包好的镜像; 放在docker仓库中;
 
 docker容器(Container): 镜像启动后的实例称为一个容器; 容器是独立运行的一个或一组应用
 
-image::images/spring-spring-boot21.png[]
+image::http://study.jcohy.com/images/spring-spring-boot21.png[]
 
 使用Docker的步骤:
 

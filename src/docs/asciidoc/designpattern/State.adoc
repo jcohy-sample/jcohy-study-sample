@@ -9,7 +9,7 @@
 [[design-state-role]]
 == 状态模式的角色
 
-image::images/design-state.png[]
+image::http://study.jcohy.com/images/design-state.png[]
 
 *  state:抽象状态类，定义一个接口以封装 与COntext的一个特定状态相关的行为。
 *  Context: 维护一个ConcreteState子类的实例，这个实例定义当前的状态。

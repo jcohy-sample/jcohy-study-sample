@@ -71,7 +71,7 @@ Spring的web模块里面有这个文件: **org.springframework.web.SpringServlet
 
 4)、每一个WebApplicationInitializer都调用自己的onStartup;
 
-image::images/spring-spring-boot18.png[]
+image::http://study.jcohy.com/images/spring-spring-boot18.png[]
 
 5)、相当于我们的SpringBootServletInitializer的类会被创建对象，并执行onStartup方法
 

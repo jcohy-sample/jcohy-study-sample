@@ -21,7 +21,7 @@ SpringBoot 使用它来做日志功能;
 
 底层依赖关系
 
-image::images/spring-spring-boot3.png[]
+image::http://study.jcohy.com/images/spring-spring-boot3.png[]
 
 总结:
 
@@ -41,7 +41,7 @@ public abstract class LogFactory {
     static LogFactory logFactory = new SLF4JLogFactory();
 ----
 
-image::images/spring-spring-boot4.png[]
+image::http://study.jcohy.com/images/spring-spring-boot4.png[]
 
 
 

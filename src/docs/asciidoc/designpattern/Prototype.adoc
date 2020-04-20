@@ -25,7 +25,7 @@
 [[design-prototype-role]]
 == 原型模式的参与者
 
-image::images/design-prototype.png[]
+image::http://study.jcohy.com/images/design-prototype.png[]
 
 *  Prototype(原型):Prototype 规定复制对象实例建立新对象实例的方法。
 *  ConcretePrototype:实际上实现先复制对象实例再建立新对象实例的方法。

@@ -10,7 +10,7 @@
 [[design-visitor-role]]
 == 访问者模式的角色
 
-image::images/design-visitor.png[]
+image::http://study.jcohy.com/images/design-visitor.png[]
 
 *  Visitor:为该对象结构中的ConcreteElement的每一个类声明一个Visit操作。
 *  ConcreteVisit(1、2、3...):具体访问者，实现每个由Visitor声明的操作，每个操作实现算法的一部分，而该算法的片段乃是对应于结构中对象的类。

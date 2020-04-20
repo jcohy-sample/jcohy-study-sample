@@ -83,7 +83,7 @@ public class ResourceProperties implements ResourceLoaderAware {
 
 http://www.webjars.org/
 
-image::images/spring-spring-boot5.png[]
+image::http://study.jcohy.com/images/spring-spring-boot5.png[]
 
 localhost:8080/webjars/jquery/3.3.1/jquery.js
 

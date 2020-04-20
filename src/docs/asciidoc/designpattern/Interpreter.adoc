@@ -9,7 +9,7 @@
 [[design-interpreter-role]]
 == 解释器模式的角色
 
-image::images/design-interpreter.png[]
+image::http://study.jcohy.com/images/design-interpreter.png[]
 
 
 [[design-interpreter-sign]]

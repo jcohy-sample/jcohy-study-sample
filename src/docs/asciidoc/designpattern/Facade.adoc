@@ -9,7 +9,7 @@
 [[design-facade-role]]
 == 外观模式的角色
 
-image::images/design-facade.png[]
+image::http://study.jcohy.com/images/design-facade.png[]
 
 * Facade:外观类，知道那些子系统类负责处理请求。将客户的请求代理给适当的子系统对象。
 *  SubSystem(One，Two，Three，。。。。):子系统类集合，实现子系统功能，处理 Facade 对象指派的任务，注意子类没有Facade对象的任何信息，即没有对 Facade 对象的引用。

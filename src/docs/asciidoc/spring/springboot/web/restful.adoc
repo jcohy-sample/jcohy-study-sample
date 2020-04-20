@@ -46,7 +46,7 @@ public class MyMvcConfig extends WebMvcConfigurerAdapter {
 
 1)、编写国际化配置文件，抽取页面需要显示的国际化消息
 
-image::images/spring-spring-boot7.png[]
+image::http://study.jcohy.com/images/spring-spring-boot7.png[]
 
 2)、SpringBoot自动配置好了管理国际化资源文件的组件;
 
@@ -84,7 +84,7 @@ public class MessageSourceAutoConfiguration {
 
 3)、去页面获取国际化的值;
 
-image::images/spring-spring-boot8.png[]
+image::http://study.jcohy.com/images/spring-spring-boot8.png[]
 
 [source,html]
 ----

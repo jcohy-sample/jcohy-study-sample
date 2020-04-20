@@ -3,7 +3,7 @@
 
 == SpringData简介
 
-image::images/spring-spring-boot23.png[]
+image::http://study.jcohy.com/images/spring-spring-boot23.png[]
 
 == 整合SpringData JPA
 

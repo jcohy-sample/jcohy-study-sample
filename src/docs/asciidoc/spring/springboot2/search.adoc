@@ -15,7 +15,7 @@
 ** 文档-表中的记录
 ** 属性-列
 
-image::images/spring-spring-boot34.png[]
+image::http://study.jcohy.com/images/spring-spring-boot34.png[]
 
 [[spring-advanced-search-install]]
 == 安装

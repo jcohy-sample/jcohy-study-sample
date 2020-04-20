@@ -9,7 +9,7 @@
 [[design-flyweight-role]]
 == 亨元模式的角色
 
-image::images/design-flyweight1.png[]
+image::http://study.jcohy.com/images/design-flyweight1.png[]
 
 *  FlyweightFactory:一个亨元工厂，用来创建并管理Flyweight对象，他主要是用来确保合理的共享Flyweight，当一个用户请求Flyweight时，FlyweightFactory对象提供一个已经创建好的实例或创建一个(当没有时)
 *  Flyweight:所有具体亨元类的超类或者接口，通过这个接口，Flyweight 可以接受并作用于外部状态。

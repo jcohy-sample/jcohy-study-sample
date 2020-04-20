@@ -9,7 +9,7 @@
 [[design-decorator-role]]
 == 装饰器模式的角色
 
-image::images/design-decorator1.png[]
+image::http://study.jcohy.com/images/design-decorator1.png[]
 
 * Component:定义了一个对象接口，可以动态的给这些对象添加职责。
 * ConcreteComponent:ConcreteComponent定义了一个具体的对象，也可以给这个对象添加一些职责。

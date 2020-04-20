@@ -12,7 +12,7 @@
 
 单例模式的结构如图:
 
-image::images/design-singleton.png[]
+image::http://study.jcohy.com/images/design-singleton.png[]
 
 [[design-singleton-sign]]
 == 适用性

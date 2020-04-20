@@ -6,13 +6,13 @@
 
 旧版本回顾：
 
-image::images/java-14-2.png[]
+image::http://study.jcohy.com/images/java-14-2.png[]
 
-image::images/java-14-3.png[]
+image::http://study.jcohy.com/images/java-14-3.png[]
 
 2020 年 3 月 17 日,JDK/Java 14 正式 GA(General Available) 。这是自从Java 采用六个月一次的发布周期之后的第五次发布。
 
-image::images/java-14-1.png[]
+image::http://study.jcohy.com/images/java-14-1.png[]
 
 此版本包含的 JEP (Java/JDK Enhancement Proposals,JDK 增强提案) 比 Java 12 和 13 加起来的还要多。总共 16 个新特性，包括两个孵化器模块 、三个预览特性、两个弃用的功能以及两个删除的功能。
 
@@ -71,7 +71,7 @@ image::images/java-14-1.png[]
 
 * 项目设置
 
-image::images/java-14-4.png[]
+image::http://study.jcohy.com/images/java-14-4.png[]
 
 [[java-14-feature-instanceof]]
 == instanceof 模式匹配 (预览语言)
@@ -194,7 +194,7 @@ JDK14 引入了 `jdk.incubator.jpackage.jmod` ，它基于 JavaFX javapackager t
 
 NUMA 就是非统一内存访问架构(英语： non uniform memory access ，简称 NUMA )，是一种为多处理器的电脑设计的内存架构，内存访问时间取决于内存相对于处理器的位置。
 
-image::images/java-14-7.png[]
+image::http://study.jcohy.com/images/java-14-7.png[]
 
 [[java-14-feature-streaming]]
 == JFR 事件流
@@ -575,9 +575,9 @@ ZGC 与 Shenandoah 目标高度相似，在尽可能对吞吐量影响不大的�
 
 深入理解 Java 虚拟机 一书中这样定义 ZGC,ZGC 收集器是一款基于 Region 内存布局的，(暂时)不设分代的，使用了读屏障、染色指针和内存多重映射等技术来实现可并发的标记 压缩算法的， 以低延迟为首要目标的一款垃圾收集器。
 
-image::images/java-14-5.png[]
+image::http://study.jcohy.com/images/java-14-5.png[]
 
-image::images/java-14-6.png[]
+image::http://study.jcohy.com/images/java-14-6.png[]
 
 JDK14 之前， ZGC 仅 Linux 才支持 。
 尽管许多使用 ZGC 的用户都使用类 Linux 的环境，但在 Windows 和 macOS 上，人们也需要 ZGC 进行开发部署和测试。许多桌面应用也可以从 ZGC 中受益。因此， ZGC 特性被移植到了 Windows 和 macOS 上。

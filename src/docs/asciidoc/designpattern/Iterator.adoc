@@ -9,7 +9,7 @@
 [[design-iterator-role]]
 == 迭代器模式的角色
 
-image::images/design-iterator.png[]
+image::http://study.jcohy.com/images/design-iterator.png[iterator]
 
 *  Aggregate:聚集抽象类
 *  ConcreteAggregate:具体聚集类，继承Aggregate

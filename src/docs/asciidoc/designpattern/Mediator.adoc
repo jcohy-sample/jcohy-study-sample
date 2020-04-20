@@ -9,7 +9,7 @@
 [[design-mediator-role]]
 == 中介者模式的角色
 
-image::images/design-mediator.png[]
+image::http://study.jcohy.com/images/design-mediator.png[]
 
 *  Mediator :抽象中介者，定义了同事对象到中介者对象之间的接口。
 *  Colleague: 同事对象。

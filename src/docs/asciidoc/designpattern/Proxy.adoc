@@ -9,7 +9,7 @@
 [[design-proxy-role]]
 == 代理模式的角色
 
-image::images/design-proxy.png[]
+image::http://study.jcohy.com/images/design-proxy.png[]
 
 *  Subject:定义了RealSubject和Proxy的公共接口，这样就可以在任何使用RealSubject的地方可以使用Proxy
 *  RealSubject:定义Proxy代表的真实实体。

@@ -470,17 +470,17 @@ Stream 是 Java8 中处理集合的关键抽象概念，它可以指定你希望
 
 - 创建Stream
 
-  一个数据源(如: 集合、数组)，获取一个流
+一个数据源(如: 集合、数组)，获取一个流
 
 - 中间操作
 
-  一个中间操作链，对数据源的数据进行处理
+一个中间操作链，对数据源的数据进行处理
 
 - 终止操作(终端操作)
 
-  一个终止操作，执行中间操作链，并产生结果
+一个终止操作，执行中间操作链，并产生结果
 
-image::images/java-stream1.jpg[]
+image::http://study.jcohy.com/images/java-stream1.jpg[]
 
 [[java-8-feature-stream-use-create]]
 ==== 创建 Stream
@@ -804,7 +804,7 @@ Java 8 中将并行进行了优化，我们可以很容易的对数据进行并�
 
 Fork/Join 框架: 就是在必要的情况下，将一个大任务，进行拆分(fork)成若干个小任务(拆到不可再拆时)，再将一个个的小任务运算的结果进行join 汇总
 
-image::images/java-fork-join.jpg[]
+image::http://study.jcohy.com/images/java-fork-join.jpg[]
 
 .Fork/Join 框架与传统线程池的区别
 ****

@@ -39,9 +39,9 @@ private void initialize(Object[] sources) {
 }
 ----
 
-image::images/spring-spring-boot24.png[]
+image::http://study.jcohy.com/images/spring-spring-boot24.png[]
 
-image::images/spring-spring-boot25.png[]
+image::http://study.jcohy.com/images/spring-spring-boot25.png[]
 
 2、运行run方法
 

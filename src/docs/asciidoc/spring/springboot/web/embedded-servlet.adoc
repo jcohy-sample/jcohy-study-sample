@@ -3,7 +3,7 @@
 
 SpringBoot默认使用Tomcat作为嵌入式的Servlet容器;
 
-image::images/spring-spring-boot14.png[]
+image::http://study.jcohy.com/images/spring-spring-boot14.png[]
 
 问题？
 
@@ -114,7 +114,7 @@ public ServletRegistrationBean dispatcherServletRegistration(
 
 == 替换为其他嵌入式Servlet容器
 
-image::images/spring-spring-boot15.png[]
+image::http://study.jcohy.com/images/spring-spring-boot15.png[]
 
 默认支持:
 
@@ -247,11 +247,11 @@ public interface EmbeddedServletContainerFactory {
 }
 ----
 
-image::images/spring-spring-boot16.png[]
+image::http://study.jcohy.com/images/spring-spring-boot16.png[]
 
 2)、EmbeddedServletContainer: (嵌入式的Servlet容器)
 
-image::images/spring-spring-boot17.png[]
+image::http://study.jcohy.com/images/spring-spring-boot17.png[]
 
 3)、以**TomcatEmbeddedServletContainerFactory**为例
 

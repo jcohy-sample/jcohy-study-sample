@@ -19,12 +19,12 @@
 [[algorithm-sort-classify]]
 == 算法分类
 
-image::images/algorithm-sort1.png[]
+image::http://study.jcohy.com/images/algorithm-sort1.png[classify]
 
 [[algorithm-sort-complexity]]
 == 算法复杂度
 
-image::images/algorithm-sort2.png[]
+image::http://study.jcohy.com/images/algorithm-sort2.png[complexity]
 
 [[algorithm-sort-exchange]]
 == 交换排序
@@ -47,11 +47,11 @@ image::images/algorithm-sort2.png[]
 
 ==== 排序过程
 
-image::images/algorithm-bubblesort1.png[]
+image::http://study.jcohy.com/images/algorithm-bubblesort1.png[bubblesort1]
 
 - 动图演示
 
-image::images/algorithm-bubblesort2.gif[]
+image::http://study.jcohy.com/images/algorithm-bubblesort2.gif[bubblesort2]
 
 ==== 冒泡排序算法的改进
 
@@ -109,11 +109,11 @@ include::{algorithm-code}/sort/BubbleSort2.java[tag=code]
 
 例如: 8个关键码分别为: 49，38，65，97，76，13，27，49
 
-image::images/algorithm-quick1.jpeg[]
+image::http://study.jcohy.com/images/algorithm-quick1.jpeg[quick1]
 
 ==== 动图演示
 
-image::images/algorithm-quick2.gif[]
+image::http://study.jcohy.com/images/algorithm-quick2.gif[]
 
 ==== 快速排序算法分析
 
@@ -157,11 +157,11 @@ include::{algorithm-code}/sort/QuickSort.java[tag=code]
 
 例如: n=6，数组R的六个排序码分别为: 17 3 25 14 20 9。他的直接插入排序过程如下:
 
-image::images/algorithm-insertsort2.jpeg[]
+image::http://study.jcohy.com/images/algorithm-insertsort2.jpeg[]
 
 ==== 动图演示
 
-image::images/algorithm-insertsort1.gif[]
+image::http://study.jcohy.com/images/algorithm-insertsort1.gif[]
 
 ==== 代码实现
 
@@ -209,11 +209,11 @@ include::{algorithm-code}/sort/BinaryInsertSort.java[tag=code]
 
 例如: 8个关键码分别为: 91	67	35	62	29	72	46	57
 
-image::images/algorithm-shellsort1.jpeg[]
+image::http://study.jcohy.com/images/algorithm-shellsort1.jpeg[]
 
 ==== 动图演示
 
-image::images/algorithm-shellsort2.gif[]
+image::http://study.jcohy.com/images/algorithm-shellsort2.gif[]
 
 ==== 希尔排序算法分析
 
@@ -262,11 +262,11 @@ include::{algorithm-code}/sort/ShellSort.java[tag=code]
 
 ==== 排序过程
 
-image::images/algorithm-selectsort1.jpg[]
+image::http://study.jcohy.com/images/algorithm-selectsort1.jpg[]
 
 ==== 动图演示
 
-image::images/algorithm-selectsort2.gif[]
+image::http://study.jcohy.com/images/algorithm-selectsort2.gif[]
 
 ==== 代码实现
 
@@ -297,7 +297,7 @@ include::{algorithm-code}/sort/SelectSort2.java[tag=code]
 
 上面的1称为小顶堆(二叉树的所有节点值小于或等于左右孩子的值)。2称为大顶堆(二叉树的所有节点值大于或等于左右孩子的值)
 
-image::images/algorithm-heapsort1.jpg[]
+image::http://study.jcohy.com/images/algorithm-heapsort1.jpg[]
 
 ==== 算法描述
 
@@ -309,55 +309,55 @@ image::images/algorithm-heapsort1.jpg[]
 
 建立初始堆(把放在数组里的元素的序列看成是一颗完全二叉树，对该二叉树进行调整，使之称为堆)
 
-image::images/algorithm-heapsort2.jpg[]
+image::http://study.jcohy.com/images/algorithm-heapsort2.jpg[]
 
-image::images/algorithm-heapsort4.jpg[]
+image::http://study.jcohy.com/images/algorithm-heapsort4.jpg[]
 
-image::images/algorithm-heapsort5.jpg[]
+image::http://study.jcohy.com/images/algorithm-heapsort5.jpg[]
 
-image::images/algorithm-heapsort6.jpg[]
+image::http://study.jcohy.com/images/algorithm-heapsort6.jpg[]
 
-image::images/algorithm-heapsort7.jpg[]
+image::http://study.jcohy.com/images/algorithm-heapsort7.jpg[]
 
-image::images/algorithm-heapsort8.jpg[]
+image::http://study.jcohy.com/images/algorithm-heapsort8.jpg[]
 
 堆排序
 
-image::images/algorithm-heapsort9.jpg[]
+image::http://study.jcohy.com/images/algorithm-heapsort9.jpg[]
 
 调整
 
-image::images/algorithm-heapsort10.jpg[]
+image::http://study.jcohy.com/images/algorithm-heapsort10.jpg[]
 
-image::images/algorithm-heapsort11.jpg[]
-
-调整
-
-image::images/algorithm-heapsort12.jpg[]
-
-image::images/algorithm-heapsort13.jpg[]
+image::http://study.jcohy.com/images/algorithm-heapsort11.jpg[]
 
 调整
 
-image::images/algorithm-heapsort14.jpg[]
+image::http://study.jcohy.com/images/algorithm-heapsort12.jpg[]
 
-image::images/algorithm-heapsort15.jpg[]
-
-调整
-
-image::images/algorithm-heapsort16.jpg[]
-
-image::images/algorithm-heapsort17.jpg[]
+image::http://study.jcohy.com/images/algorithm-heapsort13.jpg[]
 
 调整
 
-image::images/algorithm-heapsort18.jpg[]
+image::http://study.jcohy.com/images/algorithm-heapsort14.jpg[]
 
-image::images/algorithm-heapsort19.jpg[]
+image::http://study.jcohy.com/images/algorithm-heapsort15.jpg[]
+
+调整
+
+image::http://study.jcohy.com/images/algorithm-heapsort16.jpg[]
+
+image::http://study.jcohy.com/images/algorithm-heapsort17.jpg[]
+
+调整
+
+image::http://study.jcohy.com/images/algorithm-heapsort18.jpg[]
+
+image::http://study.jcohy.com/images/algorithm-heapsort19.jpg[]
 
 ==== 动图演示
 
-image::images/algorithm-heapsort20.gif[]
+image::http://study.jcohy.com/images/algorithm-heapsort20.gif[]
 
 ==== 代码实现
 
@@ -384,29 +384,29 @@ include::{algorithm-code}/sort/HeapSort.java[tag=code]
 
 例如，将下列两个已排序的顺序表合并成一个已排序表。顺序比较两者的相应元素，小者移入另一个表中，反复如此，直至其中任一表全部移入另一表为止
 
-image::images/algorithm-mergesort1.jpg[]
+image::http://study.jcohy.com/images/algorithm-mergesort1.jpg[]
 
-image::images/algorithm-mergesort2.jpg[]
+image::http://study.jcohy.com/images/algorithm-mergesort2.jpg[]
 
-image::images/algorithm-mergesort3.jpg[]
+image::http://study.jcohy.com/images/algorithm-mergesort3.jpg[]
 
-image::images/algorithm-mergesort4.jpg[]
+image::http://study.jcohy.com/images/algorithm-mergesort4.jpg[]
 
-image::images/algorithm-mergesort5.jpg[]
+image::http://study.jcohy.com/images/algorithm-mergesort5.jpg[]
 
-image::images/algorithm-mergesort6.jpg[]
+image::http://study.jcohy.com/images/algorithm-mergesort6.jpg[]
 
-image::images/algorithm-mergesort7.jpg[]
+image::http://study.jcohy.com/images/algorithm-mergesort7.jpg[]
 
-image::images/algorithm-mergesort8.jpg[]
+image::http://study.jcohy.com/images/algorithm-mergesort8.jpg[]
 
 === 二路并归过程
 
-image::images/algorithm-mergesort9.jpeg[]
+image::http://study.jcohy.com/images/algorithm-mergesort9.jpeg[]
 
 === 动图演示
 
-image::images/algorithm-mergesort10.gif[]
+image::http://study.jcohy.com/images/algorithm-mergesort10.gif[]
 
 === 代码实现
 
@@ -434,7 +434,7 @@ include::{algorithm-code}/sort/MergeSort.java[tag=code]
 
 === 动图演示
 
-image::images/algorithm-countingsort1.gif[]
+image::http://study.jcohy.com/images/algorithm-countingsort1.gif[]
 
 === 代码实现
 
@@ -462,7 +462,7 @@ include::{algorithm-code}/sort/CountingSort.java[tag=code]
 
 以下为例:  5，4，2，4，1 使用桶式排序
 
-image::images/algorithm-bucketsort1.jpg[]
+image::http://study.jcohy.com/images/algorithm-bucketsort1.jpg[]
 
 === 代码实现
 
@@ -495,11 +495,11 @@ include::{algorithm-code}/sort/BucketSort.java[tag=code]
 
 === 排序过程
 
-image::images/algorithm-radixsort1.jpg[]
+image::http://study.jcohy.com/images/algorithm-radixsort1.jpg[]
 
 === 动图演示
 
-image::images/algorithm-radixsort2.gif[]
+image::http://study.jcohy.com/images/algorithm-radixsort2.gif[]
 
 === 算法分析
 

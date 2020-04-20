@@ -479,9 +479,9 @@ protected ConfigurableApplicationContext createApplicationContext() {
 
 我们可以看到这两个类的继承关系，如下:
 
-image::images/spring-spring-boot-AnnotationConfigEmbeddedWebApplicationContext.png[]
+image::http://study.jcohy.com/images/spring-spring-boot-AnnotationConfigEmbeddedWebApplicationContext.png[]
 
-image::images/spring-spring-boot-AnnotationConfigApplicationContext.png[]
+image::http://study.jcohy.com/images/spring-spring-boot-AnnotationConfigApplicationContext.png[]
 
 * `GenericWebApplicationContext` 继承了 `GenericApplicationContext` 实现了 `ConfigurableWebApplicationContext` 接口 我们看一下这个接口，主要提供了web容器也就是servlet容器的相关操作。
 * 再看 `AnnotationConfigEmbeddedWebApplicationContext` 容器重写 `AbstractApplicationContext` 的模板方法,在同期中提供了 `WebApplicationContextServletContextAwareProcessor` 的处理器，提供了容器注入的功能。
@@ -871,13 +871,13 @@ protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactor
 
 好了，到此为止。我们来看看我们已经在beanFactory中添加了那些信息
 
-image::images/spring-spring-boot-beanfactory1.png[]
+image::http://study.jcohy.com/images/spring-spring-boot-beanfactory1.png[]
 
-image::images/spring-spring-boot-beanfactory2.png[]
+image::http://study.jcohy.com/images/spring-spring-boot-beanfactory2.png[]
 
-image::images/spring-spring-boot-beanfactory3.png[]
+image::http://study.jcohy.com/images/spring-spring-boot-beanfactory3.png[]
 
-image::images/spring-spring-boot-beanfactory4.png[]
+image::http://study.jcohy.com/images/spring-spring-boot-beanfactory4.png[]
 
 ==== 9.5 初始化和执行 BeanFactoryPostProcessor beans
 

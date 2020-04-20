@@ -51,11 +51,11 @@ LDAP是轻量 https://baike.baidu.com/item/%E7%9B%AE%E5%BD%95%E8%AE%BF%E9%97%AE%
 
 表单认证
 
-image::images/spring-spring-security3.jpg[]
+image::http://study.jcohy.com/images/spring-spring-security3.jpg[]
 
 === Spring Security 过滤器链
 
-image::images/spring-spring-security4.jpg[]
+image::http://study.jcohy.com/images/spring-spring-security4.jpg[]
 
 ==== SecurityContextPersistenceFilter
 
@@ -353,9 +353,9 @@ public PasswordEncoder passwordEncoder() {
 
 SpringBoot 的过滤器链
 
-image::images/spring-spring-security1.jpg[]
+image::http://study.jcohy.com/images/spring-spring-security1.jpg[]
 
-image::images/spring-spring-security2.jpg[]
+image::http://study.jcohy.com/images/spring-spring-security2.jpg[]
 
 首先进入 `UserNamePasswordAuthenticationFilter` 过滤器来处理表单登录请求。
 
@@ -722,7 +722,7 @@ http://www.rfcreader.com/#rfc6749[OAuth 2.0 协议官方文档]
 
 http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html[OAuth 2.0 协议简介]
 
-image::images/spring-spring-security-oauth1.png[]
+image::http://study.jcohy.com/images/spring-spring-security-oauth1.png[]
 
 [[spring-security-oauth2-impl]]
 === 实现
@@ -783,7 +783,7 @@ SpringBoot 实现资源服务器(SpringBoot自带的资源实现)只需要两个
 
 下图中绿色代表实体类,蓝色代表接口
 
-image::images/spring-spring-security-oauth2.png[]
+image::http://study.jcohy.com/images/spring-spring-security-oauth2.png[]
 
 * TokenEndPoint:整个流程的入口点，可以理解为一个Controller
 * ClientDetails:封装了请求中应用的信息
@@ -1079,7 +1079,7 @@ public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) 
 简单总结一下 `AuthorizationServerTokenServices` 的作用，他提供了创建 token，刷新 token，获取 token 的实现。
 在创建token时，他会调用 tokenStore 对产生的 token 和相关信息存储到对应的实现类中，可以是 redis，数据库，内存，jwt。
 
-image::images/spring-spring-security-oauth3.png[]
+image::http://study.jcohy.com/images/spring-spring-security-oauth3.png[]
 
 无论使用那种登录方法，校验成功后都会进入到AuthenticationSuccessfulHandler的实现类里面，而我们要做的是在这个实现类中调用TokenService去产生令牌当作一个返回。
 
@@ -1088,7 +1088,7 @@ image::images/spring-spring-security-oauth3.png[]
 
 三个角色: 服务提供商(Provider)，资源所有者(Resource Owner)，第三方应用(Client)
 
-image::images/spring-spring-security-oauth5.jpg[]
+image::http://study.jcohy.com/images/spring-spring-security-oauth5.jpg[]
 
 在标准的OAuth2协议中，1-6步都是固定，只有最后一步，不通的服务提供商返回的用户信息是不同的。Spring Social已经为我们封装好了1-6步。
 
@@ -1101,7 +1101,7 @@ OAuth协议中的授权模式
 
 第三方应用授权码模式流程
 
-image::images/spring-spring-security-oauth6.jpg[]
+image::http://study.jcohy.com/images/spring-spring-security-oauth6.jpg[]
 
 [[spring-security-social-source]]
 === Spring Social 原理
@@ -1110,8 +1110,8 @@ SpringSocial使用 `SocialAuthenticationFilter` 过滤器实现上图的流程�
 
 ServiceProvider: 针对每一个服务提供商，都必须提供一个 `ServiceProvider`，继承 `AbstractOAuth2ServiceProvider` 这个抽象类，里面实现了最基本的功能
 
-image::images/spring-spring-security-oauth7.jpg[]
+image::http://study.jcohy.com/images/spring-spring-security-oauth7.jpg[]
 
 第三方登陆涉及到的类和接口
 
-image::images/spring-spring-security-oauth4.jpg[]
+image::http://study.jcohy.com/images/spring-spring-security-oauth4.jpg[]

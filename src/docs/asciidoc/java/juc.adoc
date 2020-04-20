@@ -62,7 +62,7 @@ cpu在线程中做时间片的切换。
 
 内存屏障的另外一个作用是强制刷出各种CPU缓存数据，因此任何CPU上的线程都能读取到这些数据的最新版本。
 
-image::images/java-juc-volatile1.jpg[]
+image::http://study.jcohy.com/images/java-juc-volatile1.jpg[]
 
 [[java-juc-volatile-define]]
 === volatile 的定义
@@ -463,7 +463,7 @@ public ThreadPoolExecutor(int corePoolSize,
 [[java-juc-executorspool-work]]
 === 线程池底层工作原理
 
-image::images/java-juc-theard1.jpg[]
+image::http://study.jcohy.com/images/java-juc-theard1.jpg[]
 
 [[java-juc-executorspool-reject]]
 === 线程池的拒绝策略
@@ -541,7 +541,7 @@ userThreadPool.execute(thread);
 
 Fork/Join 框架: 就是在必要的情况下，将一个大任务，进行拆分(fork)成若干个小任务(拆到不可再拆时)，再将一个个的小任务运算的结果进行join 汇总。
 
-image::images/java-juc-fork-join13.jpg[]
+image::http://study.jcohy.com/images/java-juc-fork-join13.jpg[]
 
 * 采用 "工作窃取" 模式(work-stealing):
 

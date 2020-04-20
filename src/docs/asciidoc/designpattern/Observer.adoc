@@ -9,7 +9,7 @@
 [[design-observer-role]]
 == 观察者模式的角色
 
-image::images/design-observer.png[]
+image::http://study.jcohy.com/images/design-observer.png[]
 
 *  Subject::他把所有观察者对象的引用保存在一个聚类中，每个主题都可以有任务数量的观察者，抽象主题提供一个接口，可以增加和删除观察者对象。
 *  Observer::抽象观察者，为所有的具体观察者定义一个接口，在得到主题的通知时更新自己。

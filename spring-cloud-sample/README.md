@@ -57,7 +57,7 @@ springcloud-provider2模块中的子模块，主要结合seate使用。
 
 - 启动TM后，我们在  http://localhost:19994/admin/index.html  可以进行登录，默认密码为 codingapi 。也可以在 application.yml 文件 通过 tx-lcn.manager.admin-key 属性 指定密码。
 
-  ![TM](https://github.com/jiachao23/spring-cloud-sample/blob/master/images/tm.png)
+![TM](https://github.com/jiachao23/spring-cloud-sample/blob/master/images/tm.png)
 
 - Eureka注册中心控制台 
 

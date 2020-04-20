@@ -9,7 +9,7 @@
 [[design-composite-role]]
 == 组合模式的角色
 
-image::images/design-composite1.png[]
+image::http://study.jcohy.com/images/design-composite1.png[]
 
 *  Component:组合中的对象声明接口，在适当情况下，实现所有类公共接口的默认行为，声明一个接口用于访问和管理的子部件。
 *  Leaf :在组合中表示叶节点对象，叶节点没有子节点。

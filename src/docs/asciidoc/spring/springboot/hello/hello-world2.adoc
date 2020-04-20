@@ -116,7 +116,7 @@ Spring的底层注解@Import，给容器中导入一个组件; 导入的组件�
 
 会给容器中导入非常多的自动配置类(xxxAutoConfiguration); 就是给容器中导入这个场景需要的所有组件，并配置好这些组件;
 
-image::images/spring-spring-boot2.png[]
+image::http://study.jcohy.com/images/spring-spring-boot2.png[]
 
 有了自动配置类，免去了我们手动编写配置注入功能组件等的工作;
 

@@ -64,7 +64,7 @@ Stop-the-World ，简称STW ，指的是GC 事件发生过程中，停止所有�
 由于JDK 的版本处于高速迭代过程中，因此Java 发展至今已经衍生了众多的GC 版本。
 从不同角度分析垃圾收集器，可以将GC 分为不同的类型。
 
-image::images/java12-2.png[]
+image::http://study.jcohy.com/images/java-12-2.png[]
 
 * 按线程数分，可以分为串行垃圾回收器和并行垃圾回收器。
 ** 串行回收指的是在同一时间段内只允许一件事情发生，简单来说，当多个CPU 可用时，也只能有一个CPU用于执行垃圾回收操作，井且在执行垃圾回收时，程序中的工作线程将会被暂停，当垃圾收集工作完成后才会恢复之前被暂停的工作线程，这就是串行回收。
@@ -399,7 +399,7 @@ https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-5.html
 
 引入了 `ConstantDesc` 接口( `ClassDesc`、`MethodTypeDesc`、`MethodHandleDesc` 这几个接口直接继承了 `ConstantDesc` 接口)以及 `Constable` 接口; `ConstantDesc` 接口定义了 `resolveConstantDesc` 方法，`Constable` 接口定义了 `describeConstable` 方法; `String`、`Integer`、`Long`、`Float`、`Double` 均实现了这两个接口，而 `EnumDesc` 实现了 `ConstantDesc` 接口。
 
-image::images/java-12-1.png[]
+image::http://study.jcohy.com/images/java-12-1.png[]
 
 符号引用以纯 nominal 形式描述可加载常量，与类加载或可访问性上下文区分开。有些类可以作为自己的符号引用(例如 String)。而对于可链接常量，另外定义了一系列符号引用类型，具体包括:  `ClassDesc` (Class 的可加载常量标称描述符) ，`MethodTypeDesc`(方法类型常量标称描述符) ，`MethodHandleDesc` (方法句柄常量标称描述符) 和 `DynamicConstantDesc` (动态常量标称描述符) ，它们包含描述这些常量的 `nominal` 信息。此 API 对于操作类和方法的工具很有帮助。
 
