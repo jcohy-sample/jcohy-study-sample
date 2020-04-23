@@ -1,0 +1,18 @@
+dependencies {
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    compile "org.apache.commons:commons-lang3:${commonLang3Version}"
+    compile "org.apache.ant:ant:${antVersion}"
+
+    compile "commons-io:commons-io:${commonsIoVersion}"
+    compile "commons-fileupload:commons-fileupload:${fileuploadVersion}"
+    compile "commons-beanutils:commons-beanutils:${commonsBeanutilsVersion}"
+    compile "com.google.zxing:core:${zxingVersion}"
+    compile "com.google.zxing:javase:${zxingVersion}"
+    compile "com.jcraft:jsch:${jschVersion}"
+    compile "commons-codec:commons-codec:${codecVersion}"
+    compile "com.google.guava:guava:${GuavaVersion}"
+    compile "com.googlecode.libphonenumber:libphonenumber:${libphonenumberVersion}"
+    compile "org.springframework.boot:spring-boot-starter-undertow"
+    compile "javax.mail:javax.mail-api:${mailVersion}"
+    compile "eu.bitwalker:UserAgentUtils:${UserAgentUtilsVersion}"
+}

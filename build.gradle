@@ -79,6 +79,18 @@ ext {
     curatorVersion = "4.0.1"
     jacksonVersion = "2.10.2"
     jacksonDataformatYamlVersion="2.9.8"
+    commonLang3Version = "3.9"
+    commonsBeanutilsVersion = "1.9.3"
+    zxingVersion = "3.3.3"
+    jschVersion = "0.1.54"
+    codecVersion = "1.14"
+    commonsIoVersion = "2.6"
+    fileuploadVersion = "1.4"
+    libphonenumberVersion = "8.12.1"
+    antVersion = "1.10.7"
+    mailVersion= "1.6.2"
+    UserAgentUtilsVersion= "1.20"
+
 
     //================= test ====================
     h2Version = "1.4.197"

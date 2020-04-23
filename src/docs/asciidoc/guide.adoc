@@ -6,6 +6,24 @@ include::guide/java-base.adoc[leveloffset=+1]
 
 include::guide/java-collection.adoc[leveloffset=+1]
 
+include::guide/java-reflect.adoc[leveloffset=+1]
+
+include::guide/java-stream.adoc[leveloffset=+1]
+
+include::guide/java-thread.adoc[leveloffset=+1]
+
+include::guide/java-jvm.adoc[leveloffset=+1]
+
 include::guide/java-javaweb.adoc[leveloffset=+1]
 
 include::guide/java-javaee.adoc[leveloffset=+1]
+
+include::guide/socket.adoc[leveloffset=+1]
+
+include::guide/network.adoc[leveloffset=+1]
+
+include::guide/os.adoc[leveloffset=+1]
+
+include::guide/sql.adoc[leveloffset=+1]
+
+include::guide/others.adoc[leveloffset=+1]
