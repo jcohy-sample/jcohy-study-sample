@@ -57,7 +57,7 @@ port(){
 	#zipkin
 	firewall-cmd --add-port=9411/tcp --permanent
 	
-	#redis
+	#rabbitmq
 	firewall-cmd --add-port=5672/tcp --permanent
 	firewall-cmd --add-port=15672/tcp --permanent
 	service firewalld restart
