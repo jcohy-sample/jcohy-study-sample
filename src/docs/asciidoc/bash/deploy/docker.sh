@@ -10,7 +10,7 @@ RES="\033[0m"
 #软件安装目录
 DOCKER_DIR=/usr/local/docker
 
-BASH_CONFIG=http://software.jcohy.com/bash
+BASH_CONFIG=http://software.jcohy.com/bash/common
 #使用说明，用来提示输入参数
 usage() {
 	echo -e "${BLUE_COLOR}安装 elk 之前，请确保vm.max_map_count大小至少为 262144。执行${RES}"

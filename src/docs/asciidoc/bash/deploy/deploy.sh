@@ -10,7 +10,7 @@ YELLOW_COLOR="\033[33m"
 RES="\033[0m"
 
 #脚本所在http服务器。
-BASH_CONFIG=http://software.jcohy.com/bash
+BASH_CONFIG=http://software.jcohy.com/bash/common
 
 usage() {
 	echo -e "${BLUE_COLOR}docker 方式安装，请执行 ./deploy.sh docker${RES}"

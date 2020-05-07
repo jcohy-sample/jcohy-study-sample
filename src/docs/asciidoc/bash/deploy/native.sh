@@ -10,7 +10,7 @@ YELLOW_COLOR="\033[33m"
 RES="\033[0m"
 
 #软件所在http服务器。
-BASE_URL=http://software.jcohy.com/linux/
+BASE_URL=http://software.jcohy.com/linux
 #软件下载目录
 BASE_DIR=/opt/software
 INSTALL_DIR=/usr/local
