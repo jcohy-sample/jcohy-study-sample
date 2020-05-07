@@ -10,7 +10,7 @@ RES="\033[0m"
 #软件安装目录
 DOCKER_DIR=/usr/local/docker
 
-BASH_CONFIG=https://software.jcohy.com/linux/
+BASH_CONFIG=http://software.jcohy.com/bash
 #使用说明，用来提示输入参数
 usage() {
 	echo -e "${BLUE_COLOR}安装 elk 之前，请确保vm.max_map_count大小至少为 262144。执行${RES}"
@@ -78,8 +78,8 @@ if ! [ -x "$(command -v docker-compose)" ]; then
 fi
 
 
-test ! -e "./.env" && wget -N $BASH_URL/.env
-test ! -e "./docker-compose.yml" && wget -N $BASH_URL/docker-compose.yml
+test ! -e "./.env" && wget -N $BASH_CONFIG/.env
+test ! -e "./docker-compose.yml" && wget -N $BASH_CONFIG/docker-compose.yml
 
 
 
@@ -198,26 +198,26 @@ download(){
 
 
 # 移动配置文件
-test ! -e "${DOCKER_DIR}/nacos/master/init.d/custom.properties" && download $BASH_URL/nacos/init.d/custom.properties ${DOCKER_DIR}/nacos/master/init.d
+test ! -e "${DOCKER_DIR}/nacos/master/init.d/custom.properties" && download $BASH_CONFIG/nacos/init.d/custom.properties ${DOCKER_DIR}/nacos/master/init.d
 
-test ! -e "${DOCKER_DIR}/nginx/api/conf/nginx.conf" && download $BASH_URL/nginx/api/nginx.conf ${DOCKER_DIR}/nginx/api/conf
-test ! -e "${DOCKER_DIR}/nginx/web/conf/nginx.conf" && download $BASH_URL/nginx/web/nginx.conf ${DOCKER_DIR}/nginx/web/conf
-test ! -e "${DOCKER_DIR}/nginx/web/html/index.html" && download $BASH_URL/nginx/web/html/index.html ${DOCKER_DIR}/nginx/web/html
+test ! -e "${DOCKER_DIR}/nginx/api/conf/nginx.conf" && download $BASH_CONFIG/nginx/api/nginx.conf ${DOCKER_DIR}/nginx/api/conf
+test ! -e "${DOCKER_DIR}/nginx/web/conf/nginx.conf" && download $BASH_CONFIG/nginx/web/nginx.conf ${DOCKER_DIR}/nginx/web/conf
+test ! -e "${DOCKER_DIR}/nginx/web/html/index.html" && download $BASH_CONFIG/nginx/web/html/index.html ${DOCKER_DIR}/nginx/web/html
 
-test ! -e "${DOCKER_DIR}/redis/conf/redis.conf" && download $BASH_URL/redis.conf ${DOCKER_DIR}/redis/conf
-
-
-test ! -e "${DOCKER_DIR}/elasticsearch/master/conf/es-master.yml" && download $BASH_URL/es-master.yml ${DOCKER_DIR}/elasticsearch/master/conf
-test ! -e "${DOCKER_DIR}/elasticsearch/slave1/conf/es-slave1.yml" && download $BASH_URL/es-slave1.yml ${DOCKER_DIR}/elasticsearch/slave1/conf
-test ! -e "${DOCKER_DIR}/elasticsearch/slave2/conf/es-slave2.yml" && download $BASH_URL/es-slave2.yml ${DOCKER_DIR}/elasticsearch/slave2/conf
+test ! -e "${DOCKER_DIR}/redis/conf/redis.conf" && download $BASH_CONFIG/redis.conf ${DOCKER_DIR}/redis/conf
 
 
-test ! -e "${DOCKER_DIR}/kibana/conf/kibana.yml" && download  $BASH_URL/kibana.yml ${DOCKER_DIR}/kibana/conf
+test ! -e "${DOCKER_DIR}/elasticsearch/master/conf/es-master.yml" && download $BASH_CONFIG/es-master.yml ${DOCKER_DIR}/elasticsearch/master/conf
+test ! -e "${DOCKER_DIR}/elasticsearch/slave1/conf/es-slave1.yml" && download $BASH_CONFIG/es-slave1.yml ${DOCKER_DIR}/elasticsearch/slave1/conf
+test ! -e "${DOCKER_DIR}/elasticsearch/slave2/conf/es-slave2.yml" && download $BASH_CONFIG/es-slave2.yml ${DOCKER_DIR}/elasticsearch/slave2/conf
 
-test ! -e "${DOCKER_DIR}/logstash/conf/logstash-filebeat.conf" && download  $BASH_URL/logstash-filebeat.conf ${DOCKER_DIR}/logstash/conf
-test ! -e "${DOCKER_DIR}/logstash/conf/logstash.yml" && download  $BASH_URL/logstash.yml ${DOCKER_DIR}/logstash/conf
 
-test ! -e "${DOCKER_DIR}/filebeat/conf/filebeat.yml" && download  $BASH_URL/filebeat.yml ${DOCKER_DIR}/filebeat/conf
+test ! -e "${DOCKER_DIR}/kibana/conf/kibana.yml" && download  $BASH_CONFIG/kibana.yml ${DOCKER_DIR}/kibana/conf
+
+test ! -e "${DOCKER_DIR}/logstash/conf/logstash-filebeat.conf" && download  $BASH_CONFIG/logstash-filebeat.conf ${DOCKER_DIR}/logstash/conf
+test ! -e "${DOCKER_DIR}/logstash/conf/logstash.yml" && download  $BASH_CONFIG/logstash.yml ${DOCKER_DIR}/logstash/conf
+
+test ! -e "${DOCKER_DIR}/filebeat/conf/filebeat.yml" && download  $BASH_CONFIG/filebeat.yml ${DOCKER_DIR}/filebeat/conf
 
 
 
