@@ -1,3 +1,7 @@
 [[go-overview]]
 = 概述
 include::attributes.adoc[]
+
+include::go/overview.adoc[leveloffset=+1]
+
+include::go/getting-started.adoc[leveloffset=+1]
