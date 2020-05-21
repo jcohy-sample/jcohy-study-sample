@@ -3,7 +3,7 @@
 :idseparator: -
 :toc: left
 :toclevels: 5
-:tabsize: 4
+:tabsize: 5
 :numbered:
 :sectanchors:
 :sectnums:

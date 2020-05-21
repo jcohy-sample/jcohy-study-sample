@@ -1,6 +1,7 @@
 [[go-getting-started]]
 = 入门
 
+[[go-getting-started-install]]
 == 安装
 
 具体安装教程参考下面链接
@@ -23,6 +24,7 @@ GOPATH之下主要包含三个目录:
 可以自己在用户目录下面创建一个目录, 如 gopath
 ====
 
+[[go-getting-started-hello-world]]
 == Hello World
 
 ====
@@ -44,6 +46,7 @@ func main() { <4>
 <5> 调用了来自于 fmt 包的函数打印字符串到屏幕。字符串由 `"` 包裹，并且可以包含非 ASCII 的字符。
 ====
 
+[[go-getting-started-run]]
 == 编译和运行代码
 
 构建 go 程序的最佳途径是使用 go 工具,下面使用两种执行流程
@@ -79,6 +82,7 @@ go run helloworld.go
 * 在编译时，编译器会将程序运行依赖的库文件包含在可执行文件中，所有，可执行文件大了许多
 ****
 
+[[go-getting-started-notice]]
 == 程序开发注意事项
 
 . Go 源文件以 "go" 为扩展名
@@ -89,6 +93,22 @@ go run helloworld.go
 . Go 语言定义的变量或者 import 的包如果没有使用到，代码不能编译通过
 . 大括号都是成对出现的，不可省略
 
+[[go-getting-started-specification]]
+== Golang 代码规范
+
+* Golang 官方推荐使用行注释来注释整个方法和语句
+* 正确的缩进和空白，使用 gofmt 命令进行格式化
+* 运算符两边习惯各加一个空格
+* 大括号必须跟在语句后面，不能单起一行。
+* 一行最多不超过80个字符
+
+[[go-getting-started-guide]]
+== Golang 官方编程指南
+
+官方网站: https://tour.golang.org/list[https://tour.golang.org/list]
+中文网站: http://go-tour-zh.appspot.com/list[http://go-tour-zh.appspot.com/list]
+
+[[go-getting-started-escapes]]
 == Golang 转义符
 
 [[go-getting-started-escape-tbl]]
@@ -127,20 +147,39 @@ go run helloworld.go
 | 反斜杠
 |===
 
-== Golang 代码规范
+[[go-getting-started-identifier]]
+== Golang 标识符
 
-* Golang 官方推荐使用行注释来注释整个方法和语句
-* 正确的缩进和空白，使用 gofmt 命令进行格式化
-* 运算符两边习惯各加一个空格
-* 大括号必须跟在语句后面，不能单起一行。
-* 一行最多不超过80个字符
+Golang 对各种方法，函数，变量，自定义等命名时使用的字符序列称为标识符
 
-== Golang 官方编程指南
+标识符命名规则：
 
-官方网站: https://tour.golang.org/list[https://tour.golang.org/list]
-中文网站: http://go-tour-zh.appspot.com/list[http://go-tour-zh.appspot.com/list]
+. 由 26 个英文字母大小写，0-9，_ 组成
+. 数字不可以开头
+. Golang 中严格区分大小写
+. 标识符不能包含空格
+. 下划线 `_` 本身在 Go 中是一个特殊的标识符，称为空标识符，可以代表任何其他的标识符，但是它对应的值会被忽略（比如，忽略某个返回值）。**所以仅能被作为占位符使用，不能作为标识符使用**
+. 不能以系统<<go-getting-started-key>>作为标识符(25 个)
 
-[[go-getting-started-var]]
+标识符命名注意事项
+
+. 包名：保持 package 的名字和目录一致,尽量采取简短，有意义的包名，不要和标准库冲突
+. 变量，函数，常量名采用驼峰式
+. 如果变量名，函数名，常量名首字母大写，则可以被其他的包访问，如果首字母小写，只能在本包中使用
+
+
+[[go-getting-started-key]]
+== 系统保留关键字
+
+25 个
+
+[[go-getting-started-pre-identifier]]
+== 系统预定义标识符
+
+36 个
+
+
+[[go-getting-started-vars]]
 == 变量
 
 与其他语言不同，在 go 语言中，变量的类型在变量名的后面。 例如，声明一个 `int` 类型的 a，是 a int , 而不是 int a.
@@ -149,6 +188,7 @@ go run helloworld.go
 
 在 Go 中，声明和初始化是两个过程,但是可以连在一起。以下实例显示了变量的使用方式
 
+[[go-getting-started-vars-define]]
 === 变量的声明
 
 * 基本语言 `var 变量名 数据类型`
@@ -166,6 +206,7 @@ func main(){
 }
 ----
 
+[[go-getting-started-vars-initialization]]
 === 初始化变量
 
 在声明变量的时候就给值，则为初始化变量。可以省略数据类型
@@ -241,6 +282,7 @@ func main(){
 
 一个特殊的变量名是 `_`（下划线）。下划线意思是忽略这个变量，例如，`f,err := os.Open(xxxxxxx)` 如果此时不需要知道返回的错误值，就可以用 `f, _ := os.Open(xxxxxx)` ,//如此则忽略了error变量。
 
+[[go-getting-started-vars-assignment]]
 === 给变量赋值
 
 在变量声明之后,再赋予变量的值，比如你先声明了变量: `var num int` ,默认为 `0` . 然后，再给值 `num = 100` 。这就是给变量赋值
@@ -253,19 +295,19 @@ Go 中的数据类型主要分为两大块，一块是基本数据类型，一�
 [[go-getting-started-data-type-base]]
 === 基本数据类型
 
-[[go-getting-started-data-type-int]]
+[[go-getting-started-data-type-base-int]]
 ==== 整型
 
 当定义了整型类型而没有指定数据类型时，默认使用 `int` 类型
 
-[[go-getting-started-data-type-int-tbl]]
+[[go-getting-started-data-type-base-int-tbl]]
 .整型类型
 |===
 | 类型名称 | 有无符号 | 占用存储空间(bit) | 范围 | 备注
 
 | int8	| Yes	| 8 | -128 ~ 127 |
 
-| int16	| Yes	| 16 | -2^15 ~ 2^15-1 |
+| int16	| Yes	| 16 | -2{caret}15 ~ 2{caret}15-1 |
 
 | int32	| Yes	| 32 | -2^31 ~ 2^31-1 |
 
@@ -300,12 +342,12 @@ Go 中的数据类型主要分为两大块，一块是基本数据类型，一�
 
 有符号整数采用 `2` 的补码形式表示，也就是最高 bit 位用作表示符号位，一个 `n` bit 的有 符号数的值域是从 `-2^{n-1}` 到 `2^{n-1}−1`。例如，`int8` 类型整数的值域是从 `-128` 到 `127`， 而 `uint8` 类型整数的值域是从 `0` 到 `255`。
 
-[[go-getting-started-data-type-float]]
+[[go-getting-started-data-type-base-float]]
 ==== 浮点类型
 
 Golang 的浮点型默认声明为 `float64` 类型
 
-[[go-getting-started-data-type-float-tbl]]
+[[go-getting-started-data-type-base-float-tbl]]
 .浮点类型
 |===
 | 类型名称  | 占用存储空间(bit) | 范围 | 备注
@@ -321,7 +363,7 @@ Golang 的浮点型默认声明为 `float64` 类型
 * 浮点数是有符号的
 * 尾数部分可能丢失，造成精度损失(一个 `float32` 类型的浮点数可以提供大约 `6` 个十进制数的精度，而 `float64` 则可以提供约 `15` 个十进制数的精度).
 
-[[go-getting-started-data-type-byte]]
+[[go-getting-started-data-type-base-byte]]
 ==== 字符类型
 
 Golang 中没有专门的字符类型，如果要存储单个字符（字母），一般使用 `byte` 存储
@@ -403,12 +445,171 @@ Go 语言的字符串是由单个字节连接起来的，Go 语言的字符串�
 * 双引号：会识别转义字符
 * 反引号：以字符串的原生形式输出，包括换行和特殊字符
 
-[[go-getting-started-data-type-plural]]
+[[go-getting-started-data-type-complex]]
 === 复杂数据类型
 
-[[go-getting-started-data-type-pointer]]
+[[go-getting-started-data-type-complex-pointer]]
 ==== 指针
 
+指针（pointer）在Go语言中可以被拆分为两个核心概念：
+
+* 指针类型，允许对这个指针类型的数据进行修改，传递数据可以直接使用指针，而无须拷贝数据，类型指针不能进行偏移和运算。
+* 切片，由指向起始元素的原始指针、元素数量和容量组成。
+
+===== 指针地址和指针类型
+
+一个指针变量可以指向任何一个值的内存地址，它所指向的值的内存地址在 32 和 64 位机器上分别占用 4 或 8 个字节，占用字节的大小与所指向的值的大小无关。当一个指针被定义后没有分配到任何变量时，它的默认值为 nil。指针变量通常缩写为 ptr。
+
+每个变量在运行时都拥有一个地址，这个地址代表变量在内存中的位置。Go 语言中使用在变量名前面添加 `&` 操作符（前缀）来获取变量的内存地址（取地址操作），格式如下：
+
+[source,go]
+----
+ptr := &v    // v 的类型为 T
+----
+
+其中 `v` 代表被取地址的变量，变量 `v` 的地址使用变量 `ptr` 进行接收，`ptr` 的类型为 `{asterisk}T`，称做 `T` 的指针类型，`{asterisk}` 代表指针。
+
+====
+[source,go]
+----
+package main
+import (
+    "fmt"
+)
+func main() {
+    var cat int = 1 <1>
+    var str string = "banana" <2>
+    fmt.Printf("%p %p", &cat, &str) //0xc042052088 0xc0420461b0 <3>
+}
+----
+<1> 声明整型变量 cat。
+<2> 声明字符串变量 str。
+<3> 使用 fmt.Printf 的动词%p打印 cat 和 str 变量的内存地址，指针的值是带有 0x 十六进制前缀的一组数据。
+====
+
+[TIP]
+====
+变量、指针和地址三者的关系是，每个变量都拥有地址，指针的值就是地址。
+====
+
+===== 从指针获取指针指向的值
+
+当使用 `&` 操作符对普通变量进行取地址操作并得到变量的指针后，可以对指针使用 `*` 操作符，也就是指针取值，代码如下。
+
+====
+[source,go]
+----
+package main
+import (
+    "fmt"
+)
+func main() {
+    // 准备一个字符串类型
+    var house = "Malibu Point 10880, 90265" <1>
+    // 对字符串取地址, ptr类型为*string
+    ptr := &house <2>
+    // 打印ptr的类型
+    fmt.Printf("ptr type: %T\n", ptr) // ptr type: *string <3>
+    // 打印ptr的指针地址
+    fmt.Printf("address: %p\n", ptr) // address: 0xc0420401b0 <4>
+    // 对指针进行取值操作
+    value := *ptr <5>
+    // 取值后的类型
+    fmt.Printf("value type: %T\n", value) // value type: string <6>
+    // 指针取值后就是指向变量的值
+    fmt.Printf("value: %s\n", value) // value: Malibu Point 10880, 90265 <7>
+}
+----
+<1> 准备一个字符串并赋值。
+<2> 对字符串取地址，将指针保存到变量 ptr 中。
+<3> 打印变量 ptr 的类型，其类型为 *string。
+<4> 打印 ptr 的指针地址，地址每次运行都会发生变化。
+<5> 对 ptr 指针变量进行取值操作，变量 value 的类型为 string。
+<6> 打印取值后 value 的类型。
+<7> 打印 value 的值。
+====
+
+取地址操作符 `&` 和取值操作符 `{asterisk}` 是一对互补操作符，`&` 取出地址，`{asterisk}` 根据地址取出地址指向的值。
+
+变量、指针地址、指针变量、取地址、取值的相互关系和特性如下：
+
+* 对变量进行取地址操作使用 `&` 操作符，可以获得这个变量的指针变量。
+* 指针变量的值是指针地址。
+* 对指针变量进行取值操作使用 {asterisk} 操作符，可以获得指针变量指向的原变量的值。
+
+===== 使用指针修改值
+
+通过指针不仅可以取值，也可以修改值。
+
+前面已经演示了使用多重赋值的方法进行数值交换，使用指针同样可以进行数值交换，代码如下：
+
+====
+[source,go]
+----
+package main
+import "fmt"
+// 交换函数
+func swap(a, b *int) { <1>
+    // 取a指针的值, 赋给临时变量t
+    t := *a <2>
+    // 取b指针的值, 赋给a指针指向的变量
+    *a = *b <3>
+    // 将a指针的值赋给b指针指向的变量
+    *b = t <4>
+}
+func main() {
+// 准备两个变量, 赋值1和2
+    x, y := 1, 2 <5>
+    // 交换变量值
+    swap(&x, &y) <6>
+    // 输出变量值
+    fmt.Println(x, y) // 2 1 <7>
+}
+----
+<1> 定义一个交换函数，参数为 a、b，类型都为 *int 指针类型。
+<2> 取指针 a 的值，并把值赋给变量 t，t 此时是 int 类型。
+<3> 取 b 的指针值，赋给指针 a 指向的变量。注意，此时*a的意思不是取 a 指针的值，而是“a 指向的变量”。
+<4> 将 t 的值赋给指针 b 指向的变量。
+<5> 准备 x、y 两个变量，分别赋值为 1 和 2，类型为 int。
+<6> 取出 x 和 y 的地址作为参数传给 swap() 函数进行调用。
+<7> 交换完毕时，输出 x 和 y 的值。
+====
+
+`{asterisk}` 操作符作为右值时，意义是取指针的值，作为左值时，也就是放在赋值操作符的左边时，表示 a 指针指向的变量。其实归纳起来，`{asterisk}` 操作符的根本意义就是操作指针指向的变量。当操作在右值时，就是取指向变量的值，当操作在左值时，就是将值设置给指向的变量。
+
+如果在 `swap()` 函数中交换操作的是指针值，会发生什么情况？可以参考下面代码：
+
+[source,go]
+----
+package main
+import "fmt"
+func swap(a, b *int) {
+    b, a = a, b
+}
+func main() {
+    x, y := 1, 2
+    swap(&x, &y)
+    fmt.Println(x, y) // 1 2
+}
+----
+
+结果表明，交换是不成功的。上面代码中的 `swap()` 函数交换的是 a 和 b 的地址，在交换完毕后，a 和 b 的变量值确实被交换。但和 a、b 关联的两个变量并没有实际关联。这就像写有两座房子的卡片放在桌上一字摊开，交换两座房子的卡片后并不会对两座房子有任何影响。
+
+.创建指针的方法
+****
+Go语言还提供了另外一种方法来创建指针变量，格式如下：
+
+new(类型)
+
+一般这样写：
+
+[source,go]
+----
+str := new(string)
+*str = "Go语言教程"
+fmt.Println(*str)
+----
+****
 
 [[go-getting-started-data-type-default]]
 === 零值(默认值)
@@ -569,5 +770,3 @@ func main(){
 转换时需要确保能转换为有效值
 ====
 
-[[go-getting-started-key]]
-=== 关键字
