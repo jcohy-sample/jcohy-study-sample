@@ -96,11 +96,26 @@ go run helloworld.go
 |===
 | 转移字符 | 描述
 
+| \a
+| 响铃
+
 | \t
 | 表示一个制表符，通常使用他排版
 
 | \n
 | 换行符
+
+| \r
+| 一个回车
+
+| \b
+| 退格
+
+| \f
+| 换页
+
+| \v
+| 垂直制表符
 
 | \\
 | 一个 \
@@ -108,8 +123,8 @@ go run helloworld.go
 | \"
 | 一个 "
 
-| \r
-| 一个回车
+| \\
+| 反斜杠
 |===
 
 == Golang 代码规范
@@ -125,10 +140,434 @@ go run helloworld.go
 官方网站: https://tour.golang.org/list[https://tour.golang.org/list]
 中文网站: http://go-tour-zh.appspot.com/list[http://go-tour-zh.appspot.com/list]
 
-== 变量,类型和关键字
+[[go-getting-started-var]]
+== 变量
 
 与其他语言不同，在 go 语言中，变量的类型在变量名的后面。 例如，声明一个 `int` 类型的 a，是 a int , 而不是 int a.
 
-当定义了一个变量，它默认赋值为其类型的 `null` 值，例如，在 var a int 后， `a` 的值为 `0`, 而 var s String ，`s` 为零长度字符串。也就是 `""`
+当定义了一个变量，它默认赋值为其类型的 `null` 值，例如，在 var a int 后， `a` 的值为 `0`, 而 var s string ，`s` 为零长度字符串。也就是 `""`
 
-在 Go 中，声明和赋值是两个过程
+在 Go 中，声明和初始化是两个过程,但是可以连在一起。以下实例显示了变量的使用方式
+
+=== 变量的声明
+
+* 基本语言 `var 变量名 数据类型`
+
+变量在未进行初始化前，使用 <<go-getting-started-data-type-default>>
+[source, go]
+----
+package main
+
+import "fmt"
+
+func main(){
+	var i int
+	fmt.Print("i=",i) //打印结果为 0
+}
+----
+
+=== 初始化变量
+
+在声明变量的时候就给值，则为初始化变量。可以省略数据类型
+
+* 根据值自行判断类型
+
+[source, go]
+----
+package main
+
+import "fmt"
+
+func main(){
+	var i = 10
+	fmt.Print("i=",i)
+}
+----
+
+* 省略 `var` 也称为 短声明变量, 使用 `:=` 替代 `var` 。 注意，左侧的变量不应该是已经声明过的，且 `:` 不可以省略
+
+[source, go]
+----
+package main
+
+import "fmt"
+
+func main(){
+	i := 10
+	fmt.Print("i=",i)
+}
+----
+
+* 多变量声明
+
+[source, go]
+----
+package main
+
+import "fmt"
+
+func main(){
+	//变量类型一致
+	var n1,n2,n3 int
+	//变量类型不一致
+	var n4,n5,n6 = 100,"tom",666
+	//类型推导
+	n7,n8,n9 := 200,"cheery",999
+
+	fmt.Println("n1=",n1,"n2=",n2,"n3=",n3)
+	fmt.Println("n4=",n4,"n5=",n5,"n6=",n6)
+	fmt.Println("n7=",n7,"n8=",n8,"n9=",n9)
+}
+----
+
+* 一次性声明,使用 `()`
+
+[source,go]
+----
+package main
+
+import "fmt"
+
+var (
+	name = "tom"
+	age = 19
+)
+
+func main(){
+
+	fmt.Println("name=",name,"age=",age)
+}
+----
+
+一个特殊的变量名是 `_`（下划线）。下划线意思是忽略这个变量，例如，`f,err := os.Open(xxxxxxx)` 如果此时不需要知道返回的错误值，就可以用 `f, _ := os.Open(xxxxxx)` ,//如此则忽略了error变量。
+
+=== 给变量赋值
+
+在变量声明之后,再赋予变量的值，比如你先声明了变量: `var num int` ,默认为 `0` . 然后，再给值 `num = 100` 。这就是给变量赋值
+
+[[go-getting-started-data-type]]
+== 数据类型
+
+Go 中的数据类型主要分为两大块，一块是基本数据类型，一块是复杂数据类型。每一种数据类型都定义了明确的数据类型，在内存中分配了不同大小的内存空间
+
+[[go-getting-started-data-type-base]]
+=== 基本数据类型
+
+[[go-getting-started-data-type-int]]
+==== 整型
+
+当定义了整型类型而没有指定数据类型时，默认使用 `int` 类型
+
+[[go-getting-started-data-type-int-tbl]]
+.整型类型
+|===
+| 类型名称 | 有无符号 | 占用存储空间(bit) | 范围 | 备注
+
+| int8	| Yes	| 8 | -128 ~ 127 |
+
+| int16	| Yes	| 16 | -2^15 ~ 2^15-1 |
+
+| int32	| Yes	| 32 | -2^31 ~ 2^31-1 |
+
+| int64	| Yes	| 64 | -2^63 ~ 2^63-1|
+
+| uint8	| No	| 8 | 0 ~ 255 |
+
+| uint16	| No	| 16 | 0 ~ 2^16-1  |
+
+| uint32	| No	| 32 | 0 ~ 2^32-1 |
+
+| uint64	| No	| 64 | 0 ~ 2^64-1 |
+
+| int	| Yes	| 等于cpu位数(32 为系统 4 个字节，64 位系统 8 个字节) |  32 位: -2^31 ~ 2^31-1 64 位: -2^63 ~ 2^63-1 |
+
+| uint	| No	| 等于cpu位数(32 为系统 4 个字节，64 位系统 8 个字节) | 32 位: 0 ~ 2^64-1 64 位: 0 ~ 2^64-1|
+
+| rune	| Yes	| 与 int32 等价 |  -2^31 ~ 2^31-1 | 表示一个 Unicode 码
+
+| byte	| No	| 与 uint8 等价 | 0~255 | 当要存储字符时，选用 byte
+
+| uintptr	| No	| - | |
+|===
+
+`rune` 类型是 `Unicode` 字符类型，和 `int32` 类型等价，通常用于表示一个 `Unicode` 码点。`rune` 和 `int32` 可以互换使用。
+
+`byte` 是uint8类型的等价类型，byte类型一般用于强调数值是一个原始的数据而不是 一个小的整数。
+
+`uintptr` 是一种无符号的整数类型，没有指定具体的bit大小但是足以容纳指针。 `uintptr` 类型只有在底层编程是才需要，特别是 Go 语言和 C 语言函数库或操作系统接口相交互的地方。
+
+不管它们的具体大小，`int`、`uint` 和 `uintptr` 是不同类型的兄弟类型。其中 `int` 和 `int32` 也是 不同的类型， 即使 `int` 的大小也是 32bit，在需要将 `int` 当作 `int32` 类型的地方需要一个显式 的类型转换操作，反之亦然。
+
+有符号整数采用 `2` 的补码形式表示，也就是最高 bit 位用作表示符号位，一个 `n` bit 的有 符号数的值域是从 `-2^{n-1}` 到 `2^{n-1}−1`。例如，`int8` 类型整数的值域是从 `-128` 到 `127`， 而 `uint8` 类型整数的值域是从 `0` 到 `255`。
+
+[[go-getting-started-data-type-float]]
+==== 浮点类型
+
+Golang 的浮点型默认声明为 `float64` 类型
+
+[[go-getting-started-data-type-float-tbl]]
+.浮点类型
+|===
+| 类型名称  | 占用存储空间(bit) | 范围 | 备注
+
+| 单精度 float32 | 32 | -3.403E38 ~ 3.403E38 |
+
+| 双精度 float64 | 64 | -1.798E308 ~ 1.798E308 |
+|===
+
+说明
+
+* 浮点数在机器中存放的形式：浮点数=符号位+指数位+尾位数
+* 浮点数是有符号的
+* 尾数部分可能丢失，造成精度损失(一个 `float32` 类型的浮点数可以提供大约 `6` 个十进制数的精度，而 `float64` 则可以提供约 `15` 个十进制数的精度).
+
+[[go-getting-started-data-type-byte]]
+==== 字符类型
+
+Golang 中没有专门的字符类型，如果要存储单个字符（字母），一般使用 `byte` 存储
+
+[NOTE]
+====
+字符串就是一串固定长度的字符连接起来的字符序列，Go 的字符串是有单个字节连接起来的，也就是说对于传统的字符串是由 **字符** 组成的，而在 Go 中是由 **字节** 组成的
+====
+
+====
+[source,go]
+----
+package main
+
+import "fmt"
+
+func main(){
+	var c1 byte = 'a'
+	var c2 byte = '0'
+	var c3 int = '北'
+	//当直接输出 byte 值，就是输出了对应字符的 码值
+	fmt.Println("c1=",c1," c2=",c2) <1>
+
+	// 如果需要输出对应字符，需要格式化输出
+	fmt.Printf("c1=%c c2=%c\n",c1,c2) <2>
+
+	// var c3 byte = '北' // overflow 溢出
+	fmt.Printf("c3=%c c3对应的码值=%d",c3,c3) <3>
+}
+----
+<1> 当直接输出 byte 值，就是输出了对应字符的 码值,输出结果为: c1=97 c2=48
+<2> 如果需要输出对应字符，需要格式化输出,输出结果为: c1=a c2=0
+<3> 如果我们保存的字符在 ASCII 表，比如[0-1,a-z,A-Z] 则可以直接保存到 `byte`。如果保存的字符对应的码值大于 `255` ，这时可以考虑使用 `int` 类型保存.输出结果为:c3=北 c3对应的码值=21271
+====
+
+字符串使用细节
+
+* 字符常量使用单引号括(`''`)起来的单个字符。
+* Go 中允许使用转义字符 `\` 来将其后的字符转变为特殊字符型常量。例如: var c2 byte = '\n' \n 表示换行符
+* Go 语言的字符使用 UTF-8 编码，可以在 http://www.mytju.com/classcode/tools/encode_utf8.asp[这个网站] 查询字符对应的 UTF-8 码值
+* 在 Go 中，字符的本质是一个整数，直接输出时，是该字符对应的 UTF-8 编码的码值
+* 可以直接给某一个变量赋一个数字，然后使用 `%c` 格式化输出，会输出该数字对应的 unicode 值
+* 字符类型可以进行运算，运算时是按照码值进行运算的
+
+[[go-getting-started-data-type-base-bool]]
+==== 布尔型
+
+布尔类型也叫 bool 类型，bool 类型只允许取值 `true` 或 `false`,bool 类型占用一个字节
+
+`if` 和 `for` 语句的条件部分都是布尔类型的值，并且 `==` 和 `<` 等比 较操作也会产生布尔型的值。一元操作符 `!` 对应逻辑非操作，因此 `!true` 的值为 `false`。
+
+布尔值可以和 `&&`（AND）和 `||（OR）` 操作符结合，并且可能会有短路行为：如果运算符左边值已经可以确 定整个布尔表达式的值，那么运算符右边的值将不在被求值
+
+布尔值并不会隐式转换为数字值 `0` 或 `1`，反之亦然。必须使用一个显式的 `if` 语句辅助转换。
+
+[[go-getting-started-data-type-base-plural]]
+==== 复数
+
+Go语言提供了两种精度的复数类型：`complex64` 和 `complex128`，分别对应 `float32` 和 `float64` 两种浮点数精度。内置的 `complex` 函数用于构建复数，内建的 `real` 和 `imag` 函数分别返回复数的实部和虚部。
+
+复数也可以用 `==` 和 `!=` 进行相等比较。只有两个复数的实部和虚部都相等的时候它们才是相等的。 `math/cmplx` 包提供了复数处理的许多函数，例如求复数的平方根函数和求幂函数。
+
+[source,go]
+----
+z := x + yi
+x = real(z)
+y = imag(z)
+----
+
+[[go-getting-started-data-type-base-string]]
+==== 字符串
+
+Go 语言的字符串是由单个字节连接起来的，Go 语言的字符串的字节使用 UTF-8 编码标识的 Unicode 文本
+
+**Go 语言中的字符串是不可变的**
+
+字符串的两种表现形式
+
+* 双引号：会识别转义字符
+* 反引号：以字符串的原生形式输出，包括换行和特殊字符
+
+[[go-getting-started-data-type-plural]]
+=== 复杂数据类型
+
+[[go-getting-started-data-type-pointer]]
+==== 指针
+
+
+[[go-getting-started-data-type-default]]
+=== 零值(默认值)
+
+[[go-getting-started-data-type-default-tbl]]
+.零值
+|===
+| 数据类型 | 默认值
+
+| 整型
+| 0
+
+| 浮点型
+| 0
+
+| 字符串
+| ""
+
+| 布尔类型
+| false
+|===
+
+[[go-getting-started-data-type-convert]]
+=== 数据类型转换
+
+Golang 和 java/c 不同，Go 在不同类型的变量之间赋值时需要显示转换。也就是说 Golang 中数据类型不能自动转换
+
+==== 基本数据类型转换
+
+表达式 T(v) 将值 v 转换为类型 T
+
+T : 就是数据类型,比如 int32,int64,float32
+v: 就是需要转换的变量
+
+====
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+)
+func main()  {
+	var n1 int32 = 100
+
+	var n2 float32 = float32(n1) <1>
+
+	var n3 int8 = int8(n1) <2>
+
+	var n4 int64 = int64(n1) <3>
+
+	fmt.Printf("n1=%v n2=%v n3=%v n4=%v",n1,n2,n3,n4)
+}
+----
+<1> 将 n1 转换为 float32 类型
+<2> 将 n1 转换为 int8 类型
+<3> 将 n1 转换为 int64 类型
+====
+
+[NOTE]
+====
+* 被转换的是变量存储的数据（即值），变量本身的数据类型并没有变化！
+* 在转换中，比如将 int64 转为 int8 ，编译时不会报错，只是转化结果按溢出处理。因此在转换时，需要考虑范围
+====
+
+==== 基本数据类型转 string 类型
+
+* func Sprintf(format string, a ...interface{}) string
+
+[source,go]
+----
+package main
+
+import "fmt"
+
+func main(){
+	var num int = 0
+	var num2 float64 = 23.456
+	var b bool = true
+	var mychar byte = 'h'
+	var str string
+
+	str = fmt.Sprintf("%d",num)
+	fmt.Printf("str type %T str=%q\n",str,str) //str type string str="0"
+
+	str = fmt.Sprintf("%f",num2)
+	fmt.Printf("str type %T str=%q\n",str,str) //str type string str="23.456000"
+
+	str = fmt.Sprintf("%t",b)
+	fmt.Printf("str type %T str=%q\n",str,str) //str type string str="true"
+
+	str = fmt.Sprintf("%c",mychar)
+	fmt.Printf("str type %T str=%q\n",str,str) //str type string str="h"
+}
+----
+
+* 使用 strconv 包的函数
+
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+	"strconv"
+)
+
+func main(){
+	var num3 int = 23
+	var num4 float64 = 23.456
+	var b2 bool = true
+	var str string
+
+	str = strconv.FormatInt(int64(num3),10)
+	fmt.Printf("str type %T str=%q\n",str,str) // str type string str="23"
+
+	str = strconv.FormatFloat(num4,'f',10,64)
+	fmt.Printf("str type %T str=%q\n",str,str) // str type string str="23.4560000000"
+
+	str = strconv.FormatBool(b2)
+	fmt.Printf("str type %T str=%q\n",str,str) // str type string str="true"
+}
+----
+
+====  string 类型转基本数据类型
+
+* 使用 strconv 包的函数
+
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+	"strconv"
+)
+
+func main(){
+
+	var str1 string = "64"
+	var str2 string = "25.3664"
+	var str3 string = "false"
+	// strconv.ParseInt 返回值为 int 64,如果需要得到 int 8
+
+	num1,_ := strconv.ParseInt(str1,10,32)
+	fmt.Printf("num1 type %T num1=%v\n",num1,num1) // str type string str="23"
+
+	f1,_ := strconv.ParseFloat(str2,10)
+	fmt.Printf("f1 type %T f1=%v\n",f1,f1) // str type string str="23"
+
+	b1,_ := strconv.ParseBool(str3)
+	fmt.Printf("b1 type %T b1=%v\n",b1,b1) // str type string str="23"
+}
+----
+
+[IMPORTANT]
+====
+转换时需要确保能转换为有效值
+====
+
+[[go-getting-started-key]]
+=== 关键字
