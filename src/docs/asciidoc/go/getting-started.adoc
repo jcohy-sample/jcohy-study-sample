@@ -167,17 +167,33 @@ Golang 对各种方法，函数，变量，自定义等命名时使用的字符�
 . 变量，函数，常量名采用驼峰式
 . 如果变量名，函数名，常量名首字母大写，则可以被其他的包访问，如果首字母小写，只能在本包中使用
 
-
 [[go-getting-started-key]]
 == 系统保留关键字
 
 25 个
+
+----
+break       default     func	interface	select
+case        defer       go      map	        struct
+chan        else        goto    package	    switch
+const       fallthrough if      range	    type
+continue    for         import  return	    var
+----
 
 [[go-getting-started-pre-identifier]]
 == 系统预定义标识符
 
 36 个
 
+----
+append	bool	byte	cap	    close	complex	complex64	complex128	uint16
+
+copy	false	float32	float64	imag	int	    int8	    int16	    uint32
+
+int32	int64	iota	len	    make	new	    nil	        panic	    uint64
+
+print	println	real	recover	string	true	uint	    uint8	    uintptr
+----
 
 [[go-getting-started-vars]]
 == 变量
@@ -453,7 +469,7 @@ Go 语言的字符串是由单个字节连接起来的，Go 语言的字符串�
 
 指针（pointer）在Go语言中可以被拆分为两个核心概念：
 
-* 指针类型，允许对这个指针类型的数据进行修改，传递数据可以直接使用指针，而无须拷贝数据，类型指针不能进行偏移和运算。
+* 指针类型，允许对这个指针类型的数据进行修改，传递数据可以直接使用指针，而无须拷贝数据，指针类型不能进行偏移和运算。
 * 切片，由指向起始元素的原始指针、元素数量和容量组成。
 
 ===== 指针地址和指针类型
@@ -770,3 +786,593 @@ func main(){
 转换时需要确保能转换为有效值
 ====
 
+[[go-getting-started-operator]]
+== 运算符
+
+[[go-getting-started-operator-base]]
+=== 基本介绍
+
+运算符用于在程序运行时执行数学或逻辑运算。
+
+Go 语言内置的运算符有：
+
+* 算术运算符
+* 关系运算符
+* 逻辑运算符
+* 位运算符
+* 赋值运算符
+* 其他运算符
+
+[NOTE]
+====
+Golang 语言明确不支持 三元运算符。如果需要实现三元运算的效果，如下
+
+[source,go]
+----
+if expr{
+	n = trueVal
+} else {
+	n = falseVal
+}
+----
+====
+
+接下来让我们来详细看看各个运算符的介绍
+
+[[go-getting-started-operator-arithmetic]]
+=== 算术运算符
+
+下表列出了所有Go语言的算术运算符。假定 A 值为 10，B 值为 20
+
+[[go-getting-started-operator-arithmetic-tbl]]
+.算术运算符
+|===
+| 运算符 | 描述 | 实例
+
+| +	 |相加	| A + B 输出结果 30
+
+| -	 | 相减	| A - B 输出结果 -10
+
+| *	 | 相乘	| A * B 输出结果 200
+
+| /	 | 相除	| B / A 输出结果 2
+
+| %	 | 求余	| B % A 输出结果 0
+
+| {plus}{plus} | 自增  | 	A{plus}{plus} 输出结果 11
+
+| -- | 自减  | 	A-- 输出结果 9
+|===
+
+使用注意事项：
+
+* 对于除号 "`/`" ，它的整数除和小数除是有区别的：整数之间做除法时，只保留整数部分而舍弃小数部分。 例如 `x := 19/5` ,结果是 `3`
+* 当对一个数取模时，可以等价 `a%b = a-a/b*b` ,这样我们可以看到取模的一个本质运算
+* Golang 的自增和自减是语句，不是表达式，因此不能赋值给另外的变量，不能这样使用： `a = i++` ，`a =i --`
+* Golang 的 `{plus}{plus}` 和 `--` 只能写在变量的后面，不能写在变量的前面。即，只有 `a{plus}{plus}`,`a--`，没有 `{plus}{plus}a`,`--a`
+
+[[go-getting-started-operator-relationship]]
+=== 关系运算符
+
+关系运算符的结果都是 `bool`，也就是要么是 `true`，要么是 `false`.经常在 if 结构的条件中或循环结构的条件中。
+
+
+下表列出了所有Go语言的关系运算符。假定 A 值为 10，B 值为 20。
+[[go-getting-started-operator-relationship-tbl]]
+.关系运算符
+|===
+| 运算符 | 描述 | 实例
+
+| ==	 |检查两个值是否相等，如果相等返回 True 否则返回 False。	| (A == B) 为 False
+
+| !=  | 检查两个值是否不相等，如果不相等返回 True 否则返回 False。	| (A != B) 为 True
+
+| >	 | 检查左边值是否大于右边值，如果是返回 True 否则返回 False。	| (A > B) 为 False
+
+| <	 | 检查左边值是否小于右边值，如果是返回 True 否则返回 False。	| (A < B) 为 True
+
+| <=	 | 检查左边值是否小于等于右边值，如果是返回 True 否则返回 False。	| (A <= B) 为 True
+
+| >= | 检查左边值是否大于等于右边值，如果是返回 True 否则返回 False。  | (A >= B) 为 False
+|===
+
+[[go-getting-started-operator-logic]]
+=== 逻辑运算符
+
+下表列出了所有Go语言的逻辑运算符。假定 A 值为 True，B 值为 False。
+
+[[go-getting-started-operator-logic-tbl]]
+.逻辑运算符
+|===
+| 运算符 | 描述 | 实例
+
+| &&   | 	逻辑 AND 运算符。 如果两边的操作数都是 True，则条件 True，否则为 False。	| (A && B) 为 False
+
+| {vbar}{vbar}  | 逻辑 OR 运算符。 如果两边的操作数有一个 True，则条件 True，否则为 False。| (A {vbar}{vbar} B) 为 True
+
+| !	 | 逻辑 NOT 运算符。 如果条件为 True，则逻辑 NOT 条件 False，否则为 True。| !(A && B) 为 True
+|===
+
+注意事项：
+
+* && 也叫短路与：如果第一个条件为 `false`，则第二个条件不会判断。最终结果为 `false`
+* || 也叫短路或：如果第一个条件为 `true`，则第二个条件不会判断，最终结果为 `true`
+
+[[go-getting-started-operator-bitwise]]
+=== 位运算符
+
+位运算符对整数在内存中的二进制位进行操作。
+
+下表列出了位运算符 `&`, `|`, 和 `^` 的计算：
+
+[[go-getting-started-operator-bitwise-tbl]]
+.位运算符
+|===
+|p	|q	|p & q	|p {vbar} q	|p ^ q
+
+|0	|0	|0	|0	|0
+
+|0	|1	|0	|1	|1
+
+|1	|1	|1	|1	|0
+
+|1	|0	|0	|1	|1
+|===
+
+Golang 语言支持的位运算符如下表所示。假定 A 为 60，B 为13：
+
+[[go-getting-started-operator-bitwise-tbl2]]
+.位运算符
+|===
+| 运算符 | 描述 | 实例
+
+|&	| 按位与运算符 "&" 是双目运算符。 其功能是参与运算的两数各对应的二进位相与。	| (A & B) 结果为 12, 二进制为 0000 1100
+
+|{vbar}	| 按位或运算符 "{vbar}" 是双目运算符。 其功能是参与运算的两数各对应的二进位相或	| (A {vbar} B) 结果为 61, 二进制为 0011 1101
+
+|^	| 按位异或运算符 "^" 是双目运算符。 其功能是参与运算的两数各对应的二进位相异或，当两对应的二进位相异时，结果为1。	| (A ^ B) 结果为 49, 二进制为 0011 0001
+
+|<<	| 左移运算符 "<<" 是双目运算符。左移n位就是乘以 2 的 n 次方。 其功能把"<<"左边的运算数的各二进位全部左移若干位，由 "<<" 右边的数指定移动的位数，高位丢弃，低位补0。	| A << 2 结果为 240 ，二进制为 1111 0000
+
+|>>	| 右移运算符 ">>" 是双目运算符。右移n位就是除以 2 的 n 次方。 其功能是把 ">>" 左边的运算数的各二进位全部右移若干位，">>" 右边的数指定移动的位数。	| A >> 2 结果为 15 ，二进制为 0000 1111
+|===
+
+[[go-getting-started-operator-assignment]]
+=== 赋值运算符
+
+下表列出了所有Go语言的赋值运算符。
+
+[[go-getting-started-operator-assignment-tbl]]
+.赋值运算符
+|===
+| 运算符 | 描述 | 实例
+
+|=	| 简单的赋值运算符，将一个表达式的值赋给一个左值	 | C = A + B 将 A + B 表达式结果赋值给 C
+
+|+=	| 相加后再赋值	| C += A 等于 C = C + A
+
+|-=	| 相减后再赋值	| C -= A 等于 C = C - A
+
+|*=	| 相乘后再赋值	| C *= A 等于 C = C * A
+
+|/=	| 相除后再赋值	| C /= A 等于 C = C / A
+
+|%=	| 求余后再赋值	| C %= A 等于 C = C % A
+
+|<<=    | 左移赋值	| C <<= 2 等于 C = C << 2
+
+|>>=	| 右移赋值	| C >>= 2 等于 C = C >> 2
+
+|&=	| 位逻辑与赋值	| C &= 2 等于 C = C & 2
+
+|^=	| 位逻辑或赋值	| C ^= 2 等于 C = C ^ 2
+
+|{vbar}=	| 位逻辑异或赋值	| C {vbar}= 2 等于 C = C {vbar} 2
+|===
+
+注意事项：
+
+* 运算顺序从右向左
+* 赋值运算符的左边只能是 **变量** ，右边可以是 **变量，表达式，常量值**
+
+[[go-getting-started-operator-other]]
+=== 其他运算符
+
+[[go-getting-started-operator-other-tbl]]
+.其他运算符
+|===
+| 运算符 | 描述 | 实例
+
+|&	| 返回变量存储地址		 | &a; 将给出变量的实际地址。
+
+|*	| 指针变量。	| *a; 是一个指针变量
+|===
+
+[[go-getting-started-operator-level]]
+=== 运算符的优先级
+
+有些运算符拥有较高的优先级，二元运算符的运算方向均是从左至右。下表列出了所有运算符以及它们的优先级，由上至下代表优先级由高到低：
+
+[[go-getting-started-operator-level-tbl]]
+.运算符的优先级
+|===
+| 优先级    | 运算符
+
+|7	| ^ !
+
+|6	| * / % << >> & &^
+
+|5	| + - {vbar} ^
+
+|4	| == != < <= >= >
+
+|3	| <-
+
+|2	| &&
+
+|1	| {vbar}{vbar}
+|===
+
+当然，你可以通过使用括号来临时提升某个表达式的整体运算优先级。
+
+[[go-getting-started-flow]]
+== 程序流程控制
+
+在程序中，程序运行的流程控制决定程序是如何执行的，是我们必须掌握的，只要有三大流程控制语句
+
+. 顺序控制
+. 分支控制
+. 循环控制
+
+[[go-getting-started-order]]
+=== 顺序控制
+
+程序从上到西逐行执行，中间没有任何判断或跳转
+
+[[go-getting-started-if]]
+=== 分支控制
+
+==== if 语句
+
+关键字：`if`、`else`、`else` `if`
+
+语法表达式:
+
+[source,go,indent=0,subs="verbatim,quotes",role="primary"]
+.单分支
+----
+if expre {
+	// 执行代码块
+}
+----
+.双分支
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+if expre {
+	// 执行代码块1
+} else {
+    // 执行代码块2
+}
+----
+.多分支
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+if expre1 {
+	// 执行代码块1
+} else if expre2 {
+    // 执行代码块2
+}
+...
+else {
+    // 执行代码块n
+}
+----
+.嵌套分支
+[source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+if expre1 {
+	if expre2{
+	} else {
+
+	}
+}
+----
+
+if 语句使用注意事项
+
+* 当 if 条件匹配后，会执行响应的代码块，执行完后退出 if，即使后面也有匹配的条件也不会执行
+* if 的条件表达式只能是 bool 值，不能是赋值语句
+
+[NOTE]
+====
+if 语句不需要()来包围条件语句，`{}` 为必须的，且必须与关键字同行
+====
+
+Golang 支持在 if 中，直接定义一个局部变量。比如：
+
+[source,go]
+----
+if age:=20; age >18{
+	fmt.Println("你的年龄大于18岁")
+}
+----
+
+==== switch 语句
+
+关键字：`switch`、`case`、`fallthrough`
+
+语法格式:
+
+====
+[source,go]
+----
+switch i {                 //<1>
+case 0:                    //<2>
+      fmt.Printf("0")
+case 1:                    //<3>
+      fallthrough
+case 2, 3:                 //<4>
+      fmt.Printf("2,3,4")
+default:                   //<5>
+      fmt.Printf("Default")
+}
+----
+<1>：`{` 须与 switch 同行,这里可以有一个初始化表达式，右侧需要跟分号
+<2>：不需要明确的 break 来退出，默认自动退出
+<3>：当 i=1 时输出 2,3，fallthrough 关键字会继续执行紧跟的下一个 case 代码
+<4>：可以一个 case 中写多个满足条件（i 为 2，3 中的一个即可）
+<5>：以上的都不匹配时执行
+====
+
+switch 后面的表达式不是必需的,这种结构与多个if...else if的逻辑作用等同
+
+====
+[source,go]
+----
+switch {                   //<1>
+case 0 == i:
+  fmt.Printf("0")
+case 1 == i:
+  fallthrough
+case 2 == i || 3 == i:
+  fmt.Printf("2,3,4")
+default:
+  fmt.Printf("Default")
+}
+----
+<1>：`{` 这里可以有一个初始化表达式，右侧需要跟分号,如本行可写为switch i := 0; {
+====
+
+switch 使用注意事项
+
+* case/switch 后是一个表达式(即：常量值，变量，一个有返回值的函数等都可以)
+* case 后的各个表达式的值的数据类型，必须和 switch 的表达式数据类型一致
+* case 后面可以带多个表达式，使用逗号间隔
+* case 后面的表达式如果是常量，则要求不能重复
+* case 后面不需要带 break，程序匹配到一个 case 后会执行对应的代码块，然后退出 switch，如果一个都匹配不到，则执行 default
+* default 语句不是必须的
+* switch 后也可以不带表达式，类似 if-else 分支来使用
+* switch 后也可以直接声明/定义一个变量，分号结束。
+* switch 穿透 fallthrough，如果在 case 语句块后增加 fallthrough，则会继续执行下一个 case，也叫 switch 穿透
+* Type Switch：switch 语句还可以被用于 type-switch 来判断某个 interface 变量中实际指向的变量类型
+
+[[go-getting-started-loop]]
+=== 循环控制
+
+==== for 语句
+
+关键字：`for`、`range`、`break`、`continue`
+
+基本语法
+
+[source,go]
+----
+for 循环变量初始化;循环条件;循环变量迭代{
+	循环操作(语句)
+}
+----
+
+for 语句的多种格式
+
+格式1：
+
+====
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+)
+
+func main(){
+
+	for i := 0;i < 10;i++{ <1>
+		fmt.Println("Hello World",i)
+	}
+}
+----
+<1> 不需要 `()` 来包围条件语句，`{}` 为必须有的，且 `{` 必须与关键字同行
+====
+
+格式2：
+
+====
+[source,go]
+----
+k := 1
+
+for { <1>
+    if k <= 10 {
+        fmt.Println("Hello World",k)
+    } else {
+        break
+    }
+    k++
+}
+----
+<1> 类似于 Java 中的 `while(true)` 写法，是一个无限循环，通常需要配合 `break` 使用
+====
+
+格式3：
+
+====
+[source,go]
+----
+j := 0
+
+for j <= 10 {
+    fmt.Println("Hello World",j)
+    j++
+}
+----
+====
+
+格式4：Golang 提供 for-range 的方式，可以方便的遍历字符串和数组
+
+====
+[source,go]
+----
+mySlice := []int{1, 2, 3, 4}              //<1>
+sum := 0
+for i, l := 0, len(mySlice); i < l; i++ { //<2>
+    sum += mySlice[i]
+}
+----
+<1> 定义一个slice
+<2> 赋值语句支持多重赋值（仅支持平行多重赋值）
+====
+
+或者使用下面这种方式
+
+====
+[source,go]
+----
+for _, v := range mySlice {               // <1>
+  sum += v                             // <2>
+          //sum +=mySlice[i]
+}
+----
+<1> range有两个返回值，i为索引，v为值。当对 map(后面讲解)进行遍历时，range的返回值分别为key,value
+<2> 这里要注意 i 没有使用，编译错误，请使用 `_` 代替
+====
+
+==== while 和 do..while 的实现
+
+Golang 语言没有 while 和 do..while 语法，可以通过 for 循环来实现其使用效果
+
+while 的实现
+
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+)
+
+func main(){
+
+	var i int = 1
+
+	for {
+		if i > 10 {
+			break
+		}
+		fmt.Println("Hello World",i)
+		i++
+	}
+	fmt.Println("i=",i) // 11
+}
+----
+
+do..while 实现
+
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+)
+
+func main(){
+
+	var i int = 1
+
+	for {
+		fmt.Println("Hello World",i)
+		i++
+		if i > 10 {
+			break
+		}
+	}
+	fmt.Println("i=",i)
+}
+----
+
+==== 跳转语句
+
+关键字: `goto` ，其实 `break` 及 `continue` 也有跳转的功能
+
+三个语法都可以配合标签使用，标签区分大小写
+
+[source,go]
+----
+label1:
+for {
+    if i > 10 {
+        break label1
+    }
+    fmt.Println("Hello World",i)
+    i++
+}
+fmt.Println("i=",i)
+----
+
+* goto     标签名：调整程序执行位置，标签可以在语句之后定义
+* break    标签名：结束与标签同级的 for 循环,标签必须在语句之前定义
+* continue 标签名：结束与标签同级的 for 循环,标签必须在语句之前定义
+
+[[go-getting-started-infunction]]
+== 内建函数
+
+Golang 预定义了少数函数，这意味着无需引用任何包就可以使用他们，这些内建函数的文档记录在与 Go 版本一起发布的伪包 builtin 中。下表列出来所有的内建函数
+
+[[go-getting-started-infunction-tbl]]
+.内建函数
+|===
+| 函数名 | 描述
+
+| func append(slice []Type, elems ...Type) []Type | 用于追加 slice
+
+| func cap(v Type) int  |   cap 内建函数返回 v 的容量，这取决于具体类型
+
+| func close(c chan<- Type) |   用于 channel 通信，使用它来关闭 channel
+
+| func complex(r, i FloatType) ComplexType  |   complex 内建函数将两个浮点数值构造成一个复数值。 其实部和虚部的大小必须相同
+
+| func copy(dst, src []Type) int    |   copy 内建函数将元素从来源切片复制到目标切片中
+
+| func delete(m map[Type]Type1, key Type) | delete 内建函数按照指定的键将元素从映射中删除。 若 m 为 nil 或无此元素，delete 即为空操作
+
+| func imag(c ComplexType) FloatType    |   imag 内建函数返回复数 c 的虚部
+
+| func len(v Type) int  |   len 内建函数返回 v 的长度，这取决于具体类型
+
+| func make(Type, size IntegerType) Type    | make 内建函数分配并初始化一个类型为切片、映射、或（仅仅为）信道的对象
+
+| func new(Type) *Type | new 内建函数分配内存
+
+| func panic(v interface{}) | 用于异常处理机制
+
+| func print(args ...Type)  |   底层打印函数
+
+| func println(args ...Type)    | 底层打印函数
+
+| func real(c ComplexType) FloatType    | real 内建函数返回复数 c 的实部。
+
+| func recover() interface{} | 用于异常处理机制
+|===
+
+关于这些内建函数的详情请参考官方文档 https://golang.org/pkg/builtin/[https://golang.org/pkg/builtin/] 或 中文文档 http://docscn.studygolang.com/pkg/builtin/#append[http://docscn.studygolang.com/pkg/builtin/#append]

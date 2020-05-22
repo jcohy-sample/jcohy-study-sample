@@ -5,3 +5,9 @@ include::attributes.adoc[]
 include::go/overview.adoc[leveloffset=+1]
 
 include::go/getting-started.adoc[leveloffset=+1]
+
+include::go/function.adoc[leveloffset=+1]
+
+include::go/notice.adoc[leveloffset=+1]
+
+include::go/question.adoc[leveloffset=+1]
