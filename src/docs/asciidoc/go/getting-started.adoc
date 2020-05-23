@@ -627,6 +627,82 @@ fmt.Println(*str)
 ----
 ****
 
+[[go-getting-started-data-type-complex-array]]
+==== 数组
+
+[[go-getting-started-data-type-complex-struct]]
+==== 结构体
+
+[[go-getting-started-data-type-complex-channel]]
+==== 管道
+
+[[go-getting-started-data-type-complex-function]]
+==== 函数
+
+在 Go 中，函数也是一种 **数据类型**，可以赋值给一个变量，该变量就是一个函数类型的变量。通过该变量可以对函数进行调用。
+
+[source,go]
+----
+func main(){
+	a := getSum
+	fmt.Printf("a 的类型是 %T ,getSum 的类型是 %T \n",a,getSum) // a 的类型是 func(int, int) int ,getSum 的类型是 func(int, int) int
+}
+
+func test02(n1 int){
+	n1 = n1 + 10
+	fmt.Printf("test02() n1=%d\n",n1)
+}
+----
+
+函数既然是一种数据类型，因此在 Go 中，可以作为形参，并且调用。接上例,我们新定义一个函数，接收一个函数
+
+[source,go]
+----
+func test03(funvar func(int, int) int, num1 int, num2 int) int {
+	return funvar(num1,num2)
+}
+
+func main(){
+	n1 := test03(getSum,50,60)
+	fmt.Printf("test02() n1=%d\n",n1) // 结果为 110
+}
+----
+
+[[go-getting-started-data-type-complex-slice]]
+==== 切片
+
+[[go-getting-started-data-type-complex-interface]]
+==== 接口
+
+[[go-getting-started-data-type-complex-map]]
+==== map
+
+[[go-getting-started-data-type-custom]]
+=== 自定义数据类型
+
+为了简化数据类型定义，Go 支持自定义数据类型。
+
+基本语法: type 自定义数据类型 数据类型. 如下
+
+====
+[source,go]
+----
+func main(){
+
+	type myInt int <1>
+
+	var num1 myInt
+	var num2 int
+
+	num1 = 40
+	num2 = int(num1) <2>
+	fmt.Println("num1=",num1,"num2=",num2)
+}
+----
+<1> 给 int 取了别名，在 go 中，myInt 和 int 虽然都是 int 类型，但是 go 认为 myInt 和 int 是两种类型
+<2> 需要显示转换
+====
+
 [[go-getting-started-data-type-default]]
 === 零值(默认值)
 

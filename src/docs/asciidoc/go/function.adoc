@@ -19,7 +19,253 @@ func (p mytype) funcname(q int) (r,s int) {
 * 函数体。注意 return 是一个语句，所以包裹参数的括号是可选的
 ====
 
+== 函数调用过程
 
-== 函数的基本语法
+. 在调用一个函数时，会给该函数分配一个新的空间，编译器会通过自身的处理让这个新的空间和其他的栈的空间区分开来
+. 在每个函数对应的栈中，数据空间是独立的，不会混淆
+. 当一个函数调用完毕后，程序会销毁这个函数对应的栈空间
+
+== 作用域
+
+在 Go 中，定义在函数外的变量时全局的，那些定义在函数内部的变量，对于函数来说是局部的。如果命名覆盖，在函数执行的时候，局部变量将覆盖全局变量
+
+image::{go-images}/go1.png[]
+
+在上述左侧函数 q() 中定义了局部变量 a。局部变量 a 仅在 q() 中可见。打印结果为：656
+
+在右侧中没有定义局部变量，只有全局变量 a。这将使得对 a 的赋值全局可见。打印结果为：655
+
+== 函数的使用
+
+=== 多返回值
+
+Go 函数支持多个返回值，如下
+
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+)
+
+func main(){
+	sum,sub := getSumAndSub(10,20)
+	fmt.Printf("sum=%d,sub=%d \n",sum,sub)
+}
+
+func getSumAndSub(a,b int) (int,int){
+	return a+b,a-b
+}
+----
+
+希望忽略某个返回值，则使用 `_` 符号表示占位符
+
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+)
+
+func main(){
+	_,sub := getSumAndSub(10,20)
+	fmt.Printf("sub=%d \n",sub)
+}
+
+func getSumAndSub(a,b int) (int,int){
+	return a+b,a-b
+}
+----
+
+如果返回值只有一个，可以不写 `()`
+
+[source,go]
+----
+func getSum(a,b int) int{
+	return a+b
+}
+----
+
+=== 命名返回值
+
+Go 函数的返回值或者结果参数可以指定一个名字，并且像原始的变量那样使用，就像输入参数那样，如果对其命名，在函数开始时，它们会用其类型的<<go-getting-started-data-type-default>>初始化。
+
+[source,go]
+----
+func getSumAndSub(a,b int) (sum int,sub int){
+	sum = a + b
+	sub = a - b
+	return
+}
+----
+
+=== 可变参数
+
+接收不定数量的参数的函数叫做变参函数，定义函数使其接收变参
+
+[source,go]
+----
+func myfunc(arg ...int){}
+----
+
+`arg ...int` 告诉 go 这个函数接受不定数量的参数。注意这些参数的类型都是 `int`。在函数体中，变量 arg 是一个 int 类型的 <<go-getting-started-data-type-complex-slice>>
+
+[source,go]
+----
+func main(){
+	res := sum(10,2,1,58,8)
+	fmt.Printf("res=%d\n",res) //res=79
+}
+func sum(n1 int ,arg ...int) int{
+	sum := n1
+	for i := 0; i< len(arg); i++{
+		sum += arg[i]
+	}
+	return sum
+}
+----
+
+如果不指定变参的类型，默认是空接口 `interface{}`
+
+=== 延迟代码
+
+=== 恐慌(Panic)和恢复(Recover)
+
+Go 没有像 Java 那样的异常机制，例如你无法像在 Java 中那样抛出一个异常，作为替代，它使用了恐慌和恢复 (panic-and-recover) 机制。一定要记得，这应当作为最后的手段被使用，你的代码中应当没有，或者很少的令人恐慌
+的东西。
+
+Panic:是一个内建函数，可以中断原有的控制流程，进入一个令人恐慌的流程中。当函数 F 调用 `panic`，函数 F 的执行被中断，并且 F 中的延迟函数会正常执行，然后 F 返回到调用它的地方。在调用的地方，F 的行为就像调用了 `panic`。这一过
+程继续向上，直到程序崩溃时的所有 `goroutine` 返回。 恐慌可以直接调用 `panic` 产生。也可以由运行时错误产生，例如访问越界的数组。
+
+Recover:是一个内建的函数，可以让进入令人恐慌的流程中的 `goroutine` 恢复过来。`recover` 仅在延迟函数中有效。在正常的执行过程中，调用 `recover` 会返回 `nil` 并且没有其他任何效果。如果
+当前的 `goroutine` 陷入恐慌，调用 `recover` 可以捕获到 `panic` 的输入值，并且恢复正常的执行。
+
+以下这个函数检查作为其参数的函数在执行时是否会产生 panic
+
+====
+[source,go]
+----
+func throwsPanic(f func()) (b bool){ <1>
+	defer func() { <2>
+		if x := recover();x != nil {
+			b = true
+		}
+	}()
+	f() <3>
+	return  <4>
+}
+----
+<1> 定义一个 throwsPanic 函数接收一个函数作为参数。函数 `f` 产生 `panic`，就返回 `true`，否则返回 `false`
+<2> 定义了一个利用 `recover` 的 `defer` 函数，如果当前的 `goroutine` 产生了 `panic`，这个 `defer` 函数能够发现。当 `recover()` 返回非 `nil` 值，设置 `b` 为 `true`
+<3> 调用作为参数接收的函数
+<4> 返回 `b` 的值。由于 `b` 是命名返回
+====
+
+=== init 函数
+
+每一个源文件都可以包含一个 init 函数，该函数会在 main 函数之前执行。被 Go 运行框架调用，也就是说 init 会在 main 函数之前被调用
+
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+)
+
+func init(){
+	fmt.Println("init()...")
+}
+func main(){
+	fmt.Println("main()....")
+}
+// 输出结果
+// init()...
+// main()....
+----
+
+. 如果一个文件同时包含全局变量定义，`init` 函数和 `main` 函数，则执行的流程 全局变量定义 -> `init` 函数 -> `main` 函数
+. `init` 函数最主要的作用就是完成一些初始化的工作
+. 如果本文件和被引入的文件中都包含变量的定义，先执行被引入包中变量的定义(被引入包变量定义 -> 被引入包 `init` 函数)。然后在执行本文件的变量定义和 `init` 函数
+
+=== 匿名函数
+
+Go 支持匿名函数，匿名函数就是没有名字的函数，如果我们某个函数只是希望调用一个，可以考虑使用匿名函数，匿名函数也可以多次调用
+
+在定义匿名函数时就直接使用，这种方式匿名函数只能调用一次
+
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+)
+
+func main(){
+	res1 := func(n1 int, n2 int) int{
+		return n1 + n2
+	}(10,20)
+
+	fmt.Println("res1=",res1)// res1= 30
+}
+----
+
+将匿名函数赋给一个全局变量，那么这个匿名函数，就成为一个全局匿名函数，可以在程序中有效
+
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+)
+
+var (
+	Fun1 = func(n1 ,n2 int) int {
+		return n1+n2
+	}
+)
+
+func main(){
+	res2 := Fun1(4,9)
+	fmt.Println("res2=",res2) // res2= 13
+}
+
+----
+
+=== 闭包
+
+闭包就是一个函数和与其相关的引用环境组成的一个整体(实体)
+
+[source,go]
+----
+----
+
+[source,go]
+----
+----
+
+[source,go]
+----
+----
+
+[source,go]
+----
+----
 
 
+== 注意事项
+
+* 函数的形参列表可以是多个，返回值列表也可以是多个
+* 形参列表和返回值列表的数据类型可以是值类型和引用类型
+* 函数的命名遵循<<go-getting-started-identifier>> 命名规范
+* 首字母大写的函数可以被本包和其他包文件使用。首字母小写，只能被本包文件使用
+* 函数中的变量时局部的，函数外不生效
+* 基本数据类型和数组默认都是值传递的，即进行值拷贝。在函数内修改，不会影响到原来的值
+* 如果希望函数内的变量能修改函数外的变量(指的是默认以值传递的方式的数据类型)，可以传入变量的地址 `&` ，函数内以 <<go-getting-started-data-type-complex-pointer>> 的凡是操作变量
+* Go 函数不支持函数重载
+* 函数是一种数据类型,参见<<go-getting-started-data-type-complex-function,函数数据类型>>
+* 使用 `_` 标识符，忽略返回值
