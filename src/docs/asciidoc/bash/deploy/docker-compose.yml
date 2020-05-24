@@ -226,7 +226,7 @@ services:
       - ${DOCKER_DIR}/logs:/home/project/elk/logs
       - ${DOCKER_DIR}/filebeat/logs:/usr/share/filebeat/logs
       - ${DOCKER_DIR}/filebeat/data:/usr/share/filebeat/data
-    # 将指定容器连接到当前连接，可以设置别名，避免ip方式导致的容器重启动态改变的无法连接情况
+    # 将指定容器连接到当前连接,可以设置别名,避免ip方式导致的容器重启动态改变的无法连接情况
     links:
       - logstash
     ports:

@@ -12,12 +12,12 @@ export PATH=${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:$PATH
 
 
 #版本1的问题:
-#虽然上传到Hadoop集群上了，但是原始文件还在。如何处理？
-#日志文件的名称都是xxxx.log1,再次上传文件时，因为hdfs上已经存在了，会报错。如何处理？
+#虽然上传到Hadoop集群上了,但是原始文件还在.如何处理？
+#日志文件的名称都是xxxx.log1,再次上传文件时,因为hdfs上已经存在了,会报错.如何处理？
 
 #如何解决版本1的问题
 #       1、先将需要上传的文件移动到待上传目录
-#	2、在讲文件移动到待上传目录时，将文件按照一定的格式重名名
+#	2、在讲文件移动到待上传目录时,将文件按照一定的格式重名名
 #		/export/software/hadoop.log1   /export/data/click_log/xxxxx_click_log_{date}
 
 
@@ -35,7 +35,7 @@ hdfs_root_dir=/data/clickLog/20151226/
 echo "envs: hadoop_home: $HADOOP_HOME"
 
 
-#读取日志文件的目录，判断是否有需要上传的文件
+#读取日志文件的目录,判断是否有需要上传的文件
 echo "log_src_dir:"$log_src_dir
 ls $log_src_dir | while read fileName
 do

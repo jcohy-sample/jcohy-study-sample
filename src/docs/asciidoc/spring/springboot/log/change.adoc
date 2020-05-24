@@ -1,7 +1,7 @@
 [[springboot-base-log-change]]
 = 切换日志框架
 
-可以按照 slf4j 的日志适配图，进行相关的切换;
+可以按照 slf4j 的日志适配图,进行相关的切换;
 
 slf4j+log4j 的方式;
 

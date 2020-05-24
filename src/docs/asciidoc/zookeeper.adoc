@@ -9,14 +9,14 @@ Zookeeper是一个分布式协调服务; 就是为用户的分布式应用程序
 
 
 *  zookeeper 是为别的分布式程序服务的
-*  Zookeeper 本身就是一个分布式程序(只要有半数以上节点存活，zk就能正常服务)
+*  Zookeeper 本身就是一个分布式程序(只要有半数以上节点存活,zk就能正常服务)
 *  Zookeeper 所提供的服务涵盖: 主从协调、服务器节点动态上下线、统一配置管理、分布式共享锁、统一名称服务……
-*  虽然说可以提供各种服务，但是 zookeeper 在底层其实只提供了两个功能: 管理(存储，读取)用户程序提交的数据;  并为用户程序提供数据节点监听服务;
+*  虽然说可以提供各种服务,但是 zookeeper 在底层其实只提供了两个功能: 管理(存储,读取)用户程序提交的数据;  并为用户程序提供数据节点监听服务;
 
 
 Zookeeper 集群的角色:   Leader 和  follower  (Observer)
 
-只要集群中有半数以上节点存活，集群就能提供服务
+只要集群中有半数以上节点存活,集群就能提供服务
 
 [[zookeeper-install]]
 == 安装
@@ -28,25 +28,25 @@ Zookeeper 集群的角色:   Leader 和  follower  (Observer)
 
 === zookeeper特性
 
-1、Zookeeper: 一个leader，多个follower组成的集群
+1、Zookeeper: 一个leader,多个follower组成的集群
 
-2、全局数据一致: 每个server保存一份相同的数据副本，client无论连接到哪个server，数据都是一致的
+2、全局数据一致: 每个server保存一份相同的数据副本,client无论连接到哪个server,数据都是一致的
 
-3、分布式读写，更新请求转发，由leader实施
+3、分布式读写,更新请求转发,由leader实施
 
-4、更新请求顺序进行，来自同一个client的更新请求按其发送顺序依次执行
+4、更新请求顺序进行,来自同一个client的更新请求按其发送顺序依次执行
 
-5、数据更新原子性，一次数据更新要么成功，要么失败
+5、数据更新原子性,一次数据更新要么成功,要么失败
 
-6、实时性，在一定时间范围内，client能读到最新数据
+6、实时性,在一定时间范围内,client能读到最新数据
 
 === zookeeper数据结构
 
-1、层次化的目录结构，命名符合常规文件系统规范(见下图)
+1、层次化的目录结构,命名符合常规文件系统规范(见下图)
 
 2、每个节点在zookeeper中叫做znode,并且其有一个唯一的路径标识
 
-3、节点Znode可以包含数据和子节点(但是EPHEMERAL类型的节点不能有子节点，下一页详细讲解)
+3、节点Znode可以包含数据和子节点(但是EPHEMERAL类型的节点不能有子节点,下一页详细讲解)
 
 4、客户端应用可以在节点上设置监视器(后续详细讲解)
 
@@ -68,13 +68,13 @@ https://github.com/jiachao23/StudyNote/blob/master/src/img/zks.png[zks]
     EPHEMERAL
     EPHEMERAL_SEQUENTIAL
 
-. 创建znode时设置顺序标识，znode名称后会附加一个值，顺序号是一个单调递增的计数器，由父节点维护
-. 在分布式系统中，顺序号可以被用于为所有的事件进行全局排序，这样客户端可以通过顺序号推断事件的顺序
+. 创建znode时设置顺序标识,znode名称后会附加一个值,顺序号是一个单调递增的计数器,由父节点维护
+. 在分布式系统中,顺序号可以被用于为所有的事件进行全局排序,这样客户端可以通过顺序号推断事件的顺序
 
 [[zookeeper-theory]]
 == zookeeper 原理
 
-** Zookeeper虽然在配置文件中并没有指定 master 和 slave 但是,zookeeper 工作时，是有一个节点为 `leader`，其他则为 `follower` Leader是通过内部的选举机制临时产生的**
+** Zookeeper虽然在配置文件中并没有指定 master 和 slave 但是,zookeeper 工作时,是有一个节点为 `leader`,其他则为 `follower` Leader是通过内部的选举机制临时产生的**
 
 [[zookeeper-theory-paxos]]
 === zookeeper 的选举机制(全新集群 paxos)
@@ -96,23 +96,23 @@ https://github.com/jiachao23/StudyNote/blob/master/src/img/zks.png[zks]
 [[zookeeper-theory-other]]
 === 非全新集群的选举机制(数据恢复)
 
-那么，初始化的时候，是按照上述的说明进行选举的，但是 `当zookeeper` 运行了一段时间之后，有机器 `down` 掉，重新选举时，选举过程就相对复杂了。 需要加入数据 `id`,`leader`, `id` 和逻辑时钟。
+那么,初始化的时候,是按照上述的说明进行选举的,但是 `当zookeeper` 运行了一段时间之后,有机器 `down` 掉,重新选举时,选举过程就相对复杂了. 需要加入数据 `id`,`leader`, `id` 和逻辑时钟.
 
-数据 `id`: 数据新的 `id` 就大，数据每次更新都会更新 `id`。
+数据 `id`: 数据新的 `id` 就大,数据每次更新都会更新 `id`.
 
-Leader id: 就是我们配置的 `myid` 中的值，每个机器一个。
+Leader id: 就是我们配置的 `myid` 中的值,每个机器一个.
 
 逻辑时钟: 这个值从 `0` 开始递增,每次选举对应一个值,也就是说:  如果在同一次选举中,那么这个值应该是一致的 ;  逻辑时钟值越大,说明这一次选举 `leader` 的进程更新.
 
 选举的标准就变成:
 
-1、逻辑时钟小的选举结果被忽略，重新投票
+1、逻辑时钟小的选举结果被忽略,重新投票
 
-2、统一逻辑时钟后，数据 `id` 大的胜出
+2、统一逻辑时钟后,数据 `id` 大的胜出
 
-3、数据id相同的情况下，leader `id` 大的胜出
+3、数据id相同的情况下,leader `id` 大的胜出
 
-根据这个规则选出 `leader`。
+根据这个规则选出 `leader`.
 
 [[zookeeper-command]]
 == zookeeper 命令行操作
@@ -128,7 +128,7 @@ https://github.com/jiachao23/StudyNote/blob/master/src/img/zkc.png[zkc]
 [zk: 202.115.36.251:2181(CONNECTED) 1] ls /
 ----
 
-2、创建一个新的 znode ，使用 `create` /zk myData 。这个命令创建了一个新的 znode 节点“ zk ”以及与它关联的字符串:
+2、创建一个新的 znode ,使用 `create` /zk myData .这个命令创建了一个新的 znode 节点“ zk ”以及与它关联的字符串:
 
 [source,shell]
 ----
@@ -179,7 +179,7 @@ zookeeper-api 应用
 
 . 基本使用
 
-`org.apache.zookeeper.Zookeeper` 是客户端入口主类，负责建立与 server 的会话
+`org.apache.zookeeper.Zookeeper` 是客户端入口主类,负责建立与 server 的会话
 
 [[java-12-feature-overview-tbl]]
 .api
@@ -214,7 +214,7 @@ zookeeper-api 应用
 .Java
 ----
 public class SimpleDemo {
-    // 会话超时时间，设置为与系统默认时间一致
+    // 会话超时时间,设置为与系统默认时间一致
     private static final int SESSION_TIMEOUT = 30000;
     // 创建 ZooKeeper 实例
     ZooKeeper zk;
@@ -232,7 +232,7 @@ public class SimpleDemo {
     }
     private void ZKOperations() throws IOException, InterruptedException, KeeperException
     {
-        System.out.println("/n1. 创建 ZooKeeper 节点 (znode :  zoo2, 数据:  myData2 ，权限:  OPEN_ACL_UNSAFE ，节点类型:  Persistent");
+        System.out.println("/n1. 创建 ZooKeeper 节点 (znode :  zoo2, 数据:  myData2 ,权限:  OPEN_ACL_UNSAFE ,节点类型:  Persistent");
         zk.create("/zoo2", "myData2".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
         System.out.println("/n2. 查看是否创建成功:  ");
         System.out.println(new String(zk.getData("/zoo2", false, null)));
@@ -263,7 +263,7 @@ public class SimpleDemo {
 
 https://github.com/jiachao23/StudyNote/blob/master/src/img/zkworg.png[zkworg]
 
-监听器是一个接口，我们的代码中可以实现Wather这个接口，实现其中的process方法，方法中即我们自己的业务逻辑
+监听器是一个接口,我们的代码中可以实现Wather这个接口,实现其中的process方法,方法中即我们自己的业务逻辑
 
 * 监听器的注册是在获取数据的操作中实现:
 ** `getData(path,watch?)` 监听的事件是: 节点数据变化事件
@@ -275,7 +275,7 @@ https://github.com/jiachao23/StudyNote/blob/master/src/img/zkworg.png[zkworg]
 [[zookeeper-example-ha]]
 === 实现分布式应用的(主节点HA)及客户端动态更新主节点状态
 
-* 某分布式系统中，主节点可以有多台，可以动态上下线
+* 某分布式系统中,主节点可以有多台,可以动态上下线
 * 任意一台客户端都能实时感知到主节点服务器的上下线
 
 https://github.com/jiachao23/StudyNote/blob/master/src/img/zk1.png[zk1]

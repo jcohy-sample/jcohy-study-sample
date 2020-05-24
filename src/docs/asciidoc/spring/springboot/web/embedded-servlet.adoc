@@ -3,7 +3,7 @@
 
 SpringBoot默认使用Tomcat作为嵌入式的Servlet容器;
 
-image::http://study.jcohy.com/images/spring-spring-boot14.png[]
+image::{oss-images}/spring-spring-boot14.png[]
 
 问题？
 
@@ -43,7 +43,7 @@ public EmbeddedServletContainerCustomizer embeddedServletContainerCustomizer(){
 
 == 注册Servlet三大组件【Servlet、Filter、Listener】
 
-由于SpringBoot默认是以jar包的方式启动嵌入式的Servlet容器来启动SpringBoot的web应用，没有web.xml文件。
+由于SpringBoot默认是以jar包的方式启动嵌入式的Servlet容器来启动SpringBoot的web应用,没有web.xml文件.
 
 注册三大组件用以下方式
 
@@ -84,7 +84,7 @@ public ServletListenerRegistrationBean myListener(){
 }
 ----
 
-SpringBoot帮我们自动SpringMVC的时候，自动的注册SpringMVC的前端控制器; DIspatcherServlet;
+SpringBoot帮我们自动SpringMVC的时候,自动的注册SpringMVC的前端控制器; DIspatcherServlet;
 
 DispatcherServletAutoConfiguration中:
 
@@ -96,7 +96,7 @@ public ServletRegistrationBean dispatcherServletRegistration(
       DispatcherServlet dispatcherServlet) {
    ServletRegistrationBean registration = new ServletRegistrationBean(
          dispatcherServlet, this.serverProperties.getServletMapping());
-    //默认拦截:  /  所有请求; 包静态资源，但是不拦截jsp请求;    /*会拦截jsp
+    //默认拦截:  /  所有请求; 包静态资源,但是不拦截jsp请求;    /*会拦截jsp
     //可以通过server.servletPath来修改SpringMVC前端控制器默认拦截的请求路径
 
    registration.setName(DEFAULT_DISPATCHER_SERVLET_BEAN_NAME);
@@ -114,7 +114,7 @@ public ServletRegistrationBean dispatcherServletRegistration(
 
 == 替换为其他嵌入式Servlet容器
 
-image::http://study.jcohy.com/images/spring-spring-boot15.png[]
+image::{oss-images}/spring-spring-boot15.png[]
 
 默认支持:
 
@@ -187,7 +187,7 @@ EmbeddedServletContainerAutoConfiguration: 嵌入式的Servlet容器自动配置
 @Import(BeanPostProcessorsRegistrar.class)
 //导入BeanPostProcessorsRegistrar: Spring注解版; 给容器中导入一些组件
 //导入了EmbeddedServletContainerCustomizerBeanPostProcessor:
-//后置处理器: bean初始化前后(创建完对象，还没赋值赋值)执行初始化工作
+//后置处理器: bean初始化前后(创建完对象,还没赋值赋值)执行初始化工作
 public class EmbeddedServletContainerAutoConfiguration {
 
     @Configuration
@@ -247,11 +247,11 @@ public interface EmbeddedServletContainerFactory {
 }
 ----
 
-image::http://study.jcohy.com/images/spring-spring-boot16.png[]
+image::{oss-images}/spring-spring-boot16.png[]
 
 2)、EmbeddedServletContainer: (嵌入式的Servlet容器)
 
-image::http://study.jcohy.com/images/spring-spring-boot17.png[]
+image::{oss-images}/spring-spring-boot17.png[]
 
 3)、以**TomcatEmbeddedServletContainerFactory**为例
 
@@ -278,7 +278,7 @@ public EmbeddedServletContainer getEmbeddedServletContainer(
    }
    prepareContext(tomcat.getHost(), initializers);
 
-    //将配置好的Tomcat传入进去，返回一个EmbeddedServletContainer; 并且启动Tomcat服务器
+    //将配置好的Tomcat传入进去,返回一个EmbeddedServletContainer; 并且启动Tomcat服务器
    return getTomcatEmbeddedServletContainer(tomcat);
 }
 ----
@@ -312,7 +312,7 @@ public Object postProcessBeforeInitialization(Object bean, String beanName)
 
 private void postProcessBeforeInitialization(
 			ConfigurableEmbeddedServletContainer bean) {
-    //获取所有的定制器，调用每一个定制器的customize方法来给Servlet容器进行属性赋值;
+    //获取所有的定制器,调用每一个定制器的customize方法来给Servlet容器进行属性赋值;
     for (EmbeddedServletContainerCustomizer customizer : getCustomizers()) {
         customizer.customize(bean);
     }
@@ -324,7 +324,7 @@ private Collection<EmbeddedServletContainerCustomizer> getCustomizers() {
         this.customizers = new ArrayList<EmbeddedServletContainerCustomizer>(
             this.beanFactory
             //从容器中获取所有这葛类型的组件: EmbeddedServletContainerCustomizer
-            //定制Servlet容器，给容器中可以添加一个EmbeddedServletContainerCustomizer类型的组件
+            //定制Servlet容器,给容器中可以添加一个EmbeddedServletContainerCustomizer类型的组件
             .getBeansOfType(EmbeddedServletContainerCustomizer.class,
                             false, false)
             .values());
@@ -339,13 +339,13 @@ ServerProperties也是定制器
 
 步骤:
 
-1)、SpringBoot根据导入的依赖情况，给容器中添加相应的EmbeddedServletContainerFactory【TomcatEmbeddedServletContainerFactory】
+1)、SpringBoot根据导入的依赖情况,给容器中添加相应的EmbeddedServletContainerFactory【TomcatEmbeddedServletContainerFactory】
 
 2)、容器中某个组件要创建对象就会惊动后置处理器; EmbeddedServletContainerCustomizerBeanPostProcessor;
 
-只要是嵌入式的Servlet容器工厂，后置处理器就工作;
+只要是嵌入式的Servlet容器工厂,后置处理器就工作;
 
-3)、后置处理器，从容器中获取所有的**EmbeddedServletContainerCustomizer**，调用定制器的定制方法
+3)、后置处理器,从容器中获取所有的**EmbeddedServletContainerCustomizer**,调用定制器的定制方法
 
 == 嵌入式Servlet容器启动原理;
 
@@ -355,7 +355,7 @@ ServerProperties也是定制器
 
 1)、SpringBoot应用启动运行run方法
 
-2)、refreshContext(context);SpringBoot刷新IOC容器【创建IOC容器对象，并初始化容器，创建容器中的每一个组件】; 如果是web应用创建**AnnotationConfigEmbeddedWebApplicationContext**，否则: **AnnotationConfigApplicationContext**
+2)、refreshContext(context);SpringBoot刷新IOC容器【创建IOC容器对象,并初始化容器,创建容器中的每一个组件】; 如果是web应用创建**AnnotationConfigEmbeddedWebApplicationContext**,否则: **AnnotationConfigApplicationContext**
 
 3)、refresh(context);**刷新刚才创建好的ioc容器; **
 
@@ -434,12 +434,12 @@ public void refresh() throws BeansException, IllegalStateException {
 
 EmbeddedServletContainerFactory containerFactory = getEmbeddedServletContainerFactory();
 
-​从ioc容器中获取EmbeddedServletContainerFactory 组件; **TomcatEmbeddedServletContainerFactory**创建对象，后置处理器一看是这个对象，就获取所有的定制器来先定制Servlet容器的相关配置;
+​从ioc容器中获取EmbeddedServletContainerFactory 组件; **TomcatEmbeddedServletContainerFactory**创建对象,后置处理器一看是这个对象,就获取所有的定制器来先定制Servlet容器的相关配置;
 
 7)、**使用容器工厂获取嵌入式的Servlet容器**: this.embeddedServletContainer = containerFactory      .getEmbeddedServletContainer(getSelfInitializer());
 
 8)、嵌入式的Servlet容器创建对象并启动Servlet容器;
 
-**先启动嵌入式的Servlet容器，再将ioc容器中剩下没有创建出的对象获取出来; **
+**先启动嵌入式的Servlet容器,再将ioc容器中剩下没有创建出的对象获取出来; **
 
 **IOC容器启动创建嵌入式的Servlet容器**

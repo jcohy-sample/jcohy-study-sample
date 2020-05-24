@@ -1,11 +1,11 @@
 [[restful]]
 = RESTful
 
-一种软件架构风格、设计风格，而不是标准，只是提供了一组设计原则和约束条件。它主要用于客户端和服务器交互类的软件。
+一种软件架构风格、设计风格,而不是标准,只是提供了一组设计原则和约束条件.它主要用于客户端和服务器交互类的软件.
 
-image::http://study.jcohy.com/images/restful1.jpg[]
+image::{oss-images}/restful1.jpg[]
 
-image::http://study.jcohy.com/images/restful1.jpg[]
+image::{oss-images}/restful1.jpg[]
 
 http://www.ruanyifeng.com/blog/2014/05/restful_api.html[RESTful API 设计指南]
 
@@ -33,11 +33,11 @@ public Callable<String> order(){
 }
 ----
 
-* 使用DeferredResult异步处理Rest服务 模拟一个订单请求，当placeOrder有值时，接到下单请求 completeOrder有值时，下单请求完成。
+* 使用DeferredResult异步处理Rest服务 模拟一个订单请求,当placeOrder有值时,接到下单请求 completeOrder有值时,下单请求完成.
 
-image::http://study.jcohy.com/images/restful-queue.jpg[]
+image::{oss-images}/restful-queue.jpg[]
 
-QueueListener:实现 `ApplicationListener<ContextRefreshedEvent>`。当初始化完成后开始监听
+QueueListener:实现 `ApplicationListener<ContextRefreshedEvent>`.当初始化完成后开始监听
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Controller

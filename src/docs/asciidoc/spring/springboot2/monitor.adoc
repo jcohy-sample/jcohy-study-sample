@@ -1,7 +1,7 @@
 [[spring-advanced-monitor]]
 = SpringBoot 之监控管理
 
-通过引入 `spring-boot-starter-actuator`，可以使用Spring Boot为我们提供的准生产环境下的应用监控和管理功能。我们可以通过HTTP，JMX，SSH协议来进行操作，自动得到审计、健康及指标信息等
+通过引入 `spring-boot-starter-actuator`,可以使用Spring Boot为我们提供的准生产环境下的应用监控和管理功能.我们可以通过HTTP,JMX,SSH协议来进行操作,自动得到审计、健康及指标信息等
 
 [[spring-advanced-monitor-integration]]
 == 整合
@@ -38,7 +38,7 @@ management.context-path=/manage
 management.port=8181
 ----
 
-. 可进行 shutdown(POST 提交，此端点默认关闭)
+. 可进行 shutdown(POST 提交,此端点默认关闭)
 
 . 通过 http 方式访问监控端点
 
@@ -75,7 +75,7 @@ management.port=8181
 [[spring-advanced-monitor-info]]
 == 定制端点信息
 
-* 定制端点一般通过endpoints+端点名+属性名来设置。
+* 定制端点一般通过endpoints+端点名+属性名来设置.
 * 修改端点id(endpoints.beans.id=mybeans)
 * 开启远程应用关闭功能(endpoints.shutdown.enabled=true)
 * 关闭端点(endpoints.beans.enabled=false)
@@ -90,7 +90,7 @@ management.port=8181
 [[spring-advanced-monitor-customize]]
 == 自定义 HealthIndicator
 
-. 编写一个指示器，实现 `HealthIndicator`
+. 编写一个指示器,实现 `HealthIndicator`
 . 指示器名字必须写 xxxHealthIndicator
 . 加入容器
 

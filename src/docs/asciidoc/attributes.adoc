@@ -18,4 +18,5 @@
 :algorithm-code: ../../../../algorithm-sample/src/main/java/com/jcohy/sample/algorithm
 :spring-boot-chinese-docs: http://docs.jcohy.com/zh-cn/spring-boot/2.2.5.RELEASE
 
-:go-images: images
+:base-images: images
+:oss-images: http://study.jcohy.com/images

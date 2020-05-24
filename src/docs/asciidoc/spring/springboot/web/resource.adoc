@@ -5,7 +5,7 @@
 ----
 @ConfigurationProperties(prefix = "spring.resources", ignoreUnknownFields = false)
 public class ResourceProperties implements ResourceLoaderAware {
-  //可以设置和静态资源有关的参数，缓存时间等
+  //可以设置和静态资源有关的参数,缓存时间等
 ----
 
 [source,java]
@@ -77,13 +77,13 @@ public class ResourceProperties implements ResourceLoaderAware {
 
 ----
 
-1)、所有 /webjars/** ，都去 classpath:/META-INF/resources/webjars/ 找资源
+1)、所有 /webjars/** ,都去 classpath:/META-INF/resources/webjars/ 找资源
 
 ​webjars: 以jar包的方式引入静态资源;
 
 http://www.webjars.org/
 
-image::http://study.jcohy.com/images/spring-spring-boot5.png[]
+image::{oss-images}/spring-spring-boot5.png[]
 
 localhost:8080/webjars/jquery/3.3.1/jquery.js
 
@@ -97,7 +97,7 @@ localhost:8080/webjars/jquery/3.3.1/jquery.js
 		</dependency>
 ----
 
-2)、"/**" 访问当前项目的任何资源，都去(静态资源的文件夹)找映射
+2)、"/**" 访问当前项目的任何资源,都去(静态资源的文件夹)找映射
 
 [source]
 ----

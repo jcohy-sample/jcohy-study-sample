@@ -11,22 +11,22 @@ RES="\033[0m"
 DOCKER_DIR=/usr/local/docker
 
 BASH_CONFIG=http://software.jcohy.com/bash/common
-#使用说明，用来提示输入参数
+#使用说明,用来提示输入参数
 usage() {
-	echo -e "${BLUE_COLOR}安装 elk 之前，请确保vm.max_map_count大小至少为 262144。执行${RES}"
-	echo -e "${BLUE_COLOR}安装 nacos，请执行  source ./docker.sh nacos${RES}"
-	echo -e "${BLUE_COLOR}安装 sentinel，请执行  ./docker.sh sentinel${RES}"
-	echo -e "${BLUE_COLOR}安装 api-nginx，请执行  ./docker.sh api-nginx${RES}"
-	echo -e "${BLUE_COLOR}安装 web-nginx，请执行  ./docker.sh web-nginx${RES}"
-	echo -e "${BLUE_COLOR}安装 redis-master，请执行  ./docker.sh redis${RES}"
-	echo -e "${BLUE_COLOR}安装 rabbitmq，请执行  ./docker.sh rabbitmq${RES}"
-	echo -e "${BLUE_COLOR}安装 zipkin，请执行  ./docker.sh zipkin${RES}"
-	echo -e "${BLUE_COLOR}安装 minio，请执行  ./docker.sh minio${RES}"
-	echo -e "${BLUE_COLOR}安装 elk，请执行  ./docker.sh elk${RES}"
-	echo -e "${BLUE_COLOR}启动基础模块，请执行  ./docker.sh base${RES}"
-	echo -e "${BLUE_COLOR}关闭所有模块，请执行  ./docker.sh stop${RES}"
-	echo -e "${BLUE_COLOR}删除所有模块，请执行  ./docker.sh rm${RES}"
-	echo -e "${BLUE_COLOR}删除Tag为空的镜像，请执行  ./docker.sh rmiNoneTag${RES}"
+	echo -e "${BLUE_COLOR}安装 elk 之前,请确保vm.max_map_count大小至少为 262144.执行${RES}"
+	echo -e "${BLUE_COLOR}安装 nacos,请执行  source ./docker.sh nacos${RES}"
+	echo -e "${BLUE_COLOR}安装 sentinel,请执行  ./docker.sh sentinel${RES}"
+	echo -e "${BLUE_COLOR}安装 api-nginx,请执行  ./docker.sh api-nginx${RES}"
+	echo -e "${BLUE_COLOR}安装 web-nginx,请执行  ./docker.sh web-nginx${RES}"
+	echo -e "${BLUE_COLOR}安装 redis-master,请执行  ./docker.sh redis${RES}"
+	echo -e "${BLUE_COLOR}安装 rabbitmq,请执行  ./docker.sh rabbitmq${RES}"
+	echo -e "${BLUE_COLOR}安装 zipkin,请执行  ./docker.sh zipkin${RES}"
+	echo -e "${BLUE_COLOR}安装 minio,请执行  ./docker.sh minio${RES}"
+	echo -e "${BLUE_COLOR}安装 elk,请执行  ./docker.sh elk${RES}"
+	echo -e "${BLUE_COLOR}启动基础模块,请执行  ./docker.sh base${RES}"
+	echo -e "${BLUE_COLOR}关闭所有模块,请执行  ./docker.sh stop${RES}"
+	echo -e "${BLUE_COLOR}删除所有模块,请执行  ./docker.sh rm${RES}"
+	echo -e "${BLUE_COLOR}删除Tag为空的镜像,请执行  ./docker.sh rmiNoneTag${RES}"
 	exit 1
 }
 
@@ -35,7 +35,7 @@ usage() {
 echo -e "${RED_COLOR}>>>>>>>>>>>>>>>>>>>>>>>>>> Init The Start <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<${RES}"
 # 安装docker
 if ! [ -x "$(command -v docker)" ]; then
-   echo -e "${GREEN_COLOR}---------->>检测到 Docker 尚未安装。正在试图从网络安装...所需时间与你的网络环境有关${RES}"
+   echo -e "${GREEN_COLOR}---------->>检测到 Docker 尚未安装.正在试图从网络安装...所需时间与你的网络环境有关${RES}"
    echo -e "${GREEN_COLOR}---------->>安装一些必要的系统工具${RES}"
    yum install -y yum-utils device-mapper-persistent-data lvm2 bridge-utils net-tools
    echo -e "${GREEN_COLOR}---------->>添加软件源信息${RES}"
@@ -67,7 +67,7 @@ fi
 
 if ! [ -x "$(command -v docker-compose)" ]; then
 	echo -e "${GREEN_COLOR}---------->>开始安装 docker-compose${RES}"
-	echo -e "${GREEN_COLOR}---------->>检测到 docker-compose 尚未安装。正在试图从网络安装...所需时间与你的网络环境有关${RES}"
+	echo -e "${GREEN_COLOR}---------->>检测到 docker-compose 尚未安装.正在试图从网络安装...所需时间与你的网络环境有关${RES}"
 	curl -L https://dn-dao-github-mirror.daocloud.io/docker/compose/releases/download/1.23.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
 	chmod +x /usr/local/bin/docker-compose
 	if ! [ -x "$(command -v docker-compose)" ]; then
@@ -85,7 +85,7 @@ test ! -e "./docker-compose.yml" && wget -N $BASH_CONFIG/docker-compose.yml
 
 #创建docker目录
 if [ ! -d "$DOCKER_DIR" ]; then
-	echo '创建目录。'$DOCKER_DIR
+	echo '创建目录.'$DOCKER_DIR
     mkdir -p $DOCKER_DIR
 fi
 
@@ -244,7 +244,7 @@ rmiNoneTag(){
 }
 
 
-#根据输入参数，选择执行对应方法，不输入则执行使用说明
+#根据输入参数,选择执行对应方法,不输入则执行使用说明
 case "$1" in
 "nacos")
 	docker-compose up -d --build nacos

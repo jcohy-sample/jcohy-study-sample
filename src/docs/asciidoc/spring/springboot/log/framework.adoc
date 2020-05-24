@@ -9,7 +9,7 @@
 
 3、高大上的几个功能？异步模式？自动归档？xxxx？  zhanglogging-good.jar？
 
-4、将以前框架卸下来？换上新的框架，重新修改之前相关的API; zhanglogging-prefect.jar;
+4、将以前框架卸下来？换上新的框架,重新修改之前相关的API; zhanglogging-prefect.jar;
 
 5、JDBC---数据库驱动;
 
@@ -35,6 +35,6 @@ JUL、JCL、Jboss-logging、logback、log4j、log4j2、slf4j....
 
 日志实现: Logback;
 
-SpringBoot: 底层是Spring框架，Spring框架默认是用JCL
+SpringBoot: 底层是Spring框架,Spring框架默认是用JCL
 
 ​**SpringBoot选用 SLF4j和logback; **

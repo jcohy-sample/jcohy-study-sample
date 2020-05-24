@@ -2,7 +2,7 @@
 = java socket
 
 [[guide-socket-1]]
-== 用Java的套接字编程实现一个多线程的回显(echo)服务器。
+== 用Java的套接字编程实现一个多线程的回显(echo)服务器.
 
 [source,java]
 ----
@@ -52,9 +52,9 @@ public class EchoServer {
 }
 ----
 
-注意：上面的代码使用了Java 7的TWR语法，由于很多外部资源类都间接的实现了 `AutoCloseable` 接口(单方法回调接口)，因此可以利用TWR语法在try结束的时候通过回调的方式自动调用外部资源类的close()方法，避免书写冗长的finally代码块。此外，上面的代码用一个静态内部类实现线程的功能，使用多线程可以避免一个用户I/O操作所产生的中断影响其他用户对服务器的访问，简单的说就是一个用户的输入操作不会造成其他用户的阻塞。当然，上面的代码使用线程池可以获得更好的性能，因为频繁的创建和销毁线程所造成的开销也是不可忽视的。
+注意:上面的代码使用了Java 7的TWR语法,由于很多外部资源类都间接的实现了 `AutoCloseable` 接口(单方法回调接口),因此可以利用TWR语法在try结束的时候通过回调的方式自动调用外部资源类的close()方法,避免书写冗长的finally代码块.此外,上面的代码用一个静态内部类实现线程的功能,使用多线程可以避免一个用户I/O操作所产生的中断影响其他用户对服务器的访问,简单的说就是一个用户的输入操作不会造成其他用户的阻塞.当然,上面的代码使用线程池可以获得更好的性能,因为频繁的创建和销毁线程所造成的开销也是不可忽视的.
 
-下面是一段回显客户端测试代码：
+下面是一段回显客户端测试代码:
 
 [source,java]
 ----
@@ -80,7 +80,7 @@ public class EchoClient {
 }
 ----
 
-如果希望用NIO的多路复用套接字实现服务器，代码如下所示。NIO的操作虽然带来了更好的性能，但是有些操作是比较底层的，对于初学者来说还是有些难于理解。
+如果希望用NIO的多路复用套接字实现服务器,代码如下所示.NIO的操作虽然带来了更好的性能,但是有些操作是比较底层的,对于初学者来说还是有些难于理解.
 
 [source,java]
 ----
@@ -147,7 +147,7 @@ public class EchoServerNIO {
                     buffer.flip();
                     CharBuffer charBuffer = CharsetHelper.decode(buffer);
                     String msg = charBuffer.toString();
-                    System.out.println("收到" + channel.getRemoteAddress() + "的消息：" + msg);
+                    System.out.println("收到" + channel.getRemoteAddress() + "的消息:" + msg);
                     channel.write(CharsetHelper.encode(CharBuffer.wrap(msg)));
                 } else {
                     channel.close();

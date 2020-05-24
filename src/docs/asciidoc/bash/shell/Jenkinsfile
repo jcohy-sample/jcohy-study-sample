@@ -27,7 +27,7 @@ node {
                     env.ENV = userInput
                 } catch(err) {
                     def user = err.getCauses()[0].getUser()
-                    // 时钟到达，默认为dev
+                    // 时钟到达,默认为dev
                     if ('SYSTEM' == user.toString()) {
                         env.ENV = 'dev'
                     } else {
@@ -75,7 +75,7 @@ node {
                     try {
                         input "Deploy to ${env.ENV} environment?"
                         echo "${env.WORKSPACE}"
-                        //echo "${WORKSPACE},${JOB_NAME},${JENKINS_HOME},${env.BUILD_URL}，${BUILD_URL}，${JOB_URL}"
+                        //echo "${WORKSPACE},${JOB_NAME},${JENKINS_HOME},${env.BUILD_URL},${BUILD_URL},${JOB_URL}"
 //                        env.REPO_URL = sh(returnStdout: true, script: "./gradlew -Penv=${env.ENV} publish | grep -oP -m 1 'http.*?zip'").trim()
                         env.REPO_URL = sh(returnStdout: true, script: "find ${env.WORKSPACE} -name '*?zip'").trim()
                         echo "Deploy to url: ${env.REPO_URL}"

@@ -1,6 +1,6 @@
 = SpringBoot 基础版
 
-本节讨论 Spring Boot 的入门知识。
+本节讨论 Spring Boot 的入门知识.
 
 SpringBoot 中文翻译文档 {spring-boot-chinese-docs}/index.html.
 

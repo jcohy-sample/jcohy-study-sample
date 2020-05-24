@@ -24,11 +24,11 @@ javaBean:
 [source,java]
 ----
 /**
- * 将配置文件中配置的每一个属性的值，映射到这个组件中
+ * 将配置文件中配置的每一个属性的值,映射到这个组件中
  * @ConfigurationProperties: 告诉SpringBoot将本类中的所有属性和配置文件中相关的配置进行绑定;
  *      prefix = "person": 配置文件中哪个下面的所有属性进行一一映射
  *
- * 只有这个组件是容器中的组件，才能容器提供的@ConfigurationProperties功能;
+ * 只有这个组件是容器中的组件,才能容器提供的@ConfigurationProperties功能;
  *
  */
 @Component
@@ -46,11 +46,11 @@ public class Person {
 
 ----
 
-我们可以导入配置文件处理器，以后编写配置就有提示了
+我们可以导入配置文件处理器,以后编写配置就有提示了
 
 [source,xml]
 ----
-<!--导入配置文件处理器，配置文件进行绑定就会有提示-->
+<!--导入配置文件处理器,配置文件进行绑定就会有提示-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
@@ -62,7 +62,7 @@ public class Person {
 
 调整
 
-image::http://study.jcohy.com/images/spring-spring-boot1.png[]
+image::{oss-images}/spring-spring-boot1.png[]
 
 == `@Value` 获取值和 `@ConfigurationProperties` 获取值比较
 
@@ -83,9 +83,9 @@ image::http://study.jcohy.com/images/spring-spring-boot1.png[]
 
 配置文件 `yml` 还是 `properties` 他们都能获取到值;
 
-如果说，我们只是在某个业务逻辑中需要获取一下配置文件中的某项值，使用 `@Value`;
+如果说,我们只是在某个业务逻辑中需要获取一下配置文件中的某项值,使用 `@Value`;
 
-如果说，我们专门编写了一个 javaBean 来和配置文件进行映射，我们就直接使用 `@ConfigurationProperties`;
+如果说,我们专门编写了一个 javaBean 来和配置文件进行映射,我们就直接使用 `@ConfigurationProperties`;
 
 == 配置文件注入值数据校验
 
@@ -124,11 +124,11 @@ public class Person {
 [source,java]
 ----
 /**
- * 将配置文件中配置的每一个属性的值，映射到这个组件中
+ * 将配置文件中配置的每一个属性的值,映射到这个组件中
  * @ConfigurationProperties: 告诉SpringBoot将本类中的所有属性和配置文件中相关的配置进行绑定;
  *      prefix = "person": 配置文件中哪个下面的所有属性进行一一映射
  *
- * 只有这个组件是容器中的组件，才能容器提供的@ConfigurationProperties功能;
+ * 只有这个组件是容器中的组件,才能容器提供的@ConfigurationProperties功能;
  *  @ConfigurationProperties(prefix = "person")默认从全局配置文件中获取值;
  *
  */
@@ -157,11 +157,11 @@ public class Person {
 
 
 
-@**ImportResource**: 导入Spring的配置文件，让配置文件里面的内容生效;
+@**ImportResource**: 导入Spring的配置文件,让配置文件里面的内容生效;
 
-Spring Boot里面没有Spring的配置文件，我们自己编写的配置文件，也不能自动识别;
+Spring Boot里面没有Spring的配置文件,我们自己编写的配置文件,也不能自动识别;
 
-想让Spring的配置文件生效，加载进来; @**ImportResource**标注在一个配置类上
+想让Spring的配置文件生效,加载进来; @**ImportResource**标注在一个配置类上
 
 [source,java]
 ----

@@ -49,7 +49,7 @@ smonth=`date --date=$day_01 +%m`
 sday=`date --date=$day_01 +%d`
 
 
-#读取日志文件的目录，判断是否有当日待处理的目录(如: 2016-03-18)
+#读取日志文件的目录,判断是否有当日待处理的目录(如: 2016-03-18)
 files=`hadoop fs -ls $log_pre_input | grep $day_01 | wc -l`
 if [ $files -gt 0 ]; then
 #提交mr任务job运行
@@ -66,6 +66,6 @@ fi
 
 
 #如果失败
-#发送邮件或短信，人为来干预
+#发送邮件或短信,人为来干预
 
 

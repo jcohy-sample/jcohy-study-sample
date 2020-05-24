@@ -4,28 +4,28 @@
 [[design-composite-overview]]
 == 概述
 
-将对象组合成树形结构以表示‘部分-整体’的层次结构，组合模式使得用户对单个对象和组合对象的使用的一致性。
+将对象组合成树形结构以表示‘部分-整体’的层次结构,组合模式使得用户对单个对象和组合对象的使用的一致性.
 
 [[design-composite-role]]
 == 组合模式的角色
 
-image::http://study.jcohy.com/images/design-composite1.png[]
+image::{oss-images}/design-composite1.png[]
 
-*  Component:组合中的对象声明接口，在适当情况下，实现所有类公共接口的默认行为，声明一个接口用于访问和管理的子部件。
-*  Leaf :在组合中表示叶节点对象，叶节点没有子节点。
-*  Composite:定义有枝节点行为，用来存储子部件，在 Component 接口中实现与子部件相关的操作。
+*  Component:组合中的对象声明接口,在适当情况下,实现所有类公共接口的默认行为,声明一个接口用于访问和管理的子部件.
+*  Leaf :在组合中表示叶节点对象,叶节点没有子节点.
+*  Composite:定义有枝节点行为,用来存储子部件,在 Component 接口中实现与子部件相关的操作.
 *  Client
 
 [[design-composite-sign]]
 == 适用性
 
-* 你想表示对象的部分-整体层次结构。
-* 你希望用户忽略组合对象与单个对象的不同，用户将统一地使用组合结构中的所有对象。
+* 你想表示对象的部分-整体层次结构.
+* 你希望用户忽略组合对象与单个对象的不同,用户将统一地使用组合结构中的所有对象.
 
 [[design-composite-impl]]
 == 组合模式的实现
 
-以文件和目录的结构为例。在程序中，File 表示文件，Directory 表示目录。两者合并起来就是父类 Entry 类，表示目录进入点的类。对 File 和 Directory 一视同仁的类。
+以文件和目录的结构为例.在程序中,File 表示文件,Directory 表示目录.两者合并起来就是父类 Entry 类,表示目录进入点的类.对 File 和 Directory 一视同仁的类.
 
 1.Entry
 

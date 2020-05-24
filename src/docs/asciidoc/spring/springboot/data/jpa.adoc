@@ -3,13 +3,13 @@
 
 == SpringData简介
 
-image::http://study.jcohy.com/images/spring-spring-boot23.png[]
+image::{oss-images}/spring-spring-boot23.png[]
 
 == 整合SpringData JPA
 
 JPA:ORM(Object Relational Mapping);
 
-1)、编写一个实体类(bean)和数据表进行映射，并且配置好映射关系;
+1)、编写一个实体类(bean)和数据表进行映射,并且配置好映射关系;
 
 [source,java]
 ----

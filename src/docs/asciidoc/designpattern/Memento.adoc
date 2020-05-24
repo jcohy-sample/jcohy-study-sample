@@ -4,22 +4,22 @@
 [[design-memento-overview]]
 == 概述
 
-备忘录模式: 在不破坏封装性的前提下，捕获一个对象的内部状态，并在这个对象之外保存这个状态，这样以后就可将该对象恢复到原先保存的状态。
+备忘录模式: 在不破坏封装性的前提下,捕获一个对象的内部状态,并在这个对象之外保存这个状态,这样以后就可将该对象恢复到原先保存的状态.
 
 [[design-memento-role]]
 == 备忘录模式的角色
 
-image::http://study.jcohy.com/images/design-memento.png[]
+image::{oss-images}/design-memento.png[]
 
-*  Originator:负责创建一个备忘录Memento,用来记录当前时刻他的内部状态，并可使用备忘录恢复他的内部状态。
-*  Memento: 负责存储Originator对象的内部状态，并可防止Originator以外的其他对象访问备忘录Memento。
+*  Originator:负责创建一个备忘录Memento,用来记录当前时刻他的内部状态,并可使用备忘录恢复他的内部状态.
+*  Memento: 负责存储Originator对象的内部状态,并可防止Originator以外的其他对象访问备忘录Memento.
 *  Caretaker: 负责保存好备忘录Memento
 
 [[design-memento-sign]]
 == 适用性
 
-* 必须保存一个对象在某一个时刻的(部分)状态, 这样以后需要时它才能恢复到先前的状态。
-* 如果一个用接口来让其它对象直接得到这些状态，将会暴露对象的实现细节并破坏对象的封装性。
+* 必须保存一个对象在某一个时刻的(部分)状态, 这样以后需要时它才能恢复到先前的状态.
+* 如果一个用接口来让其它对象直接得到这些状态,将会暴露对象的实现细节并破坏对象的封装性.
 
 [[design-memento-impl]]
 == 备忘录模式的实现

@@ -9,7 +9,7 @@ ${random.value}、${random.int}、${random.long}
 ${random.int(10)}、${random.int[1024,65536]}
 ----
 
-== 占位符获取之前配置的值，如果没有可以是用:指定默认值
+== 占位符获取之前配置的值,如果没有可以是用:指定默认值
 
 [source,properties]
 ----

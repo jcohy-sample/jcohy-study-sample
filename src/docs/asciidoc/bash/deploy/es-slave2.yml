@@ -17,7 +17,7 @@ discovery.seed_hosts:
   - es-master
   - es-slave1
   - es-slave2
-# 手动指定可以成为 mater 的所有节点的 name 或者 ip，这些配置将会在第一次选举中进行计算
+# 手动指定可以成为 mater 的所有节点的 name 或者 ip,这些配置将会在第一次选举中进行计算
 cluster.initial_master_nodes:
   - es-master
 # 支持跨域访问

@@ -3,7 +3,7 @@
 
 == 多Profile文件
 
-我们在主配置文件编写的时候，文件名可以是   application-{profile}.properties/yml
+我们在主配置文件编写的时候,文件名可以是   application-{profile}.properties/yml
 
 默认使用application.properties的配置;
 
@@ -41,7 +41,7 @@ spring:
 
 java -jar spring-boot-02-config-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev;
 
-可以直接在测试的时候，配置传入命令行参数
+可以直接在测试的时候,配置传入命令行参数
 
 * 虚拟机参数;
 

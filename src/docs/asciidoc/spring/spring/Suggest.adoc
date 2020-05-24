@@ -1,9 +1,9 @@
 [[Suggest]]
 = 建议
 
-Spring团队是不建议开发者使用 InitializingBean 接口，因为这样会将代码耦合到Spring的特殊接口上. 他们建议使用 @PostConstruct 注解或者指定一个POJO的实现方法， 这会比实现接口更好. 在基于XML的元数据配置上，开发者可以使用 init-method 属性来指定一个没有参数的方法，使用Java配置的开发者可以在 @Bean 上添加 initMethod 属性. 请参阅接收生命周期回调
+Spring团队是不建议开发者使用 InitializingBean 接口,因为这样会将代码耦合到Spring的特殊接口上. 他们建议使用 @PostConstruct 注解或者指定一个POJO的实现方法, 这会比实现接口更好. 在基于XML的元数据配置上,开发者可以使用 init-method 属性来指定一个没有参数的方法,使用Java配置的开发者可以在 @Bean 上添加 initMethod 属性. 请参阅接收生命周期回调
 
-我们建议您不要使用 DisposableBean 回调接口，因为它会不必要地将代码耦合到Spring. 或者，我们建议使用@PreDestroy 注解 或指定bean定义支持的泛型方法. 在基于XML的元数据配置中，您可以在 <bean/> 上使用 destroy-method 属性. 使用Java配置，您可以使用 @Bean 的 destroyMethod 属性. 请参阅接收生命周期回调. 考虑以下定义:
+我们建议您不要使用 DisposableBean 回调接口,因为它会不必要地将代码耦合到Spring. 或者,我们建议使用@PreDestroy 注解 或指定bean定义支持的泛型方法. 在基于XML的元数据配置中,您可以在 <bean/> 上使用 destroy-method 属性. 使用Java配置,您可以使用 @Bean 的 destroyMethod 属性. 请参阅接收生命周期回调. 考虑以下定义:
 
 默认初始化和销毁方法 init(), initialize(), dispose().
 

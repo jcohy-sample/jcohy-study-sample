@@ -43,7 +43,7 @@ smonth=`date --date=$day_01 +%m`
 sday=`date --date=$day_01 +%d`
 
 
-#读取日志文件的目录，判断是否有需要上传的文件
+#读取日志文件的目录,判断是否有需要上传的文件
 files=`hadoop fs -ls $log_flume_dir | grep $day_01 | wc -l`
 if [ $files -gt 0 ]; then
 hadoop fs -mv ${log_flume_dir}/${day_01} ${log_pre_input}

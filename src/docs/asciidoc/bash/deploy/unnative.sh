@@ -5,11 +5,11 @@ BLUE_COLOR="\033[36m"
 RES="\033[0m"
 
 usage(){
-	echo -e "${BLUE_COLOR}卸载 jdk，请执行  source ./unnative.sh jdk${RES}"
-	echo -e "${BLUE_COLOR}卸载 tomcat，请执行  ./unnative.sh tomcat${RES}"
-	echo -e "${BLUE_COLOR}卸载 mysql，请执行  ./unnative.sh mysql${RES}"
-	echo -e "${BLUE_COLOR}卸载 nginx，请执行  ./unnative.sh nginx${RES}"
-	echo -e "${BLUE_COLOR}卸载，请执行  ./unnative.sh all${RES}"
+	echo -e "${BLUE_COLOR}卸载 jdk,请执行  source ./unnative.sh jdk${RES}"
+	echo -e "${BLUE_COLOR}卸载 tomcat,请执行  ./unnative.sh tomcat${RES}"
+	echo -e "${BLUE_COLOR}卸载 mysql,请执行  ./unnative.sh mysql${RES}"
+	echo -e "${BLUE_COLOR}卸载 nginx,请执行  ./unnative.sh nginx${RES}"
+	echo -e "${BLUE_COLOR}卸载,请执行  ./unnative.sh all${RES}"
 	exit 1
 }
 

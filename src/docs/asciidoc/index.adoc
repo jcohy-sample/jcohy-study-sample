@@ -9,13 +9,13 @@ http://www.jcohy.com[*http://www.jcohy.com*]
 文档翻译网址:
 http://docs.jcohy.com[*http://docs.jcohy.com*]
 
-我的学习笔记，记录学习过程中的笔记以及遇到的问题,以及我的一些经验总结。如果出现链接失效,或者想知道更多的内容等情况可以提交 https://github.com/jcohy/jcohy-issues/issues[Issues] 提醒我修改相关内容。
+我的学习笔记,记录学习过程中的笔记以及遇到的问题,以及我的一些经验总结.如果出现链接失效,或者想知道更多的内容等情况可以提交 https://github.com/jcohy/jcohy-issues/issues[Issues] 提醒我修改相关内容.
 ****
 
 [horizontal]
 <<java.adoc#java-overview, Java基础>> :: java 基础,Java 8,9,10,11,12,13,14新特性
 <<designpattern.adoc#design-overview, 设计模式>> :: Java 23种设计模式
-<<algorithm.adoc#algorithm-overview, 算法>>  :: ACM 常见算法精题。各种排序算法
+<<algorithm.adoc#algorithm-overview, 算法>>  :: ACM 常见算法精题.各种排序算法
 <<other.adoc#other-overview, 其他组件>>  :: Quartz,Swagger,Jenkins,WenSite等
 <<linux.adoc#linux-overview, linux>>  :: Linux 介绍
 <<nosql.adoc#nosql-overview, nosql>>  :: nosql 介绍
@@ -25,4 +25,4 @@ http://docs.jcohy.com[*http://docs.jcohy.com*]
 <<docker.adoc#docker-overview, docker>>  :: docker
 <<go.adoc#go-overview, go>>  :: go
 <<guide.adoc#guide, 面试指南>>  :: 面试指南
-<<file.adoc#file-overview, 常用文件>>  :: 常用正则表达式，配置文件等
+<<file.adoc#file-overview, 常用文件>>  :: 常用正则表达式,配置文件等

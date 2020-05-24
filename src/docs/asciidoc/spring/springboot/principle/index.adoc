@@ -39,9 +39,9 @@ private void initialize(Object[] sources) {
 }
 ----
 
-image::http://study.jcohy.com/images/spring-spring-boot24.png[]
+image::{oss-images}/spring-spring-boot24.png[]
 
-image::http://study.jcohy.com/images/spring-spring-boot25.png[]
+image::{oss-images}/spring-spring-boot25.png[]
 
 2、运行run方法
 
@@ -82,10 +82,10 @@ public ConfigurableApplicationContext run(String... args) {
        //prepareContext运行完成以后回调所有的SpringApplicationRunListener的contextLoaded();
 
        //s刷新容器; ioc容器初始化(如果是web应用还会创建嵌入式的Tomcat); Spring注解版
-       //扫描，创建，加载所有组件的地方; (配置类，组件，自动配置)
+       //扫描,创建,加载所有组件的地方; (配置类,组件,自动配置)
       refreshContext(context);
        //从ioc容器中获取所有的ApplicationRunner和CommandLineRunner进行回调
-       //ApplicationRunner先回调，CommandLineRunner再回调
+       //ApplicationRunner先回调,CommandLineRunner再回调
       afterRefresh(context, applicationArguments);
        //所有的SpringApplicationRunListener回调finished方法
       listeners.finished(context, null);

@@ -3,7 +3,7 @@
 
 == 如何在系统中使用 SLF4j   https://www.slf4j.org
 
-以后开发的时候，日志记录方法的调用，不应该来直接调用日志的实现类，而是调用日志抽象层里面的方法;
+以后开发的时候,日志记录方法的调用,不应该来直接调用日志的实现类,而是调用日志抽象层里面的方法;
 
 给系统里面导入 slf4j 的 jar 和  logback 的实现jar
 
@@ -22,18 +22,18 @@ public class HelloWorld {
 
 图示;
 
-image::http://study.jcohy.com/images/spring-spring-boot-concrete-bindings.png[]
+image::{oss-images}/spring-spring-boot-concrete-bindings.png[]
 
-每一个日志的实现框架都有自己的配置文件。使用slf4j以后，**配置文件还是做成日志实现框架自己本身的配置文件; **
+每一个日志的实现框架都有自己的配置文件.使用slf4j以后,**配置文件还是做成日志实现框架自己本身的配置文件; **
 
 [[springboot-base-log-remain]]
 == 遗留问题
 
 a(slf4j+logback): Spring(commons-logging)、Hibernate(jboss-logging)、MyBatis、xxxx
 
-统一日志记录，即使是别的框架和我一起统一使用slf4j进行输出？
+统一日志记录,即使是别的框架和我一起统一使用slf4j进行输出？
 
-image::http://study.jcohy.com/images/spring-spring-boot-legacy.png[]
+image::{oss-images}/spring-spring-boot-legacy.png[]
 
 **如何让系统中所有的日志都统一到slf4j; **
 

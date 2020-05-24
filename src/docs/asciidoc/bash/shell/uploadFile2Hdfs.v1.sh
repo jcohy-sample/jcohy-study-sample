@@ -21,7 +21,7 @@ log_src_dir=/export/software/
 hdfs_root_dir=/data/clickLog/20151226/
 
 
-#读取日志文件的目录，判断是否有需要上传的文件
+#读取日志文件的目录,判断是否有需要上传的文件
 
 ls $log_src_dir | while read fileName
 do

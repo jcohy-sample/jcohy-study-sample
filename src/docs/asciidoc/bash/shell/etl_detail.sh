@@ -64,4 +64,4 @@ as ref_host, ref_path, ref_query, ref_query_id) c
 $exe_hive -e "$HQL"
 
 #异常处理
-#如果失败，发送邮件、短信
+#如果失败,发送邮件、短信

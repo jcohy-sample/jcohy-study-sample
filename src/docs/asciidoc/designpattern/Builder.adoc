@@ -4,12 +4,12 @@
 [[design-builder-overview]]
 == 概述
 
-建造者模式: 将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。
+建造者模式: 将一个复杂对象的构建与它的表示分离,使得同样的构建过程可以创建不同的表示.
 
 [[design-builder-role]]
 == 建造者模式的参与者
 
-image::http://study.jcohy.com/images/design-builder1.png[]
+image::{oss-images}/design-builder1.png[]
 
 *  Builder:规定产生对象实例的接口
 *  ConcreteBuilder;实现Builder的接口
@@ -19,8 +19,8 @@ image::http://study.jcohy.com/images/design-builder1.png[]
 [[design-builder-sign]]
 == 适用性
 
-* 当创建复杂对象的算法应该独立于该对象的组成部分以及它们的装配方式时。
-* 当构造过程必须允许被构造的对象有不同的表示时。
+* 当创建复杂对象的算法应该独立于该对象的组成部分以及它们的装配方式时.
+* 当构造过程必须允许被构造的对象有不同的表示时.
 
 [[design-builder-impl]]
 == 建造者模式的实现
@@ -41,7 +41,7 @@ include::{design-pattern-code}/builder/Builder.java[tag=code]
 include::{design-pattern-code}/builder/Director.java[tag=code]
 ----
 
-3、创建 Builder 的实现类 TextBuilder，HtmlBuilder
+3、创建 Builder 的实现类 TextBuilder,HtmlBuilder
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .TextBuilder
@@ -66,8 +66,8 @@ include::{design-pattern-code}/builder/Test.java[tag=code]
 == Q&A
 
 [qanda]
-在textBuilder类中，为什么使用StringBuffer类，而非String类?::
- 像这样经常修改或者新增字符串的程序，利用 `StringBuffer` 的执行速度比 `String` 更快。因为 `String` 类每次修改或者新增都会产生一个新的对象实例
+在textBuilder类中,为什么使用StringBuffer类,而非String类?::
+ 像这样经常修改或者新增字符串的程序,利用 `StringBuffer` 的执行速度比 `String` 更快.因为 `String` 类每次修改或者新增都会产生一个新的对象实例
 
 [[design-builder-java]]
 == Java语言中建造者模式
@@ -82,5 +82,5 @@ include::{design-pattern-code}/builder/Test.java[tag=code]
 [[design-builder-expand]]
 == 扩展
 
-*  将程序中的 Builder 类修改成接口。配合修改其他类
-*  修改示例程序，让确定在调出 `makeString`，`makeItems` 和 `getResult` 方法之前一定会先调用 `makeTitle` 方法
+*  将程序中的 Builder 类修改成接口.配合修改其他类
+*  修改示例程序,让确定在调出 `makeString`,`makeItems` 和 `getResult` 方法之前一定会先调用 `makeTitle` 方法

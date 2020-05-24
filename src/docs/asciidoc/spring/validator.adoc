@@ -21,9 +21,9 @@
 | @URL | 字符串是合法的 URL
 | @AssertFalse | 值必须是 false
 | @AssertTrue | 值必须是 true
-| @DecimalMax(value=,inclusive=) | 值必须小于等于(inclusive=true)/小于(inclusive=false) value属性指定的值，可以注解在字符串类型的属性上。
-| @DecimalMin(value=,inclusive=) | 值必须大于等于(inclusive=true)/大于(inclusive=false) value属性指定的值，可以注解在字符串类型的属性上。
-| @Digits(integer=,fraction=) | 数字格式检查,integer 指定整数部分的最大长度，fraction指定小数部分的最大长度
+| @DecimalMax(value=,inclusive=) | 值必须小于等于(inclusive=true)/小于(inclusive=false) value属性指定的值,可以注解在字符串类型的属性上.
+| @DecimalMin(value=,inclusive=) | 值必须大于等于(inclusive=true)/大于(inclusive=false) value属性指定的值,可以注解在字符串类型的属性上.
+| @Digits(integer=,fraction=) | 数字格式检查,integer 指定整数部分的最大长度,fraction指定小数部分的最大长度
 | @Future | 值必须是未来的日期
 | @Pass | 值必须是过去的日期
 | @Max(value=) | 值必须小于等于 value 指定的值,不能注解在字符串类型的属性上

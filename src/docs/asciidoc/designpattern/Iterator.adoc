@@ -4,30 +4,30 @@
 [[design-iterator-overview]]
 == 概述
 
-迭代子模式: 提供一种方法顺序访问一个聚合对象中的各个元素，而又不暴露该对象的内部表示。
+迭代子模式: 提供一种方法顺序访问一个聚合对象中的各个元素,而又不暴露该对象的内部表示.
 
 [[design-iterator-role]]
 == 迭代器模式的角色
 
-image::http://study.jcohy.com/images/design-iterator.png[iterator]
+image::{oss-images}/design-iterator.png[iterator]
 
 *  Aggregate:聚集抽象类
-*  ConcreteAggregate:具体聚集类，继承Aggregate
-*  Iterator:迭代抽象类，用于定义得到的开始对象，得到下一个对象，判断是否到结尾，当前对象等抽象方法，统一接口。
-*  ConcreteIterator:具体迭代类，继承Iterator，实现其中的方法。
+*  ConcreteAggregate:具体聚集类,继承Aggregate
+*  Iterator:迭代抽象类,用于定义得到的开始对象,得到下一个对象,判断是否到结尾,当前对象等抽象方法,统一接口.
+*  ConcreteIterator:具体迭代类,继承Iterator,实现其中的方法.
 *  Client
 
 [[design-iterator-sign]]
 == 适用性
 
-* 访问一个聚合对象的内容而无需暴露它的内部表示。
-* 支持对聚合对象的多种遍历。
-* 为遍历不同的聚合结构提供一个统一的接口(即, 支持多态迭代)。
+* 访问一个聚合对象的内容而无需暴露它的内部表示.
+* 支持对聚合对象的多种遍历.
+* 为遍历不同的聚合结构提供一个统一的接口(即, 支持多态迭代).
 
 [[design-iterator-impl]]
 == 迭代器模式的实现
 
-实现一个把书籍放到书架上，并依次输出书名。
+实现一个把书籍放到书架上,并依次输出书名.
 
 1、定义Book实体类
 
@@ -53,7 +53,7 @@ include::{design-pattern-code}/iterator/Aggregate.java[tag=code]
 include::{design-pattern-code}/iterator/BookShelf.java[tag=code]
 ----
                     
-4、执行递增，遍历的接口
+4、执行递增,遍历的接口
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Iterator

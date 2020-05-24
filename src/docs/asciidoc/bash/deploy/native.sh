@@ -9,7 +9,7 @@ VIOLET_COLOR="\033[35m"
 YELLOW_COLOR="\033[33m"
 RES="\033[0m"
 
-#软件所在http服务器。
+#软件所在http服务器.
 BASE_URL=http://software.jcohy.com/linux
 #软件下载目录
 BASE_DIR=/opt/software
@@ -22,13 +22,13 @@ MYSQL_PACKAGE=mysql-8.0.19-1.el7.x86_64.rpm-bundle.tar
 GCC_PACKAGE=gcc-8.3.0.build.tar.gz
 NGINX_PACKAGE=nginx-1.6.2.build.tar.gz
 
-#使用说明，用来提示输入参数
+#使用说明,用来提示输入参数
 usage() {
-	echo -e "${BLUE_COLOR}如果需要安装 jdk，请执行  source ./native.sh jdk${RES}"
-	echo -e "${BLUE_COLOR}如果需要安装 tomcat，请执行  ./native.sh tomcat${RES}"
-	echo -e "${BLUE_COLOR}如果需要安装 mysql，请执行  ./native.sh mysql${RES}"
-	echo -e "${BLUE_COLOR}如果需要安装 nginx，请执行  ./native.sh nginx${RES}"
-	echo -e "${BLUE_COLOR}如果需要安装以上全部软件，请执行  ./native.sh all${RES}"
+	echo -e "${BLUE_COLOR}如果需要安装 jdk,请执行  source ./native.sh jdk${RES}"
+	echo -e "${BLUE_COLOR}如果需要安装 tomcat,请执行  ./native.sh tomcat${RES}"
+	echo -e "${BLUE_COLOR}如果需要安装 mysql,请执行  ./native.sh mysql${RES}"
+	echo -e "${BLUE_COLOR}如果需要安装 nginx,请执行  ./native.sh nginx${RES}"
+	echo -e "${BLUE_COLOR}如果需要安装以上全部软件,请执行  ./native.sh all${RES}"
 	exit 1
 }
 
@@ -45,7 +45,7 @@ jdk(){
 export JAVA_HOME=${INSTALL_DIR}/jdk1.8.0_221
 export PATH=\$PATH:\$JAVA_HOME/bin
 EOF
-		echo "====================== JDK 已安装完成，JAVA_HOME='$JAVA_HOME' ======================"
+		echo "====================== JDK 已安装完成,JAVA_HOME='$JAVA_HOME' ======================"
 	fi
 	
 	
@@ -63,7 +63,7 @@ nginx(){
 		if [ $? -eq 0 ];then
 		echo "====================== NGINX 已安装完成! ======================"
 		else
-		echo "====================== NGINX 安装失败!，请检查文件是否存在！ ======================"
+		echo "====================== NGINX 安装失败!,请检查文件是否存在！ ======================"
 		fi
 		
 	fi
@@ -117,7 +117,7 @@ mysql(){
 		#pattern="^(?![A-Za-z0-9]+$)(?![a-z0-9\\W]+$)(?![A-Za-z\\W]+$)(?![A-Z0-9\\W]+$)[a-zA-Z0-9\\W]{8,}$"
 		#while [[ "$newPassword" =~ $pattern ]]
 		#do
-		read -p '准备修改mysql密码，请输入新密码: 新密码必须包含大小写字母、数字和特殊符号，并且长度不能少于8位。' newPassword
+		read -p '准备修改mysql密码,请输入新密码: 新密码必须包含大小写字母、数字和特殊符号,并且长度不能少于8位.' newPassword
 		#done
 		# grep 'temporary password' /var/log/mysqld.log | sed -r 's/.*localhost: (.*)/\1/g'
 		cd ~
@@ -149,7 +149,7 @@ tomcat(){
 	fi
 }
 
-#根据输入参数，选择执行对应方法，不输入则执行使用说明
+#根据输入参数,选择执行对应方法,不输入则执行使用说明
 case "$1" in
 "jdk")
 	jdk

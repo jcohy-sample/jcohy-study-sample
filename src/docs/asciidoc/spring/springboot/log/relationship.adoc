@@ -21,7 +21,7 @@ SpringBoot 使用它来做日志功能;
 
 底层依赖关系
 
-image::http://study.jcohy.com/images/spring-spring-boot3.png[]
+image::{oss-images}/spring-spring-boot3.png[]
 
 总结:
 
@@ -41,7 +41,7 @@ public abstract class LogFactory {
     static LogFactory logFactory = new SLF4JLogFactory();
 ----
 
-image::http://study.jcohy.com/images/spring-spring-boot4.png[]
+image::{oss-images}/spring-spring-boot4.png[]
 
 
 
@@ -63,4 +63,4 @@ image::http://study.jcohy.com/images/spring-spring-boot4.png[]
 		</dependency>
 ----
 
-**SpringBoot能自动适配所有的日志，而且底层使用slf4j+logback的方式记录日志，引入其他框架的时候，只需要把这个框架依赖的日志框架排除掉即可; **
+**SpringBoot能自动适配所有的日志,而且底层使用slf4j+logback的方式记录日志,引入其他框架的时候,只需要把这个框架依赖的日志框架排除掉即可; **

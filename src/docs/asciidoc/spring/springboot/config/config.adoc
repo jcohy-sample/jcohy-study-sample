@@ -1,7 +1,7 @@
 [[springboot-base-config-file]]
 = 配置文件
 
-SpringBoot 使用一个全局的配置文件，配置文件名是固定的
+SpringBoot 使用一个全局的配置文件,配置文件名是固定的
 
 * application.properties
 
@@ -19,7 +19,7 @@ YAML(YAML Ain't Markup Language)
 
 ​以前的配置文件; 大多都使用的是  **xxxx.xml**文件;
 
-​YAML: **以数据为中心**，比json、xml等更适合做配置文件;
+​YAML: **以数据为中心**,比json、xml等更适合做配置文件;
 
 ​YAML: 配置例子
 

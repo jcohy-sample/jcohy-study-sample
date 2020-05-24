@@ -1,7 +1,7 @@
 [[springboot-base-hello]]
 = Spring Boot HelloWorld
 
-一个功能:浏览器发送hello请求，服务器接受请求并处理，响应Hello World字符串;
+一个功能:浏览器发送hello请求,服务器接受请求并处理,响应Hello World字符串;
 
 1、创建一个maven工程; (jar)
 
@@ -28,7 +28,7 @@
 ----
 
 /**
- *  @SpringBootApplication 来标注一个主程序类，说明这是一个Spring Boot应用
+ *  @SpringBootApplication 来标注一个主程序类,说明这是一个Spring Boot应用
  */
 @SpringBootApplication
 public class HelloWorldMainApplication {
@@ -63,7 +63,7 @@ public class HelloController {
 
 [source,xml]
 ----
- <!-- 这个插件，可以将应用打包成一个可执行的jar包; -->
+ <!-- 这个插件,可以将应用打包成一个可执行的jar包; -->
     <build>
         <plugins>
             <plugin>
@@ -74,4 +74,4 @@ public class HelloController {
     </build>
 ----
 
-将这个应用打成jar包，直接使用java -jar的命令进行执行;
+将这个应用打成jar包,直接使用java -jar的命令进行执行;

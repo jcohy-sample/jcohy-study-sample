@@ -41,7 +41,7 @@ wait4FlagFile HDFS /user/hive/warehouse/dw.db/dw_order/dt=${day_01} _SUCCESS 186
 #### 4.执行HQL
 $exe_hive -e "$HQL"
 
-#### 5. 判断代码是否执行成功，touch控制文件
+#### 5. 判断代码是否执行成功,touch控制文件
 result=`hadoop fs -ls /user/hive/warehouse/${TARGET_DB}/${TARGET_TABLE}/dt=${day_01} | wc -l`
 if [[ $result -gt 0 ]]; then
     hadoop fs -touchz /user/hive/warehouse/${TARGET_DB}/${TARGET_TABLE}/dt=${day_01}/_SUCCESS

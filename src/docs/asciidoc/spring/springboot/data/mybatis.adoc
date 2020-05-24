@@ -10,7 +10,7 @@
 		</dependency>
 ----
 
-image::http://study.jcohy.com/images/spring-spring-boot22.png[]
+image::{oss-images}/spring-spring-boot22.png[]
 
 步骤:
 

@@ -44,9 +44,9 @@ public class MyMvcConfig extends WebMvcConfigurerAdapter {
 
 步骤:
 
-1)、编写国际化配置文件，抽取页面需要显示的国际化消息
+1)、编写国际化配置文件,抽取页面需要显示的国际化消息
 
-image::http://study.jcohy.com/images/spring-spring-boot7.png[]
+image::{oss-images}/spring-spring-boot7.png[]
 
 2)、SpringBoot自动配置好了管理国际化资源文件的组件;
 
@@ -84,7 +84,7 @@ public class MessageSourceAutoConfiguration {
 
 3)、去页面获取国际化的值;
 
-image::http://study.jcohy.com/images/spring-spring-boot8.png[]
+image::{oss-images}/spring-spring-boot8.png[]
 
 [source,html]
 ----
@@ -185,7 +185,7 @@ public class MyLocaleResolver implements LocaleResolver {
 
 == 登陆
 
-开发期间模板引擎页面修改以后，要实时生效
+开发期间模板引擎页面修改以后,要实时生效
 
 1)、禁用模板引擎的缓存
 
@@ -212,7 +212,7 @@ spring.thymeleaf.cache=false
 ----
 
 /**
- * 登陆检查，
+ * 登陆检查,
  */
 public class LoginHandlerInterceptor implements HandlerInterceptor {
     //目标方法执行之前
@@ -220,12 +220,12 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Object user = request.getSession().getAttribute("loginUser");
         if(user == null){
-            //未登陆，返回登陆页面
+            //未登陆,返回登陆页面
             request.setAttribute("msg","没有权限请先登陆");
             request.getRequestDispatcher("/index.html").forward(request,response);
             return false;
         }else{
-            //已登陆，放行请求
+            //已登陆,放行请求
             return true;
         }
 
@@ -335,7 +335,7 @@ URI:   /资源名称/资源标识       HTTP请求方式区分对资源CRUD操�
 
 3、默认效果:
 insert的公共片段在div标签中
-如果使用th:insert等属性进行引入，可以不用写~{}:
+如果使用th:insert等属性进行引入,可以不用写~{}:
 行内写法可以加上: [[~{}]];[(~{})];
 ----
 
@@ -448,7 +448,7 @@ insert的公共片段在div标签中
 
 日期的格式化; SpringMVC将页面提交的值需要转换为指定的类型;
 
-2017-12-12---Date;  类型转换，格式化;
+2017-12-12---Date;  类型转换,格式化;
 
 默认日期是按照/的方式;
 
@@ -464,7 +464,7 @@ insert的公共片段在div标签中
     <!--
 1、SpringMVC中配置HiddenHttpMethodFilter;(SpringBoot自动配置好的)
 2、页面创建一个post表单
-3、创建一个input项，name="_method";值就是我们指定的请求方式
+3、创建一个input项,name="_method";值就是我们指定的请求方式
 -->
     <input type="hidden" name="_method" value="put" th:if="${emp!=null}"/>
     <input type="hidden" name="id" th:if="${emp!=null}" th:value="${emp.id}">

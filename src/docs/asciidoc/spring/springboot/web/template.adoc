@@ -3,11 +3,11 @@
 
 JSP、Velocity、Freemarker、Thymeleaf
 
-image::http://study.jcohy.com/images/spring-spring-boot-template-engine.png[]
+image::{oss-images}/spring-spring-boot-template-engine.png[]
 
 SpringBoot推荐的Thymeleaf;
 
-语法更简单，功能更强大;
+语法更简单,功能更强大;
 
 [[springboot-base-web-template-thymeleaf]]
 == 引入 thymeleaf
@@ -46,7 +46,7 @@ public class ThymeleafProperties {
   	//
 ----
 
-只要我们把HTML页面放在classpath:/templates/，thymeleaf就能自动渲染;
+只要我们把HTML页面放在classpath:/templates/,thymeleaf就能自动渲染;
 
 使用:
 
@@ -82,7 +82,7 @@ public class ThymeleafProperties {
 
 ​	th: 任意html属性; 来替换原生属性的值
 
-image::http://study.jcohy.com/images/spring-spring-boot6.png[]
+image::{oss-images}/spring-spring-boot6.png[]
 
 2)、表达式？
 

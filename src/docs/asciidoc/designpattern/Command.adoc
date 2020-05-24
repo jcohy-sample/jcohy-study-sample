@@ -4,16 +4,16 @@
 [[design-command-overview]]
 == 概述
 
-命令模式: 将一个请求封装成一个对象，从而使你可用不同的请求对客户进行参数化，对请求排队或者记录请求日志，以及支持可撤销的操作。
+命令模式: 将一个请求封装成一个对象,从而使你可用不同的请求对客户进行参数化,对请求排队或者记录请求日志,以及支持可撤销的操作.
 
 [[design-command-role]]
 == 命令模式的角色
 
-image::http://study.jcohy.com/images/design-command1.png[]
+image::{oss-images}/design-command1.png[]
 
 *  Command:用来声明 执行操作的接口
-*  ConcreteCommand:将一个接受者对象绑定于一个动作，调用接受者相应的操作，以实现Excute。
-*  Receiver:知道如何实施与执行一个请求相关的操作，任何类都可能作为一个接受者。
+*  ConcreteCommand:将一个接受者对象绑定于一个动作,调用接受者相应的操作,以实现Excute.
+*  Receiver:知道如何实施与执行一个请求相关的操作,任何类都可能作为一个接受者.
 *  Invoker:要求该命令执行这个请求
 *  Client
 
@@ -23,9 +23,9 @@ image::http://study.jcohy.com/images/design-command1.png[]
 [[design-command-impl]]
 == 命令模式的实现
 
-简单的绘图软件，移动鼠标时自动绘制一个红点，按下clear 清除所有
+简单的绘图软件,移动鼠标时自动绘制一个红点,按下clear 清除所有
 
-1.表示命令的接口。
+1.表示命令的接口.
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Command
@@ -72,7 +72,7 @@ include::{design-pattern-code}/command/Client.java[tag=code]
 
 7、result
 
-image::http://study.jcohy.com/images/design-command2.png[]
+image::{oss-images}/design-command2.png[]
 
 [[design-command-qa]]
 == Q&A

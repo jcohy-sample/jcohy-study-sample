@@ -9,15 +9,15 @@ VIOLET_COLOR="\033[35m"
 YELLOW_COLOR="\033[33m"
 RES="\033[0m"
 
-#脚本所在http服务器。
+#脚本所在http服务器.
 BASH_CONFIG=http://software.jcohy.com/bash/common
 
 usage() {
-	echo -e "${BLUE_COLOR}docker 方式安装，请执行 ./deploy.sh docker${RES}"
-	echo -e "${BLUE_COLOR}native 方式安装，请执行 ./deploy.sh native${RES}"
-	echo -e "${BLUE_COLOR}native 方式卸载，请执行 ./deploy.sh unnative${RES}"
-	echo -e "${BLUE_COLOR}docker 方式卸载，请执行 ./deploy.sh undocker${RES}"
-	echo -e "${BLUE_COLOR}开启端口，请执行  ./deploy.sh port${RES}"
+	echo -e "${BLUE_COLOR}docker 方式安装,请执行 ./deploy.sh docker${RES}"
+	echo -e "${BLUE_COLOR}native 方式安装,请执行 ./deploy.sh native${RES}"
+	echo -e "${BLUE_COLOR}native 方式卸载,请执行 ./deploy.sh unnative${RES}"
+	echo -e "${BLUE_COLOR}docker 方式卸载,请执行 ./deploy.sh undocker${RES}"
+	echo -e "${BLUE_COLOR}开启端口,请执行  ./deploy.sh port${RES}"
 	exit 1
 }
 
@@ -116,7 +116,7 @@ echo -e "${RED_COLOR}>>>>>>>>>>>>>>>>>>>>>>>> End Install Dependency <<<<<<<<<<<
 
 
 
-#根据输入参数，选择执行对应方法，不输入则执行使用说明
+#根据输入参数,选择执行对应方法,不输入则执行使用说明
 case "$1" in
 "native")
 	exec ./native.sh $2

@@ -5,7 +5,7 @@
 
 ​优点: 简单、便携;
 
-​缺点: 默认不支持JSP、优化定制比较复杂(使用定制器【ServerProperties、自定义EmbeddedServletContainerCustomizer】，自己编写嵌入式Servlet容器的创建工厂【EmbeddedServletContainerFactory】);
+​缺点: 默认不支持JSP、优化定制比较复杂(使用定制器【ServerProperties、自定义EmbeddedServletContainerCustomizer】,自己编写嵌入式Servlet容器的创建工厂【EmbeddedServletContainerFactory】);
 
 外置的Servlet容器: 外面安装Tomcat---应用war包的方式打包;
 
@@ -24,7 +24,7 @@
 </dependency>
 ----
 
-3)、必须编写一个**SpringBootServletInitializer**的子类，并调用configure方法
+3)、必须编写一个**SpringBootServletInitializer**的子类,并调用configure方法
 
 [source,java]
 ----
@@ -43,9 +43,9 @@ public class ServletInitializer extends SpringBootServletInitializer {
 
 == 原理
 
-jar包: 执行SpringBoot主类的main方法，启动ioc容器，创建嵌入式的Servlet容器;
+jar包: 执行SpringBoot主类的main方法,启动ioc容器,创建嵌入式的Servlet容器;
 
-war包: 启动服务器，**服务器启动SpringBoot应用**【SpringBootServletInitializer】，启动ioc容器;
+war包: 启动服务器,**服务器启动SpringBoot应用**【SpringBootServletInitializer】,启动ioc容器;
 
 servlet3.0(Spring注解版):
 
@@ -55,9 +55,9 @@ servlet3.0(Spring注解版):
 
 ​1)、服务器启动(web应用启动)会创建当前web应用里面每一个jar包里面ServletContainerInitializer实例:
 
-​2)、ServletContainerInitializer的实现放在jar包的META-INF/services文件夹下，有一个名为javax.servlet.ServletContainerInitializer的文件，内容就是ServletContainerInitializer的实现类的全类名
+​2)、ServletContainerInitializer的实现放在jar包的META-INF/services文件夹下,有一个名为javax.servlet.ServletContainerInitializer的文件,内容就是ServletContainerInitializer的实现类的全类名
 
-​3)、还可以使用@HandlesTypes，在应用启动的时候加载我们感兴趣的类;
+​3)、还可以使用@HandlesTypes,在应用启动的时候加载我们感兴趣的类;
 
 流程:
 
@@ -71,9 +71,9 @@ Spring的web模块里面有这个文件: **org.springframework.web.SpringServlet
 
 4)、每一个WebApplicationInitializer都调用自己的onStartup;
 
-image::http://study.jcohy.com/images/spring-spring-boot18.png[]
+image::{oss-images}/spring-spring-boot18.png[]
 
-5)、相当于我们的SpringBootServletInitializer的类会被创建对象，并执行onStartup方法
+5)、相当于我们的SpringBootServletInitializer的类会被创建对象,并执行onStartup方法
 
 6)、SpringBootServletInitializer实例执行onStartup的时候会createRootApplicationContext; 创建容器
 
@@ -98,7 +98,7 @@ protected WebApplicationContext createRootApplicationContext(
          new ServletContextApplicationContextInitializer(servletContext));
    builder.contextClass(AnnotationConfigEmbeddedWebApplicationContext.class);
 
-    //调用configure方法，子类重写了这个方法，将SpringBoot的主程序类传入了进来
+    //调用configure方法,子类重写了这个方法,将SpringBoot的主程序类传入了进来
    builder = configure(builder);
 
     //使用builder创建一个Spring应用
@@ -160,4 +160,4 @@ public ConfigurableApplicationContext run(String... args) {
 }
 ----
 
-**启动Servlet容器，再启动SpringBoot应用**
+**启动Servlet容器,再启动SpringBoot应用**

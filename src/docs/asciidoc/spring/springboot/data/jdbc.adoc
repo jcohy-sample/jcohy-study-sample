@@ -34,7 +34,7 @@ spring:
 
 `org.springframework.boot.autoconfigure.jdbc`:
 
-1、参考 `DataSourceConfiguration`，根据配置创建数据源，默认使用Tomcat连接池; 可以使用 `spring.datasource.type` 指定自定义的数据源类型;
+1、参考 `DataSourceConfiguration`,根据配置创建数据源,默认使用Tomcat连接池; 可以使用 `spring.datasource.type` 指定自定义的数据源类型;
 
 2、SpringBoot 默认可以支持;
 
@@ -56,7 +56,7 @@ static class Generic {
 
    @Bean
    public DataSource dataSource(DataSourceProperties properties) {
-       //使用DataSourceBuilder创建数据源，利用反射创建响应type的数据源，并且绑定相关属性
+       //使用DataSourceBuilder创建数据源,利用反射创建响应type的数据源,并且绑定相关属性
       return properties.initializeDataSourceBuilder().build();
    }
 
@@ -76,7 +76,7 @@ static class Generic {
 [source,properties]
 ----
 schema-*.sql、data-*.sql
-默认规则: schema.sql，schema-all.sql;
+默认规则: schema.sql,schema-all.sql;
 可以使用
 	schema:
       - classpath:department.sql

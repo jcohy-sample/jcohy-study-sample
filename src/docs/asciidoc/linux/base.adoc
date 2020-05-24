@@ -14,7 +14,7 @@
 == Linux 目录结构
 
 *  bin  (binaries)存放二进制可执行文件
-*  sbin  (super user binaries)存放二进制可执行文件，只有 root 才能访问
+*  sbin  (super user binaries)存放二进制可执行文件,只有 root 才能访问
 *  etc (etcetera)存放系统配置文件
 *  usr  (unix shared resources)用于存放共享的系统资源
 *  home 存放用户文件的根目录
