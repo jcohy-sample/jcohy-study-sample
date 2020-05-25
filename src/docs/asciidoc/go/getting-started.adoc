@@ -939,6 +939,29 @@ for _,value := range slice3 {
 }
 ----
 
+===== string 和 slice
+
+string 底层是一个 byte 数组，因此可以进行切片处理
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+)
+
+func main(){
+
+	str := "Hello World"
+
+	slice := str[:6]
+
+	fmt.Println("slice:",slice)//slice: Hello
+}
+----
+
+string 是不可变的，也就是说不能通过 str[0] = 'a' 方式来修改字符串。如果需要修改字符串，可以先将 string 转为 []byte/[]rune ，然后修改，重写
+
 ===== 注意事项
 
 . 切片初始化时 `var slice = arr[startIndex:endIndex]` .从 `arr` 数组下标为 `startIndex` ,取到 `endIndex` 的元素(不包含 `arr[endIndex]`)
@@ -947,8 +970,137 @@ for _,value := range slice3 {
 . 切片定义完成之后,还不能使用,因为本身就是一个空的,需要让其引用到一个数组,或者使用 `make` 一个空间供切片使用
 . slice 是引用传递,所以在传递时,遵守引用传递机制
 
+[[go-getting-started-data-type-complex-map]]
+==== map
+
+map 是 key-value 数据结构，又称为字段或者关联数组，类似其他编程语言的集合。
+===== map 的定义
+
+`var 变量名 map[keytype] valuetype`
+
+Golang 中的 map 的 `key` 可以是很多种类型，比如，`bool`,`数字`，`string`，`指针`，`channel`，还可以是只包含前面几个类型的 `接口`，`结构体`，`数组`。
+
+[NOTE]
+====
+`slice`，`map` 还有 `function` 不可以，因为这几个没法用 `==` 判断
+====
+
+`value` 的类型和 `key` 基本一样
+
+例如如下定义
+
+[source,go]
+----
+var map1 map[string] string
+var map2 map[string] int
+var map2 map[int] string
+var map4 map[string] map[string]string
+----
+
+声明 `map` 是不会分配内存的，初始化需要 `make`，分配内存后才能赋值和使用
+
+====
+[source,go]
+----
+package main
+
+import "fmt"
+
+func main(){
+	var map1 map[string] string
+
+	map1 = make(map[string] string,10) <1>
+	map1["no1"]  = "宋江" <2>
+	map1["no2"]  = "宋江" <3>
+	map1["no3"]  = "武松" <4>
+	map1["no4"]  = "吴用"
+	fmt.Println(map1) // map[no1:宋江 no2:宋江 no3:武松 no4:吴用]
+}
+----
+<1> map 在使用前一定要 `make`。`make` 是 <<go-function-infunction>>
+<2> map 的 `key` 不能重复，如果重复了，则以最后这个 `kay-value` 为准
+<3> map 的 `value` 可以重复
+<4> map 的 `key-value` 是无序的
+====
+
+===== map 的使用
+
+. 在使用之前，先 `make`，`make` 的作用就是给 `map` 分配数据空间。如上面的例子
+. 使用类型推导
++
+[source,go]
+----
+map2 := make(map[string]string,20)
+map2["no1"]  = "宋江"
+map2["no2"]  = "宋江"
+map2["no3"]  = "武松"
+map2["no4"]  = "吴用"
+fmt.Println(map1)
+----
+. 直接赋值
++
+[source,go]
+----
+map3 := map[string]string{
+    "no1":"宋江",
+    "no2":"武松",
+}
+fmt.Println(map3)
+----
+
+===== map 的操作
+
+. `map["key"] = value` // 如果 key 还没有，就是新增，如果 key 存在，就是修改
+. `delete(map,"key")`,`delete` 是一个 <<go-function-infunction>>,如果 `key` 存在，就删除，如果 `key` 不存在，不操作，但是也不会报出错
+. `map` 没有批量删除，我们只能通过遍历 `key` ，逐个删除 或者 `map = make(...)` ,`make` 一个新的，让原来的称为垃圾，被 gc 回收
+. `map` 通过 `value,bool := map["key"]` 方法查找。如果存在值， `bool` 返回 `true`，否则返回 `false`
+. map 的遍历使用 `for-range` 结构
+. map 的长度使用 `len(map)`
+. 切片数据类型如果是 `map`，则我们称为 `map` 切片。这样使用 `map` 个数就可以动态变化了。
+. Golang 中的 `map` 默认是无序的，注意也不是按照添加的顺序存放的，如果需要对 `map` 进行排序，是先将 `key` 排序，然后根据 `key` 值遍历输出即可。如下
++
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+func main(){
+	map4 := make(map[int]int,10)
+	map4[10] = 100
+	map4[1] = 13
+	map4[4] = 56
+	map4[6] = 90
+
+	var keys []int
+	for k,_ := range map4 {
+		keys = append(keys,k)
+	}
+	sort.Ints(keys)
+	fmt.Println(keys) // [1 4 6 10]
+
+	for _,k := range keys {
+		fmt.Printf("map[%v] = %v \n",k,map4[k])
+	}
+	// map[1] = 13
+	// map[4] = 56
+	// map[6] = 90
+	// map[10] = 100
+}
+
+----
+
+===== 注意事项
+
+. `map` 是引用类型，遵守引用类型传递的机制，在一个函数接收 `map` ，修改后，会直接修改原来的 map
+. `map` 的容量达到后，再向 `map` 增加元素，会自动扩容，并不会发生 `panic`，也就是说 `map` 能动态的增长键值对 (key-value)
+. `map` 的 `value` 也经常使用 <<go-getting-started-data-type-complex-struct>> 类型，更适合管理复杂的数据
+
 [[go-getting-started-data-type-complex-function]]
-==== 函数
+==== 函数(function)
 
 在 Go 中,函数也是一种 **数据类型**,可以赋值给一个变量,该变量就是一个函数类型的变量.通过该变量可以对函数进行调用.
 
@@ -982,7 +1134,9 @@ func main(){
 ----
 
 [[go-getting-started-data-type-complex-struct]]
-==== 结构体
+==== 结构体(struct)
+
+有关结构体的详细信息 在 <<go-oop-struct>> 章节进行了详细介绍
 
 [[go-getting-started-data-type-complex-channel]]
 ==== 管道
@@ -990,8 +1144,7 @@ func main(){
 [[go-getting-started-data-type-complex-interface]]
 ==== 接口
 
-[[go-getting-started-data-type-complex-map]]
-==== map
+有关结构体的详细信息 在 <<go-oop-interface>> 章节进行了详细介绍
 
 [[go-getting-started-data-type-custom]]
 === 自定义数据类型
@@ -1038,6 +1191,15 @@ func main(){
 
 | 布尔类型
 | false
+
+| 指针
+| nil
+
+| slice
+| nil
+
+| map
+| nil
 |===
 
 [[go-getting-started-data-type-convert]]
