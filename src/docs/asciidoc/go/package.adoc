@@ -217,6 +217,16 @@ exit status 1
 FAIL    jcohy   0.267s
 ----
 
+单元测试注总结
+
+. 测试用例文件必须以 `_test.go` 结尾
+. 测试用例函数必须以 `Test` 开头,一般来说就是 Test+被测试的函数名
+. 一个测试用例文件中,可以有多个测试用例函数
+. 运行测试用例指令 `go test`,  `go test -v`
+. 当出现错误时,可以使用 t.Fatalf 来格式化输出错误信息,并退出程序
+. `t.Logf` 方法可以输出相应的日志
+. 测试单个文件,一定要带上被测试的源文件.例如 `go test -v cal_test.go cal.go`
+
 [[go-package-usuall]]
 == 常用的包
 

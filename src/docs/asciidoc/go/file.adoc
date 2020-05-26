@@ -1,0 +1,653 @@
+[[go-file]]
+= 文件操作
+
+[[go-file-overview]]
+== 文件基本介绍
+
+image::{base-images}/go5.png[]
+
+os.File 封装所有文件相关操作,File 是一个结构体
+
+[[go-file-method]]
+== 文件操作常用方法
+
+[[go-file-method-tbl]]
+.文件操作常用方法
+|===
+| 方法 | 描述 |使用方法
+
+| func Open(name string) (*File, error) | 打开文件 | file,err := os.Open("1.txt")
+
+| func OpenFile(name string, flag int, perm FileMode) (*File, error) | 使用指定的选项打开文件 | file,err := os.OpenFile("1.txt",os.O_WRONLY | os.O_CREATE,0666)
+
+| func (file *File) Close() error | 关闭文件 | file.Close()
+
+| func NewReader(rd io.Reader) *Reader | 带缓冲区的 Reader | reader := bufio.NewReader(file)
+
+| func NewWriter(w io.Writer) | 带缓冲区的 Writer | write := bufio.NewWriter(file)
+
+| func ReadFile(filename string) ([]byte, error) | 一次将整个文件读入到内存中 | content,err :=ioutil.ReadFile("1.txt")
+
+| func Stat(name string) (FileInfo, error) | 判断文件是否存在,如果 `error` 为 `nil`,则说明文件或文件夹存在,如果 `error` 用 `os.IsNotExist(error)` 判断为 `true`,,说明文件或文件夹不存在,如果 `error` 为其他类型,则不确定是否存在 | _,err := os.Stat("1.txt")
+
+| func IsNotExist(err error) bool | 返回一个布尔值说明该错误是否表示一个文件或目录不存在.ErrNotExist 和一些系统调用错误会使它返回真 | os.IsNotExist(error)
+
+|func Copy(dst Writer, src Reader) (written int64, err error)| 此方法在 io 包中,将src的数据拷贝到dst,直到在 src 上到达 EOF 或发生错误.返回拷贝的字节数和遇到的第一个错误.
+对成功的调用,返回值 `err` 为 `nil` 而非 EOF,因为 Copy 定义为从 src 读取直到 EOF,它不会将读取到EOF视为应报告的错误.如果 `src` 实现了 `WriterTo` 接口,本函数会调用 `src.WriteTo(dst)` 进行拷贝；否则如果 `dst` 实现了 `ReaderFrom` 接口,本函数会调用 `dst.ReadFrom(src)` 进行拷贝.|
+|===
+
+OpenFile 中的 `flag` 参数说明如下.最后一个代表 Linux 权限 `r w x -> 4,2,1`
+
+[source,go]
+----
+const (
+	// Exactly one of O_RDONLY, O_WRONLY, or O_RDWR must be specified.
+	O_RDONLY int = syscall.O_RDONLY // open the file read-only.
+	O_WRONLY int = syscall.O_WRONLY // open the file write-only.
+	O_RDWR   int = syscall.O_RDWR   // open the file read-write.
+	// The remaining values may be or'ed in to control behavior.
+	O_APPEND int = syscall.O_APPEND // append data to the file when writing.
+	O_CREATE int = syscall.O_CREAT  // create a new file if none exists.
+	O_EXCL   int = syscall.O_EXCL   // used with O_CREATE, file must not exist.
+	O_SYNC   int = syscall.O_SYNC   // open for synchronous I/O.
+	O_TRUNC  int = syscall.O_TRUNC  // truncate regular writable file when opened.
+)
+----
+
+[[go-file-sample]]
+== 代码示例
+
+[[go-file-sample-1]]
+=== 示例1
+
+创建一个新文件 `sample1.go`,写入内容 5 句 "hello world" 到 `d:/sample1.txt` 文件中.
+
+`sample2.go` 打开 `d:/sample1.txt` 文件,将原来的内容覆盖成新的内容 10 句 "你好 Golang"
+
+`sample3.go` 打开 `d:/sample1.txt` 文件,在原来的内容追加 "Asciidoc"
+
+`sample4.go` 打开 `d:/sample1.txt` 文件,将原来的内容读出显示在终端,并且追加 5 句 "Hello 北京"
+
+[source,go,indent=0,subs="verbatim,quotes",role="primary"]
+.sample1.go
+----
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
+
+func main(){
+
+	filePath := "d:/sample1.txt"
+
+	file,err := os.OpenFile(filePath,os.O_WRONLY | os.O_CREATE,0666)
+
+	if err != nil{
+		fmt.Printf("open file err=%v\n",err)
+	}
+
+	// 及时关闭 file 句柄
+	defer file.Close()
+
+	str := "Hello world\n"
+	write := bufio.NewWriter(file)
+	for i := 0; i< 5; i++{
+		write.WriteString(str)
+	}
+	// 因为 write 是带缓存,因此调用 WriteString 方法时,其实内容是先写入到缓存的,所有需要调用 Flush 方法,将缓冲的数据真正写入到文件中,否则文件中会没有数据
+	write.Flush()
+}
+----
+.sample2.go
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
+
+func main(){
+
+	filePath := "d:/sample1.txt"
+
+	file,err := os.OpenFile(filePath,os.O_WRONLY | os.O_TRUNC,0666)
+
+	if err != nil{
+		fmt.Printf("open file err=%v\n",err)
+	}
+
+	// 及时关闭 file 句柄
+	defer file.Close()
+
+	str := "你好 Golang\n"
+	write := bufio.NewWriter(file)
+	for i := 0; i< 10; i++{
+		write.WriteString(str)
+	}
+	// 因为 write 是带缓存,因此调用 WriteString 方法时,其实内容是先写入到缓存的,所有需要调用 Flush 方法,将缓冲的数据真正写入到文件中,否则文件中会没有数据
+	write.Flush()
+}
+----
+.sample3.go
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
+
+func main(){
+
+	filePath := "d:/sample1.txt"
+
+	file,err := os.OpenFile(filePath,os.O_WRONLY | os.O_APPEND,0666)
+
+	if err != nil{
+		fmt.Printf("open file err=%v\n",err)
+	}
+
+	// 及时关闭 file 句柄
+	defer file.Close()
+
+	str := "Asciidoc\n"
+	write := bufio.NewWriter(file)
+	for i := 0; i< 10; i++{
+		write.WriteString(str)
+	}
+	// 因为 write 是带缓存,因此调用 WriteString 方法时,其实内容是先写入到缓存的,所有需要调用 Flush 方法,将缓冲的数据真正写入到文件中,否则文件中会没有数据
+	write.Flush()
+}
+----
+.sample4.go
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"io"
+	"os"
+)
+
+func main(){
+
+	filePath := "d:/sample1.txt"
+
+	file,err := os.OpenFile(filePath,os.O_RDWR | os.O_APPEND,0666)
+
+	if err != nil{
+		fmt.Printf("open file err=%v\n",err)
+	}
+
+	// 及时关闭 file 句柄
+	defer file.Close()
+
+
+	reader := bufio.NewReader(file)
+
+	for {
+		str,err := reader.ReadString('\n')
+		if err == io.EOF {
+			// 如果读取到文件末尾
+			break
+		}
+		fmt.Print(str)
+
+	}
+
+	str := "Hello 北京\n"
+
+	write := bufio.NewWriter(file)
+	for i := 0; i< 5; i++{
+		write.WriteString(str)
+	}
+	// 因为 write 是带缓存,因此调用 WriteString 方法时,其实内容是先写入到缓存的,所有需要调用 Flush 方法,将缓冲的数据真正写入到文件中,否则文件中会没有数据
+	write.Flush()
+}
+----
+
+[[go-file-sample-2]]
+=== 示例2
+
+编写一个程序,将一个文件的内容,写入到另一个文件中去
+
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+)
+
+func main(){
+	file1Path := "d:/sample1.txt"
+	file2Path := "d:/sample2.txt"
+
+	data,err :=ioutil.ReadFile(file1Path)
+
+	if err != nil {
+		fmt.Printf("read file err=%v\n",err)
+		return
+	}
+	err = ioutil.WriteFile(file2Path,data,0666)
+
+	if err != nil {
+		fmt.Printf("write file err=%v\n",err)
+	}
+
+}
+----
+
+[[go-file-sample-3]]
+=== 示例3
+
+文件拷贝
+
+[source,go]
+----
+package main
+import (
+	"fmt"
+	"os"
+	"io"
+	"bufio"
+)
+
+//自己编写一个函数,接收两个文件路径 srcFileName dstFileName
+func CopyFile(dstFileName string, srcFileName string) (written int64, err error) {
+
+	srcFile, err := os.Open(srcFileName)
+	if err != nil {
+		fmt.Printf("open file err=%v\n", err)
+	}
+	defer srcFile.Close()
+	//通过srcfile ,获取到 Reader
+	reader := bufio.NewReader(srcFile)
+
+	//打开dstFileName
+	dstFile, err := os.OpenFile(dstFileName, os.O_WRONLY | os.O_CREATE, 0666)
+	if err != nil {
+		fmt.Printf("open file err=%v\n", err)
+		return
+	}
+
+	//通过dstFile, 获取到 Writer
+	writer := bufio.NewWriter(dstFile)
+	defer dstFile.Close()
+
+	return io.Copy(writer, reader)
+
+
+}
+
+func main() {
+
+	//将d:/flower.jpg 文件拷贝到 e:/abc.jpg
+
+	//调用CopyFile 完成文件拷贝
+	srcFile := "d:/sample1.txt"
+	dstFile := "d:/sample3.txt"
+	_, err := CopyFile(dstFile, srcFile)
+	if err == nil {
+		fmt.Printf("拷贝完成\n")
+	} else {
+		fmt.Printf("拷贝错误 err=%v\n", err)
+	}
+
+}
+----
+
+[[go-file-sample-4]]
+=== 示例4
+
+统计英文,数字,空格和其他字符串数量
+
+[source,go]
+----
+package main
+import (
+	"fmt"
+	"os"
+	"io"
+	"bufio"
+)
+
+//定义一个结构体,用于保存统计结果
+type CharCount struct {
+	ChCount int // 记录英文个数
+	NumCount int // 记录数字的个数
+	SpaceCount int // 记录空格的个数
+	OtherCount int // 记录其它字符的个数
+}
+
+func main() {
+
+	//思路: 打开一个文件, 创一个Reader
+	//每读取一行,就去统计该行有多少个 英文、数字、空格和其他字符
+	//然后将结果保存到一个结构体
+	fileName := "d:/sample1.txt"
+	file, err := os.Open(fileName)
+	if err != nil {
+		fmt.Printf("open file err=%v\n", err)
+		return
+	}
+	defer file.Close()
+	//定义个CharCount 实例
+	var count CharCount
+	//创建一个Reader
+	reader := bufio.NewReader(file)
+
+	//开始循环的读取fileName的内容
+	for {
+		str, err := reader.ReadString('\n')
+		if err == io.EOF { //读到文件末尾就退出
+			break
+		}
+		//遍历 str ,进行统计
+		for _, v := range str {
+
+			switch {
+			case v >= 'a' && v <= 'z':
+				fallthrough //穿透
+			case v >= 'A' && v <= 'Z':
+				count.ChCount++
+			case v == ' ' || v == '\t':
+				count.SpaceCount++
+			case v >= '0' && v <= '9':
+				count.NumCount++
+			default :
+				count.OtherCount++
+			}
+		}
+	}
+
+	//输出统计的结果看看是否正确
+	fmt.Printf("字符的个数为=%v 数字的个数为=%v 空格的个数为=%v 其它字符个数=%v",
+		count.ChCount, count.NumCount, count.SpaceCount, count.OtherCount)
+
+}
+----
+
+[[go-file-command]]
+== 命令行参数
+
+os.Args 是一个 string 切片,用来存储所有的命令行参数,此外,我们还可以使用 flag 包来解析命令行参数.编写一段代码,可以获取命令行的各个参数
+
+[source,go]
+----
+package main
+import (
+	"fmt"
+	"flag"
+)
+
+func main() {
+
+	//定义几个变量,用于接收命令行的参数值
+	var user string
+	var pwd string
+	var host string
+	var port int
+
+	//&user 就是接收用户命令行中输入的 -u 后面的参数值
+	//"u" ,就是 -u 指定参数
+	//"" , 默认值
+	//"用户名,默认为空" 说明
+	flag.StringVar(&user, "u", "", "用户名,默认为空")
+	flag.StringVar(&pwd, "pwd", "", "密码,默认为空")
+	flag.StringVar(&host, "h", "localhost", "主机名,默认为localhost")
+	flag.IntVar(&port, "port", 3306, "端口号,默认为3306")
+	//这里有一个非常重要的操作,转换, 必须调用该方法
+	flag.Parse()
+
+	//输出结果
+	fmt.Printf("user=%v pwd=%v host=%v port=%v",
+		user, pwd, host, port)
+
+}
+----
+
+[source,shell]
+----
+> test.exe -u root -pwd root -h 192.168.0.1 -port 3306
+user= root
+pwd= root
+host= 192.168.0.1
+port= 3306
+----
+
+[[go-file-json]]
+== json
+
+JSON 是一种轻量级的数据交换格式,易于人阅读和编写,同时也易于机器解析和生成,并有效的提升网络传输效率,通常程序在网络传输时会将数据序列化成 json 字符串,到接收方得到 json 字符串时,再反序列化恢复成原来的数据类型.
+
+[[go-file-json-serial]]
+=== JSON 序列化
+
+[source,go]
+----
+package main
+import (
+	"fmt"
+	"encoding/json"
+)
+
+//定义一个结构体
+type Monster struct {
+	Name string `json:"monster_name"` //反射机制
+	Age int `json:"monster_age"`
+	Birthday string //....
+	Sal float64
+	Skill string
+}
+
+
+
+func testStruct() {
+	//演示
+	monster := Monster{
+		Name :"牛魔王",
+		Age : 500 ,
+		Birthday : "2011-11-11",
+		Sal : 8000.0,
+		Skill : "牛魔拳",
+	}
+
+	//将monster 序列化
+	data, err := json.Marshal(&monster) //..
+	if err != nil {
+		fmt.Printf("序列号错误 err=%v\n", err)
+	}
+	//输出序列化后的结果
+	fmt.Printf("monster序列化后=%v\n", string(data))
+
+}
+
+//将map进行序列化
+func testMap() {
+	//定义一个map
+	var a map[string]interface{}
+	//使用map,需要make
+	a = make(map[string]interface{})
+	a["name"] = "红孩儿"
+	a["age"] = 30
+	a["address"] = "洪崖洞"
+
+	//将a这个map进行序列化
+	//将monster 序列化
+	data, err := json.Marshal(a)
+	if err != nil {
+		fmt.Printf("序列化错误 err=%v\n", err)
+	}
+	//输出序列化后的结果
+	fmt.Printf("a map 序列化后=%v\n", string(data))
+
+}
+
+//演示对切片进行序列化, 我们这个切片 []map[string]interface{}
+func testSlice() {
+	var slice []map[string]interface{}
+	var m1 map[string]interface{}
+	//使用map前,需要先make
+	m1 = make(map[string]interface{})
+	m1["name"] = "jack"
+	m1["age"] = "7"
+	m1["address"] = "北京"
+	slice = append(slice, m1)
+
+	var m2 map[string]interface{}
+	//使用map前,需要先make
+	m2 = make(map[string]interface{})
+	m2["name"] = "tom"
+	m2["age"] = "20"
+	m2["address"] = [2]string{"墨西哥","夏威夷"}
+	slice = append(slice, m2)
+
+	//将切片进行序列化操作
+	data, err := json.Marshal(slice)
+	if err != nil {
+		fmt.Printf("序列化错误 err=%v\n", err)
+	}
+	//输出序列化后的结果
+	fmt.Printf("slice 序列化后=%v\n", string(data))
+
+}
+
+//对基本数据类型序列化,对基本数据类型进行序列化意义不大
+func testFloat64() {
+	var num1 float64 = 2345.67
+
+	//对num1进行序列化
+	data, err := json.Marshal(num1)
+	if err != nil {
+		fmt.Printf("序列化错误 err=%v\n", err)
+	}
+	//输出序列化后的结果
+	fmt.Printf("num1 序列化后=%v\n", string(data))
+}
+
+func main() {
+	//演示将结构体, map , 切片进行序列号
+	testStruct()
+	testMap()
+	testSlice()//演示对切片的序列化
+	testFloat64()//演示对基本数据类型的序列化
+}
+----
+
+[NOTE]
+====
+对于结构体的序列化,如果我们希望序列化后的 `key` 的名字,由我们重新制定,那么可以给 `struct` 指定一个 `tag`
+====
+
+[[go-file-json-unmarshal]]
+=== JSON 反序列化
+
+[source,go]
+----
+package main
+import (
+	"fmt"
+	"encoding/json"
+)
+
+//定义一个结构体
+type Monster struct {
+	Name string
+	Age int
+	Birthday string //....
+	Sal float64
+	Skill string
+}
+
+
+//演示将json字符串,反序列化成struct
+func unmarshalStruct() {
+	//说明str 在项目开发中,是通过网络传输获取到.. 或者是读取文件获取到
+	str := "{\"Name\":\"牛魔王~~~\",\"Age\":500,\"Birthday\":\"2011-11-11\",\"Sal\":8000,\"Skill\":\"牛魔拳\"}"
+
+	//定义一个Monster实例
+	var monster Monster
+
+	err := json.Unmarshal([]byte(str), &monster)
+	if err != nil {
+		fmt.Printf("unmarshal err=%v\n", err)
+	}
+	fmt.Printf("反序列化后 monster=%v monster.Name=%v \n", monster, monster.Name)
+
+}
+//将map进行序列化
+func testMap() string {
+	//定义一个map
+	var a map[string]interface{}
+	//使用map,需要make
+	a = make(map[string]interface{})
+	a["name"] = "红孩儿~~~~~~"
+	a["age"] = 30
+	a["address"] = "洪崖洞"
+
+	//将a这个map进行序列化
+	//将monster 序列化
+	data, err := json.Marshal(a)
+	if err != nil {
+		fmt.Printf("序列化错误 err=%v\n", err)
+	}
+	//输出序列化后的结果
+	//fmt.Printf("a map 序列化后=%v\n", string(data))
+	return string(data)
+
+}
+
+//演示将json字符串,反序列化成map
+func unmarshalMap() {
+	//str := "{\"address\":\"洪崖洞\",\"age\":30,\"name\":\"红孩儿\"}"
+	str := testMap()
+	//定义一个map
+	var a map[string]interface{}
+
+	//反序列化
+	//注意:反序列化map,不需要make,因为make操作被封装到 Unmarshal函数
+	err := json.Unmarshal([]byte(str), &a)
+	if err != nil {
+		fmt.Printf("unmarshal err=%v\n", err)
+	}
+	fmt.Printf("反序列化后 a=%v\n", a)
+
+}
+
+//演示将json字符串,反序列化成切片
+func unmarshalSlice() {
+	str := "[{\"address\":\"北京\",\"age\":\"7\",\"name\":\"jack\"}," +
+		"{\"address\":[\"墨西哥\",\"夏威夷\"],\"age\":\"20\",\"name\":\"tom\"}]"
+
+	//定义一个slice
+	var slice []map[string]interface{}
+	//反序列化,不需要make,因为make操作被封装到 Unmarshal函数
+	err := json.Unmarshal([]byte(str), &slice)
+	if err != nil {
+		fmt.Printf("unmarshal err=%v\n", err)
+	}
+	fmt.Printf("反序列化后 slice=%v\n", slice)
+}
+
+func main() {
+
+	unmarshalStruct()
+	unmarshalMap()
+	unmarshalSlice()
+}
+----
+
+* 在反序列化一个 json 字符串时,要确保反序列化后的数据类型和原来序列化的数据类型一致
+* 如果 json 字符串是通过程序获取到的,则不需要对 " 转移处理

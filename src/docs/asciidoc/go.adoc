@@ -1,4 +1,4 @@
-[[go-overview]]
+[[overview]]
 = 概述
 include::attributes.adoc[]
 
@@ -8,9 +8,17 @@ include::go/getting-started.adoc[leveloffset=+1]
 
 include::go/function.adoc[leveloffset=+1]
 
+include::go/oop.adoc[leveloffset=+1]
+
+include::go/file.adoc[leveloffset=+1]
+
+include::go/concurrency.adoc[leveloffset=+1]
+
+include::go/reflect.adoc[leveloffset=+1]
+
 == 排序和查找
 
-有关使用 go 语言进行排序算法，请参考 <<algorithm.adoc#algorithm-sort, 算法>>
+有关使用 go 语言进行排序算法,请参考 <<algorithm.adoc#algorithm-sort, 算法>>
 
 include::go/notice.adoc[leveloffset=+1]
 

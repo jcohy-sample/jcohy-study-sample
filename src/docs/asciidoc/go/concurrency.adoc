@@ -1,0 +1,575 @@
+[[go-concurrency]]
+= 并发
+
+Go语言是为并发而生的语言,Go语言是为数不多的在语言层面实现并发的语言；也正是Go语言的并发特性,吸引了全球无数的开发者.
+
+并发(concurrency):两个或两个以上的任务在一段时间内被执行.我们不必 care 这些任务在某一个时间点是否是同时执行,可能同时执行,也可能不是,我们只关心在一段时间内,哪怕是很短的时间(一秒或者两秒)是否执行解决了两个或两个以上任务.
+
+并行(parallellism):两个或两个以上的任务在同一时刻被同时执行.
+
+并发说的是逻辑上的概念,而并行,强调的是物理运行状态.并发 "包含" 并行.
+
+在本章中将展示 Go 使用 `channel` 和 `goroutine` 开发并行程序的能力,`goroutine` 是 Go 并发能力的核心要素.
+
+[[go-concurrency-goroutine]]
+== goroutine
+
+[[go-concurrency-goroutine-overview]]
+=== 概述
+
+叫做 `goroutine` 是因为已有的短语 -- 线程,协程,进程等等---传递了不准确的含义,`goroutine` 有简单的模型,它是与其他 `goroutine` 并行执行的,有着相同地址空间的函数.
+
+`goroutine` 的特点
+
+. 有独立的栈空间
+. 共享程序堆空间
+. 调度由用户控制
+. `goroutine` 是轻量级的线程
+
+image::{base-images}/go6.png[]
+
+`goroutine` 是一个普通的函数,只是需要使用关键字 `go` 作为开头.看下面的例子
+
+[source,go]
+----
+package main
+import (
+	"fmt"
+	"strconv"
+	"time"
+)
+
+// 在主线程(可以理解成进程)中,开启一个goroutine, 该协程每隔1秒输出 "hello,world"
+// 在主线程中也每隔一秒输出"hello,golang", 输出10次后,退出程序
+// 要求主线程和goroutine同时执行
+
+//编写一个函数,每隔1秒输出 "hello,world"
+func test() {
+	for i := 1; i <= 10; i++ {
+		fmt.Println("tesst () hello,world " + strconv.Itoa(i))
+		time.Sleep(time.Second)
+	}
+}
+
+func main() {
+
+	go test() // 开启了一个协程
+
+	for i := 1; i <= 10; i++ {
+		fmt.Println(" main() hello,golang" + strconv.Itoa(i))
+		time.Sleep(time.Second)
+	}
+}
+----
+
+主线程和 `goroutine` 执行流程图
+
+image::{base-images}/go7.png[]
+
+* 主线程是一个物理线程,直接作用在 CPU 上的.是重量级的,非常耗费 cpu 资源
+* `goroutine` 从主线程开启的,是轻量级的线程,是逻辑态.对资源消耗相对小
+* Golang 的 `goroutine` 机制是重要的特点,可以轻松的开启上万个协程,其他编程语言的并发机制是一般基于线程的,开启过多的线程,资源耗费大,这里就突显 Golang 在并发上的优势了
+
+[[go-concurrency-goroutine-model]]
+=== `goroutine` 的调度模型
+
+==== MPG模式
+
+`M` 指的是 `Machine`,一个 M 直接关联了一个内核线程
+
+`P` 指的是 "processor",代表了M所需的上下文环境,也是处理用户级代码逻辑的处理器
+
+`G` 指的是 `Goroutine`,其实本质上也是一种轻量级的线程
+
+三者关系如下图所示:
+
+image::{base-images}/GMPrelation.png[]
+
+以上这个图讲的是两个线程(内核线程)的情况.一个 `M` 会对应一个内核线程,一个 `M` 也会连接一个上下文 `P`,一个上下文 `P` 相当于一个 "处理器",一个上下文连接一个或者多个 `Goroutine`.`P(Processor)` 的数量是在启动时被设置为环境变量 `GOMAXPROCS` 的值,
+或者通过运行时调用函数 `runtime.GOMAXPROCS()` 进行设置.`Processor` 数量固定意味着任意时刻只有固定数量的线程在运行 go 代码.`Goroutine` 中就是我们要执行并发的代码.图中P正在执行的 `Goroutine` 为蓝色的；处于待执行状态的 `Goroutine` 为灰色的,灰色的 `Goroutine` 形成了一个队列 `runqueues`
+
+三者关系的宏观的图为:
+
+image::{base-images}/total.png[]
+
+* 抛弃P(Processor)
+
+你可能会想,为什么一定需要一个上下文,我们能不能直接除去上下文,让 `Goroutine` 的 `runqueues` 挂到 `M` 上呢？答案是不行,需要上下文的目的,是让我们可以直接放开其他线程,当遇到内核线程阻塞的时候.
+
+一个很简单的例子就是系统调用 `sysall`,一个线程肯定不能同时执行代码和系统调用被阻塞,这个时候,此线程 `M` 需要放弃当前的上下文环境 `P`,以便可以让其他的 `Goroutine` 被调度执行.
+
+image::{base-images}/giveupP.png[]
+
+如上图左图所示,`M0` 中的 G0 执行了 `syscall`,然后就创建了一个 M1(也有可能本身就存在,没创建),(转向右图)然后 `M0` 丢弃了 `P`,等待 `syscall` 的返回值,`M1` 接受了 `P`,将·继续执行 `Goroutine` 队列中的其他 `Goroutine`.
+
+当系统调用 `syscall` 结束后,`M0` 会 "偷" 一个上下文,如果不成功,`M0` 就把它的 Gouroutine G0 放到一个全局的 `runqueue` 中,然后自己放到线程池或者转入休眠状态.全局 `runqueue` 是各个 `P` 在运行完自己的本地的 `Goroutine runqueue` 后用来拉取新 `goroutine` 的地方.`P` 也会周期性的检查这个全局 `runqueue` 上的 `goroutine`,否则,全局 `runqueue` 上的 `goroutines` 可能得不到执行而饿死.
+
+* 均衡的分配工作
+
+按照以上的说法,上下文 `P` 会定期的检查全局的 `goroutine` 队列中的 `goroutine`,以便自己在消费掉自身 `Goroutine` 队列的时候有事可做.假如全局 `goroutine` 队列中的 `goroutine` 也没了呢？就从其他运行的中的 `P` 的 `runqueue` 里偷.
+
+每个 `P` 中的 `Goroutine` 不同导致他们运行的效率和时间也不同,在一个有很多 `P` 和 `M` 的环境中,不能让一个 `P` 跑完自身的 `Goroutine` 就没事可做了,因为或许其他的 `P` 有很长的 `goroutine` 队列要跑,得需要均衡.
+该如何解决呢？
+
+Go 的做法倒也直接,从其他 `P` 中偷一半！
+
+image::{base-images}/stealwork.png[]
+
+https://i6448038.github.io/2017/12/04/golang-concurrency-principle[Go并发原理]
+
+[[go-concurrency-channel]]
+== channel
+
+[[go-concurrency-channel-overview]]
+=== 概述
+
+`channel` 是 Go 语言中的一个非常重要的特性,通道类型是 Go 自带的,相当于是一个先进先出的队列,同时唯一一个可以满足并发安全性的类型.声明一个通道类型变量的时候,首先需要确定通道类型的元素类型,然后还要确定通道的容量,当然默认容量是 `0`.
+
+
+==== 定义/声明 channel
+
+====
+[source,go]
+----
+var 变量名 chan 数据类型
+----
+`channel` 是引用类型
+
+`channel` 必须初始化才能写入数据,即 `make` 后才能使用
+
+管道是有类型的,例如: `var intChar chan int` 只能写入整数 `int`
+====
+
+==== 初始化
+
+====
+[source,go]
+----
+unBufferChan := make(chan int)  // <1>
+bufferChan := make(chan int, N) // <2>
+----
+<1> 创建的是无缓冲 `channel`
+<2> 创建的是缓冲 `channel`.如果使用 `channel` 之前没有 make,会出现 dead lock 错误.
+====
+
+==== channel 读写操作
+
+[source,go]
+----
+ch := make(chan int, 10)
+
+// 读操作
+x <- ch
+
+// 写操作
+ch <- x
+----
+
+* `channel` 中只能存放指定的数据类型
+* `channel` 的数据放满后,就不能再放入了
+* 如果从 `channel` 取出数据后,可以继续放入
+* 再没有使用 `goroutine` 的情况下,如果 `channel` 数据取完了,再取,就会报 dead lock
+
+==== channel 种类
+
+`channel` 分为无缓冲 `channel` 和有缓冲 `channel`.两者的区别如下:
+
+* 无缓冲:发送和接收动作是同时发生的.如果没有 `goroutine` 读取 `channel (<- channel)`,则发送者 `(channel <-)` 会一直阻塞.
+
+image::{base-images}/unbufferedchannel.png[]
+
+* 缓冲:缓冲 `channel` 类似一个有容量的队列.当队列满的时候发送者会阻塞；当队列空的时候接收者会阻塞.
+
+image::{base-images}/bufferedchannel.png[]
+
+==== 关闭 channel
+
+使用 <<go-function-infunction>> `close` 可以关闭 `channel`,当 `channel` 关闭后,就不能再向 `channel` 写数据了,但是仍然可以从该 `channel` 读取数据
+[source,go]
+----
+ch := make(chan int)
+
+// 关闭
+close(ch)
+----
+
+. 重复关闭 `channel` 会导致 `panic`.
+. 向关闭的 `channel` 发送数据会 `panic`.
+. 从关闭的 `channel` 读数据不会 `panic`,但是读出的数据是 `channel` 类似的默认值,比如 chan int 类型的 `channel` 关闭之后读取到的值为 `0`.
+
+==== channel 遍历
+
+`channel` 支持 `for-range` 的方式进行遍历,但是注意两个细节
+
+. 在遍历时,如果 `channel` 没有关闭,则会出现 dead lock 错误
+. 在遍历时,如果 `channel` 已经关闭,则会正常遍历数据,遍历完成后,就会退出遍历
+
+[source,go]
+----
+package main
+import (
+	"fmt"
+)
+
+func main() {
+
+	intChan := make(chan int, 3)
+	intChan<- 100
+	intChan<- 200
+	close(intChan) // close
+	//这是不能够再写入数到channel
+	//intChan<- 300
+	fmt.Println("okook~")
+	//当管道关闭后,读取数据是可以的
+	n1 := <-intChan
+	fmt.Println("n1=", n1)
+
+
+	//遍历管道
+	intChan2 := make(chan int, 100)
+	for i := 0; i < 100; i++ {
+		intChan2<- i * 2  //放入100个数据到管道
+	}
+
+	//遍历管道不能使用普通的 for 循环
+	// for i := 0; i < len(intChan2); i++ {
+
+	// }
+	//在遍历时,如果channel没有关闭,则会出现deadlock的错误
+	//在遍历时,如果channel已经关闭,则会正常遍历数据,遍历完后,就会退出遍历
+	close(intChan2)
+	for v := range intChan2 {
+		fmt.Println("v=", v)
+	}
+}
+----
+
+[[go-concurrency-channel-usage]]
+=== 应用
+
+==== 示例一
+
+请使用 `goroutine` 和 `channel` 协同完成下面的案例
+
+. 开启一个 writeData `goroutine` ,向 intChan `channel` 中写入 50 个整数
+. 开启一个 readData `goroutine`,从 iniChan `channel` 中读取 writeData 写入的数据
+. 注意: writeData 和 readData 操作的是同一个 `channel`
+. 主线程需要等待 writeData 和 readData `goroutine` 都完成时才退出
+
+[source,go]
+----
+package main
+
+import "fmt"
+
+
+func writeData(intChan chan int){
+	for i := 0; i< 50; i++ {
+		intChan <- i
+		fmt.Println("writeData",i)
+	}
+	close(intChan)
+}
+
+func readData(intChan chan int,exitChan chan bool){
+	for {
+		v,ok := <- intChan
+		if !ok {
+			break
+		}
+		fmt.Printf("读到的数据=%v\n",v)
+	}
+
+	exitChan <- true
+
+	close(exitChan)
+}
+
+func main(){
+	intChan := make(chan int,50)
+	exitChan := make(chan bool,1)
+
+	go writeData(intChan)
+
+	go readData(intChan,exitChan)
+
+	for {
+		_,ok := <- exitChan
+		if !ok {
+			break
+		}
+	}
+}
+----
+
+==== 示例二
+
+统计 1-200000 的数字中,那些是素数.
+
+[source,go,indent=0,subs="verbatim,quotes",role="primary"]
+.使用 goroutine 和 channel
+----
+package main
+import (
+"fmt"
+"time"
+)
+
+
+
+//向 intChan放入 1-8000 个数
+func putNum(intChan chan int) {
+
+	for i := 1; i <= 8000; i++ {
+		intChan<- i
+	}
+
+	//关闭intChan
+	close(intChan)
+}
+
+// 从 intChan取出数据,并判断是否为素数,如果是,就
+// 	//放入到primeChan
+func primeNum(intChan chan int, primeChan chan int, exitChan chan bool) {
+
+	//使用for 循环
+	// var num int
+	var flag bool //
+	for {
+		//time.Sleep(time.Millisecond * 10)
+		num, ok := <-intChan //intChan 取不到..
+
+		if !ok {
+			break
+		}
+		flag = true //假设是素数
+		//判断num是不是素数
+		for i := 2; i < num; i++ {
+			if num % i == 0 {//说明该num不是素数
+				flag = false
+				break
+			}
+		}
+
+		if flag {
+			//将这个数就放入到primeChan
+			primeChan<- num
+		}
+	}
+
+	fmt.Println("有一个primeNum 协程因为取不到数据,退出")
+	//这里我们还不能关闭 primeChan
+	//向 exitChan 写入true
+	exitChan<- true
+
+}
+
+func main() {
+
+	intChan := make(chan int , 1000)
+	primeChan := make(chan int, 20000)//放入结果
+	//标识退出的管道
+	exitChan := make(chan bool, 8) // 4个
+
+
+
+	start := time.Now().UnixNano()
+
+	//开启一个协程,向 intChan放入 1-8000个数
+	go putNum(intChan)
+	//开启4个协程,从 intChan取出数据,并判断是否为素数,如果是,就
+	//放入到primeChan
+	for i := 0; i < 8; i++ {
+		go primeNum(intChan, primeChan, exitChan)
+	}
+
+	//这里我们主线程,进行处理
+	//直接
+	go func(){
+		for i := 0; i < 8; i++ {
+			<-exitChan
+		}
+
+		end := time.Now().UnixNano()
+		fmt.Println("使用协程耗时=", end - start,"ns")
+
+		//当我们从exitChan 取出了4个结果,就可以放心的关闭 prprimeChan
+		close(primeChan)
+	}()
+
+
+	//遍历我们的 primeChan ,把结果取出
+	for {
+		res, ok := <-primeChan
+		if !ok{
+			break
+		}
+		//将结果输出
+		fmt.Printf("素数=%d\n", res)
+	}
+
+	fmt.Println("main线程退出")
+
+}
+----
+.传统方式
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+package main
+import (
+	"time"
+	"fmt"
+)
+
+func main() {
+
+		start := time.Now().Unix()
+		for num := 1; num <= 80000; num++ {
+
+			flag := true //假设是素数
+			//判断num是不是素数
+			for i := 2; i < num; i++ {
+				if num % i == 0 {//说明该num不是素数
+					flag = false
+					break
+				}
+			}
+
+			if flag {
+				//将这个数就放入到primeChan
+				//primeChan<- num
+			}
+
+		}
+		end := time.Now().Unix()
+		fmt.Println("普通的方法耗时=", end - start)
+
+}
+----
+
+=== 注意事项
+
+. `channel` 可以声明为只读,或者只写
++
+[source,go]
+----
+package main
+import (
+	"fmt"
+)
+
+func main() {
+	//管道可以声明为只读或者只写
+
+	//1. 在默认情况下下,管道是双向
+	//var chan1 chan int //可读可写
+
+	//2 声明为只写
+	var chan2 chan<- int
+	chan2 = make(chan int, 3)
+	chan2<- 20
+	//num := <-chan2 //error
+
+	fmt.Println("chan2=", chan2)
+
+	//3. 声明为只读
+	var chan3 <-chan int
+	num2 := <-chan3
+	//chan3<- 30 //err
+	fmt.Println("num2", num2)
+
+}
+----
+. 使用 `select` 可以解决从 `channel` 取数据阻塞的问题
++
+[source,go]
+----
+package main
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+
+	//使用select可以解决从管道取数据的阻塞问题
+
+	//1.定义一个管道 10个数据int
+	intChan := make(chan int, 10)
+	for i := 0; i < 10; i++ {
+		intChan<- i
+	}
+	//2.定义一个管道 5个数据string
+	stringChan := make(chan string, 5)
+	for i := 0; i < 5; i++ {
+		stringChan <- "hello" + fmt.Sprintf("%d", i)
+	}
+
+	//传统的方法在遍历管道时,如果不关闭会阻塞而导致 deadlock
+
+	//问题,在实际开发中,可能我们不好确定什么关闭该管道.
+	//可以使用select 方式可以解决
+	//label:
+	for {
+		select {
+			//注意: 这里,如果intChan一直没有关闭,不会一直阻塞而deadlock
+			//,会自动到下一个case匹配
+			case v := <-intChan :
+				fmt.Printf("从intChan读取的数据%d\n", v)
+				time.Sleep(time.Second)
+			case v := <-stringChan :
+				fmt.Printf("从stringChan读取的数据%s\n", v)
+				time.Sleep(time.Second)
+			default :
+				fmt.Printf("都取不到了,不玩了, 程序员可以加入逻辑\n")
+				time.Sleep(time.Second)
+				return
+				//break label
+		}
+	}
+}
+----
+. `goroutine` 中使用 `recover` ,解决 `channel` 中出现的 `panic`,导致程序崩溃的问题
++
+[source,go]
+----
+package main
+import (
+	"fmt"
+	"time"
+)
+
+//函数
+func sayHello() {
+	for i := 0; i < 10; i++ {
+		time.Sleep(time.Second)
+		fmt.Println("hello,world")
+	}
+}
+//函数
+func test() {
+	//这里我们可以使用defer + recover
+	defer func() {
+		//捕获test抛出的panic
+		if err := recover(); err != nil {
+			fmt.Println("test() 发生错误", err)
+		}
+	}()
+	//定义了一个map
+	var myMap map[int]string
+	myMap[0] = "golang" //error
+}
+
+func main() {
+
+	go sayHello()
+	go test()
+
+
+	for i := 0; i < 10; i++ {
+		fmt.Println("main() ok=", i)
+		time.Sleep(time.Second)
+	}
+
+}
+----
