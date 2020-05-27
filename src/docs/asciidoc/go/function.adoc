@@ -456,6 +456,124 @@ func main() {
 | func HasSuffix(s, suffix string) bool  | 判断字符串是否以指定的字符串结束
 |===
 
+[source,go]
+----
+package main
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
+
+func main(){
+
+	//统计字符串的长度，按字节 len(str)
+	////golang的编码统一为utf-8 (ascii的字符(字母和数字) 占一个字节，汉字占用3个字节)
+	str := "hello北"
+	fmt.Println("str len=", len(str)) // 8
+
+
+	str2 := "hello北京"
+	//字符串遍历，同时处理有中文的问题 r := []rune(str)
+	r := []rune(str2)
+	for i := 0; i < len(r); i++ {
+		fmt.Printf("字符=%c\n", r[i])
+	}
+
+
+	//字符串转整数:	 n, err := strconv.Atoi("12")
+	n, err := strconv.Atoi("123")
+	if err != nil {
+		fmt.Println("转换错误", err)
+	}else {
+		fmt.Println("转成的结果是", n)
+	}
+
+	//4)整数转字符串  str = strconv.Itoa(12345)
+	str = strconv.Itoa(12345)
+	fmt.Printf("str=%v, str=%T\n", str, str)
+
+	//5)字符串 转 []byte:  var bytes = []byte("hello go")
+	var bytes = []byte("hello go")
+	fmt.Printf("bytes=%v\n", bytes)
+
+	//6)[]byte 转 字符串: str = string([]byte{97, 98, 99})
+	str = string([]byte{97, 98, 99})
+	fmt.Printf("str=%v\n", str)
+
+	//10进制转 2, 8, 16进制:  str = strconv.FormatInt(123, 2),返回对应的字符串
+	str = strconv.FormatInt(123, 2)
+	fmt.Printf("123对应的二进制是=%v\n", str)
+	str = strconv.FormatInt(123, 16)
+	fmt.Printf("123对应的16进制是=%v\n", str)
+
+	//查找子串是否在指定的字符串中: strings.Contains("seafood", "foo") //true
+	b := strings.Contains("seafood", "mary")
+	fmt.Printf("b=%v\n", b)
+
+	//统计一个字符串有几个指定的子串 ： strings.Count("ceheese", "e") //4
+	num := strings.Count("ceheese", "e")
+	fmt.Printf("num=%v\n", num)
+
+	//10)不区分大小写的字符串比较(==是区分字母大小写的): fmt.Println(strings.EqualFold("abc", "Abc")) // true
+
+	b = strings.EqualFold("abc", "Abc")
+	fmt.Printf("b=%v\n", b) //true
+
+	fmt.Println("结果","abc" == "Abc") // false //区分字母大小写
+
+	//11)返回子串在字符串第一次出现的index值，如果没有返回-1 :
+	//strings.Index("NLT_abc", "abc") // 4
+
+	index := strings.Index("NLT_abcabcabc", "abc") // 4
+	fmt.Printf("index=%v\n",index)
+
+	//12)返回子串在字符串最后一次出现的index，
+	//如没有返回-1 : strings.LastIndex("go golang", "go")
+
+	index = strings.LastIndex("go golang", "go") //3
+	fmt.Printf("index=%v\n",index)
+
+	//将指定的子串替换成 另外一个子串: strings.Replace("go go hello", "go", "go语言", n)
+	//n可以指定你希望替换几个，如果n=-1表示全部替换
+
+	str2 = "go go hello"
+	str = strings.Replace(str2, "go", "北京", -1)
+	fmt.Printf("str=%v str2=%v\n", str, str2)
+
+	//按照指定的某个字符，为分割标识，将一个字符串拆分成字符串数组：
+	//strings.Split("hello,wrold,ok", ",")
+	strArr := strings.Split("hello,wrold,ok", ",")
+	for i := 0; i < len(strArr); i++ {
+		fmt.Printf("str[%v]=%v\n", i, strArr[i])
+	}
+	fmt.Printf("strArr=%v\n", strArr)
+
+	//15)将字符串的字母进行大小写的转换:
+	//strings.ToLower("Go") // go strings.ToUpper("Go") // GO
+
+	str = "goLang Hello"
+	str = strings.ToLower(str)
+	str = strings.ToUpper(str)
+	fmt.Printf("str=%v\n", str) //golang hello
+
+	//将字符串左右两边的空格去掉： strings.TrimSpace(" tn a lone gopher ntrn   ")
+	str = strings.TrimSpace(" tn a lone gopher ntrn   ")
+	fmt.Printf("str=%q\n", str)
+
+	//17)将字符串左右两边指定的字符去掉 ：
+	//strings.Trim("! hello! ", " !")  // ["hello"] //将左右两边 ! 和 " "去掉
+	str = strings.Trim("! he!llo! ", " !")
+	fmt.Printf("str=%q\n", str)
+
+	//20)判断字符串是否以指定的字符串开头:
+	//strings.HasPrefix("ftp://192.168.10.1", "ftp") // true
+
+	b = strings.HasPrefix("ftp://192.168.10.1", "hsp") //true
+	fmt.Printf("b=%v\n", b)
+}
+----
+
 [[go-function-common-date]]
 === 日期常用函数
 
@@ -507,10 +625,75 @@ const (
 | func (t Time) UnixNano() int64 | time 的 UnixNano 时间
 |===
 
+[source,go]
+----
+package main
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	//看看日期和时间相关函数和方法使用
+	//1. 获取当前时间
+	now := time.Now()
+	fmt.Printf("now=%v now type=%T\n", now, now)
+
+	//2.通过now可以获取到年月日，时分秒
+	fmt.Printf("年=%v\n", now.Year())
+	fmt.Printf("月=%v\n", now.Month())
+	fmt.Printf("月=%v\n", int(now.Month()))
+	fmt.Printf("日=%v\n", now.Day())
+	fmt.Printf("时=%v\n", now.Hour())
+	fmt.Printf("分=%v\n", now.Minute())
+	fmt.Printf("秒=%v\n", now.Second())
+
+	//格式化日期时间
+
+	fmt.Printf("当前年月日 %d-%d-%d %d:%d:%d \n", now.Year(),
+	now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second())
+
+	dateStr := fmt.Sprintf("当前年月日 %d-%d-%d %d:%d:%d \n", now.Year(),
+	now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second())
+
+	fmt.Printf("dateStr=%v\n", dateStr)
+
+	//格式化日期时间的第二种方式
+	fmt.Printf(now.Format("2006-01-02 15:04:05"))
+	fmt.Println()
+	fmt.Printf(now.Format("2006-01-02"))
+	fmt.Println()
+	fmt.Printf(now.Format("15:04:05"))
+	fmt.Println()
+
+	fmt.Printf(now.Format("2006"))
+	fmt.Println()
+
+
+	//需求，每隔1秒中打印一个数字，打印到100时就退出
+	//需求2: 每隔0.1秒中打印一个数字，打印到100时就退出
+	// i := 0
+	// for {
+	// 	i++
+	// 	fmt.Println(i)
+	// 	//休眠
+	// 	//time.Sleep(time.Second)
+	// 	time.Sleep(time.Millisecond * 100)
+	// 	if i == 100 {
+	// 		break
+	// 	}
+	// }
+
+	//Unix和UnixNano的使用
+	fmt.Printf("unix时间戳=%v unixnano时间戳=%v\n", now.Unix(), now.UnixNano())
+
+}
+----
+
 [[go-function-infunction]]
 == 内建函数
 
-Golang 预定义了少数函数,这意味着无需引用任何包就可以使用他们,这些内建函数的文档记录在与 Go 版本一起发布的伪包 builtin 中.下表列出来所有的内建函数
+Golang 预定义了少数函数,这意味着无需引用任何包就可以使用他们,这些内建函数的文档记录在与 Go 版本一起发布的伪包 `builtin` 中.下表列出来所有的内建函数
 
 [[go-function-infunction-tbl]]
 .内建函数
@@ -548,8 +731,260 @@ Golang 预定义了少数函数,这意味着无需引用任何包就可以使用
 | func recover() interface{} | 用于异常处理机制
 |===
 
-关于这些内建函数的详情请参考官方文档 https://golang.org/pkg/builtin/[https://golang.org/pkg/builtin/] 或 中文文档 http://docscn.studygolang.com/pkg/builtin/#append[http://docscn.studygolang.com/pkg/builtin/#append]
+关于这些内建函数的详情请参考官方文档 https://golang.org/pkg/builtin[https://golang.org/pkg/builtin/] 或 中文文档 http://docscn.studygolang.com/pkg/builtin/#append[http://docscn.studygolang.com/pkg/builtin/#append]
 
+[[go-function-method]]
+== 方法
+
+在某些情况下,我们需要声明(定义)方法.比如 Person 结构体中,除了有一些字段外,还有一些行为,例如说话,跑步等.
+
+Golang 中的方法是作用在指定的数据类型上的(即:和指定的数据类型绑定),因为自定义类型都可以有方法,而不仅仅是 `struct`
+
+[[go-function-method-declare]]
+=== 方法声明(定义)
+
+方法就是有接受者的函数
+
+====
+[source,go]
+----
+func (recevier type) methodName(参数列表) (返回值列表){
+	方法体
+	return 返回值
+}
+----
+参数列表:方法输入
+
+recevier type: 表示这个方法和 yupe 这个类型绑定,或者说该方法作用于 type 类型,recevier type 可以是结构体,也可以使其他自定义类型
+
+recevier: 就是 type 类型的一个实例变量
+
+返回值列表: 表示返回的值,可以多个
+
+方法主体: 表示为了实现某一功能代码块
+
+return: return 语句不是必须的
+====
+
+[NOTE]
+====
+接受者类型必须是 `T` 或者 `*T` ,这里的 `T` 是类型名,T叫做接受者基础类型或者简称基础类型,基础类型一定不能是指针或接口类型,这样会引起 `invalid receiver type ...` 的编译错误.并且定义在与方法相同的包中
+====
+
+我们以上面的例子 Person 结构体为例,为 Person 定义如下方法
+
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+)
+
+type Person struct {
+	Name string
+	Age int
+	Scpres [5]float64
+	ptr *int
+	slice []int
+	map1 map[string]string
+}
+
+// 定义一个方法,打印 我是一个好人
+func (p Person) speak(){
+	fmt.Println(p.Name,"我是一个好人")
+}
+
+// 计算 1+2+...+1000
+func (p Person) cale(){
+	res := 0
+	for i :=0 ;i<1000; i++{
+		res += i
+	}
+	fmt.Println(p.Name,"计算结果是:",res)
+}
+
+// 计算 1+2+...+n
+func (p Person) cale2(n int){
+	res := 0
+	for i :=0 ;i < n; i++{
+		res += i
+	}
+	fmt.Println(p.Name,"计算结果是:",res)
+}
+
+// 计算 n1+n2
+func (p Person) getSum(n1 int,n2 int) (res int){
+	res = n1 + n2
+	return
+}
+type Monster struct {
+	Name string `json:"name"`
+	Age int `json:"age"`
+	Skill string `json:"skill"`
+}
+
+func main(){
+	person := Person{}
+	person.Name = "Jcohy"
+	person.speak() // Jcohy 我是一个好人
+	person.cale() // Jcohy 计算结果是: 499500
+	person.cale2(10) // Jcohy 计算结果是: 45
+	res := person.getSum(25,25)
+	fmt.Println("getSum=",res) // getSum= 50
+}
+----
+
+=== 方法的调用和传参机制
+
+方法的调用和传参机制和函数基本一样,不一样的地方式方法调用时,会将调用方法的变量,当作实参也传递给方法
+
+image::{base-images}/go4.png[]
+
+变量调用方法时,该变量本身也会作为一个参数传递到方法(如果变量时值类型,则进行值拷贝,如果变量时引用类型,则进行地址拷贝)
+
+=== 注意事项
+
+. 结构体类型是值类型,在方法调用中,遵守值类型的传递机制,是值拷贝传递方式
+. 如果希望在方法中,修改结构体变量的值,可以通过结构体指针的方式来处理
+. Golang 中的方法作用在指定的数据类型上的,因此自定义类型都可以有方法,而不仅仅是 `struct`,比如 `int`,`float32` 都可以有方法
++
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+)
+/*
+Golang中的方法作用在指定的数据类型上的(即：和指定的数据类型绑定)，因此自定义类型，
+都可以有方法，而不仅仅是struct， 比如int , float32等都可以有方法
+*/
+
+type integer int
+
+func (i integer) print() {
+	fmt.Println("i=", i)
+}
+//编写一个方法，可以改变i的值
+func (i *integer) change() {
+	*i = *i + 1
+}
+
+type Student struct {
+	Name string
+	Age int
+}
+
+//给*Student实现方法String()
+func (stu *Student) String() string {
+	str := fmt.Sprintf("Name=[%v] Age=[%v]", stu.Name, stu.Age)
+	return str
+}
+
+func main() {
+	var i integer = 10
+	i.print()
+	i.change()
+	fmt.Println("i=", i)
+
+	//定义一个Student变量
+	stu := Student{
+		Name : "tom",
+		Age : 20,
+	}
+	//如果你实现了 *Student 类型的 String方法，就会自动调用
+	fmt.Println(&stu)
+}
+----
+. 方法的访问范围控制的规则,和函数一样.方法名首字母小写,只能在本包访问,方法首字母大写,可以在本包和其他包访问
+. 如果一个类型实现了 `String()` 这个方法,那么 `fmt.println` 默认调用这个变量的 `String()` 方法进行输出
+
+== 方法和函数的区别
+
+. 调用方式不一样
++
+函数的调用: 函数名(实参列表)
++
+方法的调用: 变量.方法名(实参列表)
++
+. 对于普通函数，接收者为值类型时，不能将指针类型的数据直接传递，反之亦然
++
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+)
+
+type Person struct {
+	Name string
+}
+
+//函数
+//对于普通函数，接收者为值类型时，不能将指针类型的数据直接传递，反之亦然
+
+func test01(p Person) {
+	fmt.Println(p.Name)
+}
+
+func test02(p *Person) {
+	fmt.Println(p.Name)
+}
+func main() {
+
+	p := Person{"tom"}
+	test01(p)
+	test02(&p)
+}
+----
+. 对于方法(如 struct 的方法)，接收者为值类型时，可以直接用指针的变量调用方法，反之也可以
++
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+)
+
+type Person struct {
+	Name string
+}
+
+//对于方法（如struct的方法），
+//接收者为值类型时，可以直接用指针类型的变量调用方法，反过来同样也可以
+func (p Person) test03() {
+	p.Name = "jack"
+	fmt.Println("test03() =", p.Name) // jack
+}
+
+func (p *Person) test04() {
+	p.Name = "mary"
+	fmt.Println("test03() =", p.Name) // mary
+}
+
+func main() {
+	p.test03()
+	fmt.Println("main() p.name=", p.Name) // tom
+
+	(&p).test03() // 从形式上是传入地址，但是本质仍然是值拷贝
+
+	fmt.Println("main() p.name=", p.Name) // tom
+
+
+	(&p).test04()
+	fmt.Println("main() p.name=", p.Name) // mary
+	p.test04() // 等价 (&p).test04 , 从形式上是传入值类型，但是本质仍然是地址拷贝
+
+}
+----
+
+. 不管调用形式如何，真正决定是值值拷贝还是地址拷贝，看这个方法是和那个类型绑定
+. 如果是值类型，比如 `(p Person)`,则是值拷贝，如果是指针类型，比如 `(p *Person)` 则是地址拷贝
+
+[[go-function-notice]]
 == 注意事项
 
 . 函数的形参列表可以是多个,返回值列表也可以是多个
@@ -562,3 +997,308 @@ Golang 预定义了少数函数,这意味着无需引用任何包就可以使用
 . Go 函数不支持函数重载
 . 函数是一种数据类型,参见<<go-getting-started-data-type-complex-function,函数数据类型>>
 . 使用 `_` 标识符,忽略返回值
+
+[[go-function-sample]]
+== 示例
+
+=== 示例一
+
+请使用递归的方式，求出斐波那契数1,1,2,3,5,8,13...
+
+[source,go]
+----
+package main
+import (
+	"fmt"
+)
+
+/*
+请使用递归的方式，求出斐波那契数1,1,2,3,5,8,13...
+给你一个整数n，求出它的斐波那契数是多少？
+*/
+func fbn(n int) int {
+	if (n == 1 || n == 2) {
+		return 1
+	} else {
+		return fbn(n - 1) + fbn(n - 2)
+	}
+}
+
+func main() {
+	res := fbn(3)
+	//测试
+	fmt.Println("res=", res)
+	fmt.Println("res=", fbn(4)) // 3
+	fmt.Println("res=", fbn(5)) // 5
+	fmt.Println("res=", fbn(6)) // 8
+}
+----
+
+=== 示例二
+
+求函数值已知 f(1)=3; f(n) = 2*f(n-1)+1; 请使用递归的思想编程，求出 f(n)的值?
+
+[source,go]
+----
+package main
+import (
+	"fmt"
+)
+
+/*
+题2：求函数值已知 f(1)=3; f(n) = 2*f(n-1)+1; 请使用递归的思想编程，求出 f(n)的值?
+
+*/
+func f(n int) int {
+	if n == 1 {
+		return 3
+	} else {
+		return 2 * f(n - 1) + 1
+	}
+}
+func main(){
+
+	//测试一下
+	fmt.Println("f(1)=", f(1))
+	fmt.Println("f(5)=", f(5))
+}
+----
+
+=== 示例三
+
+猴子吃桃子问题有一堆桃子，猴子第一天吃了其中的一半， 并再多吃了一个！以后每天猴子都吃其中的一半，然后再多吃一个。 当到第十天时，想再吃时（还没吃），发现只有1个桃子了。问题：最初共多少个桃子？
+
+[source,go]
+----
+package main
+import (
+	"fmt"
+)
+
+//题3：猴子吃桃子问题有一堆桃子，猴子第一天吃了其中的一半，
+//并再多吃了一个！以后每天猴子都吃其中的一半，然后再多吃一个。
+//当到第十天时，想再吃时（还没吃），发现只有1个桃子了。问题：最初共多少个桃子？
+
+//思路分析
+
+/*
+1)第10天只有一个桃子
+2)第9天有几个桃子  =  (第10天桃子数量 + 1) * 2
+3)规律: 第n天的桃子数据  peach(n) = (peach(n+1) + 1) * 2
+
+*/
+//n 范围是  1 -- 10 之间
+func peach(n int) int {
+	if n > 10 || n < 1 {
+		fmt.Println("输入的天数不对")
+		return 0 //返回0表示没有得到正确数量
+	}
+	if n == 10 {
+		return 1
+	} else {
+		return (peach(n + 1) + 1) * 2
+	}
+}
+
+func main() {
+
+	fmt.Println("第1天桃子数量是=", peach(1)) //1534
+}
+----
+
+=== 示例四
+
+打印金字塔
+
+[source,go]
+----
+package main
+import (
+	"fmt"
+)
+
+
+//将打印金字塔的代码封装到函数中
+func printPyramid(totalLevel int) {
+
+	//i 表示层数
+	for i := 1; i <= totalLevel; i++ {
+		//在打印*前先打印空格
+		for k := 1; k <= totalLevel - i; k++ {
+			fmt.Print(" ")
+		}
+
+		//j 表示每层打印多少*
+		for j :=1; j <= 2 * i - 1; j++ {
+				fmt.Print("*")
+		}
+		fmt.Println()
+	}
+
+}
+func main() {
+	//调用printPyramid函数，就可以打印金字塔
+	//从终端输入一个整数打印出对应的金子塔
+	var n int
+	fmt.Println("请输入打印金字塔的层数")
+	fmt.Scanln(&n)
+	printPyramid(n)
+}
+----
+
+=== 示例五
+
+* 编写结构体(MethodUtils),编写一个方法，方法不需要参数，在方法中打印一个 10*8 的矩形
+* 编写一个方法算该矩形的面积(可以接收长 len，和宽 width)，
+* 判断一个数是奇数还是偶数
+* 根据行、列、字符打印 对应行数和列数的字符
+* 实现加减乘除小功能
+
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+)
+
+type MethodUtils struct {
+	//字段...
+}
+
+//给MethodUtils编写方法
+func (mu MethodUtils) Print() {
+	for i := 1; i <= 10; i++ {
+		for j := 1; j <= 8; j++ {
+			fmt.Print("*")
+		}
+		fmt.Println()
+	}
+}
+
+//2)编写一个方法，提供m和n两个参数，方法中打印一个m*n的矩形
+func (mu MethodUtils) Print2(m int, n int) {
+	for i := 1; i <= m; i++ {
+		for j := 1; j <= n; j++ {
+			fmt.Print("*")
+		}
+		fmt.Println()
+	}
+}
+
+/*
+编写一个方法算该矩形的面积(可以接收长len，和宽width)，
+将其作为方法返回值。在main方法中调用该方法，接收返回的面积值并打印
+*/
+
+func (mu MethodUtils) area(len float64, width float64) (float64) {
+	return len * width
+}
+
+/*
+编写方法：判断一个数是奇数还是偶数
+
+*/
+
+func (mu *MethodUtils) JudgeNum(num int)  {
+	if num % 2 == 0 {
+		fmt.Println(num, "是偶数..")
+	} else {
+		fmt.Println(num, "是奇数..")
+	}
+}
+/*
+根据行、列、字符打印 对应行数和列数的字符，
+比如：行：3，列：2，字符*,则打印相应的效果
+
+*/
+
+func (mu *MethodUtils) Print3(n int, m int, key string)  {
+
+	for i := 1; i <= n ; i++ {
+		for j := 1; j <= m; j++ {
+			fmt.Print(key)
+		}
+		fmt.Println()
+	}
+}
+
+/*
+定义小小计算器结构体(Calcuator)，
+实现加减乘除四个功能
+实现形式1：分四个方法完成: , 分别计算 + - * /
+实现形式2：用一个方法搞定, 需要接收两个数，还有一个运算符
+
+*/
+//实现形式1
+
+type Calcuator struct{
+	Num1 float64
+	Num2 float64
+}
+
+func (calcuator *Calcuator) getSum() float64 {
+
+	return calcuator.Num1 + calcuator.Num2
+}
+
+func (calcuator *Calcuator) getSub() float64 {
+
+	return calcuator.Num1 - calcuator.Num2
+}
+
+//..
+
+//实现形式2
+
+func (calcuator *Calcuator) getRes(operator byte) float64 {
+	res := 0.0
+	switch operator {
+	case '+':
+			res = calcuator.Num1 + calcuator.Num2
+	case '-':
+			res = calcuator.Num1 - calcuator.Num2
+	case '*':
+			res = calcuator.Num1 * calcuator.Num2
+	case '/':
+			res = calcuator.Num1 / calcuator.Num2
+	default:
+			fmt.Println("运算符输入有误...")
+
+	}
+	return res
+}
+
+
+func main() {
+	/*
+	1)编写结构体(MethodUtils)，编程一个方法，方法不需要参数，
+	在方法中打印一个10*8 的矩形，在main方法中调用该方法。
+	*/
+	var mu MethodUtils
+	mu.Print()
+	fmt.Println()
+	mu.Print2(5, 20)
+
+	areaRes := mu.area(2.5, 8.7)
+	fmt.Println()
+	fmt.Println("面积为=", areaRes)
+
+	mu.JudgeNum(11)
+
+	mu.Print3(7, 20, "@")
+
+
+	//测试一下:
+	var calcuator Calcuator
+	calcuator.Num1 = 1.2
+	calcuator.Num2 = 2.2
+	fmt.Printf("sum=%v\n", fmt.Sprintf("%.2f",calcuator.getSum()))
+	fmt.Printf("sub=%v\n",fmt.Sprintf("%.2f",calcuator.getSub()))
+
+
+	res := calcuator.getRes('*')
+	fmt.Println("res=", res)
+
+}
+----

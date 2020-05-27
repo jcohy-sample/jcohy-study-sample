@@ -35,7 +35,11 @@ Redis:REmote DIctionary Server(远程字典服务器).它是是完全开源免�
 * dbsize:查看当前数据库的key的数量
 * keys *:显示当前库的所有key
 * set key value:设置键值对
+* mset key1 value1 ...:同时设置一个或多个键值对
 * get key:获取key的值
+* mget key1 ...: 同时获取多个键值对
+* del key:删除ket
+* setex key second value: 设置key的过期时间和值
 * FLUSHALL,FLUSHDB:删除所有库,删除当前库.
 * http://redisdoc.com/[Redis常用命令]
 

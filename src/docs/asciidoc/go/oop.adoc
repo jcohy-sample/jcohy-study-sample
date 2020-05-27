@@ -87,13 +87,135 @@ var person4 *Person = &Person{}
 [[go-oop-struct-memory]]
 === 结构体的内存结构
 
+以下面的例子来说明结构体在内存中如何存在
+
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+)
+
+type Person struct {
+	Name string
+	Age  int
+}
+
+func main() {
+
+	var p1 Person
+	p1.Age = 10
+	p1.Name = "小明"
+	var p2 *Person = &p1 //这里是关键-->画出示意图
+
+	fmt.Println((*p2).Age) // 0
+	fmt.Println(p2.Age) // 0
+	p2.Name = "tom~"
+	fmt.Printf("p2.Name=%v p1.Name=%v \n", p2.Name, p1.Name)    // p2.Name=tom~ p1.Name=tom~
+	fmt.Printf("p2.Name=%v p1.Name=%v \n", (*p2).Name, p1.Name) // p2.Name=tom~ p1.Name=tom~
+
+	fmt.Printf("p1的地址%p\n", &p1) // p2的地址0xc0420023e0
+	fmt.Printf("p2的地址%p p2的值%p\n", &p2, p2) // p2的地址0xc042004028 p2的值0xc0420023e0
+
+}
+----
+
+上面的代码对应的内存分析
+
+image::{base-images}/go9.png[]
+
 [[go-oop-struct-notice]]
 === 注意事项
 
 . 结构体的所有字段再内存中是连续的
++
+[source,go]
+----
+package main
+import "fmt"
+
+//结构体
+type Point struct {
+	x int
+	y int
+}
+
+//结构体
+type Rect struct {
+	leftUp, rightDown Point
+}
+
+//结构体
+type Rect2 struct {
+	leftUp, rightDown *Point
+}
+
+func main() {
+
+	r1 := Rect{Point{1,2}, Point{3,4}}
+
+	//r1有四个int, 在内存中是连续分布
+	//打印地址
+	fmt.Printf("r1.leftUp.x 地址=%p r1.leftUp.y 地址=%p r1.rightDown.x 地址=%p r1.rightDown.y 地址=%p \n",
+	&r1.leftUp.x, &r1.leftUp.y, &r1.rightDown.x, &r1.rightDown.y)
+
+	//r2有两个 *Point类型，这个两个*Point类型的本身地址也是连续的，
+	//但是他们指向的地址不一定是连续
+
+	r2 := Rect2{&Point{10,20}, &Point{30,40}}
+
+	//打印地址
+	fmt.Printf("r2.leftUp 本身地址=%p r2.rightDown 本身地址=%p \n",
+		&r2.leftUp, &r2.rightDown)
+
+	//他们指向的地址不一定是连续...， 这个要看系统在运行时是如何分配
+	fmt.Printf("r2.leftUp 指向地址=%p r2.rightDown 指向地址=%p \n",
+		r2.leftUp, r2.rightDown)
+
+}
+----
 . 结构体是用户单独定义的类型,和其他类型进行转换时需要有完全相同的字段(名字,个数个类型)
++
+[source,go]
+----
+package main
+import "fmt"
+import "encoding/json"
+
+type A struct {
+	Num int
+}
+type B struct {
+	Num int
+}
+
+type Monster struct{
+	Name string `json:"name"` // `json:"name"` 就是 struct tag
+	Age int `json:"age"`
+	Skill string `json:"skill"`
+}
+func main() {
+	var a A
+	var b B
+	a = A(b) // ? 可以转换，但是有要求，就是结构体的的字段要完全一样(包括:名字、个数和类型！)
+	fmt.Println(a, b)
+
+	//1. 创建一个Monster变量
+	monster := Monster{"牛魔王", 500, "芭蕉扇~"}
+
+	//2. 将monster变量序列化为 json格式字串
+	//   json.Marshal 函数中使用反射，这个讲解反射时，我会详细介绍
+	jsonStr, err := json.Marshal(monster)
+	if err != nil {
+		fmt.Println("json 处理错误 ", err)
+	}
+	fmt.Println("jsonStr", string(jsonStr))
+
+}
+----
 . 结构体进行 type 重新定义(相当于取别名),Golang 认为是新的数据类型,但是相互间可以强转
-. struct 的每个字段上, 可以写上一个 tag,该 tag 可以通过反射机制获取,常见的使用场景就是序列化和反序列化
+. struct 的每个字段上, 可以写上一个 `tag`,该 `tag` 可以通过反射机制获取,常见的使用场景就是序列化和反序列化
 +
 [source,go]
 ----
@@ -113,129 +235,40 @@ func main(){
 }
 ----
 
-[[go-oop-struct-method]]
-=== 结构体方法
-
-在某些情况下,我们需要声明(定义)方法.比如 Person 结构体中,除了有一些字段外,还有一些行为,例如说话,跑步等.
-
-Golang 中的方法是作用在指定的数据类型上的(即:和指定的数据类型绑定),因为自定义类型都可以有方法,而不仅仅是 `struct`
-
-[[go-oop-struct-method-declare]]
-==== 方法声明(定义)
-
-方法就是有接受者的函数
-
-====
-[source,go]
-----
-func (recevier type) methodName(参数列表) (返回值列表){
-	方法体
-	return 返回值
-}
-----
-参数列表:方法输入
-
-recevier type: 表示这个方法和 yupe 这个类型绑定,或者说该方法作用于 type 类型,recevier type 可以是结构体,也可以使其他自定义类型
-
-recevier: 就是 type 类型的一个实例变量
-
-返回值列表: 表示返回的值,可以多个
-
-方法主体: 表示为了实现某一功能代码块
-
-return: return 语句不是必须的
-====
-
-[NOTE]
-====
-接受者类型必须是 `T` 或者 `*T` ,这里的 `T` 是类型名,T叫做接受者基础类型或者简称基础类型,基础类型一定不能是指针或接口类型,这样会引起 `invalid receiver type ...` 的编译错误.并且定义在与方法相同的包中
-====
-
-我们以上面的例子 Person 结构体为例,为 Person 定义如下方法
-
-[source,go]
-----
-package main
-
-import (
-	"fmt"
-)
-
-type Person struct {
-	Name string
-	Age int
-	Scpres [5]float64
-	ptr *int
-	slice []int
-	map1 map[string]string
-}
-
-// 定义一个方法,打印 我是一个好人
-func (p Person) speak(){
-	fmt.Println(p.Name,"我是一个好人")
-}
-
-// 计算 1+2+...+1000
-func (p Person) cale(){
-	res := 0
-	for i :=0 ;i<1000; i++{
-		res += i
-	}
-	fmt.Println(p.Name,"计算结果是:",res)
-}
-
-// 计算 1+2+...+n
-func (p Person) cale2(n int){
-	res := 0
-	for i :=0 ;i < n; i++{
-		res += i
-	}
-	fmt.Println(p.Name,"计算结果是:",res)
-}
-
-// 计算 n1+n2
-func (p Person) getSum(n1 int,n2 int) (res int){
-	res = n1 + n2
-	return
-}
-type Monster struct {
-	Name string `json:"name"`
-	Age int `json:"age"`
-	Skill string `json:"skill"`
-}
-
-func main(){
-	person := Person{}
-	person.Name = "Jcohy"
-	person.speak() // Jcohy 我是一个好人
-	person.cale() // Jcohy 计算结果是: 499500
-	person.cale2(10) // Jcohy 计算结果是: 45
-	res := person.getSum(25,25)
-	fmt.Println("getSum=",res) // getSum= 50
-}
-----
-
-==== 方法的调用和传参机制
-
-方法的调用和传参机制和函数基本一样,不一样的地方式方法调用时,会将调用方法的变量,当作实参也传递给方法
-
-image::{base-images}/go4.png[]
-
-变量调用方法时,该变量本身也会作为一个参数传递到方法(如果变量时值类型,则进行值拷贝,如果变量时引用类型,则进行地址拷贝)
-
-==== 注意事项
-
-. 结构体类型是值类型,在方法调用中,遵守值类型的传递机制,是值拷贝传递方式
-. 如果希望在方法中,修改结构体变量的值,可以通过结构体指针的方式来处理
-. Golang 中的方法作用在指定的数据类型上的,因此自定义类型都可以有方法,而不仅仅是 `struct`,比如 `int`,`float32` 都可以有方法
-. 方法的访问范围控制的规则,和函数一样.方法名首字母小写,只能在本包访问,方法首字母大写,可以在本包和其他包访问
-. 如果一个类型实现了 `String()` 这个方法,那么 `fmt.println` 默认调用这个变量的 `String()` 方法进行输出
-
-[[go-oop-struct-sample]]
-=== 应用实例
-
 [[go-oop-struct-sample-factory]]
 ==== 工厂模式的函数
+
+Golang 的结构体没有构造函数，可以使用工厂模式来解决这个问题.
+
+如果 model 包的结构体变量首字母大写，引入后，直接使用，没有问题
+
+如果 model 包的结构体变量首字母小写，引入后，不能直接使用，可以使用工厂模式解决。如下
+
+[source,go]
+----
+package model
+
+//定义一个结构体
+type student struct{
+	Name string
+	score float64
+}
+
+//因为student结构体首字母是小写，因此是只能在model使用
+//我们通过工厂模式来解决
+
+func NewStudent(n string, s float64) *student {
+	return &student{
+		Name : n,
+		score : s,
+	}
+}
+
+//如果score字段首字母小写，则，在其它包不可以直接方法，我们可以提供一个方法
+func (s *student) GetScore() float64{
+	return s.score //ok
+}
+----
 
 [[go-oop-interface]]
 == 接口(interface)
@@ -694,6 +727,7 @@ func main(){
 }
 ----
 
+[[go-oop-polymorphism-predicate]]
 === 类型断言
 
 由于接口是一般类型,不知道具体类型,如果要转成具体类型,就需要使用类型断言,看下面的例子
@@ -741,5 +775,541 @@ func main() {
 		fmt.Println("FAIL") //
 	}
 	fmt.Println("继续执行") //
+}
+----
+
+== 示例
+
+=== 示例一
+
+实现对 Hero 结构体切片的排序: `sort.Sort(data interface)`
+
+[source,go]
+----
+package main
+import (
+	"fmt"
+	"sort"
+	"math/rand"
+)
+
+//1.声明Hero结构体
+type  Hero struct{
+	Name string
+	Age int
+}
+
+//2.声明一个Hero结构体切片类型
+type HeroSlice []Hero
+
+//3.实现Interface 接口
+func (hs HeroSlice) Len() int {
+	return len(hs)
+}
+
+//Less方法就是决定你使用什么标准进行排序
+//1. 按Hero的年龄从小到大排序!!
+func (hs HeroSlice) Less(i, j int) bool {
+	return hs[i].Age < hs[j].Age
+	//修改成对Name排序
+	//return hs[i].Name < hs[j].Name
+}
+
+func (hs HeroSlice) Swap(i, j int) {
+	//交换
+	// temp := hs[i]
+	// hs[i] = hs[j]
+	// hs[j] = temp
+	//下面的一句话等价于三句话
+	hs[i], hs[j] = hs[j], hs[i]
+}
+
+
+//1.声明Student结构体
+type  Student struct{
+	Name string
+	Age int
+	Score float64
+}
+
+//将Student的切片，安Score从大到小排序!!
+
+func main() {
+
+	//先定义一个数组/切片
+	var intSlice = []int{0, -1, 10, 7, 90}
+	//要求对 intSlice切片进行排序
+	//1. 冒泡排序...
+	//2. 也可以使用系统提供的方法
+	sort.Ints(intSlice)
+	fmt.Println(intSlice)
+
+	//请大家对结构体切片进行排序
+	//1. 冒泡排序...
+	//2. 也可以使用系统提供的方法
+
+	//测试看看我们是否可以对结构体切片进行排序
+	var heroes HeroSlice
+	for i := 0; i < 10 ; i++ {
+		hero := Hero{
+			Name : fmt.Sprintf("英雄|%d", rand.Intn(100)),
+			Age : rand.Intn(100),
+		}
+		//将 hero append到 heroes切片
+		heroes = append(heroes, hero)
+	}
+
+	//看看排序前的顺序
+	for _ , v := range heroes {
+		fmt.Println(v)
+	}
+
+	//调用sort.Sort
+	sort.Sort(heroes)
+	fmt.Println("-----------排序后------------")
+	//看看排序后的顺序
+	for _ , v := range heroes {
+		fmt.Println(v)
+	}
+
+	i := 10
+	j := 20
+	i, j = j, i
+	fmt.Println("i=", i, "j=", j) // i=20 j = 10
+}
+----
+
+=== 示例二
+
+模拟实现基于文本界面的 "家庭记账软件"，该软件能够记录家庭的收入，支出，并能够打印收支明细表
+
+[source,go]
+----
+package utils
+import (
+	"fmt"
+)
+
+type FamilyAccount struct {
+	//声明必须的字段.
+
+	//声明一个字段，保存接收用户输入的选项
+	key  string
+	//声明一个字段，控制是否退出for
+	loop bool
+	//定义账户的余额 []
+	balance float64
+	//每次收支的金额
+	money float64
+	//每次收支的说明
+	note string
+	//定义个字段，记录是否有收支的行为
+	flag bool
+	//收支的详情使用字符串来记录
+	//当有收支时，只需要对details 进行拼接处理即可
+	details string
+}
+
+//编写要给工厂模式的构造方法，返回一个*FamilyAccount实例
+func NewFamilyAccount() *FamilyAccount {
+
+	return &FamilyAccount{
+		key : "",
+		loop : true,
+		balance : 10000.0,
+		money : 0.0,
+		note : "",
+		flag : false,
+		details : "收支\t账户金额\t收支金额\t说    明",
+	}
+
+}
+
+//将显示明细写成一个方法
+func (this *FamilyAccount) showDetails() {
+	fmt.Println("-----------------当前收支明细记录-----------------")
+	if this.flag {
+		fmt.Println(this.details)
+	} else {
+		fmt.Println("当前没有收支明细... 来一笔吧!")
+	}
+}
+
+//将登记收入写成一个方法，和*FamilyAccount绑定
+func (this *FamilyAccount) income() {
+
+	fmt.Println("本次收入金额:")
+	fmt.Scanln(&this.money)
+	this.balance += this.money // 修改账户余额
+	fmt.Println("本次收入说明:")
+	fmt.Scanln(&this.note)
+	//将这个收入情况，拼接到details变量
+	//收入    11000           1000            有人发红包
+	this.details += fmt.Sprintf("\n收入\t%v\t%v\t%v", this.balance, this.money, this.note)
+	this.flag = true
+}
+
+//将登记支出写成一个方法，和*FamilyAccount绑定
+func (this *FamilyAccount) pay() {
+	fmt.Println("本次支出金额:")
+	fmt.Scanln(&this.money)
+	//这里需要做一个必要的判断
+	if this.money > this.balance {
+		fmt.Println("余额的金额不足")
+		//break
+	}
+	this.balance -= this.money
+	fmt.Println("本次支出说明:")
+	fmt.Scanln(&this.note)
+	this.details += fmt.Sprintf("\n支出\t%v\t%v\t%v", this.balance, this.money, this.note)
+	this.flag = true
+}
+
+//将退出系统写成一个方法,和*FamilyAccount绑定
+func (this *FamilyAccount) exit() {
+
+	fmt.Println("你确定要退出吗? y/n")
+	choice := ""
+	for {
+
+		fmt.Scanln(&choice)
+		if choice == "y" || choice == "n" {
+			break
+		}
+		fmt.Println("你的输入有误，请重新输入 y/n")
+	}
+
+	if choice == "y" {
+		this.loop = false
+	}
+}
+
+
+//给该结构体绑定相应的方法
+//显示主菜单
+func (this *FamilyAccount) MainMenu() {
+
+	for {
+		fmt.Println("\n-----------------家庭收支记账软件-----------------")
+		fmt.Println("                  1 收支明细")
+		fmt.Println("                  2 登记收入")
+		fmt.Println("                  3 登记支出")
+		fmt.Println("                  4 退出软件")
+		fmt.Print("请选择(1-4)：")
+		fmt.Scanln(&this.key)
+		switch this.key {
+			case "1":
+				this.showDetails()
+			case "2":
+				this.income()
+			case "3":
+				this.pay()
+			case "4":
+				this.exit()
+			default :
+				fmt.Println("请输入正确的选项..")
+		}
+
+		if !this.loop {
+			break
+		}
+
+	}
+}
+
+func main() {
+
+	fmt.Println("这个是面向对象的方式完成~~")
+	utils.NewFamilyAccount().MainMenu() //思路非常清晰
+}
+----
+
+=== 示例三
+
+模拟实现基于文本界面 "客户信息管理软件",该软件能够实现对客户对象的插入，修改和删除(用切片实现)，并能打印客户明细表
+
+在 model 包下声明一个 `Customer` 结构体，表示一个客户信息
+
+[source,go]
+----
+package model
+import (
+	"fmt"
+)
+//声明一个Customer结构体，表示一个客户信息
+
+type Customer struct {
+	Id int
+	Name string
+	Gender string
+	Age int
+	Phone string
+	Email string
+}
+
+//使用工厂模式，返回一个Customer的实例
+
+func NewCustomer(id int, name string, gender string,
+	age int, phone string, email string ) Customer {
+	return Customer{
+		Id : id,
+		Name : name,
+		Gender : gender,
+		Age : age,
+		Phone : phone,
+		Email : email,
+	}
+}
+
+//第二种创建Customer实例方法，不带id
+func NewCustomer2(name string, gender string,
+	age int, phone string, email string ) Customer {
+	return Customer{
+		Name : name,
+		Gender : gender,
+		Age : age,
+		Phone : phone,
+		Email : email,
+	}
+}
+
+//返回用户的信息,格式化的字符串
+func (this Customer) GetInfo()  string {
+	info := fmt.Sprintf("%v\t%v\t%v\t%v\t%v\t%v\t", this.Id,
+		this.Name, this.Gender,this.Age, this.Phone, this.Email)
+	return info
+
+}
+----
+
+在 service 包下声明一个 `CustomerService` 结构体，完成对 `Customer` 的操作,包括增删改查
+
+[source,go]
+----
+package service
+import (
+	"model"
+
+)
+
+//该CustomerService， 完成对Customer的操作,包括
+//增删改查
+type CustomerService struct {
+	customers []model.Customer
+	//声明一个字段，表示当前切片含有多少个客户
+	//该字段后面，还可以作为新客户的id+1
+	customerNum int
+}
+
+//编写一个方法，可以返回 *CustomerService
+func NewCustomerService() *CustomerService {
+	//为了能够看到有客户在切片中，我们初始化一个客户
+	customerService := &CustomerService{}
+	customerService.customerNum = 1
+	customer := model.NewCustomer(1, "张三", "男", 20, "112", "zs@sohu.com")
+	customerService.customers = append(customerService.customers, customer)
+	return customerService
+}
+
+//返回客户切片
+func (this *CustomerService) List() []model.Customer {
+	return this.customers
+}
+
+//添加客户到customers切片
+//!!!
+func (this *CustomerService) Add(customer model.Customer) bool {
+
+	//我们确定一个分配id的规则,就是添加的顺序
+	this.customerNum++
+	customer.Id = this.customerNum
+	this.customers = append(this.customers, customer)
+	return true
+}
+
+//根据id删除客户(从切片中删除)
+func (this *CustomerService) Delete(id int) bool {
+	index := this.FindById(id)
+	//如果index == -1, 说明没有这个客户
+	if index == -1 {
+		return false
+	}
+	//如何从切片中删除一个元素
+	this.customers = append(this.customers[:index], this.customers[index+1:]...)
+	return true
+}
+
+//根据id查找客户在切片中对应下标,如果没有该客户，返回-1
+func (this *CustomerService) FindById(id int)  int {
+	index := -1
+	//遍历this.customers 切片
+	for i := 0; i < len(this.customers); i++ {
+		if this.customers[i].Id == id {
+			//找到
+			index = i
+		}
+	}
+	return index
+}
+----
+
+在 main 函数中，创建一个 `customerView`,并运行显示主菜单..
+
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+	"service"
+	"model"
+)
+
+type customerView struct {
+
+	//定义必要字段
+	key string //接收用户输入...
+	loop bool  //表示是否循环的显示主菜单
+	//增加一个字段customerService
+	customerService *service.CustomerService
+
+}
+
+//显示所有的客户信息
+func (this *customerView) list() {
+
+	//首先，获取到当前所有的客户信息(在切片中)
+	customers := this.customerService.List()
+	//显示
+	fmt.Println("---------------------------客户列表---------------------------")
+	fmt.Println("编号\t姓名\t性别\t年龄\t电话\t邮箱")
+	for i := 0; i < len(customers); i++ {
+		//fmt.Println(customers[i].Id,"\t", customers[i].Name...)
+		fmt.Println(customers[i].GetInfo())
+	}
+	fmt.Printf("\n-------------------------客户列表完成-------------------------\n\n")
+}
+
+//得到用户的输入，信息构建新的客户，并完成添加
+func (this *customerView) add() {
+	fmt.Println("---------------------添加客户---------------------")
+	fmt.Println("姓名:")
+	name := ""
+	fmt.Scanln(&name)
+	fmt.Println("性别:")
+	gender := ""
+	fmt.Scanln(&gender)
+	fmt.Println("年龄:")
+	age := 0
+	fmt.Scanln(&age)
+	fmt.Println("电话:")
+	phone := ""
+	fmt.Scanln(&phone)
+	fmt.Println("电邮:")
+	email := ""
+	fmt.Scanln(&email)
+	//构建一个新的Customer实例
+	//注意: id号，没有让用户输入，id是唯一的，需要系统分配
+	customer := model.NewCustomer2(name, gender, age, phone, email)
+	//调用
+	if this.customerService.Add(customer) {
+		fmt.Println("---------------------添加完成---------------------")
+	} else {
+		fmt.Println("---------------------添加失败---------------------")
+	}
+}
+
+//得到用户的输入id，删除该id对应的客户
+func (this *customerView) delete() {
+	fmt.Println("---------------------删除客户---------------------")
+	fmt.Println("请选择待删除客户编号(-1退出)：")
+	id := -1
+	fmt.Scanln(&id)
+	if id == -1 {
+		return //放弃删除操作
+	}
+	fmt.Println("确认是否删除(Y/N)：")
+	//这里同学们可以加入一个循环判断，直到用户输入 y 或者 n,才退出..
+	choice := ""
+	fmt.Scanln(&choice)
+	if choice == "y" || choice == "Y" {
+		//调用customerService 的 Delete方法
+		if this.customerService.Delete(id) {
+			fmt.Println("---------------------删除完成---------------------")
+		} else {
+			fmt.Println("---------------------删除失败，输入的id号不存在----")
+		}
+	}
+}
+
+//退出软件
+func (this *customerView) exit() {
+
+	fmt.Println("确认是否退出(Y/N)：")
+	for {
+		fmt.Scanln(&this.key)
+		if this.key == "Y" || this.key == "y" || this.key == "N" || this.key == "n" {
+			break
+		}
+
+		fmt.Println("你的输入有误，确认是否退出(Y/N)：")
+	}
+
+	if this.key == "Y" || this.key == "y" {
+		this.loop = false
+	}
+
+}
+
+//显示主菜单
+func (this *customerView) mainMenu() {
+
+	for {
+
+		fmt.Println("-----------------客户信息管理软件-----------------")
+		fmt.Println("                 1 添 加 客 户")
+		fmt.Println("                 2 修 改 客 户")
+		fmt.Println("                 3 删 除 客 户")
+		fmt.Println("                 4 客 户 列 表")
+		fmt.Println("                 5 退       出")
+		fmt.Print("请选择(1-5)：")
+
+		fmt.Scanln(&this.key)
+		switch this.key {
+			case "1" :
+				this.add()
+			case "2" :
+				fmt.Println("修 改 客 户")
+			case "3" :
+				this.delete()
+			case "4" :
+				this.list()
+			case "5" :
+				this.exit()
+			default :
+				fmt.Println("你的输入有误，请重新输入...")
+		}
+
+		if !this.loop {
+			break
+		}
+
+	}
+	fmt.Println("你退出了客户关系管理系统...")
+}
+
+
+
+func main() {
+	//在main函数中，创建一个customerView,并运行显示主菜单..
+	customerView := customerView{
+		key : "",
+		loop : true,
+	}
+	//这里完成对customerView结构体的customerService字段的初始化
+	customerView.customerService = service.NewCustomerService()
+	//显示主菜单..
+	customerView.mainMenu()
+
 }
 ----

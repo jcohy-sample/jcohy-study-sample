@@ -1,0 +1,259 @@
+[[go-integrate]]
+= 集成
+
+[[go-integrate-redis]]
+== redis 集成
+
+<<nosql.adoc#nosql-redis>> 中详情的介绍了 redis，这里不再过多介绍。
+
+Golang 操作 Redis，使用第三方开源的 redis 库: https://github.com/gomodule/redigo/tree/master/redis[redisgo]
+
+在使用前，先安装第三方 redis 库，在 GOPATH 路径下执行安装指令
+
+[source,shell]
+----
+go get github.com/gomodule/redigo/redis
+----
+
+[NOTE]
+====
+在安装 Redis 库之前，请确保已经安装了并配置了 Git，因为是从 github 下载安装 Redis 库的，需要使用 Git
+====
+
+=== 使用方式
+
+==== Set/Get 接口
+
+[source,go]
+----
+package main
+import (
+	"fmt"
+	"github.com/garyburd/redigo/redis" //引入redis包
+)
+
+func main() {
+	//通过go 向redis 写入数据和读取数据
+	//1. 链接到redis
+	conn, err := redis.Dial("tcp", "127.0.0.1:6379")
+	if err != nil {
+		fmt.Println("redis.Dial err=", err)
+		return
+	}
+	defer conn.Close() //关闭..
+
+	//2. 通过go 向redis写入数据 string [key-val]
+	_, err = conn.Do("Set", "name", "tomjerry猫猫")
+	if err != nil {
+		fmt.Println("set  err=", err)
+		return
+	}
+
+	//3. 通过go 向redis读取数据 string [key-val]
+
+	r, err := redis.String(conn.Do("Get", "name"))
+	if err != nil {
+		fmt.Println("set  err=", err)
+		return
+	}
+
+	//因为返回 r是 interface{}
+	//因为 name 对应的值是string ,因此我们需要转换
+	//nameString := r.(string)
+
+	fmt.Println("操作ok ", r)
+}
+----
+
+批量 Set/Get 数据
+
+[source,go]
+----
+-,err = c.Do("MSet","name","jcohy","address","陕西")
+r,err := redis.Strings(c.Do("MGet","name","address"))
+----
+
+==== Hash
+
+[source,go]
+----
+package main
+import (
+	"fmt"
+	"github.com/garyburd/redigo/redis" //引入redis包
+)
+
+func main() {
+	//通过go 向redis 写入数据和读取数据
+	//1. 链接到redis
+	conn, err := redis.Dial("tcp", "127.0.0.1:6379")
+	if err != nil {
+		fmt.Println("redis.Dial err=", err)
+		return
+	}
+	defer conn.Close() //关闭..
+
+	//2. 通过go 向redis写入数据 string [key-val]
+	_, err = conn.Do("HSet", "user01", "name", "john")
+	if err != nil {
+		fmt.Println("hset  err=", err)
+		return
+	}
+
+	_, err = conn.Do("HSet", "user01", "age", 18)
+	if err != nil {
+		fmt.Println("hset  err=", err)
+		return
+	}
+
+	//3. 通过go 向redis读取数据
+
+	r1, err := redis.String(conn.Do("HGet","user01", "name"))
+	if err != nil {
+		fmt.Println("hget  err=", err)
+		return
+	}
+
+	r2, err := redis.Int(conn.Do("HGet","user01", "age"))
+	if err != nil {
+		fmt.Println("hget  err=", err)
+		return
+	}
+
+	//因为返回 r是 interface{}
+	//因为 name 对应的值是string ,因此我们需要转换
+	//nameString := r.(string)
+
+	fmt.Printf("操作ok r1=%v r2=%v \n", r1, r2)
+}
+----
+
+对于 hash 数据结构，field-val 是批量放入和读取
+
+[source,go]
+----
+package main
+import (
+	"fmt"
+	"github.com/garyburd/redigo/redis" //引入redis包
+)
+
+func main() {
+	//通过go 向redis 写入数据和读取数据
+	//1. 链接到redis
+	conn, err := redis.Dial("tcp", "127.0.0.1:6379")
+	if err != nil {
+		fmt.Println("redis.Dial err=", err)
+		return
+	}
+	defer conn.Close() //关闭..
+
+	//2. 通过go 向redis写入数据 string [key-val]
+	_, err = conn.Do("HMSet", "user02", "name", "john", "age", 19)
+	if err != nil {
+		fmt.Println("HMSet  err=", err)
+		return
+	}
+
+
+
+	//3. 通过go 向redis读取数据
+
+	r, err := redis.Strings(conn.Do("HMGet","user02", "name", "age"))
+	if err != nil {
+		fmt.Println("hget  err=", err)
+		return
+	}
+	for i, v := range r {
+		fmt.Printf("r[%d]=%s\n", i, v)
+	}
+
+}
+----
+
+==== 给数据设置过期时间
+
+[source,go]
+----
+_,err = c.Do("expire","name",10)
+----
+
+==== 操作 List
+
+[source,go]
+----
+_,err = c.Do("lpush","heroList","no1:宋江","no2:卢俊义",28)
+r,err := redis.String(c.Do("rpop","heroList"))
+----
+
+==== 连接池
+
+Golang 还可以创建 redis 连接池，节省获取 redis 连接所需的时间。当需要操作 redis 时，直接从连接池中获取连接
+
+[source,go]
+----
+package main
+import (
+	"fmt"
+	"github.com/garyburd/redigo/redis"
+)
+
+//定义一个全局的pool
+var pool *redis.Pool
+
+//当启动程序时，就初始化连接池
+func init() {
+
+	pool = &redis.Pool{
+		MaxIdle: 8, //最大空闲链接数
+		MaxActive: 0, // 表示和数据库的最大链接数， 0 表示没有限制
+		IdleTimeout: 100, // 最大空闲时间
+		Dial: func() (redis.Conn, error) { // 初始化链接的代码， 链接哪个ip的redis
+		return redis.Dial("tcp", "localhost:6379")
+		},
+	}
+
+}
+
+func main() {
+	//先从pool 取出一个链接
+	conn := pool.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("Set", "name", "汤姆猫~~")
+	if err != nil {
+		fmt.Println("conn.Do err=", err)
+		return
+	}
+
+	//取出
+	r, err := redis.String(conn.Do("Get", "name"))
+	if err != nil {
+		fmt.Println("conn.Do err=", err)
+		return
+	}
+
+	fmt.Println("r=", r)
+
+	//如果我们要从pool 取出链接，一定保证链接池是没有关闭
+	//pool.Close()
+	conn2 := pool.Get()
+
+	_, err = conn2.Do("Set", "name2", "汤姆猫~~2")
+	if err != nil {
+		fmt.Println("conn.Do err~~~~=", err)
+		return
+	}
+
+	//取出
+	r2, err := redis.String(conn2.Do("Get", "name2"))
+	if err != nil {
+		fmt.Println("conn.Do err=", err)
+		return
+	}
+
+	fmt.Println("r=", r2)
+
+	//fmt.Println("conn2=", conn2)
+}
+----
