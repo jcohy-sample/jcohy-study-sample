@@ -75,9 +75,9 @@ image::{base-images}/go7.png[]
 
 ==== MPG模式
 
-`M` 指的是 `Machine`,一个 M 直接关联了一个内核线程
+`M` 指的是 `Machine`,一个 `M` 直接关联了一个内核线程(是一个物理线程)
 
-`P` 指的是 "processor",代表了M所需的上下文环境,也是处理用户级代码逻辑的处理器
+`P` 指的是 "processor",代表了 `M` 所需的上下文环境,也是处理用户级代码逻辑的处理器
 
 `G` 指的是 `Goroutine`,其实本质上也是一种轻量级的线程
 
@@ -85,7 +85,7 @@ image::{base-images}/go7.png[]
 
 image::{base-images}/GMPrelation.png[]
 
-以上这个图讲的是两个线程(内核线程)的情况.一个 `M` 会对应一个内核线程,一个 `M` 也会连接一个上下文 `P`,一个上下文 `P` 相当于一个 "处理器",一个上下文连接一个或者多个 `Goroutine`.`P(Processor)` 的数量是在启动时被设置为环境变量 `GOMAXPROCS` 的值,
+以上这个图讲的是两个线程(内核线程)的情况.一个 `M` 会对应一个内核线程,一个 `M` 也会连接一个上下文 `P`,一个上下文 `P` 相当于一个 "处理器",一个上下文连接一个或者多个 `Goroutine`. `P(Processor)` 的数量是在启动时被设置为环境变量 `GOMAXPROCS` 的值,
 或者通过运行时调用函数 `runtime.GOMAXPROCS()` 进行设置.`Processor` 数量固定意味着任意时刻只有固定数量的线程在运行 go 代码.`Goroutine` 中就是我们要执行并发的代码.图中P正在执行的 `Goroutine` 为蓝色的；处于待执行状态的 `Goroutine` 为灰色的,灰色的 `Goroutine` 形成了一个队列 `runqueues`
 
 三者关系的宏观的图为:

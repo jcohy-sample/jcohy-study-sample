@@ -6,7 +6,7 @@
 
 image::{base-images}/go5.png[]
 
-os.File 封装所有文件相关操作,File 是一个结构体
+`os.File` 封装所有文件相关操作,`File` 是一个结构体
 
 [[go-file-method]]
 == 文件操作常用方法
@@ -18,7 +18,7 @@ os.File 封装所有文件相关操作,File 是一个结构体
 
 | func Open(name string) (*File, error) | 打开文件 | file,err := os.Open("1.txt")
 
-| func OpenFile(name string, flag int, perm FileMode) (*File, error) | 使用指定的选项打开文件 | file,err := os.OpenFile("1.txt",os.O_WRONLY | os.O_CREATE,0666)
+| func OpenFile(name string, flag int, perm FileMode) (*File, error) | 使用指定的选项打开文件 | file,err := os.OpenFile("1.txt",os.O_WRONLY {vbar} os.O_CREATE,0666)
 
 | func (file *File) Close() error | 关闭文件 | file.Close()
 

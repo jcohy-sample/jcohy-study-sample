@@ -25,7 +25,7 @@ Redis:REmote DIctionary Server(远程字典服务器).它是是完全开源免�
 [[nosql-redis-use]]
 == Redis 的安装
 
-<<linux-install-redis>>
+<<linux.adoc#linux-install-redis>>
 
 [[nosql-redis-command]]
 == Redis 常用命令
