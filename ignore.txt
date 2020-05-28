@@ -43,6 +43,11 @@ include::{design-pattern-code}/adapter/Adaptee.java[tag=code]
 ----
 
 ----
+.Go
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{go-code}/chapter20/circelqueue/main.go[tag=code]
+----
 
 .具有手动分配的标识符的实体的基类
 ====

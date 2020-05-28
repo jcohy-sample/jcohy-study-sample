@@ -163,6 +163,11 @@ image::{oss-images}/algorithm-quick2.gif[]
 ----
 include::{algorithm-code}/sort/QuickSort.java[tag=code]
 ----
+.Go
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{go-code}/chapter20/quicksort/main.go[tag=code]
+----
 
 [[algorithm-sort-insertion]]
 == 插入排序
@@ -201,6 +206,11 @@ image::{oss-images}/algorithm-insertsort1.gif[]
 .Java
 ----
 include::{algorithm-code}/sort/InsertSort.java[tag=code]
+----
+.Go
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{go-code}/chapter20/insertsort/main.go[tag=code]
 ----
 
 [[algorithm-sort-insertion-binary]]
@@ -306,6 +316,11 @@ image::{oss-images}/algorithm-selectsort2.gif[]
 .Java
 ----
 include::{algorithm-code}/sort/SelectSort.java[tag=code]
+----
+.Go
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{go-code}/chapter20/selectsort/main.go[tag=code]
 ----
 
 简单选择排序优化

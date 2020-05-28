@@ -1,6 +1,14 @@
 [[algorithm-stack]]
 = 栈
 
+== 用数组模拟一个栈
+
+[source,go,indent=0,subs="verbatim,quotes",role="primary"]
+.Go
+----
+include::{go-code}/chapter20/stack/main.go[tag=code]
+----
+
 == 汉诺塔问题
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
@@ -31,6 +39,14 @@ include::{algorithm-code}/stack/SortStackByStack.java[tag=code]
 .Java
 ----
 include::{algorithm-code}/stack/ReverseStack.java[tag=code]
+----
+
+== 栈实现综合计算器
+
+[source,go,indent=0,subs="verbatim,quotes",role="primary"]
+.Go
+----
+include::{go-code}/chapter20/expStack/main.go[tag=code]
 ----
 
 == 实现获取最小数

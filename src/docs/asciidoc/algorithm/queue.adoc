@@ -41,6 +41,11 @@ include::{algorithm-code}/queue/PetEnterQueue.java[tag=code]
 ----
 include::{algorithm-code}/queue/QueueArray.java[tag=code]
 ----
+.Go
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{go-code}/chapter20/singlequeue/main.go[tag=code]
+----
 
 == 以链表方式实现队列
 
@@ -48,4 +53,12 @@ include::{algorithm-code}/queue/QueueArray.java[tag=code]
 .Java
 ----
 include::{algorithm-code}/queue/QueueList.java[tag=code]
+----
+
+== 以数组方式实现环形队列
+
+[source,go,indent=0,subs="verbatim,quotes",role="primary"]
+.Go
+----
+include::{go-code}/chapter20/circelqueue/main.go[tag=code]
 ----

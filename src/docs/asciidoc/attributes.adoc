@@ -16,7 +16,10 @@
 
 :design-pattern-code: ../../../../design-pattern-sample/src/main/java/com/jcohy/sample/designpattern
 :algorithm-code: ../../../../algorithm-sample/src/main/java/com/jcohy/sample/algorithm
+:go-code: ../../../../go-sample/com/jcohy/go/sample
+
 :spring-boot-chinese-docs: http://docs.jcohy.com/zh-cn/spring-boot/2.2.5.RELEASE
+
 
 :base-images: images
 :oss-images: http://study.jcohy.com/images

@@ -2,6 +2,12 @@
 = 算法和数据结构
 include::attributes.adoc[]
 
+== 简介
+
+数据结构是一门研究算法的学科
+
+程序 = 数据结构 + 算法
+
 include::algorithm/structure.adoc[leveloffset=+1]
 
 include::algorithm/sort.adoc[leveloffset=+1]

@@ -198,3 +198,11 @@ Hash(“192.168.1.1#2”);
 
 . 快慢指针法
 . 设两个工作指针p、q,p总是向前走,但q每次都从头开始走,对于每个节点,看p走的步数是否和q一样.比如p从A走到D,用了4步,而q则用了14步.因而步数不等,出现矛盾,存在环.
+
+== 树的遍历
+
+[source,go,indent=0,subs="verbatim,quotes",role="primary"]
+.Go
+----
+include::{go-code}/chapter20/binarytree/main.go[tag=code]
+----

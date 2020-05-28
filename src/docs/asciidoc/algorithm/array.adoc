@@ -27,10 +27,21 @@ include::{algorithm-code}/arrays/matrixZZ.java[tag=code]
 
 == 稀疏矩阵
 
+矩阵中非零元素的个数远远小于矩阵元素的总数，并且非零元素的分布没有规律，通常认为矩阵中非零元素的总数比上矩阵所有元素总数的值小于等于0.05时，则称该矩阵为稀疏矩阵(sparse matrix)，该比值称为这个矩阵的稠密度；与之相区别的是，如果非零元素的分布存在规律（如上三角矩阵、下三角矩阵、对角矩阵），则称该矩阵为特殊矩阵。
+
+比较基本的定义是矩阵中的大多数元素为零，并且可以利用零元素节约大量存储、运算和程序运行时间。
+
+image::{base-images}/go11.png[]
+
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java
 ----
 include::{algorithm-code}/arrays/SparseMatrix.java[tag=code]
+----
+.Go
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::{go-code}/chapter20/sparsearray/main.go[tag=code]
 ----
 
 == 下三角矩阵
@@ -60,4 +71,10 @@ include::{algorithm-code}/arrays/maze.java[tag=code]
 [source,kotlin,indent=0,subs="verbatim,quotes",role="secondary"]
 ----
 include::{algorithm-code}/arrays/TraceRecord.java[tag=code]
+----
+
+[source,go,indent=0,subs="verbatim,quotes",role="primary"]
+.Go
+----
+include::{go-code}/chapter20/migong/main/main.go[tag=code]
 ----
