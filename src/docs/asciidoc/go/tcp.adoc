@@ -1,13 +1,13 @@
 [[go-tcp]]
 = 通讯
 
-在前面已经提到的 io.Reader 接口对于 Go 语言来说非常重要。许多函数需要通过 io.Reader 读取一些数据作为输入。为了满足这个接口，只需要实现一个方法 `Read(p []byte) (n int,err error)`，
-写入则是实现了 `Writer` 方法的 `io.Writer` 。
+在前面已经提到的 io.Reader 接口对于 Go 语言来说非常重要. 许多函数需要通过 io.Reader 读取一些数据作为输入. 为了满足这个接口, 只需要实现一个方法 `Read(p []byte) (n int,err error)`,
+写入则是实现了 `Writer` 方法的 `io.Writer` .
 
-另外，我们在 <<go-file-command>> 章节介绍了如果从命令行获取解析参数。
+另外, 我们在 <<go-file-command>> 章节介绍了如果从命令行获取解析参数.
 
-所有网络相关的类型和函数可以在 `net` 包中找到，这其中最重要的函数是 `Dial`，当 `Dial` 到远程系统，这个函数就返回 `Conn` 接口类型，可有用于发送或接收信息。函数 `Dial` 简洁的抽象了网络层和
-传输层。因此 IPv4 或者 IPv6 ，TCP 或 UDP 可以共用一个接口
+所有网络相关的类型和函数可以在 `net` 包中找到, 这其中最重要的函数是 `Dial`, 当 `Dial` 到远程系统, 这个函数就返回 `Conn` 接口类型, 可有用于发送或接收信息. 函数 `Dial` 简洁的抽象了网络层和
+传输层. 因此 IPv4 或者 IPv6 , TCP 或 UDP 可以共用一个接口
 
 == 项目演示
 
@@ -22,7 +22,7 @@
 
 === 技术准备
 
-项目要保存用户信息和消息数据，因此需要学习数据库(redis 或 mysql)，这里我们选择 redis。有关在 Golang 中如何使用 redis，请参考 <<go-integrate-redis>> 章节
+项目要保存用户信息和消息数据, 因此需要学习数据库(redis 或 mysql), 这里我们选择 redis. 有关在 Golang 中如何使用 redis, 请参考 <<go-integrate-redis>> 章节
 
 === 代码实现
 
@@ -32,7 +32,7 @@ image::{base-images}/go10.png[]
 
 ==== 创建消息结构体
 
-首先创建 `common` 包，定义我们客户端和服务端需要用到的消息结构体
+首先创建 `common` 包, 定义我们客户端和服务端需要用到的消息结构体
 
 [source,go,indent=0,subs="verbatim,quotes",role="primary"]
 .message.go
@@ -70,7 +70,7 @@ type LoginMes struct {
 
 type LoginResMes struct {
 	Code    int    `json:"code"` // 返回状态码 500 表示该用户未注册 200表示登录成功
-	UsersId []int  // 增加字段，保存用户id的切片
+	UsersId []int  // 增加字段, 保存用户id的切片
 	Error   string `json:"error"` // 返回错误信息
 }
 
@@ -91,7 +91,7 @@ type NotifyUserStatusMes struct {
 //增加一个SmsMes //发送的消息
 type SmsMes struct {
 	Content string `json:"content"` //内容
-	User           //匿名结构体，继承
+	User           //匿名结构体, 继承
 }
 
 // SmsReMes
@@ -105,7 +105,7 @@ package message
 
 type User struct {
 	//确定字段信息
-	//为了序列化和反序列化成功，我们必须保证
+	//为了序列化和反序列化成功, 我们必须保证
 	//用户信息的json字符串的key 和 结构体的字段对应的 tag 名字一致!!!
 	UserId     int    `json:"userId"`
 	UserPwd    string `json:"userPwd"`
@@ -130,7 +130,7 @@ import (
 	"os"
 )
 
-//定义两个变量，一个表示用户id, 一个表示用户密码
+//定义两个变量, 一个表示用户id, 一个表示用户密码
 var userId int
 var userPwd string
 var userName string
@@ -169,7 +169,7 @@ func main() {
 			fmt.Scanf("%s\n", &userPwd)
 			fmt.Println("请输入用户名字(nickname):")
 			fmt.Scanf("%s\n", &userName)
-			//2. 调用UserProcess，完成注册的请求、
+			//2. 调用UserProcess, 完成注册的请求、
 			up := &process.UserProcess{}
 			up.Register(userId, userPwd, userName)
 		case 3:
@@ -177,7 +177,7 @@ func main() {
 			//loop = false
 			os.Exit(0)
 		default:
-			fmt.Println("你的输入有误，请重新输入")
+			fmt.Println("你的输入有误, 请重新输入")
 		}
 
 	}
@@ -196,7 +196,7 @@ import (
 	"net"
 )
 
-//因为在客户端，我们很多地方会使用到curUser,我们将其作为一个全局
+//因为在客户端, 我们很多地方会使用到curUser,我们将其作为一个全局
 type CurUser struct {
 	Conn net.Conn
 	message.User
@@ -231,7 +231,7 @@ func ShowMenu() {
 	var key int
 	var content string
 
-	//因为，我们总会使用到SmsProcess实例，因此我们将其定义在swtich外部
+	//因为, 我们总会使用到SmsProcess实例, 因此我们将其定义在swtich外部
 	smsProcess := &SmsProcess{}
 	fmt.Scanf("%d\n", &key)
 	switch key {
@@ -266,7 +266,7 @@ func serverProcessMes(conn net.Conn) {
 			fmt.Println("tf.ReadPkg err=", err)
 			return
 		}
-		//如果读取到消息，又是下一步处理逻辑
+		//如果读取到消息, 又是下一步处理逻辑
 		switch mes.Type {
 
 		case message.NotifyUserStatusMesType: // 有人上线了
@@ -274,7 +274,7 @@ func serverProcessMes(conn net.Conn) {
 			//1. 取出.NotifyUserStatusMes
 			var notifyUserStatusMes message.NotifyUserStatusMes
 			json.Unmarshal([]byte(mes.Data), &notifyUserStatusMes)
-			//2. 把这个用户的信息，状态保存到客户map[int]User中
+			//2. 把这个用户的信息, 状态保存到客户map[int]User中
 			updateUserStatus(&notifyUserStatusMes)
 			//处理
 		case message.SmsMesType: //有人群发消息
@@ -360,7 +360,7 @@ func (this *SmsProcess) SendGroupMes(content string) (err error) {
 		return
 	}
 
-	//5. 将mes发送给服务器。。
+	//5. 将mes发送给服务器. .
 	tf := &utils.Transfer{
 		Conn: CurUser.Conn,
 	}
@@ -387,7 +387,7 @@ import (
 
 //客户端要维护的map
 var onlineUsers map[int]*message.User = make(map[int]*message.User, 10)
-var CurUser model.CurUser //我们在用户登录成功后，完成对CurUser初始化
+var CurUser model.CurUser //我们在用户登录成功后, 完成对CurUser初始化
 
 //在客户端显示当前在线的用户
 func outputOnlineUser() {
@@ -399,7 +399,7 @@ func outputOnlineUser() {
 	}
 }
 
-//编写一个方法，处理返回的NotifyUserStatusMes
+//编写一个方法, 处理返回的NotifyUserStatusMes
 func updateUserStatus(notifyUserStatusMes *message.NotifyUserStatusMes) {
 
 	//适当优化
@@ -505,7 +505,7 @@ func (this *UserProcess) Register(userId int,
 }
 
 //给关联一个用户登录的方法
-//写一个函数，完成登录
+//写一个函数, 完成登录
 func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 
 	//下一个就要开始定协议..
@@ -560,7 +560,7 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 		return
 	}
 
-	fmt.Printf("客户端，发送消息的长度=%d 内容=%s", len(data), string(data))
+	fmt.Printf("客户端, 发送消息的长度=%d 内容=%s", len(data), string(data))
 
 	// 发送消息本身
 	_, err = conn.Write(data)
@@ -649,15 +649,15 @@ import (
 type Transfer struct {
 	//分析它应该有哪些字段
 	Conn net.Conn
-	Buf  [8096]byte //这时传输时，使用缓冲
+	Buf  [8096]byte //这时传输时, 使用缓冲
 }
 
 func (this *Transfer) ReadPkg() (mes message.Message, err error) {
 
 	//buf := make([]byte, 8096)
 	fmt.Println("读取客户端发送的数据...")
-	//conn.Read 在conn没有被关闭的情况下，才会阻塞
-	//如果客户端关闭了 conn 则，就不会阻塞
+	//conn.Read 在conn没有被关闭的情况下, 才会阻塞
+	//如果客户端关闭了 conn 则, 就不会阻塞
 	_, err = this.Conn.Read(this.Buf[:4])
 	if err != nil {
 		//err = errors.New("read pkg header error")
@@ -739,12 +739,12 @@ func process(conn net.Conn) {
 }
 
 func init() {
-	//当服务器启动时，我们就去初始化我们的redis的连接池
+	//当服务器启动时, 我们就去初始化我们的redis的连接池
 	initPool("localhost:6379", 16, 0, 300*time.Second)
 	initUserDao()
 }
 
-//这里我们编写一个函数，完成对UserDao的初始化任务
+//这里我们编写一个函数, 完成对UserDao的初始化任务
 func initUserDao() {
 	//这里的pool 本身就是一个全局的变量
 	//这里需要注意一个初始化顺序问题
@@ -762,7 +762,7 @@ func main() {
 		fmt.Println("net.Listen err=", err)
 		return
 	}
-	//一旦监听成功，就等待客户端来链接服务器
+	//一旦监听成功, 就等待客户端来链接服务器
 	for {
 		fmt.Println("等待客户端来链接服务器.....")
 		conn, err := listen.Accept()
@@ -770,7 +770,7 @@ func main() {
 			fmt.Println("listen.Accept err=", err)
 		}
 
-		//一旦链接成功，则启动一个协程和客户端保持通讯。。
+		//一旦链接成功, 则启动一个协程和客户端保持通讯. .
 		go process(conn)
 	}
 }
@@ -796,7 +796,7 @@ type Processor struct {
 }
 
 //编写一个ServerProcessMes 函数
-//功能：根据客户端发送消息种类不同，决定调用哪个函数来处理
+//功能: 根据客户端发送消息种类不同, 决定调用哪个函数来处理
 func (this *Processor) serverProcessMes(mes *message.Message) (err error) {
 
 	//看看是否能接收到客户端发送的群发的消息
@@ -821,7 +821,7 @@ func (this *Processor) serverProcessMes(mes *message.Message) (err error) {
 		smsProcess := &process2.SmsProcess{}
 		smsProcess.SendGroupMes(mes)
 	default:
-		fmt.Println("消息类型不存在，无法处理...")
+		fmt.Println("消息类型不存在, 无法处理...")
 	}
 	return
 }
@@ -830,7 +830,7 @@ func (this *Processor) process2() (err error) {
 
 	//循环的客户端发送的信息
 	for {
-		//这里我们将读取数据包，直接封装成一个函数readPkg(), 返回Message, Err
+		//这里我们将读取数据包, 直接封装成一个函数readPkg(), 返回Message, Err
 		//创建一个Transfer 实例完成读包任务
 		tf := &utils.Transfer{
 			Conn: this.Conn,
@@ -838,7 +838,7 @@ func (this *Processor) process2() (err error) {
 		mes, err := tf.ReadPkg()
 		if err != nil {
 			if err == io.EOF {
-				fmt.Println("客户端退出，服务器端也退出..")
+				fmt.Println("客户端退出, 服务器端也退出..")
 				return err
 			} else {
 				fmt.Println("readPkg err=", err)
@@ -871,9 +871,9 @@ func initPool(address string, maxIdle, maxActive int, idleTimeout time.Duration)
 
 	pool = &redis.Pool{
 		MaxIdle:     maxIdle,     //最大空闲链接数
-		MaxActive:   maxActive,   // 表示和数据库的最大链接数， 0 表示没有限制
+		MaxActive:   maxActive,   // 表示和数据库的最大链接数,  0 表示没有限制
 		IdleTimeout: idleTimeout, // 最大空闲时间
-		Dial: func() (redis.Conn, error) { // 初始化链接的代码， 链接哪个ip的redis
+		Dial: func() (redis.Conn, error) { // 初始化链接的代码,  链接哪个ip的redis
 			return redis.Dial("tcp", address)
 		},
 	}
@@ -889,7 +889,7 @@ package model
 import (
 	"errors"
 )
-//根据业务逻辑需要，自定义一些错误.
+//根据业务逻辑需要, 自定义一些错误.
 var (
 	ERROR_USER_NOTEXISTS = errors.New("用户不存在..")
 	ERROR_USER_EXISTS = errors.New("用户已经存在...")
@@ -905,7 +905,7 @@ package model
 
 type User struct {
 	//确定字段信息
-	//为了序列化和反序列化成功，我们必须保证
+	//为了序列化和反序列化成功, 我们必须保证
 	//用户信息的json字符串的key 和 结构体的字段对应的 tag 名字一致!!!
 	UserId int `json:"userId"`
 	UserPwd string `json:"userPwd"`
@@ -924,8 +924,8 @@ import (
 	"encoding/json"
 )
 
-//我们在服务器启动后，就初始化一个userDao实例，
-//把它做成全局的变量，在需要和redis操作时，就直接使用即可
+//我们在服务器启动后, 就初始化一个userDao实例,
+//把它做成全局的变量, 在需要和redis操作时, 就直接使用即可
 var (
 	MyUserDao *UserDao
 )
@@ -937,7 +937,7 @@ type UserDao struct {
 	pool  *redis.Pool
 }
 
-//使用工厂模式，创建一个UserDao实例
+//使用工厂模式, 创建一个UserDao实例
 func NewUserDao(pool *redis.Pool) (userDao *UserDao) {
 
 	userDao = &UserDao{
@@ -954,7 +954,7 @@ func (this *UserDao) getUserById(conn redis.Conn, id int) (user *User, err error
 	res, err := redis.String(conn.Do("HGet", "users", id))
 	if err != nil {
 		//错误!
-		if err == redis.ErrNil { //表示在 users 哈希中，没有找到对应id
+		if err == redis.ErrNil { //表示在 users 哈希中, 没有找到对应id
 			err = ERROR_USER_NOTEXISTS
 		}
 		return
@@ -971,8 +971,8 @@ func (this *UserDao) getUserById(conn redis.Conn, id int) (user *User, err error
 
 //完成登录的校验 Login
 //1. Login 完成对用户的验证
-//2. 如果用户的id和pwd都正确，则返回一个user实例
-//3. 如果用户的id或pwd有错误，则返回对应的错误信息
+//2. 如果用户的id和pwd都正确, 则返回一个user实例
+//3. 如果用户的id或pwd有错误, 则返回对应的错误信息
 func (this *UserDao) Login(userId int, userPwd string) (user *User, err error) {
 
 	//先从UserDao 的连接池中取出一根连接
@@ -1001,7 +1001,7 @@ func (this *UserDao) Register(user *message.User) (err error) {
 		err = ERROR_USER_EXISTS
 		return
 	}
-	//这时，说明id在redis还没有，则可以完成注册
+	//这时, 说明id在redis还没有, 则可以完成注册
 	data, err := json.Marshal(user) //序列化
 	if err != nil {
 		return
@@ -1056,7 +1056,7 @@ func (this *SmsProcess) SendGroupMes(mes *message.Message) {
 	}
 
 	for id, up := range userMgr.onlineUsers {
-		//这里，还需要过滤到自己,即不要再发给自己
+		//这里, 还需要过滤到自己,即不要再发给自己
 		if id == smsMes.UserId {
 			continue
 		}
@@ -1065,7 +1065,7 @@ func (this *SmsProcess) SendGroupMes(mes *message.Message) {
 }
 func (this *SmsProcess) SendMesToEachOnlineUser(data []byte, conn net.Conn) {
 
-	//创建一个Transfer 实例，发送data
+	//创建一个Transfer 实例, 发送data
 	tf := &utils.Transfer{
 		Conn: conn, //
 	}
@@ -1085,7 +1085,7 @@ import (
 )
 
 //因为UserMgr 实例在服务器端有且只有一个
-//因为在很多的地方，都会使用到，因此，我们
+//因为在很多的地方, 都会使用到, 因此, 我们
 //将其定义为全局变量
 var (
 	userMgr *UserMgr
@@ -1120,9 +1120,9 @@ func (this *UserMgr) GetAllOnlineUser() map[int]*UserProcess {
 //根据id返回对应的值
 func (this *UserMgr) GetOnlineUserById(userId int) (up *UserProcess, err error) {
 
-	//如何从map取出一个值，带检测方式
+	//如何从map取出一个值, 带检测方式
 	up, ok := this.onlineUsers[userId]
-	if !ok { //说明，你要查找的这个用户，当前不在线。
+	if !ok { //说明, 你要查找的这个用户, 当前不在线.
 		err = fmt.Errorf("用户%d 不存在", userId)
 		return
 	}
@@ -1146,12 +1146,12 @@ import (
 type UserProcess struct {
 	//字段
 	Conn net.Conn
-	//增加一个字段，表示该Conn是哪个用户
+	//增加一个字段, 表示该Conn是哪个用户
 	UserId int
 }
 
 //这里我们编写通知所有在线的用户的方法
-//userId 要通知其它的在线用户，我上线
+//userId 要通知其它的在线用户, 我上线
 func (this *UserProcess) NotifyOthersOnlineUser(userId int) {
 
 	//遍历 onlineUsers, 然后一个一个的发送 NotifyUserStatusMes
@@ -1184,14 +1184,14 @@ func (this *UserProcess) NotifyMeOnline(userId int) {
 	//将序列化后的notifyUserStatusMes赋值给 mes.Data
 	mes.Data = string(data)
 
-	//对mes再次序列化，准备发送.
+	//对mes再次序列化, 准备发送.
 	data, err = json.Marshal(mes)
 	if err != nil {
 		fmt.Println("json.Marshal err=", err)
 		return
 	}
 
-	//发送,创建我们Transfer实例，发送
+	//发送,创建我们Transfer实例, 发送
 	tf := &utils.Transfer{
 		Conn: this.Conn,
 	}
@@ -1205,7 +1205,7 @@ func (this *UserProcess) NotifyMeOnline(userId int) {
 
 func (this *UserProcess) ServerProcessRegister(mes *message.Message) (err error) {
 
-	//1.先从mes 中取出 mes.Data ，并直接反序列化成RegisterMes
+	//1.先从mes 中取出 mes.Data , 并直接反序列化成RegisterMes
 	var registerMes message.RegisterMes
 	err = json.Unmarshal([]byte(mes.Data), &registerMes)
 	if err != nil {
@@ -1243,14 +1243,14 @@ func (this *UserProcess) ServerProcessRegister(mes *message.Message) (err error)
 	//4. 将data 赋值给 resMes
 	resMes.Data = string(data)
 
-	//5. 对resMes 进行序列化，准备发送
+	//5. 对resMes 进行序列化, 准备发送
 	data, err = json.Marshal(resMes)
 	if err != nil {
 		fmt.Println("json.Marshal fail", err)
 		return
 	}
 	//6. 发送data, 我们将其封装到writePkg函数
-	//因为使用分层模式(mvc), 我们先创建一个Transfer 实例，然后读取
+	//因为使用分层模式(mvc), 我们先创建一个Transfer 实例, 然后读取
 	tf := &utils.Transfer{
 		Conn: this.Conn,
 	}
@@ -1259,10 +1259,10 @@ func (this *UserProcess) ServerProcessRegister(mes *message.Message) (err error)
 
 }
 
-//编写一个函数serverProcessLogin函数， 专门处理登录请求
+//编写一个函数serverProcessLogin函数,  专门处理登录请求
 func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 	//核心代码...
-	//1. 先从mes 中取出 mes.Data ，并直接反序列化成LoginMes
+	//1. 先从mes 中取出 mes.Data , 并直接反序列化成LoginMes
 	var loginMes message.LoginMes
 	err = json.Unmarshal([]byte(mes.Data), &loginMes)
 	if err != nil {
@@ -1272,7 +1272,7 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 	//1先声明一个 resMes
 	var resMes message.Message
 	resMes.Type = message.LoginResMesType
-	//2在声明一个 LoginResMes，并完成赋值
+	//2在声明一个 LoginResMes, 并完成赋值
 	var loginResMes message.LoginResMes
 
 	//我们需要到redis数据库去完成验证.
@@ -1294,11 +1294,11 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 
 	} else {
 		loginResMes.Code = 200
-		//这里，因为用户登录成功，我们就把该登录成功的用放入到userMgr中
+		//这里, 因为用户登录成功, 我们就把该登录成功的用放入到userMgr中
 		//将登录成功的用户的userId 赋给 this
 		this.UserId = loginMes.UserId
 		userMgr.AddOnlineUser(this)
-		//通知其它的在线用户， 我上线了
+		//通知其它的在线用户,  我上线了
 		this.NotifyOthersOnlineUser(loginMes.UserId)
 		//将当前在线用户的id 放入到loginResMes.UsersId
 		//遍历 userMgr.onlineUsers
@@ -1318,14 +1318,14 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 	//4. 将data 赋值给 resMes
 	resMes.Data = string(data)
 
-	//5. 对resMes 进行序列化，准备发送
+	//5. 对resMes 进行序列化, 准备发送
 	data, err = json.Marshal(resMes)
 	if err != nil {
 		fmt.Println("json.Marshal fail", err)
 		return
 	}
 	//6. 发送data, 我们将其封装到writePkg函数
-	//因为使用分层模式(mvc), 我们先创建一个Transfer 实例，然后读取
+	//因为使用分层模式(mvc), 我们先创建一个Transfer 实例, 然后读取
 	tf := &utils.Transfer{
 		Conn: this.Conn,
 	}
@@ -1353,15 +1353,15 @@ import (
 type Transfer struct {
 	//分析它应该有哪些字段
 	Conn net.Conn
-	Buf  [8096]byte //这时传输时，使用缓冲
+	Buf  [8096]byte //这时传输时, 使用缓冲
 }
 
 func (this *Transfer) ReadPkg() (mes message.Message, err error) {
 
 	//buf := make([]byte, 8096)
 	fmt.Println("读取客户端发送的数据...")
-	//conn.Read 在conn没有被关闭的情况下，才会阻塞
-	//如果客户端关闭了 conn 则，就不会阻塞
+	//conn.Read 在conn没有被关闭的情况下, 才会阻塞
+	//如果客户端关闭了 conn 则, 就不会阻塞
 	_, err = this.Conn.Read(this.Buf[:4])
 	if err != nil {
 		//err = errors.New("read pkg header error")

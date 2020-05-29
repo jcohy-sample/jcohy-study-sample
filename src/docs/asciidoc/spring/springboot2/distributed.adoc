@@ -154,6 +154,6 @@ public RestTemplate restTemplate(){
 RestTemplate restTemplate;
 public String buTicket(String name){
     String forObject = restTemplate.getForObject("http://PROVIDER-RICKET/ticket",String.class);
-    return name+"购买了"+forObject；
+    return name+"购买了"+forObject;
 }
 ----

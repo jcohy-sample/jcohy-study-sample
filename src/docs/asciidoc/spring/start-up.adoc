@@ -254,7 +254,7 @@ public void starting() {
 @Override
 public void multicastEvent(final ApplicationEvent event, ResolvableType eventType) {
    ResolvableType type = (eventType != null ? eventType : resolveDefaultEventType(event));
-    //getApplicationListeners(event, type): 根据其注释可知,该方法作用: 返回与给定事件类型匹配的ApplicationListeners集合,非匹配的侦听器会被提前排除；允许根据缓存的匹配结果来返回.
+    //getApplicationListeners(event, type): 根据其注释可知,该方法作用: 返回与给定事件类型匹配的ApplicationListeners集合,非匹配的侦听器会被提前排除;允许根据缓存的匹配结果来返回.
    for (final ApplicationListener<?> listener : getApplicationListeners(event, type)) {
       Executor executor = getTaskExecutor();
       if (executor != null) {

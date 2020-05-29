@@ -4,7 +4,7 @@
 [[guide-web-1]]
 == XML文档定义有几种形式？它们之间有何本质区别？解析XML文档有哪几种方式？
 
-XML文档定义分为DTD和Schema两种形式,二者都是对XML语法的约束,其本质区别在于Schema本身也是一个XML文件,可以被XML解析器解析,而且可以为XML承载的数据定义类型,约束能力较之DTD更强大.对XML的解析主要有DOM(文档对象模型,Document Object Model)、SAX(Simple API for XML)和StAX(Java 6中引入的新的解析XML的方式,Streaming API for XML),其中DOM处理大型文件时其性能下降的非常厉害,这个问题是由DOM树结构占用的内存较多造成的,而且DOM解析方式必须在解析文件之前把整个文档装入内存,适合对XML的随机访问(典型的用空间换取时间的策略)；SAX是事件驱动型的XML解析方式,它顺序读取XML文件,不需要一次全部装载整个文件.当遇到像文件开头,文档结束,或者标签开头与标签结束时,它会触发一个事件,用户通过事件回调代码来处理XML文件,适合对XML的顺序访问；顾名思义,StAX把重点放在流上,实际上StAX与其他解析方式的本质区别就在于应用程序能够把XML作为一个事件流来处理.将XML作为一组事件来处理的想法并不新颖(SAX就是这样做的),但不同之处在于StAX允许应用程序代码把这些事件逐个拉出来,而不用提供在解析器方便时从解析器中接收事件的处理程序.
+XML文档定义分为DTD和Schema两种形式,二者都是对XML语法的约束,其本质区别在于Schema本身也是一个XML文件,可以被XML解析器解析,而且可以为XML承载的数据定义类型,约束能力较之DTD更强大.对XML的解析主要有DOM(文档对象模型,Document Object Model)、SAX(Simple API for XML)和StAX(Java 6中引入的新的解析XML的方式,Streaming API for XML),其中DOM处理大型文件时其性能下降的非常厉害,这个问题是由DOM树结构占用的内存较多造成的,而且DOM解析方式必须在解析文件之前把整个文档装入内存,适合对XML的随机访问(典型的用空间换取时间的策略);SAX是事件驱动型的XML解析方式,它顺序读取XML文件,不需要一次全部装载整个文件.当遇到像文件开头,文档结束,或者标签开头与标签结束时,它会触发一个事件,用户通过事件回调代码来处理XML文件,适合对XML的顺序访问;顾名思义,StAX把重点放在流上,实际上StAX与其他解析方式的本质区别就在于应用程序能够把XML作为一个事件流来处理.将XML作为一组事件来处理的想法并不新颖(SAX就是这样做的),但不同之处在于StAX允许应用程序代码把这些事件逐个拉出来,而不用提供在解析器方便时从解析器中接收事件的处理程序.
 
 [[guide-web-2]]
 == 你在项目中哪些地方用到了XML？
@@ -66,8 +66,8 @@ finally {
 
 与Statement相比
 
-. PreparedStatement接口代表预编译的语句,它主要的优势在于可以减少SQL的编译错误并增加SQL的安全性(减少SQL注射攻击的可能性)；
-. PreparedStatement中的SQL语句是可以带参数的,避免了用字符串连接拼接SQL语句的麻烦和不安全；
+. PreparedStatement接口代表预编译的语句,它主要的优势在于可以减少SQL的编译错误并增加SQL的安全性(减少SQL注射攻击的可能性);
+. PreparedStatement中的SQL语句是可以带参数的,避免了用字符串连接拼接SQL语句的麻烦和不安全;
 . 当批量处理SQL或频繁执行相同的查询时,PreparedStatement有明显的性能上的优势,由于数据库可以将编译优化后的SQL语句缓存起来,下次执行相同结构的语句时就会很快(不用再次编译和生成执行计划).
 
 补充:为了提供对存储过程的调用,JDBC API中还提供了CallableStatement接口.存储过程(Stored Procedure)是数据库中一组为了完成特定功能的SQL语句的集合,经编译后存储在数据库中,用户通过指定存储过程的名字并给出参数(如果该存储过程带有参数)来执行它.虽然调用存储过程会在网络开销、安全性、性能上获得很多好处,但是存在如果底层数据库发生迁移时就会有很多麻烦,因为每种数据库的存储过程在书写上存在不少的差别.
@@ -93,8 +93,8 @@ DAO模式实际上包含了两个模式,一是Data Accessor(数据访问器),二
 == 事务的ACID是指什么？
 
 * 原子性(Atomic):事务中各项操作,要么全做要么全不做,任何一项操作的失败都会导致整个事务的失败
-* 一致性(Consistent):事务结束后系统状态是一致的；
-* 隔离性(Isolated):并发执行的事务彼此无法看到对方的中间状态；
+* 一致性(Consistent):事务结束后系统状态是一致的;
+* 隔离性(Isolated):并发执行的事务彼此无法看到对方的中间状态;
 * 持久性(Durable):事务完成后所做的改动都会被持久化,即使发生灾难性的失败.通过日志和同步备份可以在故障发生后重建数据.
 
 补充:关于事务,在面试中被问到的概率是很高的,可以问的问题也是很多的.首先需要知道的是,只有存在并发数据访问时才需要事务.当多个事务访问同一数据时,可能会存在5类问题,包括3类数据读取问题(脏读、不可重复读和幻读)和2类数据更新问题(第1类丢失更新和第2类丢失更新).
@@ -190,7 +190,7 @@ DAO模式实际上包含了两个模式,一是Data Accessor(数据访问器),二
 | T9   |  查询账户余额为1100元(丢失更新)|
 |===
 
-数据并发访问所产生的问题,在有些场景下可能是允许的,但是有些场景下可能就是致命的,数据库通常会通过锁机制来解决数据并发访问问题,按锁定对象不同可以分为表级锁和行级锁；按并发事务锁定关系可以分为共享锁和独占锁,具体的内容大家可以自行查阅资料进行了解.直接使用锁是非常麻烦的,为此数据库为用户提供了自动锁机制,只要用户指定会话的事务隔离级别,数据库就会通过分析SQL语句然后为事务访问的资源加上合适的锁,此外,数据库还会维护这些锁通过各种手段提高系统的性能,这些对用户来说都是透明的(就是说你不用理解,事实上我确实也不知道).ANSI/ISO SQL 92标准定义了4个等级的事务隔离级别,如下表所示:
+数据并发访问所产生的问题,在有些场景下可能是允许的,但是有些场景下可能就是致命的,数据库通常会通过锁机制来解决数据并发访问问题,按锁定对象不同可以分为表级锁和行级锁;按并发事务锁定关系可以分为共享锁和独占锁,具体的内容大家可以自行查阅资料进行了解.直接使用锁是非常麻烦的,为此数据库为用户提供了自动锁机制,只要用户指定会话的事务隔离级别,数据库就会通过分析SQL语句然后为事务访问的资源加上合适的锁,此外,数据库还会维护这些锁通过各种手段提高系统的性能,这些对用户来说都是透明的(就是说你不用理解,事实上我确实也不知道).ANSI/ISO SQL 92标准定义了4个等级的事务隔离级别,如下表所示:
 
 [[guide-web-7-5-tbl]]
 |===
@@ -210,7 +210,7 @@ DAO模式实际上包含了两个模式,一是Data Accessor(数据访问器),二
 [[guide-web-8]]
 == JDBC 中如何进行事务处理
 
-Connection提供了事务处理的方法,通过调用setAutoCommit(false)可以设置手动提交事务；当事务完成后用commit()显式提交事务；如果在事务处理过程中发生异常则通过 `rollback()` 进行事务回滚.除此之外,从JDBC 3.0中还引入了 Savepoint(保存点)的概念,允许通过代码设置保存点并让事务回滚到指定的保存点.
+Connection提供了事务处理的方法,通过调用setAutoCommit(false)可以设置手动提交事务;当事务完成后用commit()显式提交事务;如果在事务处理过程中发生异常则通过 `rollback()` 进行事务回滚.除此之外,从JDBC 3.0中还引入了 Savepoint(保存点)的概念,允许通过代码设置保存点并让事务回滚到指定的保存点.
 
 image::{oss-images}/guide-2.jpg[]
 
@@ -294,21 +294,21 @@ Servlet接口定义了5个方法,其中前三个方法与Servlet生命周期相�
 
 * void destory() * java.lang.String getServletInfo() * ServletConfig getServletConfig()
 
-Web容器加载Servlet并将其实例化后,Servlet生命周期开始,容器运行其init()方法进行Servlet的初始化；请求到达时调用Servlet的service()方法,service()方法会根据需要调用与请求对应的doGet或doPost等方法；当服务器关闭或项目被卸载时服务器会将Servlet实例销毁,此时会调用Servlet的destroy()方法.
+Web容器加载Servlet并将其实例化后,Servlet生命周期开始,容器运行其init()方法进行Servlet的初始化;请求到达时调用Servlet的service()方法,service()方法会根据需要调用与请求对应的doGet或doPost等方法;当服务器关闭或项目被卸载时服务器会将Servlet实例销毁,此时会调用Servlet的destroy()方法.
 
 [[guide-web-12]]
 == JSP有哪些内置对象？作用分别是什么？
 
 JSP有9个内置对象:
 
-* request:封装客户端的请求,其中包含来自GET或POST请求的参数；
-* response:封装服务器对客户端的响应；
-* pageContext:通过该对象可以获取其他对象；
-* session:封装用户会话的对象；
-* application:封装服务器运行环境的对象；
-* out:输出服务器响应的输出流对象；
-* config:Web应用的配置对象；
-* page:JSP页面本身(相当于Java程序中的this)；
+* request:封装客户端的请求,其中包含来自GET或POST请求的参数;
+* response:封装服务器对客户端的响应;
+* pageContext:通过该对象可以获取其他对象;
+* session:封装用户会话的对象;
+* application:封装服务器运行环境的对象;
+* out:输出服务器响应的输出流对象;
+* config:Web应用的配置对象;
+* page:JSP页面本身(相当于Java程序中的this);
 * exception:封装页面抛出异常的对象.
 
 补充:如果用Servlet来生成网页中的动态内容无疑是非常繁琐的工作,另一方面,所有的文本和HTML标签都是硬编码,即使做出微小的修改,都需要进行重新编译.JSP解决了Servlet的这些问题,它是Servlet很好的补充,可以专门用作为用户呈现视图(View),而Servlet作为控制器(Controller)专门负责处理用户请求并转发或重定向到某个页面.基于Java的Web开发很多都同时使用了Servlet和JSP.JSP页面其实是一个Servlet,能够运行Servlet的服务器(Servlet容器)通常也是JSP容器,可以提供JSP页面的运行环境,Tomcat就是一个Servlet/JSP容器.第一次请求一个JSP页面时,Servlet/JSP容器首先将JSP页面转换成一个JSP页面的实现类,这是一个实现了JspPage接口或其子接口HttpJspPage的Java类.JspPage接口是Servlet的子接口,因此每个JSP页面都是一个Servlet.转换成功后,容器会编译Servlet类,之后容器加载和实例化Java字节码,并执行它通常对Servlet所做的生命周期操作.对同一个JSP页面的后续请求,容器会查看这个JSP页面是否被修改过,如果修改过就会重新转换并重新编译并执行.如果没有则执行内存中已经存在的Servlet实例.我们可以看一段JSP代码对应的Java程序就知道一切了,而且9个内置对象的神秘面纱也会被揭开.
@@ -448,11 +448,11 @@ _jspxFactory.releasePageContext(_jspx_page_context);
 == get和post请求的区别？
 
 
-* get请求用来从服务器上获得资源,而post是用来向服务器提交数据；
+* get请求用来从服务器上获得资源,而post是用来向服务器提交数据;
 
-* get将表单中数据按照name=value的形式,添加到action 所指向的URL 后面,并且两者使用"?"连接,而各个变量之间使用"&"连接；post是将表单中的数据放在HTTP协议的请求头或消息体中,传递到action所指向URL；
-* get传输的数据要受到URL长度限制(1024字节)；而post可以传输大量的数据,上传文件通常要使用post方式；
-* 使用get时参数会显示在地址栏上,如果这些数据不是敏感数据,那么可以使用get；对于敏感数据还是应用使用post；
+* get将表单中数据按照name=value的形式,添加到action 所指向的URL 后面,并且两者使用"?"连接,而各个变量之间使用"&"连接;post是将表单中的数据放在HTTP协议的请求头或消息体中,传递到action所指向URL;
+* get传输的数据要受到URL长度限制(1024字节);而post可以传输大量的数据,上传文件通常要使用post方式;
+* 使用get时参数会显示在地址栏上,如果这些数据不是敏感数据,那么可以使用get;对于敏感数据还是应用使用post;
 * get使用MIME类型application/x-www-form-urlencoded的URL编码(也叫百分号编码)文本的格式传递参数,保证被传送的参数由遵循规范的文本组成,例如一个空格的编码是"%20".
 
 [[guide-web-14]]
@@ -460,7 +460,7 @@ _jspxFactory.releasePageContext(_jspx_page_context);
 
 Unix和Linux平台下使用最广泛的免费HTTP服务器是Apache服务器,而Windows平台的服务器通常使用IIS作为Web服务器.选择Web服务器应考虑的因素有:性能、安全性、日志和统计、虚拟主机、代理服务器、缓冲服务和集成应用程序等.下面是对常见服务器的简介:
 
-* IIS:Microsoft的Web服务器产品,全称是Internet Information Services.IIS是允许在公共Intranet或Internet上发布信息的Web服务器.IIS是目前最流行的Web服务器产品之一,很多著名的网站都是建立在IIS的平台上.IIS提供了一个图形界面的管理工具,称为Internet服务管理器,可用于监视配置和控制Internet服务.IIS是一种Web服务组件,其中包括Web服务器、FTP服务器、NNTP服务器和SMTP服务器,分别用于网页浏览、文件传输、新闻服务和邮件发送等方面,它使得在网络(包括互联网和局域网)上发布信息成了一件很容易的事.它提供ISAPI(Intranet Server API)作为扩展Web服务器功能的编程接口；同时,它还提供一个Internet数据库连接器,可以实现对数据库的查询和更新.
+* IIS:Microsoft的Web服务器产品,全称是Internet Information Services.IIS是允许在公共Intranet或Internet上发布信息的Web服务器.IIS是目前最流行的Web服务器产品之一,很多著名的网站都是建立在IIS的平台上.IIS提供了一个图形界面的管理工具,称为Internet服务管理器,可用于监视配置和控制Internet服务.IIS是一种Web服务组件,其中包括Web服务器、FTP服务器、NNTP服务器和SMTP服务器,分别用于网页浏览、文件传输、新闻服务和邮件发送等方面,它使得在网络(包括互联网和局域网)上发布信息成了一件很容易的事.它提供ISAPI(Intranet Server API)作为扩展Web服务器功能的编程接口;同时,它还提供一个Internet数据库连接器,可以实现对数据库的查询和更新.
 * Kangle:Kangle Web服务器是一款跨平台、功能强大、安全稳定、易操作的高性能Web服务器和反向代理服务器软件.此外,Kangle也是一款专为做虚拟主机研发的Web服务器.实现虚拟主机独立进程、独立身份运行.用户之间安全隔离,一个用户出问题不影响其他用户.支持PHP、ASP、ASP.NET、Java、Ruby等多种动态开发语言.* WebSphere:WebSphere Application Server是功能完善、开放的Web应用程序服务器,是IBM电子商务计划的核心部分,它是基于Java的应用环境,用于建立、部署和管理Internet和Intranet Web应用程序,适应各种Web应用程序服务器的需要.
 * WebLogic:WebLogic Server是一款多功能、基于标准的Web应用服务器,为企业构建企业应用提供了坚实的基础.针对各种应用开发、关键性任务的部署,各种系统和数据库的集成、跨Internet协作等Weblogic都提供了相应的支持.由于它具有全面的功能、对开放标准的遵从性、多层架构、支持基于组件的开发等优势,很多公司的企业级应用都选择它来作为开发和部署的环境.WebLogic Server在使应用服务器成为企业应用架构的基础方面一直处于领先地位,为构建集成化的企业级应用提供了稳固的基础.
 * Apache:目前Apache仍然是世界上用得最多的Web服务器,其市场占有率很长时间都保持在60%以上(目前的市场份额约40%左右).世界上很多著名的网站都是Apache的产物,它的成功之处主要在于它的源代码开放、有一支强大的开发团队、支持跨平台的应用(可以运行在几乎所有的Unix、Windows、Linux系统平台上)以及它的可移植性等方面.
@@ -480,7 +480,7 @@ JSP中的四种作用域包括page、request、session和application,具体来�
 
 * page代表与一个页面相关的对象和属性.
 
-* request代表与Web客户机发出的一个请求相关的对象和属性.一个请求可能跨越多个页面,涉及多个Web组件；需要在页面显示的临时数据可以置于此作用域.
+* request代表与Web客户机发出的一个请求相关的对象和属性.一个请求可能跨越多个页面,涉及多个Web组件;需要在页面显示的临时数据可以置于此作用域.
 
 * session代表与某个用户与服务器建立的一次会话相关的对象和属性.跟某个用户相关的数据应该放在用户自己的session中.
 
@@ -506,7 +506,7 @@ JSP中的四种作用域包括page、request、session和application,具体来�
 
 * URL 重写:在URL中添加用户会话的信息作为请求的参数,或者将唯一的会话ID添加到URL结尾以标识一个会话.
 * 设置表单隐藏域:将和会话跟踪相关的字段添加到隐式表单域中,这些信息不会在浏览器中显示但是提交表单时会提交给服务器.这两种方式很难处理跨越多个页面的信息传递,因为如果每次都要修改URL或在页面中添加隐式表单域来存储用户会话相关信息,事情将变得非常麻烦.
-* cookie:cookie有两种,一种是基于窗口的,浏览器窗口关闭后,cookie就没有了；另一种是将信息存储在一个临时文件中,并设置存在的时间.当用户通过浏览器和服务器建立一次会话后,会话ID就会随响应信息返回存储在基于窗口的cookie中,那就意味着只要浏览器没有关闭,会话没有超时,下一次请求时这个会话ID又会提交给服务器让服务器识别用户身份.会话中可以为用户保存信息.会话对象是在服务器内存中的,而基于窗口的cookie是在客户端内存中的.如果浏览器禁用了cookie,那么就需要通过下面两种方式进行会话跟踪.当然,在使用cookie时要注意几点:首先不要在cookie中存放敏感信息；其次cookie存储的数据量有限(4k),不能将过多的内容存储cookie中；再者浏览器通常只允许一个站点最多存放20个cookie.当然,和用户会话相关的其他信息(除了会话ID)也可以存在cookie方便进行会话跟踪.
+* cookie:cookie有两种,一种是基于窗口的,浏览器窗口关闭后,cookie就没有了;另一种是将信息存储在一个临时文件中,并设置存在的时间.当用户通过浏览器和服务器建立一次会话后,会话ID就会随响应信息返回存储在基于窗口的cookie中,那就意味着只要浏览器没有关闭,会话没有超时,下一次请求时这个会话ID又会提交给服务器让服务器识别用户身份.会话中可以为用户保存信息.会话对象是在服务器内存中的,而基于窗口的cookie是在客户端内存中的.如果浏览器禁用了cookie,那么就需要通过下面两种方式进行会话跟踪.当然,在使用cookie时要注意几点:首先不要在cookie中存放敏感信息;其次cookie存储的数据量有限(4k),不能将过多的内容存储cookie中;再者浏览器通常只允许一个站点最多存放20个cookie.当然,和用户会话相关的其他信息(除了会话ID)也可以存在cookie方便进行会话跟踪.
 * HttpSession:在所有会话跟踪技术中,HttpSession对象是最强大也是功能最多的.当一个用户第一次访问某个网站时会自动创建HttpSession,每个用户可以访问他自己的HttpSession.可以通过HttpServletRequest对象的getSession方法获得HttpSession,通过HttpSession的setAttribute方法可以将一个值放在HttpSession中,通过调用HttpSession对象的getAttribute方法,同时传入属性名就可以获取保存在HttpSession中的对象.与上面三种方式不同的是,HttpSession放在服务器的内存中,因此不要将过大的对象放在里面,即使目前的Servlet容器可以在内存将满时将HttpSession中的对象移到其他存储设备中,但是这样势必影响性能.添加到HttpSession中的值可以是任意Java对象,这个对象最好实现了Serializable接口,这样Servlet容器在必要的时候可以将其序列化到文件中,否则在序列化时就会出现异常.
 
 **补充:**HTML5中可以使用Web Storage技术通过JavaScript来保存数据,例如可以使用localStorage和sessionStorage来保存用户会话的信息,也能够实现会话跟踪
@@ -645,7 +645,7 @@ Java Web开发中的监听器(listener)就是application、session、request三�
 
 补充:session的销毁有两种情况:
 
-* session超时(可以在 `web.xml` 中通过 `<session-config>/<session-timeout>` 标签配置超时时间)；
+* session超时(可以在 `web.xml` 中通过 `<session-config>/<session-timeout>` 标签配置超时时间);
 * 通过调用session对象的invalidate()方法使session失效.
 
 4.HttpSessionAttributeListener:对Session对象中属性的添加、删除和替换进行监听.
@@ -795,9 +795,9 @@ C. Who you are? ?指纹识别、虹膜识别 在Tomcat中可以通过建立安�
 [[guide-web-23]]
 == 使用标签库有什么好处？如何自定义JSP标签？
 
-* 分离JSP页面的内容和逻辑,简化了Web开发；
-* 开发者可以创建自定义标签来封装业务逻辑和显示逻辑；
-* 标签具有很好的可移植性、可维护性和可重用性；
+* 分离JSP页面的内容和逻辑,简化了Web开发;
+* 开发者可以创建自定义标签来封装业务逻辑和显示逻辑;
+* 标签具有很好的可移植性、可维护性和可重用性;
 * 避免了对Scriptlet(小脚本)的使用(很多公司的项目开发都不允许在JSP中书写小脚本)
 
 自定义JSP标签包括以下几个步骤:
@@ -1098,7 +1098,7 @@ HTML的 `<form>` 元素有一个method属性,用来指定提交表单的方式,�
 [[guide-web-33]]
 == 如何设置请求的编码以及响应内容的类型？
 
-通过请求对象(ServletRequest)的setCharacterEncoding(String)方法可以设置请求的编码,其实要彻底解决乱码问题就应该让页面、服务器、请求和响应、Java程序都使用统一的编码,最好的选择当然是UTF-8；通过响应对象(ServletResponse)的setContentType(String)方法可以设置响应内容的类型,当然也可以通过HttpServletResponsed对象的setHeader(String, String)方法来设置.
+通过请求对象(ServletRequest)的setCharacterEncoding(String)方法可以设置请求的编码,其实要彻底解决乱码问题就应该让页面、服务器、请求和响应、Java程序都使用统一的编码,最好的选择当然是UTF-8;通过响应对象(ServletResponse)的setContentType(String)方法可以设置响应内容的类型,当然也可以通过HttpServletResponsed对象的setHeader(String, String)方法来设置.
 说明:现在如果还有公司在面试的时候问JSP的声明标记、表达式标记、小脚本标记这些内容的话,这样的公司也不用去了,其实JSP内置对象、JSP指令这些东西基本上都可以忘却了,关于Java Web开发的相关知识,可以看一下《Servlet&JSP思维导图》,上面有完整的知识点的罗列.想了解如何实现自定义MVC框架的,可以看一下《Java Web自定义MVC框架详解》.
 
 [[guide-web-34]]
@@ -1117,7 +1117,7 @@ HTML的 `<form>` 元素有一个method属性,用来指定提交表单的方式,�
 == 概念解释:SOAP、WSDL、UDDI.
 
 SOAP:简单对象访问协议(Simple Object Access Protocol),是Web Service中交换数据的一种协议规范.
-* WSDL:Web服务描述语言(Web Service Description Language),它描述了Web服务的公共接口.这是一个基于XML的关于如何与Web服务通讯和使用的服务描述；也就是描述与目录中列出的Web服务进行交互时需要绑定的协议和信息格式.通常采用抽象语言描述该服务支持的操作和信息,使用的时候再将实际的网络协议和信息格式绑定给该服务.
+* WSDL:Web服务描述语言(Web Service Description Language),它描述了Web服务的公共接口.这是一个基于XML的关于如何与Web服务通讯和使用的服务描述;也就是描述与目录中列出的Web服务进行交互时需要绑定的协议和信息格式.通常采用抽象语言描述该服务支持的操作和信息,使用的时候再将实际的网络协议和信息格式绑定给该服务.
 * UDDI:统一描述、发现和集成(Universal Description, Discovery and Integration),它是一个基于XML的跨平台的描述规范,可以使世界范围内的企业在互联网上发布自己所提供的服务.简单的说,UDDI是访问各种WSDL的一个门面(可以参考设计模式中的门面模式).
 
 [TIP]

@@ -167,7 +167,7 @@ image::{oss-images}/spring-spring-boot33.png[RabbitMQ]
      */
     @Test
     public void contextLoad(){
-        //message需要自己构建一个；定义消息体内容和消息头
+        //message需要自己构建一个;定义消息体内容和消息头
         Map<String,Object> map = new HashMap<>();
         map.put("msg","");
         map.put("data","");

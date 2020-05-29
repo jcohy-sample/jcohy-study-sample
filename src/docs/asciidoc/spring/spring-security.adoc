@@ -107,7 +107,7 @@ public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 					.getContext();
 			//清空SecurityContextHolder中的securityContext
 			SecurityContextHolder.clearContext();
-            //,并将securityContext(这个securityContext保存有后面过滤器生成的数据)放入SecurityContextRepository中,也就是执行SecurityContextRepository.saveContext()；
+            //,并将securityContext(这个securityContext保存有后面过滤器生成的数据)放入SecurityContextRepository中,也就是执行SecurityContextRepository.saveContext();
 			repo.saveContext(contextAfterChainExecution, holder.getRequest(),
 					holder.getResponse());
 			request.removeAttribute(FILTER_APPLIED);

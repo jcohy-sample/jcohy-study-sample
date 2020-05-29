@@ -33,7 +33,7 @@ image::{base-images}/go5.png[]
 | func IsNotExist(err error) bool | 返回一个布尔值说明该错误是否表示一个文件或目录不存在.ErrNotExist 和一些系统调用错误会使它返回真 | os.IsNotExist(error)
 
 |func Copy(dst Writer, src Reader) (written int64, err error)| 此方法在 io 包中,将src的数据拷贝到dst,直到在 src 上到达 EOF 或发生错误.返回拷贝的字节数和遇到的第一个错误.
-对成功的调用,返回值 `err` 为 `nil` 而非 EOF,因为 Copy 定义为从 src 读取直到 EOF,它不会将读取到EOF视为应报告的错误.如果 `src` 实现了 `WriterTo` 接口,本函数会调用 `src.WriteTo(dst)` 进行拷贝；否则如果 `dst` 实现了 `ReaderFrom` 接口,本函数会调用 `dst.ReadFrom(src)` 进行拷贝.|
+对成功的调用,返回值 `err` 为 `nil` 而非 EOF,因为 Copy 定义为从 src 读取直到 EOF,它不会将读取到EOF视为应报告的错误.如果 `src` 实现了 `WriterTo` 接口,本函数会调用 `src.WriteTo(dst)` 进行拷贝;否则如果 `dst` 实现了 `ReaderFrom` 接口,本函数会调用 `dst.ReadFrom(src)` 进行拷贝.|
 |===
 
 OpenFile 中的 `flag` 参数说明如下.最后一个代表 Linux 权限 `r w x -> 4,2,1`

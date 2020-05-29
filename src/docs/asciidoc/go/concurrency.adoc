@@ -1,7 +1,7 @@
 [[go-concurrency]]
 = 并发
 
-Go语言是为并发而生的语言,Go语言是为数不多的在语言层面实现并发的语言；也正是Go语言的并发特性,吸引了全球无数的开发者.
+Go语言是为并发而生的语言,Go语言是为数不多的在语言层面实现并发的语言;也正是Go语言的并发特性,吸引了全球无数的开发者.
 
 并发(concurrency):两个或两个以上的任务在一段时间内被执行.我们不必 care 这些任务在某一个时间点是否是同时执行,可能同时执行,也可能不是,我们只关心在一段时间内,哪怕是很短的时间(一秒或者两秒)是否执行解决了两个或两个以上任务.
 
@@ -86,7 +86,7 @@ image::{base-images}/go7.png[]
 image::{base-images}/GMPrelation.png[]
 
 以上这个图讲的是两个线程(内核线程)的情况.一个 `M` 会对应一个内核线程,一个 `M` 也会连接一个上下文 `P`,一个上下文 `P` 相当于一个 "处理器",一个上下文连接一个或者多个 `Goroutine`. `P(Processor)` 的数量是在启动时被设置为环境变量 `GOMAXPROCS` 的值,
-或者通过运行时调用函数 `runtime.GOMAXPROCS()` 进行设置.`Processor` 数量固定意味着任意时刻只有固定数量的线程在运行 go 代码.`Goroutine` 中就是我们要执行并发的代码.图中P正在执行的 `Goroutine` 为蓝色的；处于待执行状态的 `Goroutine` 为灰色的,灰色的 `Goroutine` 形成了一个队列 `runqueues`
+或者通过运行时调用函数 `runtime.GOMAXPROCS()` 进行设置.`Processor` 数量固定意味着任意时刻只有固定数量的线程在运行 go 代码.`Goroutine` 中就是我们要执行并发的代码.图中P正在执行的 `Goroutine` 为蓝色的;处于待执行状态的 `Goroutine` 为灰色的,灰色的 `Goroutine` 形成了一个队列 `runqueues`
 
 三者关系的宏观的图为:
 
@@ -178,7 +178,7 @@ ch <- x
 
 image::{base-images}/unbufferedchannel.png[]
 
-* 缓冲:缓冲 `channel` 类似一个有容量的队列.当队列满的时候发送者会阻塞；当队列空的时候接收者会阻塞.
+* 缓冲:缓冲 `channel` 类似一个有容量的队列.当队列满的时候发送者会阻塞;当队列空的时候接收者会阻塞.
 
 image::{base-images}/bufferedchannel.png[]
 

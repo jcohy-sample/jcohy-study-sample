@@ -4,13 +4,13 @@
 [[go-reflect-overview]]
 == 概述
 
-反射可以在运行时动态获取变量的各种信息，比如变量的类型(Type)，类别(Kind)。如果是结构体变量，还可以获取到结构体本身的信息(包括结构体的字段，方法)。通过反射，可以修改变量的值，调用关联的方法。使用反射，需要 `import "reflect"`
+反射可以在运行时动态获取变量的各种信息, 比如变量的类型(Type), 类别(Kind). 如果是结构体变量, 还可以获取到结构体本身的信息(包括结构体的字段, 方法). 通过反射, 可以修改变量的值, 调用关联的方法. 使用反射, 需要 `import "reflect"`
 
-`reflect.TypeOf(变量名)`，获取变量的类型，返回 `reflect.Type` 类型
+`reflect.TypeOf(变量名)`, 获取变量的类型, 返回 `reflect.Type` 类型
 
-`reflect.ValueOf(变量名)`，获取变量的值，返回 `reflect.Value` 类型。 `reflect.Value` 是一个结构体类型，通过 `reflect.Value` 可以获取到关于该变量的很多信息
+`reflect.ValueOf(变量名)`, 获取变量的值, 返回 `reflect.Value` 类型.  `reflect.Value` 是一个结构体类型, 通过 `reflect.Value` 可以获取到关于该变量的很多信息
 
-变量，`interface{}` 和 `reflect.Value` 是可以相互转换的，这点在实际开发中会经常用到
+变量, `interface{}` 和 `reflect.Value` 是可以相互转换的, 这点在实际开发中会经常用到
 
 ====
 [source,go]
@@ -41,15 +41,15 @@ func test(b interface{}){
 ----
 <1> 将 `interface{}` 转为 `reflect.Value`
 <2> 将 `reflect.Value` 转为 `interface{}`
-<3> 将 `interface{}` 转成原来的变量类型，使用 <<go-oop-polymorphism-predicate>>
+<3> 将 `interface{}` 转成原来的变量类型, 使用 <<go-oop-polymorphism-predicate>>
 ====
 
 image::{base-images}/go8.png[]
 
 反射常使用的场景有以下两种
 
-. 不知道接口调用那个函数，根据传入参数在运行时确定调用的具体接口，这种需要对函数或方法反射。
-. 对于结构体序列化时，如果结构体有指定 Tag，也会使用到反射生成对应的字符串
+. 不知道接口调用那个函数, 根据传入参数在运行时确定调用的具体接口, 这种需要对函数或方法反射.
+. 对于结构体序列化时, 如果结构体有指定 Tag, 也会使用到反射生成对应的字符串
 
 [[go-reflect-use]]
 == 操作
@@ -113,7 +113,7 @@ func reflectTest02(b interface{}) {
 	iV := rVal.Interface()
 	fmt.Printf("iv=%v iv type=%T \n", iV, iV)
 	//将 interface{} 通过断言转成需要的类型
-	//这里，我们就简单使用了一带检测的类型断言.
+	//这里, 我们就简单使用了一带检测的类型断言.
 	//同学们可以使用 swtich 的断言形式来做的更加的灵活
 	stu, ok := iV.(Student)
 	if ok {
@@ -134,7 +134,7 @@ type Monster struct {
 
 func main() {
 
-	//请编写一个案例，
+	//请编写一个案例,
 	//演示对(基本数据类型、interface{}、reflect.Value)进行反射的基本操作
 
 	//1. 先定义一个int
@@ -153,13 +153,13 @@ func main() {
 [[go-reflect-notice]]
 == 注意事项
 
-. reflect.Value.Kind 获取变量的类别，返回的是一个常量
+. reflect.Value.Kind 获取变量的类别, 返回的是一个常量
 . Type 和 Kind 的区别
 +
-Type 是类型，Kind是类别，Type 和 Kind 可能是相同的，也可能是不同的
+Type 是类型, Kind是类别, Type 和 Kind 可能是相同的, 也可能是不同的
 . 通过反射可以让变量在 `interface{}` 和 `reflect.Value` 之间相互转换
-. 使用反射的方式来获取变量的值，并返回对应的类型，要求数据类型匹配，比如 `x` 是 `int` ,那么就应该使用 `reflect.Value(x).Int()`,而不能使用其他的，否则报 `panic`
-. 通过反射来修改变量，注意当使用 SetXxx 方法来设置需要通过对应的指针类型来完成，这样才能改变传入的变量的值，同事也需要使用到 `reflect.Value.Elem()` 方法
+. 使用反射的方式来获取变量的值, 并返回对应的类型, 要求数据类型匹配, 比如 `x` 是 `int` ,那么就应该使用 `reflect.Value(x).Int()`,而不能使用其他的, 否则报 `panic`
+. 通过反射来修改变量, 注意当使用 SetXxx 方法来设置需要通过对应的指针类型来完成, 这样才能改变传入的变量的值, 同事也需要使用到 `reflect.Value.Elem()` 方法
 +
 [source,go]
 ----
@@ -179,7 +179,7 @@ func main() {
 [[go-reflect-sample]]
 == 案例
 
-示例一：使用反射来遍历结构体字段，调用结构体方法，并获取结构体标签的值
+示例一: 使用反射来遍历结构体字段, 调用结构体方法, 并获取结构体标签的值
 
 [source,go]
 ----
@@ -197,11 +197,11 @@ type Monster struct {
 
 }
 
-//方法，返回两个数的和
+//方法, 返回两个数的和
 func (s Monster) GetSum(n1, n2 int) int {
 	return n1 + n2
 }
-//方法， 接收四个值，给s赋值
+//方法,  接收四个值, 给s赋值
 func (s Monster) Set(name string, age int, score float32, sex string) {
 	s.Name = name
 	s.Age = age
@@ -209,7 +209,7 @@ func (s Monster) Set(name string, age int, score float32, sex string) {
 	s.Sex = sex
 }
 
-//方法，显示s的值
+//方法, 显示s的值
 func (s Monster) Print() {
 	fmt.Println("---start~----")
 	fmt.Println(s)
@@ -222,7 +222,7 @@ func TestStruct(a interface{}) {
 	val := reflect.ValueOf(a)
 	//获取到a对应的类别
 	kd := val.Kind()
-	//如果传入的不是struct，就退出
+	//如果传入的不是struct, 就退出
 	if kd !=  reflect.Struct {
 		fmt.Println("expect struct")
 		return
@@ -237,7 +237,7 @@ func TestStruct(a interface{}) {
 		fmt.Printf("Field %d: 值为=%v\n", i, val.Field(i))
 		//获取到struct标签, 注意需要通过reflect.Type来获取tag标签的值
 		tagVal := typ.Field(i).Tag.Get("json")
-		//如果该字段于tag标签就显示，否则就不显示
+		//如果该字段于tag标签就显示, 否则就不显示
 		if tagVal != "" {
 			fmt.Printf("Field %d: tag为=%v\n", i, tagVal)
 		}
@@ -249,7 +249,7 @@ func TestStruct(a interface{}) {
 
 	//var params []reflect.Value
 	//方法的排序默认是按照 函数名的排序（ASCII码）
-	val.Method(1).Call(nil) //获取到第二个方法。调用它
+	val.Method(1).Call(nil) //获取到第二个方法. 调用它
 
 
 	//调用结构体的第1个方法Method(0)

@@ -165,7 +165,7 @@ HashMap 基于散列表来的实现,即使用 `hashCode()` 进行快速查询元
 [[guide-collection-12]]
 == BlockingQueue
 
-`Java.util.concurrent.BlockingQueue` 是一个队列,在进行获取元素时,它会等待队列变为非空；当在添加一个元素时,它会等待队列中的可用空间.`BlockingQueue` 接口是Java集合框架的一部分,主要用于实现生产者-消费者模式.我们不需要担心等待生产者有可用的空间,或消费者有可用的对象,因为它都在 `BlockingQueue` 的实现类中被处理了.Java提供了集中 `BlockingQueue` 的实现,比如 `ArrayBlockingQueue`、`LinkedBlockingQueue`、`PriorityBlockingQueue`,、`SynchronousQueue` 等.
+`Java.util.concurrent.BlockingQueue` 是一个队列,在进行获取元素时,它会等待队列变为非空;当在添加一个元素时,它会等待队列中的可用空间.`BlockingQueue` 接口是Java集合框架的一部分,主要用于实现生产者-消费者模式.我们不需要担心等待生产者有可用的空间,或消费者有可用的对象,因为它都在 `BlockingQueue` 的实现类中被处理了.Java提供了集中 `BlockingQueue` 的实现,比如 `ArrayBlockingQueue`、`LinkedBlockingQueue`、`PriorityBlockingQueue`,、`SynchronousQueue` 等.
 
 [[guide-collection-13]]
 == 如何对一组对象进行排序
