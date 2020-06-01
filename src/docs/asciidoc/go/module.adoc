@@ -349,7 +349,7 @@ func HelloV3() string
 func OptV3() string
 ----
 
-[IMPORTAANT]
+[IMPORTANT]
 ====
 输出中还存在一个已知的错误;显示的导入路径错误地删除了/v3.
 ====

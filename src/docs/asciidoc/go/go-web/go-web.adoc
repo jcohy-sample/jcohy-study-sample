@@ -1,0 +1,237 @@
+[[go-web]]
+= Go Web
+
+== Web 服务器的创建
+
+Web 应用工作原理
+
+image::{base-images}/go-web1.png[]
+
+Go 提供了一系列用于创建 web 服务器的标准库，而且通过 Go 创建一个服务器的步骤非常简单，只要通过 `net/http` 包调用 `ListenAndServe` 函数并传入网络地址以及负责处理请求的处理器 (handle) 作为参数就可以了。
+如果网络地址参数为空字符串，那么服务器默认使用 `80` 端口进行网络连接，如果处理器参数为 `nil`，那么服务器将使用默认的多路复用器 `DefaultServeMux`，当然，我们也可以通过调用 NewServeMux
+函数创建一个多路复用器。多路复用器接受到用户请求之后根据 url 来判断使用哪个处理器处理请求，找到后就是重定向到对应的处理器来处理请求。
+
+=== 使用默认的多路复用器 (DefaultServeMux)
+
+==== 使用了处理器函数 HandleFunc 处理请求
+
+====
+[source,go,indent=0,subs="verbatim,quotes",role="primary"]
+.Go
+----
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+func handler(w http.ResponseWriter,r *http.Request){
+	fmt.Fprintln(w,"Hello World",r.URL.Path)
+}
+
+func main(){
+	http.HandleFunc("/",handler) // <1>
+
+	http.ListenAndServe(":8999", nil)
+}
+----
+<1> HandleFunc 注册一个处理器函数 handler 和对应的模式四 pattern (注册到 `DefaultServeMux`)。ServeMux 的文档解释了模式的匹配机制
+====
+
+==== 使用处理器 Handle 处理请求
+
+Handler 是一个接口，实现了 Handler 接口的对象可以注册到 HTTP 服务端，为特定的路径及其子树提供服务
+
+[source,go]
+----
+type Handler interface {
+    ServeHTTP(ResponseWriter, *Request)
+}
+----
+
+ServeHTTP 应该将回复的头域和数据写入 ResponseWriter 接口然后返回，返回标志着该请求已经结束，HTTP 服务端可以转移向该连接上的下一个请求。**也就是说某个结构体实现了 Handler 接口中的 ServeHTTP 方法，那么它就是一个处理器**
+
+====
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+type MyHandler struct {
+
+}
+
+func (h *MyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request){
+	fmt.Fprintln(w,"正在通过处理器处理你的请求")
+}
+func main(){
+	myHandler := MyHandler{}
+	http.Handle("/",&myHandler) // <1>
+	http.ListenAndServe(":8080",nil)
+}
+
+----
+<1> Handler 注册 HTTP 处理器 handler 和对应的模式 pattern (注册到 `DefaultServeMux`)。如果该模式已经注册有一个处理器，Handler 会 panic。ServeMux 的文档解释了模式的匹配机制
+====
+
+==== 通过 Server 结构对服务器进行更详细的配置
+
+首先来看 Server 的定义
+
+[source,go]
+----
+type Server struct {
+	// 监听的 TCP 地址，如果为空字符串，会使用 ":http"
+	Addr string
+
+	// 调用的处理器，如果为 nil 会调用 http.DefaultServeMux
+	Handler Handler
+
+	// 可选的TLS配置，用于 ListenAndServeTLS 方法
+	TLSConfig *tls.Config
+
+	// 请求的读取操作在操作前的最大持续时间
+	ReadTimeout time.Duration
+
+	// ReadHeaderTimeout 是允许读取请求头的时间。
+	// 读取请求头后，将重置连接的读取截止日期，并且 Handler 可以确定对 body 而言太慢的速度。
+	// 如果 ReadHeaderTimeout 为零，则使用 ReadTimeout 的值。 如果两者均为零，则没有超时。
+	ReadHeaderTimeout time.Duration
+
+    // 回复的写入操作在超时前的最大持续时间
+	WriteTimeout time.Duration
+
+    // IdleTimeout 是启用保持活动状态后等待下一个请求的最长时间。 如果 IdleTimeout 为零，则使用 ReadTimeout 的值。 如果两者均为零，则没有超时。
+	IdleTimeout time.Duration
+
+	// 请求的头域最大长度，如为0则用DefaultMaxHeaderBytes
+	MaxHeaderBytes int
+
+	// TLSNextProto（可选地）指定一个函数来在一个NPN型协议升级出现时接管TLS连接的所有权。
+    // 映射的键为商谈的协议名；映射的值为函数，该函数的Handler参数应处理HTTP请求，
+    // 并且初始化Handler.ServeHTTP的*Request参数的TLS和RemoteAddr字段（如果未设置）。
+    // 连接在函数返回时会自动关闭。
+	TLSNextProto map[string]func(*Server, *tls.Conn, Handler)
+
+    // ConnState字段指定一个可选的回调函数，该函数会在一个与客户端的连接改变状态时被调用。
+    // 参见ConnState类型和相关常数获取细节。
+	ConnState func(net.Conn, ConnState)
+
+    // ErrorLog指定一个可选的日志记录器，用于记录接收连接时的错误和处理器不正常的行为。
+    // 如果本字段为nil，日志会通过log包的标准日志记录器写入os.Stderr。
+	ErrorLog *log.Logger
+
+    // BaseContext 可以选择指定一个函数，该函数返回此服务器传入请求的 base 上下文。
+    // 监听器是即将开始接受请求的特定监听器。
+    // 如果 BaseContext为nil，则默认值为 context.Background()。
+    // 如果为非 nil，则它必须返回非 nil 上下文。
+	BaseContext func(net.Listener) context.Context
+
+    // ConnContext 可指定一个函数，该函数修改用于新连接的上下文 c。 提供的 ctx 派生自基本上下文，并且具有 ServerContextKey 值。
+	ConnContext func(ctx context.Context, c net.Conn) context.Context
+
+	disableKeepAlives int32     // 原子访问。
+	inShutdown        int32     // 原子访问（非零表示我们处于关机状态）
+	nextProtoOnce     sync.Once // guards setupHTTP2_* init
+	nextProtoErr      error     // 如果使用了 http2.ConfigureServer 的结果
+
+	mu         sync.Mutex
+	listeners  map[*net.Listener]struct{}
+	activeConn map[*conn]struct{}
+	doneChan   chan struct{}
+	onShutdown []func()
+}
+----
+
+Server 类型定义了运行服务端的参数，Server 的零值是合法的配置，如下示例
+
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+	"net/http"
+	"time"
+)
+
+type MyHandler struct {
+
+}
+
+func (h *MyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request){
+	fmt.Fprintln(w,"测试通过 Server 结构详细配置服务器")
+}
+
+func main(){
+	myHandler := MyHandler{}
+
+	server :=http.Server{
+		Addr: ":8080",
+		Handler: &myHandler,
+		ReadTimeout: 2*time.Second,
+	}
+
+	server.ListenAndServe()
+}
+----
+
+=== 使用自己创建的多路复用器
+
+在创建服务器时，我们还可以通过 NewServeMux 方法创建一个多路复用器
+
+[source,go]
+----
+func NewServeMux() *ServeMux
+----
+
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+func handler(w http.ResponseWriter,r *http.Request){
+	fmt.Fprintln(w,"通过自己创建的多路复用器来处理请求")
+}
+
+func main(){
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/",handler)
+
+	http.ListenAndServe(":8080", mux)
+}
+----
+
+结构体 ServeMux
+
+[source,go]
+----
+type ServeMux struct {
+    // 内含隐藏或非导出字段
+}
+----
+
+ServeMux 类型是 HTTP 请求的多路转接器。它会将每一个接收的请求的 URL 与一个注册模式的列表进行匹配，并调用和URL最匹配的模式的处理器。
+
+模式是固定的、由根开始的路径，如 `"/favicon.ico"`，或由根开始的子树，如 `"/images/"`（注意结尾的斜杠）。较长的模式优先于较短的模式，因此如果模式 `"/images/"` 和 `"/images/thumbnails/"` 都注册了处理器，后一个处理器会用于路径以 `"/images/thumbnails/"` 开始的请求，前一个处理器会接收到其余的路径在 `"/images/"` 子树下的请求。
+
+注意，因为以斜杠结尾的模式代表一个由根开始的子树，模式 `"/"` 会匹配所有的未被其他注册的模式匹配的路径，而不仅仅是路径 `"/"`。
+
+模式也能（可选地）以主机名开始，表示只匹配该主机上的路径。指定主机的模式优先于一般的模式，因此一个注册了两个模式 `"/codesearch"` 和 `"codesearch.google.com/"` 的处理器不会接管目标为 `"http://www.google.com/"` 的请求。
+
+ServeMux 还会注意到请求的 URL 路径的无害化，将任何路径中包含 `"."` 或 `".."` 元素的请求重定向到等价的没有这两种元素的 URL。（参见 `path.Clean` 函数）
+
+== 操作数据库
+
+include::../integrate/sql.adoc[leveloffset=+1]
+
