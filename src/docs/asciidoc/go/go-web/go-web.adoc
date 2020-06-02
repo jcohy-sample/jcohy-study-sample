@@ -1,6 +1,7 @@
 [[go-web]]
 = Go Web
 
+[[go-web-create]]
 == Web 服务器的创建
 
 Web 应用工作原理
@@ -234,4 +235,1147 @@ ServeMux 还会注意到请求的 URL 路径的无害化，将任何路径中包
 == 操作数据库
 
 include::../integrate/sql.adoc[leveloffset=+1]
+
+[[go-web-handler]]
+== 处理请求
+
+Go 语言的 `net/http` 包提供了一系列用于表示 HTTP 报文的结构，我们可以使用它处理请求和发送响应，其中 Request 结构代表了客户端发送的请求报文，下面我们看一看 Request 的结构体
+
+[source,go]
+----
+type Request struct {
+    // Method指定HTTP方法（GET、POST、PUT等）。对客户端，""代表GET。
+    Method string
+    // URL在服务端表示被请求的URI，在客户端表示要访问的URL。
+    //
+    // 在服务端，URL字段是解析请求行的URI（保存在RequestURI字段）得到的，
+    // 对大多数请求来说，除了Path和RawQuery之外的字段都是空字符串。
+    // （参见RFC 2616, Section 5.1.2）
+    //
+    // 在客户端，URL的Host字段指定了要连接的服务器，
+    // 而Request的Host字段（可选地）指定要发送的HTTP请求的Host头的值。
+    URL *url.URL
+    // 接收到的请求的协议版本。本包生产的Request总是使用HTTP/1.1
+    Proto      string // "HTTP/1.0"
+    ProtoMajor int    // 1
+    ProtoMinor int    // 0
+    // Header字段用来表示HTTP请求的头域。如果头域（多行键值对格式）为：
+    //	accept-encoding: gzip, deflate
+    //	Accept-Language: en-us
+    //	Connection: keep-alive
+    // 则：
+    //	Header = map[string][]string{
+    //		"Accept-Encoding": {"gzip, deflate"},
+    //		"Accept-Language": {"en-us"},
+    //		"Connection": {"keep-alive"},
+    //	}
+    // HTTP规定头域的键名（头名）是大小写敏感的，请求的解析器通过规范化头域的键名来实现这点。
+    // 在客户端的请求，可能会被自动添加或重写Header中的特定的头，参见Request.Write方法。
+    Header Header
+    // Body是请求的主体。
+    //
+    // 在客户端，如果Body是nil表示该请求没有主体买入GET请求。
+    // Client的Transport字段会负责调用Body的Close方法。
+    //
+    // 在服务端，Body字段总是非nil的；但在没有主体时，读取Body会立刻返回EOF。
+    // Server会关闭请求的主体，ServeHTTP处理器不需要关闭Body字段。
+    Body io.ReadCloser
+    // ContentLength记录相关内容的长度。
+    // 如果为-1，表示长度未知，如果>=0，表示可以从Body字段读取ContentLength字节数据。
+    // 在客户端，如果Body非nil而该字段为0，表示不知道Body的长度。
+    ContentLength int64
+    // TransferEncoding按从最外到最里的顺序列出传输编码，空切片表示"identity"编码。
+    // 本字段一般会被忽略。当发送或接受请求时，会自动添加或移除"chunked"传输编码。
+    TransferEncoding []string
+    // Close在服务端指定是否在回复请求后关闭连接，在客户端指定是否在发送请求后关闭连接。
+    Close bool
+    // 在服务端，Host指定URL会在其上寻找资源的主机。
+    // 根据RFC 2616，该值可以是Host头的值，或者URL自身提供的主机名。
+    // Host的格式可以是"host:port"。
+    //
+    // 在客户端，请求的Host字段（可选地）用来重写请求的Host头。
+    // 如过该字段为""，Request.Write方法会使用URL字段的Host。
+    Host string
+    // Form是解析好的表单数据，包括URL字段的query参数和POST或PUT的表单数据。
+    // 本字段只有在调用ParseForm后才有效。在客户端，会忽略请求中的本字段而使用Body替代。
+    Form url.Values
+    // PostForm是解析好的POST或PUT的表单数据。
+    // 本字段只有在调用ParseForm后才有效。在客户端，会忽略请求中的本字段而使用Body替代。
+    PostForm url.Values
+    // MultipartForm是解析好的多部件表单，包括上传的文件。
+    // 本字段只有在调用ParseMultipartForm后才有效。
+    // 在客户端，会忽略请求中的本字段而使用Body替代。
+    MultipartForm *multipart.Form
+    // Trailer指定了会在请求主体之后发送的额外的头域。
+    //
+    // 在服务端，Trailer字段必须初始化为只有trailer键，所有键都对应nil值。
+    // （客户端会声明哪些trailer会发送）
+    // 在处理器从Body读取时，不能使用本字段。
+    // 在从Body的读取返回EOF后，Trailer字段会被更新完毕并包含非nil的值。
+    // （如果客户端发送了这些键值对），此时才可以访问本字段。
+    //
+    // 在客户端，Trail必须初始化为一个包含将要发送的键值对的映射。（值可以是nil或其终值）
+    // ContentLength字段必须是0或-1，以启用"chunked"传输编码发送请求。
+    // 在开始发送请求后，Trailer可以在读取请求主体期间被修改，
+    // 一旦请求主体返回EOF，调用者就不可再修改Trailer。
+    //
+    // 很少有HTTP客户端、服务端或代理支持HTTP trailer。
+    Trailer Header
+    // RemoteAddr允许HTTP服务器和其他软件记录该请求的来源地址，一般用于日志。
+    // 本字段不是ReadRequest函数填写的，也没有定义格式。
+    // 本包的HTTP服务器会在调用处理器之前设置RemoteAddr为"IP:port"格式的地址。
+    // 客户端会忽略请求中的RemoteAddr字段。
+    RemoteAddr string
+    // RequestURI是被客户端发送到服务端的请求的请求行中未修改的请求URI
+    // （参见RFC 2616, Section 5.1）
+    // 一般应使用URI字段，在客户端设置请求的本字段会导致错误。
+    RequestURI string
+    // TLS字段允许HTTP服务器和其他软件记录接收到该请求的TLS连接的信息
+    // 本字段不是ReadRequest函数填写的。
+    // 对启用了TLS的连接，本包的HTTP服务器会在调用处理器之前设置TLS字段，否则将设TLS为nil。
+    // 客户端会忽略请求中的TLS字段。
+    TLS *tls.ConnectionState
+}
+----
+
+Request 类型代表一个服务端接受到的或者客户端发送出去的 HTTP 请求。
+
+Request 各字段的意义和用途在服务端和客户端是不同的。除了字段本身上的文档，还可参见 Request.Write 方法和 RoundTripper 接口的文档
+
+[[go-web-handler-url]]
+=== 获取请求 URL
+
+Request 结构中的 URL 字段用于表示请求行中包含的 URL，该字段是一个指向 url.URL 结构的指针。让我们来看一下 URL 结构
+
+[source,go]
+----
+type URL struct {
+    Scheme   string
+    Opaque   string    // 编码后的不透明数据
+    User     *Userinfo // 用户名和密码信息
+    Host     string    // host或host:port
+    Path     string
+    RawQuery string // 编码后的查询字符串，没有'?'
+    Fragment string // 引用的片段（文档位置），没有'#'
+}
+----
+
+URL类型代表一个解析后的URL（或者说，一个URL参照）。URL基本格式如下：
+
+[source,shell]
+----
+scheme://[userinfo@]host/path[?query][#fragment]
+----
+
+scheme 后不是冒号加双斜线的URL被解释为如下格式：
+
+[source,shell]
+----
+scheme:opaque[?query][#fragment]
+----
+
+注意路径字段是以解码后的格式保存的，如 `/%47%6f%2f` 会变成 `/Go/` 。这导致我们无法确定 Path 字段中的斜线是来自原始URL还是解码前的 `%2f`。除非一个客户端必须使用其他程序/函数来解析原始 URL 或者重构原始 URL，这个区别并不重要。
+此时，HTTP 服务端可以查询 `req.RequestURI`，而 HTTP 客户端可以使用 `URL{Host: "example.com", Opaque: "//example.com/Go%2f"}` 代替 `{Host: "example.com", Path: "/Go/"}`。
+
+例如 `http://localhost:8080/hello?username=admin&password=123456` ,通过 `r.URL.Path` 只能得到 `/hello`。通过 `r.URL.RawQuery` 得到的是 `username=admin&password=123456`
+
+[[]]
+
+[[go-web-handler-header]]
+=== 获取请求头中的信息
+
+通过 Request 结果中的 Header 字段 用来 获取请求头中的所有信息， Header 字段
+的类型是 Header 类型，而 Header 类型是 一个 `map[string][]string string` 类型的 key
+string 切片类型的值。 下面是 Header 类型及它的方法：
+
+[[go-web-handler-header-tbl]]
+.方法
+|===
+| 方法 | 描述
+
+| type Header map[string][]string | Header 代表 HTTP 头域的键值对。
+
+| func (Header) Get | Get 返回键对应的第一个值，如果键不存在会返回""。如要获取该键对应的值切片，请直接用规范格式的键访问 map。
+
+| func (Header) Set | Set 添加键值对到h，如键已存在则会用只有新值一个元素的切片取代旧值切片。
+
+| func (Header) Add | Add 添加键值对到h，如键已存在则会将新的值附加到旧值切片后面。
+
+| func (Header) Del | Del 删除键值对。
+
+| func (Header) Write | Write以有线格式将头域写入w。
+
+| func (Header) WriteSubset | WriteSubset 以有线格式将头域写入 w。当 exclude 不为 `nil` 时，如果h的键值对的键在 exclude 中存在且其对应值为真，该键值对就不会被写入 w。
+|===
+
+* 获取请求头中的所有信息
+
+r.Header
+
+* 获取请求头中的某个具体属性的值，例如获取 Accept-Encoding 值
+
+r.Header["Accept-Encoding"] :得到一个字符串切片
+
+r.Header.Get("Accept-Encoding") : 得到的是字符串形式的值，多个值使用逗号分隔
+
+[[go-web-handler-body]]
+=== 获取请求体中的信息
+
+请求和响应的主体都是有 Request 结构中的 Body 字段表示，这个字段的类型是 `io.ReadCloser` 接口 ，该接口包含了 `Reader` 接口和 `Closer` `接口，` Reader 接口拥有 `Read` 方法， `Closer` 接口拥有 `Close` 方法
+
+[source,go]
+----
+func handler(w http.ResponseWriter, r *http.Request) {
+    //获取内容的长度
+    length := r.ContentLength
+    // 创建一个字节切片
+    body := make([]byte, length)
+    // 读取请求体
+    r.Body.Read(body)
+    fmt.Fprintln(w, " 请求体中的内容是： ：", string(
+}
+----
+
+[[go-web-handler-param]]
+=== 获取请求参数
+
+下面我们就通过 `net/http` 库中的 Request 结构的字段以及方法获取 请求 URL 后面的请求参数以及 form 表单 中提交的请求参数
+
+[[go-web-handler-param-form]]
+==== Form 字段
+
+. 类型是 `url.Values` 类型， Form 是解析好的表单数据，包括 URL 字段的 query 参数和 POST 或 PUT 的表单数据
+. Form 字段只有在调用 Request 的 ParseForm 方法 后才有效。在客户端，会忽略请求中的本字段而使用 Body 替代
+. 获取表单中提交的请求参数(username 和 password)
++
+[source,go]
+----
+func handler(w http.ResponseWriter, r *http.Request) {
+    // 解析表单
+    r.ParseForm()
+    // 获取请求参数
+    fmt.Fprintln(w, " 请求参数为： ：", r.Form)
+}
+----
+. 如果对表单请求和 url 请求有相同的参数，那么表单中的请求参数的值排在 URL 请求参数数值的前面，如果我们只想获取表单中的请求参数，可以使用 Request 结构中的 <<go-web-handler-param-postform>>
+
+[[go-web-handler-param-postform]]
+==== PostForm 字段
+
+. 类型也是 `url.Values` 类型，用来获取 表单中的请求参数
++
+[source,go]
+----
+func handler(w http.ResponseWriter, r *http.Request) {
+    // 解析表单
+    r.ParseForm()
+    // 获取请求参数
+    fmt.Fprintln(w, " 请求参数为： ：", r.PostForm)
+}
+----
+. 但是 PostForm 字段只支持 `application/x-www-form-urlencoded` 编码，如果 form 表单的 enctype 属性值为 `multipart/form-data` ，那么使用 PostForm 字段无法获取表单中的数据，此时需要使用 <<go-web-handler-param-multipartform>>
+
+[[go-web-handler-param-form-method]]
+==== FormValue 方法和 PostFormValue 方法
+
+* Form Value 方法
+.. 可以通过 FormValue 方法快速地获取某一个请求参数，该方法调用之前会自动调用 `ParseMultipartForm` 和 `ParseForm` 方法对表单进行解析
+* PostFormValue 方法
+.. 可以通过 PostFormValue 方法 快速地获取 表单中的 某一个请求参数，该方法调用之前会自动调用 `ParseMultipartForm` 和 `ParseForm` 方法对表单 进行解析
+
+[[go-web-handler-param-multipartform]]
+==== MultipartForm 字段
+
+为了取得 `multipart/form-data` 编码的表单数据，我们需要用到 Request 结构的 `ParseMultipartForm` 方法和 `MultipartForm` 字段 ，我们通常上传文件时会将 form 表单的 enctype 属性值设置为 `multipart/form-data`
+
+[source,go]
+----
+func (r *Request) ParseMultipartForm(maxMemory int64) error
+----
+
+ParseMultipartForm 将请求的主体作为 `multipart/form-data` 解析。请求的整个主体都会被解析，得到的文件记录最多 `maxMemery` 字节保存在内存，其余部分保存在硬盘的 temp 文件里。如果必要，ParseMultipartForm 会自行调用 ParseForm。重复调用本方法是无意义的。
+
+====
+[source,go]
+----
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	/// 解析表单
+	r.ParseMultipartForm(1024)
+	// 打印表单数据
+	fmt.Fprintln(w, r.MultipartForm) //<1>
+}
+
+func main() {
+	http.HandleFunc("/upload", handler)
+	http.ListenAndServe(":8080", nil)
+}
+----
+<1> 浏览器显示结果假设为 `&{map[username:[hanzong]] map[photo:[0xc042126000]]}` . 结果中有两个映射，第一个映射映射的是用户名，第二个映射的值是一个地址。
+====
+
+[[go-web-response]]
+== 给客户端响应
+
+前面我们一直说的是如何使用处理器中的 `*http.Request` 处理用户的请求，下面我们来说一下如何使用 `http.ResponseWriter` 来给用户响应
+
+ResponseWriter 接口被 HTTP 处理器用于构造HTTP回复。
+
+[source,go]
+----
+type ResponseWriter interface {
+    // Header返回一个Header类型值，该值会被WriteHeader方法发送。
+    // 在调用WriteHeader或Write方法后再改变该对象是没有意义的。
+    Header() Header
+    // WriteHeader该方法发送HTTP回复的头域和状态码。
+    // 如果没有被显式调用，第一次调用Write时会触发隐式调用WriteHeader(http.StatusOK)
+    // WriterHeader的显式调用主要用于发送错误码。
+    WriteHeader(int)
+    // Write向连接中写入作为HTTP的一部分回复的数据。
+    // 如果被调用时还未调用WriteHeader，本方法会先调用WriteHeader(http.StatusOK)
+    // 如果Header中没有"Content-Type"键，
+    // 本方法会使用包函数DetectContentType检查数据的前512字节，将返回值作为该键的值。
+    Write([]byte) (int, error)
+}
+----
+
+[[go-web-response-string]]
+=== 给客户端一个字符串
+
+[source,go]
+----
+func handler(w http.ResponseWriter, r *http.Request) {
+    w.Write([]byte(" 你的请求我已经收到
+}
+----
+
+[[go-web-response-html]]
+=== 给客户端一个页面
+
+[source,go]
+----
+func handler(w http.ResponseWriter, r *http.Request) {
+	html := `<html>
+	<head>
+		<title> 测试响应内容为网页 </title>
+		<meta charset="utf 8"/>
+	</head>
+	<body>
+		我是以网页的形式响应过来的！
+	</body>
+			</html>`
+	w.Write([]byte(html))
+}
+----
+
+[[go-web-response-json]]
+=== 给客户端一个 json
+
+[source,go]
+----
+func handler(w http.ResponseWriter, r *http.Request) {
+	// 设置响应头中内容的类型
+	w.Header().Set("Content Type", "application/json")
+	user := model.User{
+		ID:       1,
+		Username: "admin",
+		Password: "123456",
+		// 将 user 转换为 json 格式
+	}
+	json,_ := json.Marshal(user)
+	w.Write(json)
+}
+----
+
+[[go-web-response-redict]]
+=== 让客户端重定向
+
+[source,go]
+----
+func handler(w http.ResponseWriter, r *http.Request) {
+	// 以下操作必须要在 WriteHeader 之前进行
+	w.Header().Set("Location", "https:www.baidu.com")
+	w.WriteHeader(302)
+}
+----
+
+[[go-web-template]]
+== 模板引擎
+
+Go 为我们提供了 `text/template` 库和 `html/template` 库这两个模板引擎，模板引擎通过将数据和模板组合在一起生成最终的 HTML ，而处理器负责调用模板引擎并将引擎生成的 HTMl 返回给客户端。
+
+Go 的模板都是文本文档（其中 Web 应用的模板通常都是 HTML ），它们都嵌入了一些称为动作的指令。从模板引擎的角度来说，模板就是嵌入了动作的文本（这些文本通常包含在模板文件里面），而模板引擎则通过分析并执行这些文本来生成出另外一些文本。
+
+[[go-web-template-hello]]
+=== Hello World
+
+使用 Go 的 Web 模板引擎需要以下两个步骤
+
+. 对文本格式的模板源进行语法分析，创建一个经过语法分析的模板结构，其中模板源既可以是一个字符串，也可以是模板文件中包含的内容 。
+. 执行经过语法分析的模板，将 `ResponseWriter` 和模板所需的动态数据传递给模板引擎，被调用的模板引擎会把经过语法分析的模板和传入的数据结合起来，生成出最终的 HTML ，并将这些 HTML 传递给 `ResponseWriter`
+
+下面就让我们写一个简单的 helloworld 页面
+
+. 创建模板文件 hello.html
++
+[source,html]
+----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <!-- 嵌入动作 -->
+    {{.}}
+</body>
+</html>
+----
+. 在处理器中触发模板引擎
++
+[souorce,go]
+----
+func handler(w http.ResponseWriter, r *http.Request) {
+	// 解析模板文件
+	t, _ := template. ParseFiles ("hello.html")
+	// 执行 模板
+	t. Execute (w, "Hello World!")
+}
+----
+
+[[go-web-template-parse]]
+=== 解析模板
+
+[[go-web-template-parse-parsefiles]]
+==== ParseFiles 函数
+
+当我们调用 ParseFiles 函数解析模板文件时， Go 会创建一个新的模板，并将给定的模板文件的名字作为新模板的名字 如果该函数中传入了多个文件名，那么也只会返回一个模板， 而且以第一个文件的文件名作为模板
+的名字至于其他文件对应的模板 则会被放到一个 map 中。 让我们再来看一下 HelloWorld 中的代码：
+
+====
+[source,go]
+----
+t, _ := template.ParseFiles("hello.html")  // <1>
+----
+<1> 以上代码相当于调用 New 函数创建一个新模板，然后再调用 template 的 ParseFiles 方法：
+====
+
+[[go-web-template-parse-must]]
+==== Must 函数
+
+我们在解析模板时都没有对错误进行处理， Go 提供了一个 Must 函数专门用来处理这个错误。 Must 函数可以包裹起一个函数，被包裹的函数会返回一个指向模板的指针和一个错误，如果错误不是 nil ，那么 Must 函数将产生一个 panic 。
+
+[source,go]
+----
+t := template.Must(template.ParseFiles("hello.html"))
+----
+
+[[go-web-template-parse-parseglob]]
+==== ParseGlob 函数
+
+通过该函数可以通过指定一个规则一次性传入多个模板文件，如：
+
+[source,go]
+----
+t, _ := template.ParseGlob("*.html")
+----
+
+[[go-web-template-run]]
+=== 执行模板
+
+[[go-web-template-run-execute]]
+==== Execute 方法
+
+如果只有一个模板文件，调用这个方法总是可行的；但是如果有多个模板文件，调用这个方法只能得到第一个模板
+
+==== ExecuteTemplate 方法
+
+ExecuteTemplate 方法类似 Execute，但是使用名为 name 的 t 关联的模板产生输出。
+
+====
+[source,go]
+----
+func handler(w http.ResponseWriter, r *http.Request) {
+	t,_ := template.ParseFiles("hello1.html","hello2.html")
+	t.ExecuteTemplate(w,"hello2.html","我要在 hello2.html 中显示") // <1>
+}
+----
+<1> 变量 t 就是一个包含了 两个模板的模板集合，第一个模板的名字是 hello . 第二个模板的名字是 hello2.html, 如果直接调用 Execute 方法，则只有模板 hello.html 会被执行，如何想要执行模板 hello2.html ，则需要调用 ExecuteTemplate 方法
+====
+
+[[go-web-template-action]]
+=== 动作
+
+Go 模板的动作就是一些嵌入到模板里面的命令，这些命令在模板中需要 放到两个大括号里 `{{动作}}` 之前我们已经用过一个 很重要的动作 ：点 `(.)` ,它代表了传递给模板的数据。下面我们再介绍几个常用的动作，如果还想了解其他类型的动作，可以参考 `text/template` 库的文档。
+
+[[go-web-template-action-if]]
+==== 条件动作
+
+[source,txt,indent=0,subs="verbatim,quotes",role="primary"]
+.格式一
+----
+{{ if arg}}
+ 要显示的内容
+{{ end }}
+----
+.格式二
+[source,txt,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+{{ if arg}}
+ 要显示的内容
+{{ else }}
+当 if 条件不满足时要显示的内容
+{{ end }}
+----
+.hello1.html
+[source,html,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {{ if .}}
+        你已经成年了
+    {{ else }}
+        你还没有成年
+    {{ end }}
+</body>
+</html>
+----
+.main.go
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+package main
+
+import (
+	"html/template"
+	"net/http"
+)
+
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	// 解析模板文件
+	t := template.Must(template.ParseFiles("hello1.html"))
+	age := 16
+	t.Execute(w,age > 18)
+}
+
+func main() {
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":8080", nil)
+}
+----
+
+[[go-web-template-action-for]]
+==== 迭代动作
+
+迭代动作可以对数组、切片、映射或者通道进行迭代。
+
+[source,txt,indent=0,subs="verbatim,quotes",role="primary"]
+.格式一
+----
+{{ range .}}
+遍历到的元素是 {{ . }}
+{{ end }}
+----
+.格式二
+[source,txt,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+{{ range .}}
+遍历到的元素是 {{ . }}
+{{else}}
+没有任何元素
+{{ end }}
+----
+.hello2.html
+[source,html,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {{ range .}}
+        <a href="#">{{ .}}</a>
+    {{else}}
+        没有看到遍历的内容
+    {{end}}
+</body>
+</html>
+----
+.main.go
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+package main
+
+import (
+	"html/template"
+	"net/http"
+)
+
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	// 解析模板文件
+	t := template.Must(template.ParseFiles("hello2.html"))
+	stars := []string{"周杰伦","周传雄","林俊杰"}
+	t.Execute(w,stars)
+}
+
+func main() {
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":8080", nil)
+}
+----
+
+. 如果迭代之后是一个个 的结构体，获取结构体中的字段值使用字段名方式获取.例如 `{{ .Name }}`
+. 迭代 Map 时可以设置变量，变量以 `$` 开头,例如：`{{rang $k,$v := .}}`
+. 迭代管道.例如 `{{ c1 | c2 | c3 }}` .c 1 、 c 2 和 c 3 可以是参数或者函数。管道允许用户将一个参数的输出传递给下一个参数，各个参数之间使用 `|` 分割。
+
+[[go-web-template-action-setup]]
+==== 设置动作
+
+设置动作允许在指定的范围内对点 `(.)` 设置值。
+
+[source,txt,indent=0,subs="verbatim,quotes",role="primary"]
+.格式一
+----
+{{ with arg }}
+ 为传过来的数据设置的新值是 {{ . }}
+{{ end }}
+----
+.格式二
+[source,txt,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+{{ with arg }}
+为传过来的数据设置的新值是 {{ . }}
+
+{{ else }}
+传过来的数据仍然是 {{ . }}
+{{ end }}
+----
+.hello3.html
+[source,html,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <!-- 嵌入动作 -->
+    <div> 得到的数据是:{{ . }}</div>
+    {{ with "太子"}}
+    <div> 替换之后的数据是:{{. }} </div>
+    {{ end }}
+    <hr />
+    {{ with ""}}
+        <div> 看一下现在的数据是:{{. }} </div>
+    {{ else }}
+        <div> 数据没有被替换,还是:{{. }} </div>
+    {{ end }}
+</body>
+</html>
+----
+.main.go
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+package main
+
+import (
+	"html/template"
+	"net/http"
+)
+
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	// 解析模板文件
+	t := template.Must(template.ParseFiles("hello3.html"))
+	t.Execute (w, "狸猫")
+}
+
+func main() {
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":8080", nil)
+}
+----
+
+[[go-web-template-action-included]]
+==== 包含动作
+
+[source,txt,indent=0,subs="verbatim,quotes",role="primary"]
+.格式一
+----
+{{ template "name" }} // name 为被包含的模板的名字
+----
+.格式二
+[source,txt,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+{{ template "name" arg}} // name 为被包含的模板的名字，arg 是用户想要传递给被嵌套模板的数据
+----
+.hello4.html
+[source,html,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <!-- 嵌入动作 -->
+    <div> 得到的数据是:{{ . }}</div>
+    <!-- 包含  hello5.html 模板-->
+    {{ template "hello5.html" }}
+    <div> hello4.html 文件内容结束 </div>
+
+    <hr />
+    <div>将 hello4.html 模板文件中的数据传递给 hello5.html
+        模板文件 </div>
+    {{ template "hello5.html" .}}
+</body>
+</html>
+----
+.hello5.html
+[source,html,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <!-- 嵌入动作 -->
+    <div> hello5.html 模板文件中的数据是: {{ . }}</div>
+</body>
+</html>
+----
+.main.go
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+package main
+
+import (
+	"html/template"
+	"net/http"
+)
+
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	// 解析模板文件
+	t := template.Must(template.ParseFiles("hello4.html","hello5.html"))
+	t.Execute (w, "测试包含")
+}
+
+func main() {
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":8080", nil)
+}
+----
+
+[[go-web-template-action-define]]
+==== 定义动作
+
+当我们访问 一些网站时，经常会看到好多网页中有相同的部分：比如导航栏、版权信息、联系方式等。这些相同的布局我们可以通过定义动作在模板文件中定义模板来实现。 定义模板的格式是：以 `{{ define "layout" }}` 开头，以 `{{ end }}` 结尾。
+
+[source,html,indent=0,subs="verbatim,quotes",role="primary"]
+.定义单个模板(hello6.html)
+----
+{{ define "model"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>模板文件</title>
+</head>
+<body>
+    {{ template "content"}}
+</body>
+</html>
+{{ end }}
+----
+.定义多个模板(hello7.html)
+[source,html,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+{{ define "model"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>模板文件</title>
+</head>
+<body>
+    {{ template "content"}}
+</body>
+</html>
+{{ end }}
+
+{{ define "content"}}
+
+<a href="#">点我</a>
+{{ end }}
+----
+.main.go
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+package main
+
+import (
+	"html/template"
+	"net/http"
+)
+
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	// 解析模板文件
+	t := template.Must(template.ParseFiles("hello6.html"))
+	t.ExecuteTemplate(w,"model","")
+}
+
+func main() {
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":8080", nil)
+}
+----
+
+* 在不同的模板文件中定义同名的模板
+
+[source,html,indent=0,subs="verbatim,quotes",role="primary"]
+.content1.html
+----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {{ define "content"}}
+        <h1> 我是 content1.html 模板文件中的内容 </h1>
+    {{end}}
+</body>
+</html>
+----
+.格式二
+[source,html,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {{ define "content"}}
+        <h1> 我是 content2.html 模板文件中的内容 </h1>
+    {{end}}
+</body>
+</html>
+----
+.hello6.html
+[source,html,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+{{ define "model"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>模板文件</title>
+</head>
+<body>
+    {{ template "content"}}
+</body>
+</html>
+{{ end }}
+----
+.main.go
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+package main
+
+import (
+	"html/template"
+	"math/rand"
+	"net/http"
+	"time"
+)
+
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	rand.Seed(time.Now().Unix())
+
+	var t *template.Template
+
+	if rand.Intn(5) >2 {
+		t = template.Must(template.ParseFiles("hello6.html","content1.html"))
+	} else {
+		t = template.Must(template.ParseFiles("hello6.html","content2.html"))
+	}
+	t.ExecuteTemplate(w,"model","")
+}
+
+func main() {
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":8080", nil)
+}
+----
+
+[[go-web-template-action-block]]
+==== 块动作
+
+Go 1.6 引入了一个新的块动作，这个动作允许用户定义一个模板并立即使用。相当于设置了一个默认的模板
+
+[source,txt,indent=0,subs="verbatim,quotes",role="primary"]
+.格式一
+----
+{{ block arg }}
+ 如果找不到模板我就显示了
+{{ end }}
+----
+.hello7.html
+[source,html,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+{{ define "model"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>模板文件</title>
+</head>
+<body>
+    {{ block "content" .}}
+        如果找不到就显示我
+    {{end}}
+</body>
+</html>
+{{ end }}
+----
+.main.go
+[source,go,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+package main
+
+import (
+	"html/template"
+	"math/rand"
+	"net/http"
+	"time"
+)
+
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	rand.Seed(time.Now().Unix())
+
+	var t *template.Template
+
+	if rand.Intn(5) >2 {
+		t = template.Must(template.ParseFiles("hello7.html","content1.html"))
+	} else {
+		t = template.Must(template.ParseFiles("hello7.html"))
+	}
+	t.ExecuteTemplate(w,"model","")
+}
+
+func main() {
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":8080", nil)
+}
+----
+
+[[go-web-session]]
+== 会话控制
+
+HTTP 是无状态协议，服务器不能记录浏览器的访问状态，也就是说服务器不能区分中两次请求是否由一个客户端发出。这样的设计严重阻碍的 Web 程序的设计。 如：在我们进行网购时，买了一条裤子，又买了一个手机。由于 http 协议是无状态的，如果不通过其他手段，服务器是不能知道用户到底买了什么。而 Cookie 就是解决方案之一。
+
+[[go-web-session-cookie]]
+=== Cookie
+
+Cookie 实际上就是服务器保存在浏览器上的一段信息。浏览器有了 Cookie 之后，每次向服务器发送请求时都会同时将该信息发送给服务器，服务器收到请求后，就可以根据该信息处理请求。
+
+Cookie 代表一个出现在 HTTP 回复的头域中 `Set-Cookie` 头的值里或者 HTTP 请求的头域中 Cookie 头的值里的 HTTP cookie。
+
+[source,go]
+----
+type Cookie struct {
+    Name       string
+    Value      string
+    Path       string
+    Domain     string
+    Expires    time.Time
+    RawExpires string
+    // MaxAge=0表示未设置Max-Age属性
+    // MaxAge<0表示立刻删除该cookie，等价于"Max-Age: 0"
+    // MaxAge>0表示存在Max-Age属性，单位是秒
+    MaxAge   int
+    Secure   bool
+    HttpOnly bool
+    Raw      string
+    Unparsed []string // 未解析的“属性-值”对的原始文本
+}
+----
+
+[[go-web-session-cookie-principle]]
+==== Cookie 运行原理
+
+. 第一次向服务器发送请求时在服务器端创建 Cookie
+. 将在服务器端创建的 Cookie 以响应头的方式发送给浏览器
+. 以后再发送请求浏览器就会携带着该 Cookie
+. 服务器得到 Cookie 之后根据 Cookie 的信息来区分不同的用户
+
+[[go-web-session-cookie-create]]
+==== 创建 Cookie
+
+[source,go]
+----
+package main
+
+import (
+	"net/http"
+)
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	cookie1 := http.Cookie{
+		Name:     "user1",
+		Value:    "admin",
+		HttpOnly: true,
+	}
+	cookie2 := http.Cookie{
+		Name:     "user2",
+		Value:    "superAdmin",
+		HttpOnly: true,
+	}
+	// 将 Cookie 发送给浏览器 即添加第一个 Cookie
+	w.Header().Set("Set Cookie", cookie1.String())
+	// 再添加一个 Cookie
+	w.Header().Add("Set Cookie", cookie2.String())
+}
+
+func main() {
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":8080", nil)
+}
+----
+
+浏览器响应报文中的内容
+
+[shource,shell]
+----
+HTTP/1.1 200 OK
+Set-Cookie: user1=admin; HttpOnly
+Set-Cookie: user2=superAdmin; HttpOnly
+Date: Sun, 12 Aug 2018 07:24:49 GMT
+Content-Length: 0
+Content-Type: text/plain; charset=utf 8
+----
+
+除了 `Set` 和 `Add` 方法之外， Go 还提供了一种更快捷的设置 Cookie 的方式，就是通过 `net/http` 库中的 `SetCookie` 方法
+
+[source,go]
+----
+func handler(w http.ResponseWriter, r *http.Request) {
+	cookie1 := http.Cookie{
+		Name:     "user1",
+		Value:    "admin",
+		HttpOnly: true,
+	}
+	cookie2 := http.Cookie{
+		Name:     "user2",
+		Value:    "superAdmin",
+		HttpOnly: true,
+	}
+	// 将 Cookie 发送给浏览器 即添加第一个 Cookie
+	http.SetCookie(w,&cookie1)
+	http.SetCookie(w,&cookie2)
+}
+----
+
+[[go-web-session-cookie-read]]
+==== 读取 Cookie
+
+由于我们在发送请求时 Cookie 在请求头中，所以我们可以通过 Request 结构中的 Header 字段来获取 Cookie
+
+[source,go]
+----
+func handler(w http.ResponseWriter, r *http.Request){
+ 	// 获取请求头中的 Cookie
+	cookies := r.Header["Cookie"]
+	fmt.Fprintln(w, cookies)
+}
+----
+
+[[go-web-session-cookie-expire]]
+==== 设置 Cookie 有效时间
+
+Cookie 默认是会话级别的 ，当关闭浏览器之后 Cookie 将失效，我们可以通过 Cookie 结构的 `MaxAge` 字段设置 `Cookie` 的有效时间
+
+[source,go]
+----
+func handler(w http.ResponseWriter, r *http.Request) {
+	cookie1 := http.Cookie{
+		Name:     "user1",
+		Value:    "admin",
+		HttpOnly: true,
+		MaxAge: 60,
+	}
+	// 将 Cookie 发送给浏览器 即添加第一个 Cookie
+	http.SetCookie(w,&cookie1)
+}
+----
+
+[[go-web-session-session]]
+=== Session
+
+使用 Cookie 有一个非常大的局限，就是如果 Cookie 很多，则无形的增加了客户端与服务端的数据传输量。而且由于浏览器对 Cookie 数量的限制，注定我们不能再 Cookie 中保存过多的信息，于是 Session 出现。
+
+Session 的作用就是在服务器端保存一些用户的数据 ，然后传递给用户一个特殊的 Cookie ，这个 Cookie 对应 着 这个服务器中的一个 Session ，通过它就可以获取到保存用户信息的 Session ，进而就知道是那个用户再发送请求。
+
+[[go-web-session-session-principle]]
+==== Session 运行原理
+
+. 第一次向服务器发送请求时创建 Session ，给它设置一个全球唯一的 ID （可以通过 UUID 生成）
+. 创建一个 Cookie ，将 Cookie 的 Value 设置为 Session 的 ID 值，并将 Cookie 发送给浏览器
+. 以后再发送请求浏览器就会携带着该 Cookie
+. 服务器获取 Cookie 并根据它的 Value 值找到服务器中对应的 Session ，也就知道了请求是那个用户发的
+
+[[go-web-resource]]
+== 静态文件处理
+
+对于 HTML 页面中的 css 以及 js 等静态文件，需要使用使用 `net/http` 包下的以下方法来处理
+
+[[go-web-resource-stripprefix]]
+=== StripPrefix 函数
+
+[[go-web-resource-fileserver]]
+=== FileServer 函数
+
+[[go-web-resource-sample]]
+=== 示例
+
+* 项目的静态文件的目录结构如下
+
+imgage::{base-images}/go-web3.png[]
+
+index.html 模板文件中引入的 css 样式的地址是: `<link rel="stylesheet" href="static/css/style.css" type="text/css">`
+
+对静态文件的处理
+
+[source,go]
+----
+http.Handler("/static/",http.StripPrefix("/static/",http.FileServer(http.Dir("views/static"))))
+----
+
+`/static` 会匹配 以 `/static` 开发的路径，当浏览器请求 index .html 页面中的 `style.css` 文件时， `static` 前缀会被替换为 `views/staic` ，然后去 `views/static/css` 目录中取查找 `style.css` 文件
 

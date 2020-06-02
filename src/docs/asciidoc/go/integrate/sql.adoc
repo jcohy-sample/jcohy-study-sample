@@ -7,4 +7,246 @@ Go 语言中的 `database/sql` 包定义了对数据库的一系列操作，`dat
 [[go-integrate-mysql-install]]
 == 安装
 
+[source,shell]
+----
 go get -u github.com/go-sql-driver/mysql
+----
+
+== 获取数据库连接
+
+DB 结构体说明
+
+[source,go]
+----
+type DB struct {
+    // 内含隐藏或非导出字段
+}
+----
+
+DB是一个数据库（操作）句柄，代表一个具有零到多个底层连接的连接池。它可以安全的被多个 go 程同时使用。
+
+sql 包会自动创建和释放连接；它也会维护一个闲置连接的连接池。如果数据库具有单连接状态的概念，该状态只有在事务中被观察时才可信。一旦调用了 `BD.Begin`，返回的 `Tx` 会绑定到单个连接。
+当调用事务 `Tx` 的 `Commit` 或 `Rollback` 后，该事务使用的连接会归还到 DB 的闲置连接池中。连接池的大小可以用 `SetMaxIdleConns` 方法控制。
+
+Open 函数说明
+
+====
+[source,go]
+----
+func Open(driverName, dataSourceName string) (*DB, error) // <1>
+----
+<1> `dataSourceName` 格式: `数据库用户名:数据库密码@[tcp(localhost:3306)]/数据库名`
+====
+
+Open 打开一个 `dirverName` 指定的数据库，`dataSourceName` 指定数据源，一般包至少括数据库文件名和（可能的）连接信息。
+
+大多数用户会通过数据库特定的连接帮助函数打开数据库，返回一个 `*DB`。Go 标准库中没有数据库驱动。参见 http://golang.org/s/sqldrivers[] 获取第三方驱动。
+
+Open 函数可能只是验证其参数，而不创建与数据库的连接。如果要检查数据源的名称是否合法，应调用返回值的 Ping 方法。
+
+返回的 DB 可以安全的被多个 go 程同时使用，并会维护自身的闲置连接池。这样一来，`Open` 函数只需调用一次。很少需要关闭 DB。
+
+我们在 utils 包下创建一个 db.go 文件
+
+[source,go]
+----
+package main
+
+import (
+	"database/sql"
+	"fmt"
+	_"github.com/go-sql-driver/mysql"
+)
+
+var (
+	Db *sql.DB
+	err error
+)
+
+func init(){
+	Db,err = sql.Open("mysql","root:jcohy1203@tcp(localhost:3306)/test")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	err = Db.Ping()
+
+	fmt.Println(err)
+}
+
+func main(){
+
+}
+----
+
+== 增删改查
+
+=== 在连接的 test 表中创建一个 users 表
+
+[source,sql]
+----
+CREATE TABLE users(
+id INT PRIMARY KEY AUTO_INCREMENT,
+username VARCHAR(100) UNIQUE NOT NULL,
+PASSWORD VARCHAR(100) NOT NULL,
+email VARCHAR(100)
+)
+----
+
+=== 插入数据
+
+[source,go]
+----
+package model
+
+import (
+	"webdemo/utils"
+)
+
+type User struct {
+	ID int
+	Username string
+	Password string
+	Email string
+}
+
+func (user *User) AddUser() error{
+
+	sqlStr := "insert into users(username,password,email) values (?,?,?)"
+
+	_, err := utils.Db.Exec(sqlStr,user.Username, user.Password, user.Email)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+----
+
+然后编写测试方法测试一下
+
+[source,go]
+----
+package model
+
+import (
+	"fmt"
+	"testing"
+)
+
+func TestUser_AddUser(t *testing.T) {
+	fmt.Println("测试添加用户")
+
+	user := &User{
+		Username: "jcohy",
+		Password: "123456",
+		Email: "jia_chao23@126.com",
+	}
+
+	user.AddUser()
+}
+----
+
+=== 获取数据
+
+[source,go]
+----
+func (user *User) GetUserInfo(userId int) (*User, error){
+
+	sqlstr := "select id,username,password,email from users where id = ?"
+
+	row := utils.Db.QueryRow(sqlstr,1)
+
+	var username string
+	var password string
+	var email string
+	err := row.Scan(&userId,&username,&password,&email)
+
+	if err != nil {
+		return nil,err
+	}
+	u := &User{
+		ID: userId,
+		Username: username,
+		Password: password,
+		Email: email,
+	}
+	return u,nil
+}
+----
+
+编写测试方法
+
+[source,go]
+----
+func TestUser_GetUserInfo(t *testing.T) {
+	fmt.Println("获取用户")
+
+	user := &User{
+		ID:1,
+	}
+
+	u,_ := user.GetUserInfo(1)
+	fmt.Println(*u)
+}
+----
+
+=== 获取多条数据
+
+[source,go]
+----
+func (user *User) GetUsers() ([]*User ,error){
+
+	sqlstr := "select id,username,password,email from users"
+
+	rows,err := utils.Db.Query(sqlstr)
+	if err != nil {
+		return nil,err
+	}
+
+	// 定义一个 user 切片
+	var users []*User
+
+	for rows.Next(){
+		var userId int
+		var username string
+		var password string
+		var email string
+		err := rows.Scan(&userId,&username,&password,&email)
+		if err != nil {
+			return nil,err
+		}
+		u := &User{
+			ID: userId,
+			Username: username,
+			Password: password,
+			Email: email,
+		}
+
+		users = append(users,u)
+	}
+	return users,nil
+}
+----
+
+测试
+
+[source,go]
+----
+func TestUser_GetUsers(t *testing.T) {
+	fmt.Println("批量获取用户")
+	user := &User{
+
+	}
+
+	users,_ := user.GetUsers()
+
+	for _,user := range users {
+		fmt.Println(*user)
+	}
+}
+----
+
+== 常用方法
+
