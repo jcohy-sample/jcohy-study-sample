@@ -48,7 +48,7 @@ dependencies {
 
 
 ext{
-	highlightjsdir = "http://docs.jcohy.com/js/highlight"
+	highlightjsdir = "http://resources.jcohy.com/js/highlight"
 	highlightjsTheme = "github"
 	sourceHighlighter = "highlight.js"
 }
