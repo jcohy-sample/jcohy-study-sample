@@ -58,13 +58,13 @@ Go语言也称为 Golang,是由 Google 公司开发的一种静态强类型、�
 
 logo:
 
-image::{base-images}/go-logo-blue.svg[quick1]
+image::{oss-images}/go-logo-blue.svg[quick1]
 
 吉祥物:
 
 Go语言有一个吉祥物,在会议、文档页面和博文中,大多会包含下图所示的 Go Gopher,这是才华横溢的插画家 Renee French 设计的,她也是 Go 设计者之一 Rob Pike 的妻子.
 
-image::{base-images}/home-gopher.png[]
+image::{oss-images}/home-gopher.png[]
 
 === gopher 的含义
 

@@ -31,7 +31,7 @@ include::{algorithm-code}/arrays/matrixZZ.java[tag=code]
 
 比较基本的定义是矩阵中的大多数元素为零, 并且可以利用零元素节约大量存储、运算和程序运行时间.
 
-image::{base-images}/go11.png[]
+image::{oss-images}/go11.png[]
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java

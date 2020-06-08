@@ -1,7 +1,6 @@
 [[jcohy-study-note]]
 = Jcohy 学习笔记
 Jcohy
-
 include::attributes.adoc[]
 
 ****

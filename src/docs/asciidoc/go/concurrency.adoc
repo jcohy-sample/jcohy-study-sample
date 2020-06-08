@@ -26,7 +26,7 @@ Go语言是为并发而生的语言,Go语言是为数不多的在语言层面实
 . 调度由用户控制
 . `goroutine` 是轻量级的线程
 
-image::{base-images}/go6.png[]
+image::{oss-images}/go6.png[]
 
 `goroutine` 是一个普通的函数,只是需要使用关键字 `go` 作为开头.看下面的例子
 
@@ -64,7 +64,7 @@ func main() {
 
 主线程和 `goroutine` 执行流程图
 
-image::{base-images}/go7.png[]
+image::{oss-images}/go7.png[]
 
 * 主线程是一个物理线程,直接作用在 CPU 上的.是重量级的,非常耗费 cpu 资源
 * `goroutine` 从主线程开启的,是轻量级的线程,是逻辑态.对资源消耗相对小
@@ -83,14 +83,14 @@ image::{base-images}/go7.png[]
 
 三者关系如下图所示:
 
-image::{base-images}/GMPrelation.png[]
+image::{oss-images}/GMPrelation.png[]
 
 以上这个图讲的是两个线程(内核线程)的情况.一个 `M` 会对应一个内核线程,一个 `M` 也会连接一个上下文 `P`,一个上下文 `P` 相当于一个 "处理器",一个上下文连接一个或者多个 `Goroutine`. `P(Processor)` 的数量是在启动时被设置为环境变量 `GOMAXPROCS` 的值,
 或者通过运行时调用函数 `runtime.GOMAXPROCS()` 进行设置.`Processor` 数量固定意味着任意时刻只有固定数量的线程在运行 go 代码.`Goroutine` 中就是我们要执行并发的代码.图中P正在执行的 `Goroutine` 为蓝色的;处于待执行状态的 `Goroutine` 为灰色的,灰色的 `Goroutine` 形成了一个队列 `runqueues`
 
 三者关系的宏观的图为:
 
-image::{base-images}/total.png[]
+image::{oss-images}/total.png[]
 
 * 抛弃P(Processor)
 
@@ -98,7 +98,7 @@ image::{base-images}/total.png[]
 
 一个很简单的例子就是系统调用 `sysall`,一个线程肯定不能同时执行代码和系统调用被阻塞,这个时候,此线程 `M` 需要放弃当前的上下文环境 `P`,以便可以让其他的 `Goroutine` 被调度执行.
 
-image::{base-images}/giveupP.png[]
+image::{oss-images}/giveupP.png[]
 
 如上图左图所示,`M0` 中的 G0 执行了 `syscall`,然后就创建了一个 M1(也有可能本身就存在,没创建),(转向右图)然后 `M0` 丢弃了 `P`,等待 `syscall` 的返回值,`M1` 接受了 `P`,将·继续执行 `Goroutine` 队列中的其他 `Goroutine`.
 
@@ -113,7 +113,7 @@ image::{base-images}/giveupP.png[]
 
 Go 的做法倒也直接,从其他 `P` 中偷一半！
 
-image::{base-images}/stealwork.png[]
+image::{oss-images}/stealwork.png[]
 
 https://i6448038.github.io/2017/12/04/golang-concurrency-principle[Go并发原理]
 
@@ -176,11 +176,11 @@ ch <- x
 
 * 无缓冲:发送和接收动作是同时发生的.如果没有 `goroutine` 读取 `channel (<- channel)`,则发送者 `(channel <-)` 会一直阻塞.
 
-image::{base-images}/unbufferedchannel.png[]
+image::{oss-images}/unbufferedchannel.png[]
 
 * 缓冲:缓冲 `channel` 类似一个有容量的队列.当队列满的时候发送者会阻塞;当队列空的时候接收者会阻塞.
 
-image::{base-images}/bufferedchannel.png[]
+image::{oss-images}/bufferedchannel.png[]
 
 ==== 关闭 channel
 

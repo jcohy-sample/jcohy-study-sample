@@ -640,7 +640,7 @@ fmt.Println(*str)
 
 ===== 数组的内存布局
 
-image::{base-images}/go2.png[]
+image::{oss-images}/go2.png[]
 
 * 数组的地址可以通过数组名来获取 &intArr
 * 数组的第一个元素的地址.就是数组的首地址
@@ -838,7 +838,7 @@ func main() {
 
 ===== 切片的内存布局
 
-image::{base-images}/go3.png[]
+image::{oss-images}/go3.png[]
 
 * slice 是一个引用类型
 * slice 从底层来说,其实就是一个数据结构(struct 结构体)

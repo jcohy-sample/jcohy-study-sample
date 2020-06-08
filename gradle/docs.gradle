@@ -74,9 +74,9 @@ asciidoctor {
 	outputDir "$buildDir/docs/ref-docs/"
 	resources {
 		from(sourceDir) {
-			include 'images/*', 'css/**', 'js/**'
+			include ''
 		}
-		from extractDocResources
+//		from extractDocResources
 	}
 	logDocuments = true
 	outputOptions {
@@ -100,28 +100,3 @@ asciidoctor {
 }
 
 asciidoctor.dependsOn extractDocResources
-
-
-/**
- * Zip all docs (API and reference) into a single archive
- */
-//task docsZip(type: Zip, dependsOn: ['api', 'asciidoctor']) {
-//	group = "Distribution"
-//	description = "Builds -${archiveClassifier} archive containing api and reference " +
-//			"for deployment at http://gitlab.jcohy.com/td/flight."
-//
-//	archiveBaseName.set("flight")
-//	archiveClassifier.set("docs")
-//	from("src/dist") {
-//		include "changelog.txt"
-//	}
-//	from (api) {
-//		into "javadoc-api"
-//	}
-//	from ("$asciidoctor.outputDir") {
-//		into "spring-framework-reference"
-//	}
-////	from ("$asciidoctor.outputDir/pdf") {
-////		into "spring-framework-reference/pdf"
-////	}
-//}

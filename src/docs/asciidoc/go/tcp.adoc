@@ -28,7 +28,7 @@
 
 首先查看整体的目录结构划分
 
-image::{base-images}/go10.png[]
+image::{oss-images}/go10.png[]
 
 ==== 创建消息结构体
 

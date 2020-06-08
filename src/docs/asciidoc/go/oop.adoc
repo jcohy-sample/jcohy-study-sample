@@ -123,7 +123,7 @@ func main() {
 
 上面的代码对应的内存分析
 
-image::{base-images}/go9.png[]
+image::{oss-images}/go9.png[]
 
 [[go-oop-struct-notice]]
 === 注意事项

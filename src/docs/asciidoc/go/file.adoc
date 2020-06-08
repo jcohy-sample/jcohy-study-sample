@@ -4,7 +4,7 @@
 [[go-file-overview]]
 == 文件基本介绍
 
-image::{base-images}/go5.png[]
+image::{oss-images}/go5.png[]
 
 `os.File` 封装所有文件相关操作,`File` 是一个结构体
 

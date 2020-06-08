@@ -44,7 +44,7 @@ func test(b interface{}){
 <3> 将 `interface{}` 转成原来的变量类型, 使用 <<go-oop-polymorphism-predicate>>
 ====
 
-image::{base-images}/go8.png[]
+image::{oss-images}/go8.png[]
 
 反射常使用的场景有以下两种
 

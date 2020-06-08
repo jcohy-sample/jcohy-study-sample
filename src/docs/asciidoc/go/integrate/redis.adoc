@@ -920,11 +920,11 @@ redis 本身具有发布订阅的功能, 其发布订阅功能通过命令 SUBSC
 
 发布者:
 
-image::{base-images}/go12.png[]
+image::{oss-images}/go12.png[]
 
 订阅者:
 
-image::{base-images}/go13.png[]
+image::{oss-images}/go13.png[]
 
 操作示例, 示例中将使用两个goroutine分别担任发布者和订阅者角色进行演示:
 
