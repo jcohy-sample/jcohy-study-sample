@@ -26,4 +26,4 @@ http://docs.jcohy.com[*http://docs.jcohy.com*]
 <<docker.adoc#docker-overview, docker>>  :: docker 指南
 <<go.adoc#go-overview, go>>  :: go 指南
 <<guide.adoc#guide, 面试指南>>  :: 面试指南
-<<file.adoc#file-overview, 常用文件>>  :: 常用正则表达式,配置文件等
+<<file.adoc#file-overview, 常用文件>>  :: 常用正则表达式,配置文件,Cron 表达式等

@@ -20,7 +20,7 @@ public class QueueArray {
     public static int front = -1, rear = -1, max = 20;
     public static int val;
     public static char ch;
-    public static int queue[] = new int[max];
+    public static int[] queue = new int[max];
 
     public static void main(String[] args) throws IOException {
         String strM;
@@ -29,12 +29,12 @@ public class QueueArray {
         while (rear < max - 1 && M != 3) {
             System.out.println("[1]存入一个数值[2]取出一个数值[3]结束");
             strM = keyin.readLine();
-            M = Integer.valueOf(strM);
+            M = Integer.parseInt(strM);
             switch (M) {
                 case 1:
                     System.out.println("\n请输入一个数: ");
                     strM = keyin.readLine();
-                    val = Integer.valueOf(strM);
+                    val = Integer.parseInt(strM);
                     rear++;
                     queue[rear] = val;
                     break;

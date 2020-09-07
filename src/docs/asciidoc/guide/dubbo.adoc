@@ -1,0 +1,47 @@
+[[guide-dubbo]]
+= dubbo 基础面试
+
+== Dubbo 是什么？
+
+== Dubbo 的由来
+
+== Dubbo 的主要应用场景
+
+== Dubbo 的核心功能
+
+== Dubbo 的核心组件
+
+== Dubbo 服务注册与发现流程
+
+== Dubbo 的服务调用流程
+
+== Dubbo 协议
+
+== Dubbo 有哪些注册中心
+
+
+== Dubbo 的服务治理
+
+== Dubbo 与 Spring 的关系？
+
+== Dubbo 使用的是什么通信框架?
+
+== Dubbo 集群提供了哪些负载均衡策略？
+
+== Dubbo 的集群容错方案有哪些？
+
+== Dubbo 支持哪些序列化方式？
+
+== Dubbo 超时时间怎样设置？
+
+== 服务调用超时问题怎么解决？
+
+== Dubbo 在安全机制方面是如何解决？
+
+== dubbo 和 dubbox 之间的区别？
+
+== 除了 Dubbo 还有哪些分布式框架？
+
+== Dubbo 和 Spring Cloud 的关系？
+
+== dubbo 和 spring cloud 的区别？

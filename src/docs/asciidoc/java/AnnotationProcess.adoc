@@ -1,0 +1,100 @@
+[[java-annotation-process]]
+= Java 注解处理器
+
+[[java-annotation-process-element]]
+== Element
+
+element指的是一系列与之相关的接口集合，它们位于javax.lang.model.element包下面
+
+image::{base-images}/java-annotation1.png[]
+
+element 是代表程序的一个元素，这个元素可以是：包、类/接口、属性变量、方法/方法形参、泛型参数。element是java-apt(编译时注解处理器)技术的基础，因此如果要编写此类框架，熟悉element是必须的。
+
+=== element及其子接口
+
+各种element所代表的元素类型
+
+image::{base-images}/java-annotation2.png[]
+
+通过上图可以看到 element 元素及其子接口所指代的元素，有点类似 `Type` 类型，那么 element 接口族和 Type 接口族之间有什么区别呢？element 所代表的元素只在编译期可见，用于保存元素在编译期的各种状态，而 Type 所代表的元素是运行期可见，用于保存元素在编译期的各种状态
+
+=== element 接口方法
+
+* `accept(ElementVisitor<R,P> v, P p)`
+
+接收一个 `ElementVisitor` 类，它的作用类似于一个 `if(element instanceof ExecutableElement)` 则调用 `visitExecutable(ExecutableElement executableElement, Void aVoid)`;两个泛型一般写 `Void` 就行，如果需要接收 `accept` 方法的返回值，则根据返回值的类型定义 `R，P` 基本上是用不到的，写 `Void` 就行
+
+* `TypeMirror asType()`
+
+返回一个 `TypeMirror` 是元素的类型信息，包括包名，类(或方法，或参数)名/类型，在生成动态代码的时候，我们往往需要知道变量/方法参数的类型，以便写入正确的类型声明
+
+* `<A extends Annotation> A getAnnotation(Class<A> annotationType)`
+
+根据传入的注解类型获取该元素上的注解
+
+* `List<? extends AnnotationMirror> getAnnotationMirrors()`
+
+获取该元素上的注解的类型信息，`AnnotationMirror` 类似于 `TypeMirror`
+
+* `List<? extends Element> getEnclosedElements()`
+
+返回该元素直接包含的子元素,通常对一个 `PackageElement` 而言，它可以包含 `TypeElement`；对于一个 `TypeElement` 而言，它可能包含属性 `VariableElement`，方法 `ExecutableElement`,
+
+* `Element getEnclosingElement()`
+
+返回包含该 element 的父 element，与上一个方法相反，`VariableElement`，方法 `ExecutableElement` 的父级是 `TypeElemnt`，而 `TypeElemnt` 的父级是 `PackageElment`
+
+* `ElementKind getKind()`
+
+返回 element 的类型，判断是哪种 element
+
+* `Set<Modifier> getModifiers()`
+
+获取修饰关键字,入public static final等关键字
+
+* `Name getSimpleName()`
+
+获取名字，不带包名
+
+* `Name getQualifiedName()`
+
+这个方法是 element 的子接口所带的方法，element 本身并不指代具体的元素，因此没有改方法。获取全限定名，如果是类的话，包含完整的报名路径
+
+ExecutableElement
+
+* `List<? extends VariableElement> getParameters()`
+
+用于获取方法的参数元素，每个元素是一个VariableElement
+
+* `TypeMirror getReturnType()`
+
+获取方法元素的返回值，返回TypeMirror表示
+
+VariableElement
+
+* `Object getConstantValue()`
+如果属性变量被final修饰，则可以使用该方法获取它的值
+
+[[java-annotation-process-package-tbl]]
+.相关包
+|===
+| 包 | 翻译
+
+| javax.annotation.processing
+| 用来声明注释处理器并允许注释处理器与注释处理工具环境通信的工具。
+
+| javax.lang.model
+|用来为 Java 编程语言建立模型的包的类和层次结构。
+
+| javax.lang.model.element
+| 用于 Java 编程语言的模型元素的接口。
+
+| javax.lang.model.type
+| 用来为 Java 编程语言类型建立模型的接口。
+
+| javax.lang.model.util
+| 用来帮助处理程序元素和类型的实用工具。
+
+|===
+
+`javax.lang.model` 包(和子包)用于处理源代码
