@@ -50,9 +50,9 @@ Java 11 已于 2018 年 9 月 25 日正式发布,之前在 Java 10 新特性介�
 
 | 333: http://openjdk.java.net/jeps/333[ZGC: A Scalable Low-Latency Garbage Collector(Experimental)] | ZGC: 可伸缩低延迟垃圾收集器
 
-| 335: http://openjdk.java.net/jeps/335[Deprecate the Nashorn JavaScript Engine] | 废除Nashorn javascript引擎
+| 335: http://openjdk.java.net/jeps/335[Deprecate the Nashorn JavaScript Engine] | 废除 Nashorn javascript 引擎
 
-| 336: http://openjdk.java.net/jeps/336[Deprecate the Pack200 Tools and API] | 废除Pack200
+| 336: http://openjdk.java.net/jeps/336[Deprecate the Pack200 Tools and API] | 废除 Pack200
 |===
 
 [[java-11-feature-access-control]]

@@ -1,0 +1,815 @@
+[[java-15-feature]]
+= Java 15 新特性
+
+[[java-15-feature-overview]]
+== Java 15 新特性一览
+
+2020 年 9 月 15 日,JDK/Java 15 正式 GA(General Available) 正式发布.
+
+根据发布的规划，这次发布的 JDK 15 将是一个短期的过度版，只会被 Oracle 支持（维护）6 个月，直到明年 3 月的 JDK 16 发布此版本将停止维护。
+而 Oracle 下一个长期支持版（LTS 版）会在明年的 9 月份候发布（Java 17），LTS 版每 3 年发布一个，上一次长期支持版是 18 年 9 月发布的 JDK 11。
+
+JDK 15 此版本包含的 14 个 JEP (Java/JDK Enhancement Proposals,JDK 增强提案)。其中包括一个孵化器模块，三个预览功能，两个不推荐使用的功能以及两个删除功能。
+
+资料来源:  http://openjdk.java.net/projects/jdk/15/
+
+[[java-15-feature-overview-tbl]]
+.Java 15 新特性一览
+|===
+| 新特性 | 翻译
+
+| 339: https://openjdk.java.net/jeps/339[Edwards-Curve Digital Signature Algorithm (EdDSA)] | EdDSA 数字签名算法
+
+| 360: https://openjdk.java.net/jeps/360[Sealed Classes (Preview)] | 封闭类 (预览)
+
+| 371: http://openjdk.java.net/jeps/371[Hidden Classes] | 隐藏类
+
+| 372: http://openjdk.java.net/jeps/372[Remove the Nashorn JavaScript Engine] | 删除 Nashorn JavaScript 引擎
+
+| 373: http://openjdk.java.net/jeps/373[Reimplement the Legacy DatagramSocket API] | 重新实现旧版 DatagramSocket API
+
+| 374: http://openjdk.java.net/jeps/374[Disable and Deprecate Biased Locking] | 禁用和弃用偏向锁
+
+| 375: http://openjdk.java.net/jeps/375[Pattern Matching for instanceof (Second Preview)] |模式匹配(第二次预览)
+
+| 377: http://openjdk.java.net/jeps/377[ZGC: A Scalable Low-Latency Garbage Collector] | ZGC: 可伸缩低延迟垃圾收集器
+
+| 378: http://openjdk.java.net/jeps/378[Text Blocks] | 文本块
+
+| 379: http://openjdk.java.net/jeps/379[Shenandoah: A Low-Pause-Time Garbage Collector] | 一个低停顿垃圾收集器
+
+| 381: http://openjdk.java.net/jeps/381[Remove the Solaris and SPARC Ports] | 删除 Solaris 和 SPARC 端口
+
+| 383: http://openjdk.java.net/jeps/383[Foreign-Memory Access API (Second Incubator)] | 外部内存访问 API(二次孵化)
+
+| 384: http://openjdk.java.net/jeps/384[Records (Second Preview)] | Record (第二次预览)
+
+| 385: http://openjdk.java.net/jeps/385[Deprecate RMI Activation for Removal] | 弃用RMI激活机制
+|===
+
+[[java-15-feature-environment]]
+== 环境安装
+
+* JDK下载地址:
++
+OpenJDK版本：https://jdk.java.net/15/
++
+Oracle版本：http://www.oracle.com/technetwork/java/javase/downloads/index.html
+
+* 修改环境变量.
+
+[[java-15-feature-eddsa]]
+== EdDSA 数字签名算法
+
+[[java-15-feature-eddsa-overview]]
+=== 简介
+
+如 https://tools.ietf.org/html/rfc8032[RFC 8032] 所述，使用Edwards-Curve数字签名算法（EdDSA）实现加密签名。
+
+[[java-15-feature-eddsa-goals]]
+=== 目标
+
+EdDSA 是一种现代的椭圆曲线方案，对比 JDK 中现有的签名方案更具有优势。这个 JEP 的主要目标是实现 https://tools.ietf.org/html/rfc8032[RFC 8032] 标准的这个方案。这个新的签名方案不能代替 ECDSA。
+
+其他实现目标
+
+* 在相同的安全强度下，开发一个独立于平台的EdDSA实现，其性能优于现有的 ECDSA 实现(使用本地C代码)。例如，使用 Curve25519 的 EdDSA 在 ~126 位安全性上应该和使用 curve secp256r1 的 ECDSA 在 ~128 位安全性上一样快。
+* 假设平台在一定时间时间内执行 64 位加/乘，请确保时间相对于 secrets 是独立的。此外，该实现不会在 secrets 分支。这些属性对于防止旁道攻击(side-channel attacks)非常有用。
+
+[[java-15-feature-eddsa-non-goals]]
+=== 非目标实现
+
+* EdDSA 仅在 SunEC 提供程序中执行。本 JEP 的目标不是在其他提供商中实施该标准。
+* EdDSA 的 API 和 SunEC 中的实现将不支持任意 domain 参数。 EdDSA 的典型用法仅使用可使用标识符指定的标准化参数集，例如 Ed25519 和 Ed448，并且通常不需要支持任意曲线参数。
+EdDSA API 应该通过扩展允许指定任意 domain 参数。 此类扩展超出了本 JEP 的范围。
+* 在完成此 JEP 之后，将在后续增强中完成 EdDSA 与 TLS 1.3 的 JSSE 的集成。
+
+[[java-15-feature-eddsa-success]]
+=== 成功指标
+
+* https://tools.ietf.org/html/rfc8032[RFC 8032] 中的所有测试均通过
+* 吞吐量（以现有密钥协议基准中的每秒导出密钥来衡量）将与所有平台上的现有 ECC 实施（具有相似的安全强度）相媲美。
+* 统计测试将显示签名操作的时间不会随私钥而变化。
+
+[[java-15-feature-eddsa-motivation]]
+=== 动机
+
+与其他签名方案相比，EdDSA 具有更高的安全性和性能，因此需求旺盛，并且已在许多其他加密库（如 OpenSSL 和 BoringSSL）中得到支持。
+此签名方案是 TLS 1.3 的可选组件，但它是 TLS 1.3 中仅允许的三种签名方案之一。 有些用户可能拥有 EdDSA 证书，并且可能强烈希望使用 EdDSA。
+这些用户将欣赏使用 EdDSA 的能力而不必使用第三方库。 开发 EdDSA 实现的另一个好处是，它使我们能够更轻松地开发和测试 TLS 1.3 中对该算法的支持。
+
+[[java-15-feature-eddsa-description]]
+=== 描述
+
+新的 `Signature`，`KeyFactory` 和 `KeyPairGenerator` 服务将添加到 SunEC 提供程序以支持EdDSA。 新的类和接口将添加到 API 中以表示 EdDSA 密钥，并且将添加新的标准算法名称来描述 EdDSA 签名方案。
+API 和实现将支持所有 EdDSA 变体 (pure, prehashed, and context).。
+
+point arithmetic（点运算）将使用 https://tools.ietf.org/html/rfc8032[RFC 8032] 中定义的 double 和 add 操作以及 branch-free  条件分配操作来防止旁道攻击。 field arithmetic（域运算）将使用为 XDH（https://openjdk.java.net/jeps/324[JEP 324]）开发的模块化算术库。 在对 JVM 和硬件行为的某些合理假设下，组合的实现不会将机密泄漏到定时和缓存旁道中。
+
+API 将重用为 XDH 开发的 `NamedParameterSpec` 类，以描述曲线域参数和 EdDSA 变体。 将为 Edwards 曲线点，EdDSA 密钥和包括上下文信息的签名参数开发新的类和接口。
+
+API用法示例：
+
+[source,java]
+====
+// example: generate a key pair and sign
+KeyPairGenerator kpg = KeyPairGenerator.getInstance("Ed25519");
+KeyPair kp = kpg.generateKeyPair();
+// algorithm is pure Ed25519
+Signature sig = Signature.getInstance("Ed25519");
+sig.initSign(kp.getPrivate());
+sig.update(msg);
+byte[] s = sig.sign();
+
+// example: use KeyFactory to contruct a public key
+KeyFactory kf = KeyFactory.getInstance("EdDSA");
+boolean xOdd = ...
+BigInteger y = ...
+NamedParameterSpec paramSpec = new NamedParameterSpec("Ed25519");
+EdECPublicKeySpec pubSpec = new EdECPublicKeySpec(paramSpec, new EdPoint(xOdd, y));
+PublicKey pubKey = kf.generatePublic(pubSpec);
+====
+
+[[java-15-feature-eddsa-alternatives]]
+=== 备选方案
+
+* 本地实现（例如现有的ECC代码）可能会提供更好的性能。 EdDSA 的性能应该类似于 XDH，因此 Java 实现可能足够快。
+* 可以使用现有 ECC 代码中的点算术来实现此签名方案，但是这种方法不能提供 RFC 8032 的所有安全/性能优势。
+* 用户可以使用提供对 EdDSA 支持的第三方库。 上面的动机部分介绍了在 JDK 中包含 EdDSA 实现的动机。
+* 使用现有的 ECC API 类来指定 EdDSA 密钥和参数在技术上可能是可行的，但这会带来密钥滥用的巨大风险。 可以在 https://bugs.openjdk.java.net/browse/JDK-8166597[JDK-8166597] 中找到更多信息。
+
+[[java-15-feature-sealed]]
+== 封闭类 (预览)
+
+[[java-15-feature-sealed-summary]]
+=== 简介
+
+通过封闭的类和接口来增强 Java 编程语言。https://cr.openjdk.java.net/~briangoetz/amber/datum.html[密封的类和接口] 可以阻止其他类或接口扩展或实现它们。
+
+[[java-15-feature-sealed-goals]]
+=== 目标
+
+* 允许类或接口的作者控制可以实现该代码的代码。
+* 提供比访问修饰符更具声明性的方式来限制超类的使用。
+* 通过对模式进行详尽的分析来支持模式匹配的未来方向。
+
+[[java-15-feature-sealed-non-goals]]
+=== 非目标实现
+
+* 不提供诸如 "朋友" 之类的新形式的访问控制。
+* 不以任何方式改变 final 。
+
+[[java-15-feature-sealed-motivation]]
+=== 动机
+
+在 Java 中，类层次结构可通过继承实现代码的重用：超类的方法可以被许多子类继承（并因此被重用）。 但是，类层次结构的目的并不总是重用代码。
+有时，其目的是对实体中存在的各种可能性进行建模，例如图形库支持的形状类型或金融应用程序支持的贷款类型。 当以这种方式使用类层次结构时，限制子类集可以简化建模。
+
+例如，在图形库中，`Shape` 类的作者可能希望只有特定的类才能扩展 `Shape`，因为该库的许多工作都涉及到如何以适当的方式处理各种形状。 作者只对 Shape 的已知子类感兴趣，而对 `Shape` 的未知子类的代码不感兴趣。
+在这种情况下，目标并不是允许任意的类扩展 `Shape`，从而继承其代码以供重用。 不幸的是，Java 之前始终以代码重用始终作为目标：如果 `Shape` 可以完全扩展，则可以扩展任何数量的类。
+现在放宽此目标，使作者可以声明一个类别层次结构，该层次结构对于任意类都不是可扩展的。 在这样一个封闭的类层次结构中，代码重用仍然是可能的，但不能超出范围。
+
+Java 开发人员熟悉限制子类集合的思想，因为它经常出现在 API 设计中。该语言在这方面提供了有限的工具:要么使一个类为 final，这样它就没有子类;要么使一个类或它的构造函数为 `package-private`，这样它就只能在同一个包中有子类。https://hg.openjdk.java.net/jdk/jdk/file/tip/src/java.base/share/classes/java/lang/[JDK 中] 出现了一个 package-private 超类的示例
+
+[source,java]
+----
+package java.lang;
+
+abstract class AbstractStringBuilder {...}
+public final class StringBuffer  extends AbstractStringBuilder {...}
+public final class StringBuilder extends AbstractStringBuilder {...}
+----
+
+如果这个类的目标是代码重用时，例如 `AbstractStringBuilder` 的子类要追加共享代码时， `package-private` 方法很有用。然而，当目标是建模时，这种方法是无用的，因为用户代码无法访问关键抽象——超类——来切换它(因为有可能不属于同一个包)。
+允许用户访问超类而不允许他们扩展它是不可能的。(即使在声明了 `Shape` 及其子类的图形库中，如果只有一个包可以访问 `Shape`，那就太不幸了。)
+
+总之，超类应该是可以被广泛访问的(因为它代表了用户的一个重要抽象)，但不能被广泛扩展(因为它的子类应该被限制为作者所知道的)。这样的超类应该能够表示它是与一组给定的子类共同开发的，既可以为读者记录意图，也可以允许 Java 编译器执行。
+同时，超类不应该过分地约束它的子类，例如，强迫它们为 `final` 或者阻止它们定义自己的状态。
+
+[[java-15-feature-sealed-description]]
+=== 描述
+
+一个封闭的类或接口只能由那些允许的类和接口来扩展或实现。通过将 `sealed` 修饰符应用到类的声明，这样的类叫封闭类。
+然后，在任何 extends 和 implements 子句之后，声明 `permit` 子句指定允许扩展封闭类的类。例如，下面的 `Shape`  指定了三个允许的子类
+
+[source,java]
+----
+package com.example.geometry;
+
+public abstract sealed class Shape
+    permits Circle, Rectangle, Square {...}
+----
+
+permits 指定的类必须位于超类附近:要么在同一个模块中(如果超类在一个命名的模块中)，要么在同一个包中(如果超类在一个未命名的模块中)。
+例如，在下面的 Shape 中，它允许的子类都位于同一个命名模块的不同包中
+
+[source,java]
+----
+package com.example.geometry;
+
+public abstract sealed class Shape
+    permits com.example.polar.Circle,
+            com.example.quad.Rectangle,
+            com.example.quad.simple.Square {...}
+----
+
+当允许的子类在大小和数量上都比较小时，在与 sealed 类中声明它们可能比较方便。当在这种情况下声明它们时，封闭类可能会省略 `permits`  子句，Java 编译器将从源文件(可能是辅助类或嵌套类)的声明中推断允许的子类。
+例如，如果 Shape 找到以下代码。然后封闭类 Shape 被推断为有三个允许的子类
+
+[source,java]
+----
+package com.example.geometry;
+
+abstract sealed class Shape {...}
+... class Circle    extends Shape {...}
+... class Rectangle extends Shape {...}
+... class Square    extends Shape {...}
+----
+
+封闭类的目的是让客户端代码清楚地、确切地解释所有允许的子类。判断子类的传统方法是使用 `instanceof` 测试的 `if-else` 链，但是对编译器来说，分析这样的链是困难的，因此它不能确定测试是否涵盖了所有允许的子类。
+例如，下面的方法会导致编译时错误，因为编译器不认同开发人员的信念，即 Shape 的每个子类都经过测试，并导致返回语句
+
+[source,java]
+----
+int getCenter(Shape shape) {
+    if (shape instanceof Circle) {
+        return ... ((Circle)shape).center() ...
+    } else if (shape instanceof Rectangle) {
+        return ... ((Rectangle)shape).length() ...
+    } else if (shape instanceof Square) {
+        return ... ((Square)shape).side() ...
+    }
+}
+----
+
+你可以添加一个 catch-all else clause ,但这并不意味着测试已经是详尽。此外，如果开发人员的判断被证明是错误的，编译器也无法挽救他们。假设上面的代码 instanceof Rectangle 测试被省略了;不会出现编译时错误。(对于三个允许的子类，可能很容易发现遗漏，但是对于 10 个或 20 个不可能。即使只有三个，代码编写起来也令人沮丧，读起来也很乏味。)
+
+在未来版本中的 https://cr.openjdk.java.net/~briangoetz/amber/pattern-match.html[模式匹配] 将实现清晰明确地推断允许的子类的能力。 客户端代码无需使用 `if-else` 检查封闭类的实例，而是可以使用 switch 类型测试切换实例（https://openjdk.java.net/jeps/375[JEP 375]）。
+这使编译器可以检查测试是否详尽。 例如，给定以下代码，编译器将推断 `Shape` 的每个允许的子类都被覆盖，因此不需要任何默认子句（或其他模式）。 此外，如果缺少以下三种情况之一，则编译器将给出错误：
+
+[source,java]
+----
+int getCenter(Shape shape) {
+    return switch (shape) {
+        case Circle c    -> ... c.center() ...
+        case Rectangle r -> ... r.length() ...
+        case Square s    -> ... s.side() ...
+    };
+}
+----
+
+封闭类对其允许的子类（由其 `permits` 子句指定的类）施加三个约束：
+
+. 封闭类及其允许的子类必须属于同一个模块，如果在未命名的模块中声明，则属于同一个包。
+. 每个允许的子类都必须直接扩展封闭类。
+. 每个被允许的子类必须选择以下三个修饰符之一来描述它如何继超类之后的行为
+
+* 可以将允许的子类声明为 `final`，以防止其在类层次结构中的进一步扩展。
+* 可以将允许的子类声明为 `sealed` ，以允许其层次结构的一部分扩展到其封闭的超类所设想的范围之外，但以受限的方式。
+* 可以将允许的子类声明为 `non-sealed` ，以便其层次结构的一部分恢复为可供未知子类扩展的状态。 （封闭类不能阻止其允许的子类这样做。）
+
+作为三个约束的示例，圆形是 `final`，而矩形是 `sealed`，而方形是 `non-sealed`：
+
+[source,java]
+----
+package com.example.geometry;
+
+public abstract sealed class Shape
+    permits Circle, Rectangle, Square {...}
+
+public final class Circle extends Shape {...}
+
+public sealed class Rectangle extends Shape
+    permits TransparentRectangle, FilledRectangle {...}
+public final class TransparentRectangle extends Rectangle {...}
+public final class FilledRectangle extends Rectangle {...}
+
+public non-sealed class Square extends Shape {...}
+----
+
+每个允许的子类必须使用一个且只有一个修饰符 `final`、`sealed` 和 `non-sealed`。一个类不可能同时是 `sealed`(意味着子类)和 `final`(意味着没有子类)，或者同时是  `non-sealed` (意味着子类)和 `final` (意味着没有子类)，或者同时是 `sealed`(意味着有限制性的子类)和 `non-sealed`(意味着没有限制性的子类)。
+
+（可以将 `final` 修饰符视为一种 `sealed` 的增强形式，其中完全禁止扩展/实现。也就是说，`final` 在概念上等同于 `sealed` +一个未指定任何内容的 `permits` 子句；请注意，此类 `permits` 子句不能用 Java 编写 ）
+
+抽象类。一个 `sealed` 或 `non-sealed` 可以是抽象的，并且具有抽象成员。一个 `sealed` 类可以允许抽象的子类(如果它们是 `sealed` 的或 `non-sealed`的，而不是 `final` 的)。
+
+类的可访问性。因为 `extends` 和 `permits`  子句使用类名，所以允许的子类和它的封闭超类必须可以相互访问。但是，允许的子类之间不需要具有与其他类或封闭类相同的可访问性。
+特别是，一个子类可能比封闭类更难访问;这意味着，在将来的版本中，当模式匹配支持 switches 时，一些用户将无法完全切换子类，除非使用了默认子句(或其他 total 模式)。Java 编译器检测机制并不如用户想象的那么详尽，建议使用 default  子句并自定义错误消。
+
+[[java-15-feature-sealed-description-interface]]
+==== 封闭接口
+
+与类的情况类似，通过对接口应用 `sealed` 修饰符来封闭接口。在任何用于指定超接口的 `extends` 子句之后，使用 `permits`  子句指定实现类和子接口。例如
+
+[source,java]
+----
+package com.example.expression;
+
+public sealed interface Expr
+    permits ConstantExpr, PlusExpr, TimesExpr, NegExpr {...}
+
+public final class ConstantExpr implements Expr {...}
+public final class PlusExpr     implements Expr {...}
+public final class TimesExpr    implements Expr {...}
+public final class NegExpr      implements Expr {...}
+----
+
+[[java-15-feature-sealed-description-records]]
+==== 封闭类和 Records
+
+密封类与 <<java-15-feature-record,Records>> (http://openjdk.java.net/jeps/384[JEP 384])一起工作得很好，后者是 Java 15 的另一个预览特性。Records 默认是 `final` 的，因此带有 Records 的封闭类层次结构比上面的示例稍微简洁一些
+
+[source,java]
+----
+package com.example.expression;
+
+public sealed interface Expr
+    permits ConstantExpr, PlusExpr, TimesExpr, NegExpr {...}
+
+public record ConstantExpr(int i)       implements Expr {...}
+public record PlusExpr(Expr a, Expr b)  implements Expr {...}
+public record TimesExpr(Expr a, Expr b) implements Expr {...}
+public record NegExpr(Expr e)           implements Expr {...}
+----
+
+封闭类和 Records 的组合有时称为 https://en.wikipedia.org/wiki/Algebraic_data_type[algebraic data types]：Records 允许我们表达产品类型，封闭类允许我们表达类型数量。
+
+[[java-15-feature-sealed-description-jdk]]
+==== 在 JDK 中 封闭类
+
+关于如何在 JDK 中使用封闭类的一个例子是在 `java.lang.constant` 包中，该包为 https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/constant/package-summary.html[JVM 实体的模型描述符]：
+
+[source,java]
+----
+package java.lang.constant;
+
+public sealed interface ConstantDesc
+    permits String, Integer, Float, Long, Double,
+            ClassDesc, MethodTypeDesc, DynamicConstantDesc {...}
+
+// ClassDesc is designed for subclassing by JDK classes only
+public sealed interface ClassDesc extends ConstantDesc
+    permits PrimitiveClassDescImpl, ReferenceClassDescImpl {...}
+final class PrimitiveClassDescImpl implements ClassDesc {...}
+final class ReferenceClassDescImpl implements ClassDesc {...}
+
+// MethodTypeDesc is designed for subclassing by JDK classes only
+public sealed interface MethodTypeDesc extends ConstantDesc
+    permits MethodTypeDescImpl {...}
+final class MethodTypeDescImpl implements MethodTypeDesc {...}
+
+// DynamicConstantDesc is designed for subclassing by user code
+public non-sealed abstract class DynamicConstantDesc implements ConstantDesc {...}
+----
+
+[[java-15-feature-sealed-description-grammar]]
+==== Java 语法
+
+NormalClassDeclaration::
+{ClassModifier} class TypeIdentifier [TypeParameters]
++
+[Superclass] [Superinterfaces] [PermittedSubclasses] ClassBody
+
+ClassModifier::
++
+(one of)
++
+Annotation public protected private
++
+abstract static sealed final non-sealed strictfp
+
+PermittedSubclasses::
+permits ClassTypeList
+
+ClassTypeList::
+ClassType {, ClassType}
+
+[[java-15-feature-sealed-description-jvm]]
+==== JVM 对封闭类的支持
+
+Java 虚拟机在运行时识别封闭的类和接口，并防止未经授权的子类和子接口进行扩展。
+
+尽管 `sealed` 是类修饰符，但 `ClassFile` 结构中没有 `ACC_SEALED` 标志。 相反，封闭类的类文件具有 `PermittedSubclasses` 属性，该属性隐式指示 `sealed` 修饰符，并显式指定允许的子类：
+
+[source,java]
+----
+PermittedSubclasses_attribute {
+    u2 attribute_name_index;
+    u4 attribute_length;
+    u2 number_of_classes;
+    u2 classes[number_of_classes];
+}
+----
+
+允许的子类列表是强制性的，即使编译器推断了允许的子类，这些推断的子类也明确包含在 `PermittedSubclasses` 属性中。
+
+允许的子类的类文件不包含任何新属性。
+
+当 JVM 尝试定义其超类或超接口具有 `PermittedSubclasses` 属性的类时，所定义的类必须由该属性命名。 否则，将引发 `IncompatibleClassChangeError`。
+
+[[java-15-feature-sealed-description-reflection]]
+==== Reflection API
+
+以下 `public` 方法将添加到 `java.lang.Class`：
+
+* java.lang.constant.ClassDesc[] getPermittedSubclasses()
+* boolean isSealed()
+
+方法 `getPermittedSubclasses()` 返回一个数组，其中包含 `java.lang.constant.ClassDesc` 对象，如果该对象是封闭类，则表示该类的所有允许的子类；如果不是封闭类，则返回一个空数组。
+
+如果给定的类或接口是封闭类，则 `isSealed()` 方法将返回 `true`。 （与 isEnum 比较。）
+
+[[java-15-feature-sealed-alternatives]]
+=== 备选方案
+
+某些语言直接支持 https://en.wikipedia.org/wiki/Algebraic_data_type[algebraic data types (ADTs)]，例如 Haskell 的数据功能。 可以通过 enum 功能的一种变体，让 Java 开发人员以更熟悉的方式直接地表示 ADT，
+在该声明中，可以在一个声明中定义总和。 但是，这将不支持所有期望的用例，例如那些总和超出一个以上编译单元中的类，或者总和超出非乘积类的那些用例。
+
+`permits`  子句允许一个封闭类（例如前面显示的 Shape 类）可以通过任何模块中的代码进行访问以进行调用，但是只能通过与该封闭类（或相同包）相同的模块中的代码来进行实现。
+（如果在未命名的模块中）。 这使得类型系统比访问控制系统更具表现力。 仅使用访问控制，如果 Shape 可以通过任何模块中的代码进行访问以进行调用（因为已导出其包），
+那么 Shape 也是可以在任何模块中进行实现的访问。 并且，如果 Shape 在任何其他模块中均不可访问以实现，则 Shape 在任何其他模块中也均不可访问。
+
+[[java-15-feature-sealed-dependencies]]
+=== 依赖
+
+封闭类并不依赖于 records (http://openjdk.java.net/jeps/384[JEP 384]) 或 模式匹配（https://openjdk.java.net/jeps/375[JEP 375]），相反，它们两者都可以与封闭类结合的很好。
+
+[[java-15-feature-hidden]]
+== 隐藏类
+
+[[java-15-feature-hidden-summary]]
+=== 简介
+
+隐藏类，即不能被其他类字节码直接使用的类，倾向于借助框架使用，框架会在运行时生成类并通过反射间接使用它们。隐藏类可被定义为访问控制嵌套的成员，并且可以独立于其他类进行卸载。
+
+[[java-15-feature-hidden-goals]]
+=== 目标
+
+* 允许框架的隐藏的类的实现细节，以便它们不能被其他类链接，也不能通过反射来发现。
+* 支持使用隐藏类扩展访问控制嵌套。
+* 支持主动卸载隐藏类，因此框架可以灵活地定义所需数量。
+* 弃用 https://blogs.oracle.com/jrose/anonymous-classes-in-the-vm[non-standard API] sun.misc.Unsafe::defineAnonymousClass，以弃用该 API 以在将来的发行版中将其删除。
+* 请勿以任何方式更改 Java 编程语言。
+
+[[java-15-feature-hidden-non-goals]]
+=== 非目标实现
+
+* 不支持 sun.misc.Unsafe::defineAnonymousClass 的所有功能（例如常量池修复）。
+
+[[java-15-feature-hidden-motivation]]
+=== 动机
+
+[[java-15-feature-hidden-description]]
+=== 描述
+
+[[java-15-feature-hidden-alternatives]]
+=== 备选方案
+
+[[java-15-feature-hidden-dependencies]]
+=== 依赖
+
+[[java-15-feature--nashorn]]
+== 删除 Nashorn JavaScript 引擎
+
+Nashorn 是 JDK 1.8 引入的一个 JavaScript 脚本引擎，用来取代 Rhino 脚本引擎。Nashorn 是 ECMAScript-262 5.1 的完整实现，增强了 Java 和 JavaScript 的兼容性，并且大大提升了性能。
+
+随着 ECMAScript 脚本语言的结构、API 的改编速度越来越快，维护 Nashorn 太有挑战性了，所以……。
+
+移除了 Nashorn JavaScript 脚本引擎、APIs，以及 jjs 工具。这些早在 JDK 11 中就已经被标记为 deprecated 了，JDK 15 已正式删除。
+
+两个JDK模块将被永久删除：
+
+* jdk.scripting.nashorn -包含 `jdk.nashorn.api.scripting` 和 `jdk.nashorn.api.tree` 包。
+* jdk.scripting.nashorn.shell-包含 jjs 工具。
+
+[[java-15-feature-sealed-summary]]
+=== 简介
+
+[[java-15-feature-sealed-goals]]
+=== 目标
+
+[[java-15-feature-sealed-non-goals]]
+=== 非目标实现
+
+[[java-15-feature-sealed-motivation]]
+=== 动机
+
+[[java-15-feature-sealed-description]]
+=== 描述
+
+[[java-15-feature-sealed-alternatives]]
+=== 备选方案
+
+[[java-15-feature-sealed-dependencies]]
+=== 依赖
+
+[[java-15-feature]]
+== 重新实现旧版 DatagramSocket API
+
+[[java-15-feature-sealed-summary]]
+=== 简介
+
+[[java-15-feature-sealed-goals]]
+=== 目标
+
+[[java-15-feature-sealed-non-goals]]
+=== 非目标实现
+
+[[java-15-feature-sealed-motivation]]
+=== 动机
+
+[[java-15-feature-sealed-description]]
+=== 描述
+
+[[java-15-feature-sealed-alternatives]]
+=== 备选方案
+
+[[java-15-feature-sealed-dependencies]]
+=== 依赖
+
+[[java-15-feature]]
+== 禁用和弃用偏向锁
+
+[[java-15-feature-sealed-summary]]
+=== 简介
+
+[[java-15-feature-sealed-goals]]
+=== 目标
+
+[[java-15-feature-sealed-non-goals]]
+=== 非目标实现
+
+[[java-15-feature-sealed-motivation]]
+=== 动机
+
+[[java-15-feature-sealed-description]]
+=== 描述
+
+[[java-15-feature-sealed-alternatives]]
+=== 备选方案
+
+[[java-15-feature-sealed-dependencies]]
+=== 依赖
+
+[[java-15-feature-instanceof]]
+== 模式匹配(第二次预览)
+
+[[java-15-feature-instanceof-summary]]
+=== 简介
+
+通过对 `instanceof` 运算符进行 https://cr.openjdk.java.net/~briangoetz/amber/pattern-match.html[模式匹配] 来增强 Java 编程语言。
+模式匹配使程序中的通用逻辑（即从对象中有条件地提取组件）得以更简洁，更安全地表示。 这是 JDK 15 中的 https://openjdk.java.net/jeps/12[预览语言功能]。
+
+[[java-15-feature-instanceof-history]]
+=== 历史
+
+https://openjdk.java.net/jeps/305[JEP 305] 于 2017 年中提出了 `instanceof` 的模式匹配，并于 2019 年末针对 JDK 14 进行了预览语言功能。
+该 JEP 建议在 JDK 15 中  https://openjdk.java.net/jeps/12[重新预览] 该功能，而相对于 JDK 14 中的预览不做任何更改，以便收集更多反馈。
+
+=== 动机
+
+几乎每个程序都包含某种逻辑,这些逻辑结合了对表达式是否具有某种类型或结构的判断,然后有条件地提取其状态的组件以进行进一步处理. 例如,以下是所有Java程序员都熟悉的一种惯用法:
+
+[source,java]
+----
+if (obj instanceof String) {
+    String s = (String) obj;
+    // use s
+}
+----
+
+这里做了三件事:
+
+. 判断 obj 是不是 String 类型的
+. 将 obj 转为 String
+. 声明一个新的局部变量,以便后续使用
+
+这种模式很简单,并且所有 Java 程序员都可以理解,但是由于一些原因,它不是最优的,并且很枯燥.当你在进行类型判断和转换只能能做什么？.到底需部需要进行类型判断和类型转换这个样板.尤其是 String 类型的三个出现,混淆了后面的更重要的逻辑.但最重要的是,重复为错误提供了机会,使错误不被察觉到程序中.
+
+我们认为 Java 是时候接受模式匹配了.模式匹配允许以简洁的语法表达对象所需的 “形式”(模式),并允许各种语句和表达式针对其输入来判断 “形状”(匹配).从 `Haskell` 到 `C#`,许多语言都接受了模式匹配.
+
+=== 描述
+
+这种模式匹配由两部分组成
+
+. 作用于目标对象的断言
+. 匹配成功后提取的一组绑定变量组合
+
+类型测试模式由指定类型的断言和单个绑定变量组成.
+
+扩展 `instanceof` 运算符以采用类型测试模式,而不仅仅是类型. 在下面的代码中,String s 是 类型测试模式:
+
+`instanceof` 运算符将目标 `obj` 与 类型测试模式 “匹配”,如下所示:如果 obj 是 String 的实例,则将其强制转换为 String 并分配给绑定变量 s. 绑定变量在 `if` 语句的 `true` 块中,而不在 `if` 语句的 `false` 块中.
+
+与局部变量的范围不同,绑定变量的范围由包含的表达式和语句的语义确定. 例如,在此代码中:
+
+[source,java]
+----
+if (!(obj instanceof String s)) {
+    .. s.contains(..) ..
+} else {
+    .. s.contains(..) ..
+}
+----
+
+`true` 块中的 `s` 表示封闭类中的字段,`false` 块中的 `s` 表示由 `instanceof` 运算符引入的绑定变量.
+
+当 `if` 语句的条件变得比单个 `instanceof` 更复杂时,绑定变量的范围也会相应地增长. 例如,在此代码中:
+
+[source,java]
+----
+if (obj instanceof String s && s.length() > 5) {.. s.contains(..) ..}
+----
+
+绑定变量 `s` 在 `&&` 运算符右侧以及 `true` 块中. (仅当 `instanceof` 成功匹配时,才考虑到右边.)另一方面,在此代码中:
+
+[source,java]
+----
+if (obj instanceof String s || s.length() > 5) {.. s.contains(..) ..}
+----
+
+绑定变量 `s` 不在 `||` 右侧的范围内 运算符,也不在 `true` 块的范围内. (在这些点上指的是封闭类中的一个字段.)
+
+目标为 `null` 时,`instanceof` 的工作方式没有任何变化. 也就是说,如果 `obj` 不为 `null`,则仅匹配模式,并且仅分配 `s`.
+
+在 `instanceof` 中使用模式匹配应大大减少 Java 程序中显式强制转换的总数. 此外,类型测试模式在编写相等方法时特别有用. 考虑以下选自 https://www.oreilly.com/library/view/effective-java-3rd/9780134686097/[Effective Java book] 第10条的相等方法:
+
+[source,java]
+----
+@Override public boolean equals(Object o) {
+    return (o instanceof CaseInsensitiveString) &&
+        ((CaseInsensitiveString) o).s.equalsIgnoreCase(s);
+}
+
+//使用类型测试模式意味着可以将其重写为更清晰的代码:
+
+@Override public boolean equals(Object o) {
+    return (o instanceof CaseInsensitiveString cis) &&
+        cis.s.equalsIgnoreCase(s);
+}
+----
+
+instanceof https://openjdk.java.net/jeps/305[语法] 会被相应的扩展
+
+RelationalExpression::
+RelationalExpression instanceof ReferenceType
+::
+RelationalExpression instanceof Pattern
+
+Pattern::
+ReferenceType Identifier
+
+=== 未来规划
+
+未来的 JEP 将通过与其他语言特性(例如 switch 表达式和语句)进行模式匹配来增强 Java 编程语言.
+
+=== 备选方案
+
+可以通过在 `if` 语句或通过 switch 构造来获得类型测试模式的好处。模式匹配概括了这两种结构。
+
+[[java-15-feature]]
+== ZGC: 可伸缩低延迟垃圾收集器
+
+[[java-15-feature-sealed-summary]]
+=== 简介
+
+[[java-15-feature-sealed-goals]]
+=== 目标
+
+[[java-15-feature-sealed-non-goals]]
+=== 非目标实现
+
+[[java-15-feature-sealed-motivation]]
+=== 动机
+
+[[java-15-feature-sealed-description]]
+=== 描述
+
+[[java-15-feature-sealed-alternatives]]
+=== 备选方案
+
+[[java-15-feature-sealed-dependencies]]
+=== 依赖
+
+[[java-15-feature]]
+== 文本块
+
+[[java-15-feature-sealed-summary]]
+=== 简介
+
+[[java-15-feature-sealed-goals]]
+=== 目标
+
+[[java-15-feature-sealed-non-goals]]
+=== 非目标实现
+
+[[java-15-feature-sealed-motivation]]
+=== 动机
+
+[[java-15-feature-sealed-description]]
+=== 描述
+
+[[java-15-feature-sealed-alternatives]]
+=== 备选方案
+
+[[java-15-feature-sealed-dependencies]]
+=== 依赖
+
+[[java-15-feature]]
+== 一个低停顿垃圾收集器
+
+[[java-15-feature-sealed-summary]]
+=== 简介
+
+[[java-15-feature-sealed-goals]]
+=== 目标
+
+[[java-15-feature-sealed-non-goals]]
+=== 非目标实现
+
+[[java-15-feature-sealed-motivation]]
+=== 动机
+
+[[java-15-feature-sealed-description]]
+=== 描述
+
+[[java-15-feature-sealed-alternatives]]
+=== 备选方案
+
+[[java-15-feature-sealed-dependencies]]
+=== 依赖
+
+[[java-15-feature]]
+== 删除 Solaris 和 SPARC 端口
+
+[[java-15-feature-sealed-summary]]
+=== 简介
+
+[[java-15-feature-sealed-goals]]
+=== 目标
+
+[[java-15-feature-sealed-non-goals]]
+=== 非目标实现
+
+[[java-15-feature-sealed-motivation]]
+=== 动机
+
+[[java-15-feature-sealed-description]]
+=== 描述
+
+[[java-15-feature-sealed-alternatives]]
+=== 备选方案
+
+[[java-15-feature-sealed-dependencies]]
+=== 依赖
+
+[[java-15-feature]]
+== 外部内存访问 API(二次孵化)
+
+[[java-15-feature-record]]
+== Record (第二次预览)
+
+[[java-15-feature-sealed-summary]]
+=== 简介
+
+[[java-15-feature-sealed-goals]]
+=== 目标
+
+[[java-15-feature-sealed-non-goals]]
+=== 非目标实现
+
+[[java-15-feature-sealed-motivation]]
+=== 动机
+
+[[java-15-feature-sealed-description]]
+=== 描述
+
+[[java-15-feature-sealed-alternatives]]
+=== 备选方案
+
+[[java-15-feature-sealed-dependencies]]
+=== 依赖
+
+[[java-15-feature]]
+== 弃用RMI激活机制
+
+[[java-15-feature-sealed-summary]]
+=== 简介
+
+[[java-15-feature-sealed-goals]]
+=== 目标
+
+[[java-15-feature-sealed-non-goals]]
+=== 非目标实现
+
+[[java-15-feature-sealed-motivation]]
+=== 动机
+
+[[java-15-feature-sealed-description]]
+=== 描述
+
+[[java-15-feature-sealed-alternatives]]
+=== 备选方案
+
+[[java-15-feature-sealed-dependencies]]
+=== 依赖

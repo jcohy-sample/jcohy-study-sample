@@ -2,6 +2,17 @@
 = 概述
 include::attributes.adoc[]
 
+版本回顾:
+
+image::{oss-images}/java-14-2.png[]
+
+image::{oss-images}/java-14-3.png[]
+
+image::{oss-images}/java-14-1.png[]
+
+* “孵化器模块”:将 尚未定稿的 API 和工具先交给开发者使用,以获得反馈,并用这些反馈 进一步改进 Java 平台的质量.
+
+* “预览特性”:是 规格已经成型、实现已经确定,但还未最终定稿的功能.它们 出现在 Java 中的目的是收集在真实世界中使用后的反馈信息,促进这些功能的最终定稿.这些特性可能会随时改变,根据反馈结果, 这些特性甚至可能会被移除,**但通常所有预览特性最后都会在 Java 中固定下来**
 
 include::java/java8.adoc[leveloffset=+1]
 
@@ -16,6 +27,8 @@ include::java/java12.adoc[leveloffset=+1]
 include::java/java13.adoc[leveloffset=+1]
 
 include::java/java14.adoc[leveloffset=+1]
+
+include::java/java15.adoc[leveloffset=+1]
 
 include::java/ArrayList.adoc[leveloffset=+1]
 

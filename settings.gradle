@@ -35,4 +35,5 @@ include 'spring-cloud-sample:spring-cloud-provider2:storage-service-19999'
 include 'spring-boot-sample:spring-boot-bloomfilter-sample-19002'
 include 'spring-sample'
 include 'jcohy-commons'
+include 'netty-sample'
 

@@ -1,6 +1,9 @@
 [[algorithm-array]]
 = 数组
 
+== 数组模拟队列
+
+
 == 两个矩阵相加
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]

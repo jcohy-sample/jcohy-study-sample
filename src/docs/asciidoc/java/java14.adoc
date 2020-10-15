@@ -4,21 +4,9 @@
 [[java-14-feature-overview]]
 == Java14 新特性一览
 
-旧版本回顾:
-
-image::{oss-images}/java-14-2.png[]
-
-image::{oss-images}/java-14-3.png[]
-
 2020 年 3 月 17 日,JDK/Java 14 正式 GA(General Available) .这是自从Java 采用六个月一次的发布周期之后的第五次发布.
 
-image::{oss-images}/java-14-1.png[]
-
 此版本包含的 JEP (Java/JDK Enhancement Proposals,JDK 增强提案) 比 Java 12 和 13 加起来的还要多.总共 16 个新特性,包括两个孵化器模块 、三个预览特性、两个弃用的功能以及两个删除的功能.
-
-* “孵化器模块”:将 尚未定稿的 API 和工具先交给开发者使用,以获得反馈,并用这些反馈 进一步改进 Java 平台的质量.
-
-* “预览特性”:是 规格已经成型、实现已经确定,但还未最终定稿的功能.它们 出现在 Java 中的目的是收集在真实世界中使用后的反馈信息,促进这些功能的最终定稿.这些特性可能会随时改变,根据反馈结果, 这些特性甚至可能会被移除,**但通常所有预览特性最后都会在 Java 中固定下来**
 
 资料来源:  http://openjdk.java.net/projects/jdk/14/
 
@@ -63,7 +51,7 @@ image::{oss-images}/java-14-1.png[]
 [[java-14-feature-environment]]
 == 环境安装
 
-* JDK下载地址:https:// www.oracle.com/java/technologies/javase downloads.html
+* JDK下载地址:https://www.oracle.com/java/technologies/javase/downloads.html
 
 * 修改环境变量.
 
@@ -78,7 +66,7 @@ image::{oss-images}/java-14-4.png[]
 
 === 简介
 
-这个特性很有意思,通过对 `instanceof` 运算符进行模式匹配来增强Java编程语言. 他为通用的模式匹配打开了大门,模式匹配通过更为简便的语法基于一定的条件来抽取对象的组件. 这是JDK 14中的预览语言功能.
+这个特性很有意思,通过对 `instanceof` 运算符进行模式匹配来增强 Java 编程语言. 他为通用的模式匹配打开了大门,模式匹配通过更为简便的语法基于一定的条件来抽取对象的组件. 这是JDK 14中的预览语言功能.
 
 有了该功能,可以减少 Java 程序中显式强制转换的数量,从而提高生产力,还能实现更精确、简洁的类型安全的代码.
 
@@ -177,7 +165,15 @@ Pattern::
 
 === 未来规划
 
-未来的 JEP 将通过与其他语言特性(例如 switch 表达式和语句)进行模式匹配来增强Java编程语言.
+未来的 JEP 将通过与其他语言特性(例如 switch 表达式和语句)进行模式匹配来增强 Java 编程语言.
+
+=== 备选方案
+
+可以通过在 `if` 语句或通过 switch 构造来获得类型测试模式的好处。模式匹配概括了这两种结构。
+
+=== 依赖
+
+该实现可以利用 https://openjdk.java.net/jeps/309[JEP 309（动态类文件常数）]。
 
 [[java-14-feature-packaging]]
 == 打包工具(孵化器模式)

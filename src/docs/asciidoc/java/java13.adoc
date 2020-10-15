@@ -4,7 +4,7 @@
 [[java-13-feature-overview]]
 == Java13 新特性一览
 
-JDK 13于2019年9月17日正式发布.
+JDK 13 于 2019 年 9 月 17 日正式发布.
 本文主要针对 Java 13 中的新特性展开介绍,让您快速了解 Java 13 带来的变化.
 
 资料来源:  http://openjdk.java.net/projects/jdk/13/
