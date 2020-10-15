@@ -51,7 +51,11 @@
 [[java-14-feature-environment]]
 == 环境安装
 
-* JDK下载地址:https://www.oracle.com/java/technologies/javase/downloads.html
+* JDK下载地址:
++
+OpenJDK版本：https://jdk.java.net/14/
++
+Oracle版本：https://www.oracle.com/java/technologies/javase-jdk14-downloads.html
 
 * 修改环境变量.
 

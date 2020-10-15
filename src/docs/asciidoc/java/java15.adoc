@@ -54,7 +54,7 @@ JDK 15 此版本包含的 14 个 JEP (Java/JDK Enhancement Proposals,JDK 增强�
 +
 OpenJDK版本：https://jdk.java.net/15/
 +
-Oracle版本：http://www.oracle.com/technetwork/java/javase/downloads/index.html
+Oracle版本：https://www.oracle.com/java/technologies/javase-jdk15-downloads.html
 
 * 修改环境变量.
 
@@ -459,14 +459,213 @@ PermittedSubclasses_attribute {
 [[java-15-feature-hidden-motivation]]
 === 动机
 
+基于 JVM 构建的许多语言都依靠动态类生成来提高灵活性和效率。 例如，对于 Java 语言，javac 不会在编译时将 lambda 表达式转换为专用的类文件，而是发出字节码，该字节码可 https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/invoke/LambdaMetafactory.html[动态生成并实例化一个类]以在需要时产生与 lambda 表达式相对应的对象。
+同样，非 Java 语言的运行时通常使用 https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/reflect/Proxy.html[动态代理] 来实现那些语言的高级功能，这些代理也可以动态生成类。
+
+语言实现者通常希望动态生成的类在逻辑上成为静态生成的类的实现的一部分。此意图建议了动态生成的类所需的各种属性：
+
+* 不可见性。 通过名字独立地被发现不仅是不必要的，而且是有害的。 它破坏了动态生成的类仅仅是静态生成的类的实现细节的目标。
+* 访问控制。 可能希望将静态生成的类的访问控制上下文扩展为包括动态生成的类。
+* 生命周期。 动态生成的类可能仅需要有限的时间，因此在静态生成的类的生命周期内保留它们可能会不必要地增加内存占用。 针对这种情况的现有解决方法（例如，按类装载器）既麻烦又效率低下。
+
+但是不幸的是标准的定义类的API：(ClassLoader::defineClass 和 Lookup::defineClass)不能够区分出这些类是动态生成(运行时生成)的还是静态生成（编译生成）的。
+
+这些 API 始终定义一个可见类，当处于 https://docs.oracle.com/javase/specs/jvms/se14/html/jvms-5.html#jvms-5.3.2[同一类加载器结构中的类尝试链接该名称的类时使用会使用这个类]。 因此，该类可能比所需的类更容易被发现或具有更长的生命周期。
+另外，如果嵌套的宿主类事先知道成员类的名称，则 API 只能定义一个将充当嵌套成员的类。 实际上，这可以防止动态生成的类成为嵌套成员。
+
+如果标准 API 可以定义无法发现的且具有有限生命周期的隐藏类，那么动态生成类的 JDK 内部和外部框架都可以定义隐藏类。 这将提高所有基于JVM的语言实现的效率。 例如：
+
+* `java.lang.reflect.Proxy` 可以定义隐藏类作为实现代理接口的代理类。
+* `java.lang.invoke.StringConcatFactory` 可以生成隐藏类来保存常量连接方法；
+* `java.lang.invoke.LambdaMetaFactory` 可以生成隐藏的 nestmate  类，以容纳访问封闭变量的 lambda 主体； 和
+* JavaScript 引擎可以为从 JavaScript 程序转换的字节码生成隐藏类，因为当引擎不再使用这些类时，这些类将被卸载。
+
 [[java-15-feature-hidden-description]]
 === 描述
+
+Java 7 中引入的 https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/invoke/MethodHandles.Lookup.html[Lookup API] 允许类获得一个查找对象，该对象提供对类，方法和字段的反射访问。 至关重要的是，无论最终使用查找对象的代码是什么，反射访问总是在最初获得查找对象的类（查找类）的上下文中发生。
+实际上，查找对象将查找类的访问权限传输给接收该对象的任何代码。
+
+Java 9通过引入方法 Lookup::defineClass(byte[]) 增强了查找对象的传输功能。根据提供的字节，此方法在与最初获得查找对象的类相同的上下文中定义一个新类。
+也就是说，新定义的类具有与查找类相同的类加载器，运行时的包和保护域( protection domain )。
+
+该JEP建议扩展 Lookup API 以支持定义只能通过反射访问的隐藏类。JVM 在字节码链接期间无法发现隐藏的类，也不能通过显式使用类加载器的程序（例如，通过 `Class::forName` 和 `ClassLoader::loadClass`) 发现隐藏的类。
+当隐藏的类不再可访问时，可以将其卸载，也可以共享一个类加载器的生存期，以便仅在对类加载器进行垃圾回收时才将其卸载。 （可选）可以将隐藏类创建为访问控制嵌套的成员。
+
+为简便起见，此JEP称 "隐藏类"，但应理解为表示隐藏类或接口。 同样，"普通类" 表示普通类或接口，即 `ClassLoader::defineClass` 的结果。
+
+[[java-15-feature-hidden-description-create]]
+==== 创建隐藏类
+
+普通类是通过调用 `ClassLoader::defineClass` 创建的，而隐藏类是通过调用 `Lookup::defineHiddenClass` 创建的。 这使 JVM 从提供的字节中派生一个隐藏类，链接该隐藏类，并返回提供对隐藏类的反射访问的查找对象。
+调用程序应仔细存储查找对象，因为这是获取隐藏类的 Class 对象的唯一方法。
+
+提供的字节码必须是 ClassFile 结构（JVMS 4.1）。 `Lookup::defineHiddenClass` 派生的隐藏类类似于 `ClassLoader::defineClass` 派生的普通类，下面将讨论一个主要区别。
+派生隐藏类之后，将其与普通类（JVMS 5.4）一样进行链接，只是不施加任何加载约束。 链接隐藏类之后，如果 `Lookup::defineHiddenClass` 的 `initialize` 参数为 `true`，则将其初始化。
+如果参数为 `false`，则在反射方法实例化或访问其成员时将初始化隐藏的类。
+
+创建隐藏类的主要区别在于其名称。 *隐藏的类不是匿名的*。 它的名称可以通过 `Class::getName` 获得，并且可以在诊断程序（例如 `java -verbose:class` 的输出），JVM TI 类加载事件，JFR 事件以及堆栈跟踪中显示。
+但是，该名称具有不寻常的形式，从而有效地使该类对所有其他类不可见。 名称是以下内容的串联：
+
+. 在 ClassFile 结构中由 `this_class` 指定的内部形式的二进制名称（JVMS 4.2.1），例如 A/B/C;
+. '.' 字符; 和
+. 由 JVM 实现选择的非限定名称
+
+例如，如果 `this_class` 指定  `com/example/Foo` （二进制名称 `com.example.Foo` 的内部形式），则从 ClassFile 结构派生的隐藏类可以命名为 `com/example/Foo.1234`。
+该字符串既不是二进制名称，也不是二进制名称的内部形式。
+
+隐藏类的命名空间与普通类的命名空间不一样。 给定一个 ClassFile  结构，其中 `this_class` 指定 `com/example/Foo/1234`，则调用 `cl.defineClass("com.example.Foo.1234", bytes, ...)` 仅会导致一个名为 `com.example.Foo.1234`的普通类。
+与名为 `com.example.Foo/1234` 的隐藏类不同。 无法创建名为 `com.example.Foo/1234` 的普通类，因为 `cl.defineClass("com.example.Foo/1234", bytes, ...)` 将拒绝字符串参数，因为它不是二进制名称。
+
+我们承认，不使用二进制名称作为隐藏类的名称可能会引起问题，但它与 Unsafe::defineAnonymousClass (https://mail.openjdk.java.net/pipermail/valhalla-dev/2019-August/006273.html[请参见此处的讨论]) 的长期实践兼容（）。
+使用 `/` 表示 `Class::getName` 输出中的隐藏类也通过使用 `/` 在堆栈跟踪中在样式上对齐，以通过其定义的模块和加载程序来限定类（请参见 StackTraceElement::toString）。
+下面的错误日志显示了两个隐藏的类，它们都在模块m1中：一个隐藏的类具有方法测试，另一个具有适用的方法。
+[source,java]
+----
+java.lang.Error: thrown from hidden class com.example.Foo/0x0000000800b7a470
+    at m1/com.example.Foo/0x0000000800b7a470.toString(Foo.java:16)
+    at m1/com.example.Foo_0x0000000800b7a470$$Lambda$29/0x0000000800b7c040.apply(<Unknown>:1000001)
+    at m1/com.example.Foo/0x0000000800b7a470.test(Foo.java:11)
+----
+
+[[java-15-feature-hidden-description-loaders]]
+==== 隐藏类和类加载器
+
+尽管隐藏类具有相应的 Class 对象，并且隐藏类的超类型是由类加载器创建的，但隐藏类本身的创建并不涉及任何类加载器。
+请注意，此 JEP 从未说过隐藏类已“加载”。 没有类加载器被记录为隐藏类的启动加载器，并且没有生成涉及隐藏类的加载约束。
+因此，任何类加载器都不知道隐藏类：在 D 的运行时常量池中，用 N 表示的 C 类的符号引用永远不会解析为 D，C 和 N 的任何值的隐藏类。
+反射方法 `Class::forName`，`ClassLoader::findLoadedClass` 和 `Lookup::findClass` 将找不到隐藏的类。
+
+尽管与类加载器分离，但是隐藏类被认为具有定义的类加载器。 这对于解析隐藏类自己的字段和方法使用的类型是必需的。
+特别是，隐藏类与查找类具有相同的定义类加载器，运行时程序包和保护域，查找类是最初获得在其上调用 `Lookup::defineHiddenClass` 的查找对象的类。
+
+
+[[java-15-feature-hidden-description-use]]
+==== 使用隐藏类
+
+`Lookup::defineHiddenClass` 返回一个 `Lookup` 对象，其查找类是新创建的隐藏类。 通过在返回的 `Lookup` 对象上调用 `Lookup::lookupClass` 可以为隐藏的类获取 `Class` 对象。
+通过 `Class` 对象，可以实例化隐藏的类，并且可以像对待普通类一样访问其成员，但有四个限制：
+
+. 如前所述，`Class::getName` 返回的字符串不是二进制名称。
+. `Class::getCanonicalName` 返回 `null`，表示隐藏的类没有规范名称。 （请注意，Java 语言中的匿名类的 Class 对象具有相同的行为。）
+. 在隐藏类中声明的最终字段不可修改。 在隐藏类的最后一个字段上，`Field::set` 和其他 setter 方法将抛出 IllegalAccessException，无论该字段的 https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/reflect/AccessibleObject.html#setAccessible(boolean)[可访问标志] 如何。
+. https://docs.oracle.com/en/java/javase/14/docs/api/java.instrument/java/lang/instrument/Instrumentation.html#isModifiableClass(java.lang.Class)[instrumentation agents] 不能修改 Class 对象，并且 JVM TI 代理不能重新定义或重新定义该类对象。
+但是，我们将扩展 JVM TI 和 JDI 以支持隐藏的类，例如测试一个类是否被隐藏，包括 "加载的" 类的任何列表中的隐藏的类，以及在创建隐藏的类时发送 JVM TI 事件。
+
+重要的是要意识到，其他类使用隐藏类的唯一方法是通过其 Class 对象间接地使用它。 隐藏类不能由其他类中的字节码指令直接使用，因为不能名义上引用它，即按名称引用。
+例如，假设一个框架学习了一个名为 `com.example.Foo/1234` 的隐藏类，并制造了一个试图实例化该隐藏类的类文件。 类文件中的代码将包含一条新指令，该指令最终指向表示名称的常量池条目。
+如果框架尝试将名称表示为  `com/example/Foo.1234`,则该类文件将无效- `com/example/Foo.1234` 不是二进制名称的有效内部形式。
+另一方面，如果框架尝试以有效的内部形式 `com/example/Foo/1234` 表示名称，则 JVM 将通过首先将内部形式的名称转换为二进制名称 com 来解析常量池。 `example.Foo.1234`，然后尝试加载该名称的类；
+这很可能会失败，并且肯定不会找到名为 `com.example.Foo/1234` 的隐藏类。 隐藏类并不是真正的匿名类，因为它的名称是公开的，但是实际上是不可见的。
+
+如果常量池无法名义上引用隐藏类，则无法将隐藏类用作超类，字段类型，返回类型或参数类型。 这种可用性的不足使人想起Java语言中的匿名类，但是隐藏的类更进一步：匿名类可以封装其他类以使其能够访问其成员，但是隐藏类不能封装其他类（它们的 InnerClasses 属性无法命名 它）。
+即使是隐藏类，也无法在其自己的字段和方法声明中将自身用作字段类型，返回类型或参数类型。
+
+重要的是，隐藏类中的代码可以直接使用隐藏类，而无需依赖 Class 对象。 这是因为隐藏类中的字节码指令可以象征性地引用隐藏类（而不必担心其名称），而不是名义上。
+例如，隐藏类中的新指令可以通过常量池条目实例化隐藏类，该常量池条目直接引用当前 ClassFile 中的 `this_class` 项。 其他指令，例如 `getstatic`，`getfield`，`putstatic`，`putfield`，`invokestatic和invokevirtual`，可以通过相同的常量池条目访问隐藏类的成员。
+在隐藏类内部直接使用非常重要，因为它可以简化语言运行时和框架对隐藏类的生成。
+
+隐藏类通常具有与普通类相同的反射能力。 即，隐藏类中的代码可以定义普通类和隐藏类，并且可以通过它们的 Class 对象来操纵普通类和隐藏类。 隐藏类甚至可以充当查找类。
+也就是说，隐藏类中的代码可以在其自身上获取查找对象，这有助于隐藏的嵌套对象（请参见下文）。
+
+[[java-15-feature-hidden-description-stack]]
+==== 堆栈跟踪中的隐藏类
+
+默认情况下，隐藏类的方法不显示在堆栈跟踪中。 它们代表了语言运行时的实现细节，并且永远不会对诊断应用程序问题的开发人员有用。 但是，可以通过选项 `-XX:+UnlockDiagnosticVMOptions -XX:+ShowHiddenFrames` 将它们包含在堆栈跟踪中。
+
+可以使用三种API来对堆栈跟踪进行校正：`Throwable::getStackTrace`，`Thread::getStackTrace` 和 Java 9 中引入的较新的 `StackWalker API`。对于 `Throwable::getStackTrace` 和 `Thread::getStackTrace` API，默认情况下会省略隐藏类的堆栈框架 ;
+它们可以包含与上述堆栈跟踪相同的选项。 对于 `StackWalker API`，仅在设置 https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/StackWalker.Option.html#SHOW_HIDDEN_FRAMES[SHOW_HIDDEN_FRAMES] 选项的情况下，JVM 实现才应包括隐藏类的堆栈框架。
+https://bugs.openjdk.java.net/browse/JDK-8212620[这使堆栈跟踪筛选可以在开发人员诊断应用程序问题时省略不必要的信息]。
+
+[[java-15-feature-hidden-description-access-control]]
+==== 访问控制嵌套中的隐藏类
+
+https://openjdk.java.net/jeps/181[JEP 181] 在 Java 11 中引入了一个嵌套，它是一组类，这些类允许访问彼此的私有成员，但没有通常与 Java 语言中的嵌套类相关联的任何后门可访问性增强方法。
+该集合是静态定义的：一个类充当嵌套主机，其类文件枚举作为嵌套成员的其他类； 嵌套成员又在其类文件中指示托管该嵌套的类。
+虽然静态成员资格对于从 Java 源代码生成的类文件非常有效，但对于语言运行时动态生成的类文件通常是不够的。
+为了帮助此类运行时，并鼓励在 `Unsafe::defineAnonymousClass` 上使用 `Lookup::defineHiddenClass`，隐藏类可以在运行时加入嵌套； 普通类不能。
+
+通过将 `NESTMATE` 选项传递给 `Lookup::defineHiddenClass`，可以将隐藏类创建为现有嵌套的成员。 隐藏类加入的嵌套不是由 `Lookup::defineHiddenClass` 的参数确定的。
+相反，要从查询类（即，其代码最初获得了查询对象的类）推断要连接的嵌套：隐藏类是与查询类相同的嵌套成员（请参见下文）。
+
+为了使 `Lookup::defineHiddenClass` 向嵌套中添加隐藏的类，查找对象必须具有适当的权限，即 `PRIVATE` 和 `MODULE` 访问。 这些权限声明查找对象是由查找类获得的，其目的是允许其他代码扩展嵌套。
+
+JVM不允许嵌套嵌套。 无论嵌套成员资格是静态还是动态定义的，一个嵌套成员都不能充当另一个嵌套的宿主。
+
+如果查找类是普通类，则可以静态地（通过 NestHost）指示嵌套的查找类的成员身份；如果查找类是隐藏类，则可以动态设置嵌套的成员资格。 静态嵌套成员资格会延迟验证。 对于语言运行库或框架库，重要的是要能够将隐藏类添加到可能具有错误的嵌套成员资格的查找类的嵌套中。 例如，请考虑 Java 8 中引入的 `LambdaMetaFactory` 框架。
+当类C的源代码包含 lambda 表达式时，相应的 C.class 文件在运行时使用 `LambdaMetaFactory` 来定义一个包含 lambda 表达式主体的隐藏类。 并实现所需的功能接口。
+C.class 可能具有错误的 `NestHost` 属性，但是C的执行绝不会引用 `NestHost` 属性中命名的类 H。 由于 lambda 主体可以访问 C 的私有成员，因此隐藏类也需要能够访问它们。
+因此，`LambdaMetaFactory` 尝试将隐藏类定义为 C 托管的嵌套成员。
+
+假设我们有一个查找类 C，并且使用 `NESTMATE` 选项调用 `defineHiddenClass` 来创建一个隐藏类并将其添加到 C 的嵌套中。该隐藏类的嵌套主机如下确定：
+
+* 如果 C 是普通类并且缺少 `NestHost` 属性，则 C 是其自己的宿主，也是隐藏类的嵌套宿主。
+* 如果 C 是具有名为H的有效 `NestHost` 属性的普通类，则 C 的嵌套主机 H 是隐藏类的嵌套主机。 在这种情况下，将隐藏类添加为 H的嵌套成员。
+* 如果 C 是具有错误的 `NestHost` 属性的普通类，则 C 将用作隐藏类的嵌套宿主。
+* 如果 C 是没有 `NESTMATE` 选项创建的隐藏类，则 C 是它自己的宿主，也是该隐藏类的嵌套宿主。
+* 如果 C 是使用 `NESTMATE` 选项创建的隐藏类，并且动态添加到 D 的嵌套中，则 D 的嵌套宿主将用作隐藏类的嵌套宿主。
+
+如果创建的隐藏类没有 `NESTMATE` 选项，则该隐藏类是其自身嵌套的宿主。 这与以下策略一致：每个类要么是嵌套的成员，另一个类作为嵌套宿主，要么本身就是嵌套的嵌套宿主。
+隐藏类可以作为其嵌套成员创建其他隐藏类：隐藏类中的代码首先获取自身的查找对象，然后在该对象上调用 `Lookup::defineHiddenClass` 并传递 `NESTMATE` 选项。
+
+给定一个作为嵌套成员创建的隐藏类的 Class 对象，`Class::getNestHost` 和 `Class::isNestmateOf` 将按预期工作。 可以在嵌套中任何类的 Class 对象上调用 `Class::getNestMembers` -- 无论是成员还是宿主，无论是普通的还是隐藏的-但仅返回静态定义的成员（即，宿主中 `NestMembers` 枚举的普通类 ）以及嵌套主机。
+
+`Class::getNestMembers` 不包含动态添加到嵌套中的隐藏类，因为隐藏类是不可发现的，并且只应与创建它们的代码有关，该代码已经知道嵌套成员身份。 如果要保持私有性，这可以防止隐藏类通过嵌套成员身份泄漏。
+
+[[java-15-feature-hidden-description-unloading]]
+==== 卸载隐藏类
+
+由类加载器定义的类与该类加载器有很强的关系。 特别是，每个 Class 对象都有对 https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/Class.html#getClassLoader[定义它] 的 ClassLoader 的引用。 这告诉 JVM 在解析类中的符号时使用哪个加载器。 这种关系的结果是，除非垃圾回收器可以回收常规类的定义加载器，否则无法卸载常规类（JLS 12.7）。
+能够回收定义的加载程序意味着没有对加载程序的实时引用，这反过来意味着没有对加载程序定义的任何类的实时引用。 （此类类，如果可以到达，将指向加载程序。）这种普遍缺乏活力的情况是唯一可以安全卸载常规类的状态。
+
+因此，为了最大化卸载普通类的机会，重要的是最小化对该类及其定义的加载器的引用。 语言运行时通常通过创建许多类加载器来实现此目的，每个类加载器仅用于定义一个类，或者可能仅定义少量相关类。 如果回收了一个类的所有实例，并且假设运行时没有保留在类加载器上，则可以回收该类及其定义的加载器。
+但是，由此产生的大量类加载器需要内存。 另外，根据微基准测试，`ClassLoader::defineClass` 比 `Unsafe::defineAnonymousClass` 慢得多。
+
+隐藏的类不是由类加载器创建的，并且与被视为其定义加载器的类加载器只有松散的连接。 通过允许卸载隐藏类，即使垃圾回收器无法回收其概念定义的加载器，我们也可以将这些事实变为我们的优势。 只要存在对隐藏类的实时引用（对隐藏类的实例或其类对象），那么隐藏类将使定义加载程序的概念保持活动状态，以便JVM可以使用该加载程序来解析符号 隐藏的类。 但是，当最后一个对隐藏类的实时引用消失时，加载程序无需通过使隐藏类保持活动状态来返回青睐。
+
+在定义类的加载程序可以访问的情况下卸载普通类是不安全的，因为以后可能会由JVM或使用反射的代码要求加载器重新加载该类，即以相同的名称加载一个类。 当静态初始化程序第二次运行时，这可能会产生不可预测的影响。 卸载隐藏类无需担心，因为隐藏类的创建方式不同。 因为隐藏类的名称是 `Lookup::defineHiddenClass` 的输出，而不是输入，所以无法重新创建先前卸载的“相同”隐藏类。
+
+默认情况下，`Lookup::defineHiddenClass` 将创建一个隐藏类，无论其概念定义加载器是否仍然存在，都可以将其卸载。 也就是说，当回收隐藏类的所有实例并且隐藏类不再可访问时，即使其概念定义加载程序仍可访问，
+也可以将其卸载。 当语言运行库创建一个隐藏类来服务由任意类加载器定义的多个类时，此行为很有用：与 `ClassLoader::defineClass` 和 `Unsafe::defineAnonymousClass` 相比，运行库将在占用空间和性能上得到改善。
+在其他情况下，语言运行库可能会将隐藏的类链接到一个普通的类，或者可能是少量的普通类，并且使用与隐藏类相同的定义加载程序。 在这种情况下，如果隐藏类必须与普通类相邻，则可以将 `STRONG` 选项传递给 `Lookup::defineHiddenClass`。
+这安排了隐藏类与其概念定义加载器之间的关系与普通类与其定义加载器之间的牢固关系相同，也就是说，只有在可以回收其概念定义加载器的情况下，隐藏类才会被卸载。
 
 [[java-15-feature-hidden-alternatives]]
 === 备选方案
 
+除了为代理类生成程序包专用访问桥的现有解决方法之外，没有其他方法可以在运行时注入嵌套伙伴，以访问目标类的私有成员。 如果类加载器可见，则无法从其他类中隐藏一个类。
+
+[[java-15-feature-hidden-testing]]
+=== 测试
+
+* 我们将更新 `LambdaMetaFactory`，`StringConcatFactory` 和 `LambdaForms` 以使用新的API。 性能测试将确保 lambda 链接或字符串连接不退缩。
+* 将开发新API的单元测试。
+
+[[java-15-feature-hidden-risks]]
+=== 风险与假设
+
+我们假设当前使用 `Unsafe::defineAnonymousClass` 的开发人员将能够轻松迁移到 `Lookup::defineHiddenClass`。 开发人员应注意相对于 JVM 匿名类，隐藏类的功能存在三个较小的限制。
++
+* 受保护的访问。 令人惊讶的是，即使VM匿名类存在于不同的运行时程序包中，并且不是主机类的子类，VM 匿名类也可以访问其主机类的受保护成员。 相反，访问控制规则适用于隐藏类：如果隐藏类与另一个类在同一运行时包中或作为另一个类的子类，则该隐藏类只能访问另一个类的受保护成员。 隐藏类对查找类的受保护成员没有特殊访问权限。
+* 常量池修复。 可以使用已经解析为具体值的常量池条目来定义 VM 匿名类。 这允许在VM匿名类和定义它的语言运行时之间以及在多个 VM 匿名类之间共享关键常量。 例如，语言运行时通常在其地址空间中具有 MethodHandle 对象，这对于新定义的 VM 匿名类很有用。
+运行时不必将对象序列化为 VM 匿名类中的恒定池条目，然后在这些类中生成字节码以费力地对条目进行编码，运行时可以简单地向 `Unsafe::defineAnonymousClass` 提供对其活动对象的引用。 新定义的 JVM -匿名类中的相关常量池条目已预先链接到这些对象，从而提高了性能并减少了占用空间。 此外，这还允许 VM 匿名类相互引用：类文件中的常量池条目基于名称。 因此，它们不能引用无名的 VM 匿名类。
+但是，语言运行库可以轻松地为其 VM 匿名类跟踪活动的 Class 对象，并将其提供给 `Unsafe::defineAnonymousClass`，从而将新类的常量池条目预先链接到其他VM匿名类。 `Lookup: defineHiddenClass` 方法将不具有这些功能，因为将来的增强功能可能会提供常量池条目到所有类的统一预链接。
+* 自我控制优化。 VM 匿名类是在仅 JDK 代码定义它们的假设下设计的。 因此，VM匿名类具有一种异常的功能，该功能以前仅可用于 JDK 中的类，即由 HotSpot JVM 控制其自身的优化。
+通过 VM 匿名类的定义字节中的注解属性来施加控制：`@ForceInline` 或 `@DontInline` 使 HotSpot 始终内联或从不内联方法，而 `@Stable` 使 HotSpot 将非空字段视为可折叠常量。
+但是，很少有 JDK 代码动态定义的 VM 匿名类需要此功能。 将来的增强甚至有可能使这些优化过时。 因此，即使由 JDK 代码定义，隐藏类也将无法控制其优化。 （从定义 VM 匿名类到定义隐藏类，这对 JDK 代码的迁移不会带来任何风险。）
+
+与此相关的是，VM匿名类可以使用 `@Hidden` 注解来防止其方法出现在堆栈跟踪中。 当然，对于隐藏的类，此功能是自动的，将来可能会提供给其他类。
+
+迁移应考虑以下因素：
++
+* 要从隐藏类中的代码调用私有 nestmate 实例方法，请使用 `invokevirtual` 或 `invokeinterface` 而不是 `invokespecial`。 生成的使用 `invokespecial` 调用私有 nestmate 实例方法的字节码将无法通过验证。 `invokespecial` 仅应用于调用私有 nestmate 构造函数。
+* 如前所述，在隐藏类的 Class 对象上调用 getName 返回的字符串不是二进制名称，因为它包含 `/` 字符。 用户级代码不会与此类 Class 对象接触，但是假设每个类都有一个二进制名称的框架级代码可能需要更新以处理隐藏的类。 先前已更新以处理 VM 匿名类的框架级代码将继续起作用，因为隐藏类使用与 VM 匿名类相同的命名约定。
+* JVM TI GetClassSignature 返回 JNI 样式的签名，并以内部形式返回不是二进制名称的字符串，例如包含的字符串。 字符。 假设每个类都有一个二进制名称的JVM TI代理和工具可能需要更新以处理隐藏的类。 另一方面，JDI 实现已更新为处理隐藏类。 JVM TI 代理无法修改隐藏的类。 受隐藏类的类签名影响的工具应受到限制。
+
 [[java-15-feature-hidden-dependencies]]
 === 依赖
+
+https://openjdk.java.net/jeps/181[JEP 181]（基于嵌套的访问控制）引入了基于嵌套的访问控制上下文，其中嵌套中的所有类和接口在嵌套伙伴之间共享私有访问。
 
 [[java-15-feature--nashorn]]
 == 删除 Nashorn JavaScript 引擎
