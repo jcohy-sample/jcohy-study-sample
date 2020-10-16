@@ -363,13 +363,13 @@ null-detail 消息的第一部分是根据弹出空值的字节码指令计算�
 
 以至于很多人选择使用 IDE 的功能来自动生成这些代码.还有一些开发会选择使用一些第三方类库,如 Lombok 等来生成这些方法,从而会导致了令人吃惊的表现( surprising behavior )和糟糕的可调试性 (poor debuggability) .
 
-通过记录增强Java编程语言. 记录提供了一种紧凑的语法来声明类,效果类似 lombok 的 @Data 注解.Kotlin 中的 data class . 它们的共同点是类的部分或全部状态可以直接在类头中描述 ,并且这个类中只 包含了纯数据而已. 这是JDK 14中的预览语言功能.
+通过 records 增强 Java 编程语言. 记录提供了一种紧凑的语法来声明类,效果类似 lombok 的 @Data 注解.Kotlin 中的 data class . 它们的共同点是类的部分或全部状态可以直接在类头中描述 ,并且这个类中只 包含了纯数据而已. 这是 JDK 14 中的预览语言功能.
 
 === 描述
 
 当你用 record 声明一个类时,该类将自动拥有以下功能:
 
-* 获取成员变量的简单方法,以上面代码为例 name () 和 partner() .注意区别于我们平常 getter 的写法.
+* 获取成员变量的简单方法,以上面代码为例 `name()` 和 `partner()` .注意区别于我们平常 getter 的写法.
 * 一个 equals 方法的实现,执行比较时会比较该类的所有成员属性
 * 重写 equals 当然要重写 hashCode
 * 一个可以打印该类所有成员属性的 toString 方法.
@@ -379,7 +379,7 @@ null-detail 消息的第一部分是根据弹出空值的字节码指令计算�
 请注意只会有一个构造方法
 ====
 
-和枚举类型一样,记录也是类的一种受限形式. 作为回报,记录对象在简洁性方面提供了显著的好处 .
+和枚举类型一样,记录也是类的一种受限形式. 作为回报,Record 对象在简洁性方面提供了显著的好处 .
 
 还可以在 Record 声明的类中定义静态字段、静态方法、构造器或实例方法.
 
@@ -545,9 +545,9 @@ for (int i = 0; i < MAX_VALUE; ++i) {
 [[java-14-feature-solaris]]
 == 弃用 Solaris 和 SPARC 的 端口
 
-不建议使用 Solaris/SPARC,Solaris/x64 和 Linux/SPARC端口,以在将来的发行版中删除它们.
+不建议使用 Solaris/SPARC,Solaris/x64 和 Linux/SPARC 端口,以在将来的发行版中删除它们.
 
-放弃对这些端口的支持将使OpenJDK社区中的贡献者能够加速新功能的开发,这些新功能将推动平台向前发展.
+放弃对这些端口的支持将使 OpenJDK 社区中的贡献者能够加速新功能的开发,这些新功能将推动平台向前发展.
 
 [[java-14-feature-cms]]
 == 删除 CMS 垃圾回收器
@@ -583,6 +583,7 @@ JDK14 之前, ZGC 仅 Linux 才支持 .
 尽管许多使用 ZGC 的用户都使用类 Linux 的环境,但在 Windows 和 macOS 上,人们也需要 ZGC 进行开发部署和测试.许多桌面应用也可以从 ZGC 中受益.因此, ZGC 特性被移植到了 Windows 和 macOS 上.
 
 现在 mac 或 Windows 上 也能使用 ZGC 了,示例如下:`-XX:+UnlockExperimentalVMOptions` `-XX:+UseZGC`
+
 [[java-14-feature-parallelscavenge]]
 == 弃用 ParallelScavenge 和 SerialOld GC 组合
 
@@ -618,9 +619,16 @@ be removed in a future release.
 * 通过规定任何新构造都可以表示与字符串文字相同的字符串集,解释相同的转义序列并以与字符串文字相同的方式进行操作,来支持从字符串文字的迁移.
 * 解析新的转义序列
 
+=== 非目标
+
+* 不为任何新构造的字符串定义不同于 `java.lang.String` 的新引用类型。
+* 不定义操作字符串操作的新操作符(与+不同)。
+* 文本块不直接支持字符串插值。 将来的 JEP 中可能会考虑内插。
+* 文本块不支持原始字符串，即不以任何方式处理其字符的字符串。
+
 === 描述
 
-此部分与本JEP的前身JEP 355中的同一部分相同,只是在新的转义序列上增加了该部分.
+此部分与本 JEP 的前身 JEP 355 中的同一部分相同,只是在新的转义序列上增加了该部分.
 
 文本块是 Java 语言中一种新型的文字. 它可以用来表示可能出现字符串文字的任何地方的字符串,但是可以提供更高的表现力和更少的意外复杂性.
 
@@ -843,15 +851,15 @@ String source = """
 
 引入一个API,以允许 Java 程序安全有效地访问 Java 堆之外的外部内存.
 
-许多现有的Java库和程序都访问外部存储器,例如 https://apacheignite.readme.io/v1.0/docs/off-heap-memory[Ignite],http://www.mapdb.org/[mapDB],https://github.com/dustin/java-memcached-client[memcached] 和 Netty 的 https://netty.io/wiki/using-as-a-generic-library.html[ByteBuf] API. 这样,他们可以
+许多现有的 Java 库和程序都访问外部存储器,例如 https://apacheignite.readme.io/v1.0/docs/off-heap-memory[Ignite], http://www.mapdb.org/[mapDB], https://github.com/dustin/java-memcached-client[memcached] 和 Netty 的 https://netty.io/wiki/using-as-a-generic-library.html[ByteBuf] API. 这样,他们可以
 
 * 避免与垃圾回收相关的成本和不可预测性(尤其是在维护大型缓存时)
 * 跨多个进程共享内存,并且通过将文件映射到内存中(例如通过 https://en.wikipedia.org/wiki/Mmap[mmap])来序列化和反序列化内存内容.
 
-但是,Java API不能为访问外部内存提供令人满意的解决方案.
+但是,Java API 不能为访问外部内存提供令人满意的解决方案.
 
 Java 1.4中引入的 https://docs.oracle.com/en/java/javase/13/docs/api/java.base/java/nio/ByteBuffer.html[ByteBuffer] API允许创建直接字节缓冲区,这些缓冲区是按堆分配的,并允许用户直接从Java处理堆内存. 但是,直接缓冲区是有限的. 例如,由于 `ByteBuffer` API使用基于int的索引方案,因此无法创建大于 `2GB` 的缓冲区. 而且,使用直接缓冲区可能很麻烦,因为与直接缓冲区相关联的内存的重新分配留给了垃圾回收器.
-也就是说,只有在垃圾回收器认为直接缓冲区不可访问之后,才能释放关联的内存. 多年来,为了克服这些和其他局限性,已经提出了许多增强请求(例如,https://bugs.openjdk.java.net/browse/JDK-4496703[4496703]、https://bugs.openjdk.java.net/browse/JDK-6558368[6558368]、
+也就是说,只有在垃圾回收器认为直接缓冲区不可访问之后,才能释放关联的内存. 多年来,为了克服这些和其他局限性,已经提出了许多增强请求(例如, https://bugs.openjdk.java.net/browse/JDK-4496703[4496703]、 https://bugs.openjdk.java.net/browse/JDK-6558368[6558368]、
 https://bugs.openjdk.java.net/browse/JDK-4837564[4837564] 和 https://bugs.openjdk.java.net/browse/JDK-5029431[5029431]). 这些限制中的许多限制是由于 `ByteBuffer` API不仅设计用于堆外内存访问,而且还用于批量数据的生产者/消费者交换,这对于例如字符集编码/解码和部分 I/O 操作至关重要.
 
 开发人员可以从Java代码访问外部内存的另一种常见途径是 `sun.misc.Unsafe` API. `Unsafe` 公开了许多内存访问操作(例如 `Unsafe::getInt` 和 `putInt`),这归功于聪明且相对通用的寻址模型,可用于堆内和堆外访问. 使用 `Unsafe` 访问内存非常高效:所有内存访问操作都定义为JVM内在函数,因此JIT会定期优化内存访问操作.
@@ -861,4 +869,4 @@ https://bugs.openjdk.java.net/browse/JDK-4837564[4837564] 和 https://bugs.openj
 
 总而言之,在访问外部内存时,开发人员面临一个难题:开发人员应该使用安全但受限(可能效率较低)的路径(例如 `ByteBuffer`),还是应该放弃安全保证并接受不受支持和危险的路径？ API不安全？
 
-该JEP引入了受支持的,安全且有效的外部内存访问 API. 通过为访问外部内存的问题提供有针对性的解决方案,开发人员将摆脱现有 API 的限制和危险. 由于新的API是从头开始设计的,并且考虑到JIT优化,因此他们还将享受改进的性能.
+该 JEP 引入了受支持的,安全且有效的外部内存访问 API. 通过为访问外部内存的问题提供有针对性的解决方案,开发人员将摆脱现有 API 的限制和危险. 由于新的API是从头开始设计的,并且考虑到JIT优化,因此他们还将享受改进的性能.

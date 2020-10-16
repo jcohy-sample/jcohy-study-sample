@@ -526,7 +526,7 @@ Java 12 中将删除由 Oracle 提供的 arm64端口相关的所有源码,即删
 [[java-12-feature-cds-history]]
 === 历史版本
 
-* JDK5 引入了 Class-Data Sharing可以用于多个JVM共享class,提升启动速度,最早只支持 system classes 及 serial GC.
+* JDK5 引入了 Class-Data Sharing 可以用于多个 JVM 共享 class,提升启动速度,最早只支持 system classes 及 serial GC.
 * JDK9 对其进行扩展以支持 application classes 及其他GC算法.
 * java10 的新特性 JEP 310: Application Class-Data Sharing 扩展了 JDK5 引入的 Class-Data Sharing,支持 application 的 Class-Data Sharing 并开源出来(以前是 commercial feature)
 * CDS 只能作用于 `BootClassLoader` 加载的类,不能作用于 AppClassLoader 或者自定义的 ClassLoader加载的类.在 Java 10 中,则将 CDS 扩展为 `AppCDS`,顾名思义,`AppCDS` 不止能够作用于 `BootClassLoader` 了,`AppClassLoader` 和自定义的 `ClassLoader` 也都能够起作用,大大加大了 CDS 的适用范围.也就说开发自定义的类也可以装载给多个JVM共享了.

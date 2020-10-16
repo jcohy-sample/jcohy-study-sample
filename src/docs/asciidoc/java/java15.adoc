@@ -681,74 +681,154 @@ Nashorn 是 JDK 1.8 引入的一个 JavaScript 脚本引擎，用来取代 Rhino
 * jdk.scripting.nashorn -包含 `jdk.nashorn.api.scripting` 和 `jdk.nashorn.api.tree` 包。
 * jdk.scripting.nashorn.shell-包含 jjs 工具。
 
-[[java-15-feature-sealed-summary]]
-=== 简介
-
-[[java-15-feature-sealed-goals]]
-=== 目标
-
-[[java-15-feature-sealed-non-goals]]
-=== 非目标实现
-
-[[java-15-feature-sealed-motivation]]
-=== 动机
-
-[[java-15-feature-sealed-description]]
-=== 描述
-
-[[java-15-feature-sealed-alternatives]]
-=== 备选方案
-
-[[java-15-feature-sealed-dependencies]]
-=== 依赖
-
-[[java-15-feature]]
+[[java-15-feature-datagramsocket]]
 == 重新实现旧版 DatagramSocket API
 
-[[java-15-feature-sealed-summary]]
+[[java-15-feature-datagramsocket-summary]]
 === 简介
 
-[[java-15-feature-sealed-goals]]
-=== 目标
+重新实现旧版 `DatagramSocket` API，更简单、更现代的实现来代替 `java.net.DatagramSocket` 和 `java.net.MulticastSocket` API 的基础实现，提高了 JDK 的可维护性和稳定性。
+新的实现将很容易使用虚拟线程，目前正在 https://openjdk.java.net/projects/loom/[Loom 项目] 中进行探索。这是 https://openjdk.java.net/jeps/353[JEP 353] (在 jdk 13 中发布)的后续版本，JEP 353 已经重新实现了遗留的套接字 API。
 
-[[java-15-feature-sealed-non-goals]]
-=== 非目标实现
-
-[[java-15-feature-sealed-motivation]]
+[[java-15-feature-datagramsocket-motivation]]
 === 动机
 
-[[java-15-feature-sealed-description]]
+`java.net.DatagramSocket` 和 `java.net.MulticastSocket` API的代码库以及它们的基础实现既老旧又脆弱：
+
+* 他们的实现可以追溯到 JDK 1.0 版本，使用遗留 Java 和 C 代码混合。难以维护和调试。
+* 尤其是 `MulticastSocket` 的实现,有很大的问题，因为那时IPv6还在开发中。因此，当前的MulticastSocket执行试图以难以维护的方式调节IPv4和IPv6。
+* 该实现还存在一些并发问题（例如，异步关闭），需要进行大修才能正确解决。
+
+此外，在虚拟线程的上下文中，在系统调用中停止而不是阻塞底层内核线程，当前的实现不适合这个目的。随着基于数据表的传输再次获得吸引力(例如 QUIC )，需要一个更简单和更可维护的实现。
+[[java-15-feature-datagramsocket-description]]
 === 描述
 
-[[java-15-feature-sealed-alternatives]]
+当前，`DatagramSocket` 和 `MulticastSocket` 类将所有套接字调用委托给 `java.net.DatagramSocketImpl` 实现，针对该实现存在不同的平台特定的具体实现：Unix 平台上的 `PlainDatagramSocketImpl`，Windows 平台上的 `TwoStackPlainDatagramSocketImpl` 和 `DualPlainDatagramSocketImpl`。
+可以追溯到 JDK 1.1 的抽象 `DatagramSocketImpl` 类的定义非常少，并且包含几个过时的方法，这些方法阻碍了提供基于 NIO 的此类的实现（请参阅下面讨论的替代方法）。
+
+该 JEP 并没有像 `DatagramSocketImpl` 的实现那样提供直接替代，而是类似于 JEP 353 中针对 `SocketImpl` 所做的那样，而是建议让 `DatagramSocket` 在内部包装另一个 `DatagramSocket` 实例，直接将所有调用委托给该实例。
+包装的实例是从 NIO `DatagramChannel::socket` 创建的套接字适配器（新实现），或者是旧版 `DatagramSocket` 类的克隆，然后将其委托给旧版 `DatagramSocketImpl` 实现（用于实现向后兼容开关） 。
+如果应用程序安装了 `DatagramSocketImplFactory`，则将选择旧的旧版实现。 否则，默认情况下将选择并使用新的实现。
+
+为了减少超过二十年后切换实施的风险，不会删除旧的实现。 引入了特定于 JDK 的系统属性 `jdk.net.usePlainDatagramSocketImpl`，以将 JDK 配置为使用旧版实现（请参见下面的风险和假设）。
+如果在启动时未设置任何值或将其设置为 "true"，则将使用旧版实现；否则，将使用新的（基于NIO）实现。在某些将来的版本中，我们将删除旧版实现和系统属性。
+在某些时候，我们还可能弃用并删除 `DatagramSocketImpl` 和 `DatagramSocketImplFactory`。
+
+image::images/ReimplementDS.png[]
+
+默认情况下启用新的实现。 通过直接使用选择器提供程序的平台默认实现（`sun.nio.ch.SelectorProviderImpl` 和 `sun.nio.ch.DatagramChannelImpl`），它为数据报和多播套接字提供了不间断的行为。
+因此，安装自定义选择器提供程序将对 `DatagramSocket` 和 `MulticastSocket` 无效。
+
+[[java-15-feature-datagramsocket-alternatives]]
 === 备选方案
 
-[[java-15-feature-sealed-dependencies]]
+我们研究，原型化并放弃了两种替代方法。
+
+[[java-15-feature-datagramsocket-alternatives-1]]
+==== 备选方案 1
+
+创建 `DatagramSocketImpl` 的实现，该实现将所有调用委派给包装的 `DatagramChannel` 和 `sun.nio.ch.DatagramSocketAdaptor`。 升级 `sun.nio.ch.DatagramSocketAdaptor` 以扩展 `java.net.MulticastSocket`。
+
+这种方法表明，基于 `DatagramChannel` 提供 `DatagramSocketImpl` 的实现相对容易。 测试通过了，但是它也强调了一些限制：
+
+* 安全检查执行了两次，一次是在 `DatagramSocket` 中，一次是在 `DatagramChannel`（或其套接字适配器）中。 有一些方法可以避免双重安全检查，但是这样做会很麻烦。
+* 在 `DatagramSocket` 级别实现的连接仿真也遇到了麻烦，因为我们不想在基于 NIO 的实现中执行此仿真。
+* 与上面提出的解决方案一样，与下面的第二个替代方案相比，此替代方案的主要优点是不需要新的本机代码，因为每个调用都可以委派给 `DatagramChannel`。
+* 在评估此替代方法时，很快变得很明显，在 `DatagramSocket` 级别而不是 `DatagramSocketImpl` 级别的重写方法将更简单，更直接，这导致了本 JEP 中提出的解决方案。
+
+[[java-15-feature-datagramsocket-alternatives-2]]
+==== 备选方案 2
+
+在 `sun.nio.ch` 包中创建 `DatagramSocketImpl` 的实现，该实现调用低级 `sun.nio.ch.Net` 原语。 这允许实现直接访问较低级别的 NIO 原语，而不是依赖于 `DatagramChannel`。 这有点类似于在 https://openjdk.java.net/jeps/353[JEP 353] 中重新实现 `Socket` 和 `ServerSocket` 的操作。
+
+* 这种选择相对于第一种选择的主要优点是，它避免了双重安全检查，因为该实现可以直接访问较低级别的NIO原语。
+* 但是，新的实现必须复制 `DatagramChannel` 已经实现的非平凡状态和锁管理。
+* 它还需要添加新的本机代码以匹配 `DatagramSocketImpl` 接口。
+* 因此，该JEP中提出的解决方案显得更简单，风险更低且易于维护。
+
+
+[[java-15-feature-datagramsocket-testing]]
+=== 测试
+
+jdk/jdk 存储库中的现有测试将用于测试新的实现。 为确保平稳过渡，新的实现应通过 tier2（jdk_net和jdk_nio）回归测试套件和 java_net/api的JCK。 多年来，jdk_net 测试组已经积累了许多针对网络极端案例的测试。
+该测试组中的某些测试将被修改为运行两次，第二次使用 `-Djdk.net.usePlainDatagramSocketImpl` 来确保在 JDK 包含两个实现的同时旧的实现不会衰减。 将根据需要添加新的测试，以扩大代码覆盖范围并增加对新实施的信心。
+
+将尽一切努力宣传该提案，并鼓励使用 `DatagramSocket` 和 `MulticastSocket` 编写代码的开发人员使用在 https://jdk.java.net/[jdk.java.net] 上发布的早期访问版本来测试其代码。
+
+jdk/jdk 存储库中的微基准包括 `DatagramChannel` 的基准。 如果缺少数据基线套接字，则将创建类似的基准，如果已有数据基准套接字，则将对其进行更新，从而可以轻松比较新旧实现。
+
+[[java-15-feature-datagramsocket-risks]]
+=== 风险和假设
+
+该建议的主要风险是，在旧的和新的实现方式行为不同的极端情况下，现有代码依赖于未指定的行为。 为了最大程度地降低这种风险，在 JDK 14 和 JDK 15 中已经进行了一些准备工作，以澄清 `DatagramSocket` 和 `MulticastSocket` 的规范，并最小化这些类与 `DatagramChannel::socket` 适配器之间的行为差​​异。 但是，可能仍然存在。 这些差异在极端情况下可能是可以观察到的，但对于绝大多数API用户来说应该是透明的。
+到目前为止，我们已经确定了差异。 通过运行 `-Djdk.net.usePlainDatagramSocketImpl` 或 `-Djdk.net.usePlainDatagramSocketImpl=true`，可以缓解除前两个以​​外的所有问题。
++
+* 在这些类的实例上同步的自定义 API 或 `DatagramSocket` 和 `MulticastSocket` 的子类可能需要重新访问，因为 `DatagramSocket` 和 `MulticastSocket` 不再与此同步。 任何锁定或同步都留给委托，而委托在 `java.net` 包之外无法访问，并且可以自由使用它认为合适的任何机制。
+* 同样，扩展 `DatagramSocket` 或 `MulticastSocket` 并覆盖诸如 `bind` 和 `setReuseAddress` 之类的方法的自定义类在构造过程中不会调用覆盖的方法。 任何人这样做都取决于未记录的和特定于实现的行为。
+* 新的实现在所有平台上都使用本机 `connect` 方法。 旧版实现仍在 macOS 上使用 emulation 。 特别是，这意味着旧的实现无法检测到端口无法到达的状况，而新的实现则应该检测到。 另外，如果本机连接失败，则旧的实现将退回到使用仿真。 新的实现将报告错误。 此外，新的实现将在连接时刷新接收缓冲区，确保丢弃在调用连接之前缓冲的所有数据报。
+旧的实现用于保留由连接的对等方发送并在内核执行关联之前进行缓冲的数据报，但是新的实现将简单地丢弃它们。
+* 在 macOS 和 Linux 上，在新的实现上调用断开连接可能需要重新绑定基础套接字。 这可能导致重新绑定可能失败，并且基础实现可能会引发异常，从而使基础套接字处于未指定状态。 尽管旧版实现可能已默默地使套接字处于未指定状态，但新实现将抛出 `UncheckedIOException`。
+* 在 macOS 上加入多播组时，如果未设置默认传出接口，并且未提供传出网络接口，则 `MulticastSocket::joinGroup` 的旧实现将获取默认网络接口，并在加入前错误地尝试将其设置为默认接口 ，通过静默设置 `IP_MULTICAST_IF` 选项。 基于 NIO 的新实现不会执行此操作，因此 `IP_MULTICAST_IF` 选项将永远不会作为连接的副作用而被静默设置。
+* `java.net` 包定义了 `SocketException` 的许多子类。 新的实现将尝试在与旧的实现相同的情况下抛出相同的异常，但是在某些情况下它们可能会有所不同。 此外，可能存在例外消息不同的情况。 例如，在 Windows 上，旧的实现将 Windows 套接字错误代码映射为仅英语的消息，而新的基于 NIO 的实现则使用系统消息。
+
+其他可观察到的行为差异
+
+* 通过其公共构造函数之一创建的 `DatagramSocket` 支持发送多播数据报的设置选项。 通过新的实现，您可以在所有平台上的 `DatagramSocket` 的基本实例上配置多播套接字选项。 旧的实现仍在 Windows 上使用双栈实现，该实现在基本 `DatagramSocket` 实例上不支持多播套接字选项。 在这种情况下，如果需要配置此类选项，则必须使用 `MulticastSocket` 的实例。
+* 新的实现仅通过委派给不存在这些问题的 NIO 实现来解决了许多问题，例如 https://bugs.openjdk.java.net/browse/JDK-8165653[8165653]。
+
+除了行为上的差异，在运行某些工作负载时，新实现的性能可能会与旧实现有所不同。 该JEP将努力提供一些性能基准来衡量差异。
+
+[[java-15-feature-datagramsocket-dependencies]]
 === 依赖
 
-[[java-15-feature]]
+替换 `DatagramSocket` 和 `MulticastSocket` 的基础实现是 https://openjdk.java.net/projects/loom/[Loom 项目] 的先决条件。
+
+[[java-15-feature-biased]]
 == 禁用和弃用偏向锁
 
-[[java-15-feature-sealed-summary]]
+默认情况下禁用偏向锁并弃用所有相关的命令行选项。
+
+[[java-15-feature-biased-summary]]
 === 简介
 
-[[java-15-feature-sealed-goals]]
+默认情况下禁用偏向锁，并弃用所有相关的命令行选项。
+
+[[java-15-feature-biased-goals]]
 === 目标
 
-[[java-15-feature-sealed-non-goals]]
-=== 非目标实现
+后面再确定是否需要继续支持偏向锁，因为维护这种锁同步优化的成本太高了。
 
-[[java-15-feature-sealed-motivation]]
+[[java-15-feature-biased-motivation]]
 === 动机
 
-[[java-15-feature-sealed-description]]
+偏向锁是 HotSpot 虚拟机中使用的一种优化技术，可以减少无竞争时锁的开销。 假设一个线程持有一个 monitor ,在另一个线程试图获取 monitor 之前。给定线程在获取 monitor 时避免执行 CAS 原子操作。
+monitor 的初始锁定使 monitor 偏向该线程，从而避免了对同一对象进行后续同步操作时需要原子指令。
+当许多线程对以单线程方式使用的对象执行许多同步操作时，从历史上看，对锁施加偏向已导致与常规锁定技术相比，性能得到了显着改善。
+
+过去看到的性能提升在今天已经不那么明显了。 许多受益于偏向锁的应用程序都是使用早期 Java 集合API 的较旧的旧版应用程序，这些 API 会在每次访问（例如 `Hashtable` 和 `Vector`）时进行同步。 较新的应用程序通常使用 Java 1.2 中针对单线程场景引入的非同步集合（例如 `HashMap` 和 `ArrayList`），或者针对 Java 5 中针对多线程场景使用的性能更高的并发数据结构。
+这意味着，如果代码更新为使用这些较新的类，则由于不必要的同步而受益于偏向锁的应用程序可能会看到性能提高。 此外，围绕线程池队列和工作线程构建的应用程序通常在禁用偏向锁的情况下性能更好。
+（SPECjbb2015  是按这种方式设计的，例如，而 SPECjvm98 和 SPECjbb2005 并非如此）。 有偏向锁会带来抢占时需要进行昂贵的撤销操作的代价。
+因此，从中受益的应用程序仅是那些表现出大量无竞争的同步操作的应用程序（如上面提到的那些应用程序），因此执行便宜的锁拥有者检查的成本加上偶尔的昂贵吊销仍然比执行 CAS 原子指令的成本低。 自从在 HotSpot 中引入偏向锁以来，原子指令成本的变化也改变了保持这种关系所需的无竞争操作的数量。
+另一个值得注意的方面是，即使先前的成本关系为真，而同步操作上花费的时间仍仅占应用程序总工作量的一小部分，应用程序也不会从偏向锁中获得显着的性能改进。
+
+偏向锁在同步子系统中引入了大量复杂的代码，而且还会对其他热点组件造成干扰。这种复杂性是理解代码的各个部分的障碍，也是在同步子系统中进行重大设计更改的障碍。为此，我们希望禁用、弃用并最终取消对偏向锁的支持。
+
+[[java-15-feature-biased-description]]
 === 描述
 
-[[java-15-feature-sealed-alternatives]]
-=== 备选方案
+在JDK 15之前，始终启用并提供偏向锁。 使用此 JEP，除非在命令行上设置了 `XX:+UseBiasedLocking`，否则在启动 HotSpot 时将不再启用偏向锁。
 
-[[java-15-feature-sealed-dependencies]]
-=== 依赖
+我们将弃用 `UseBiasedLocking` 选项以及与偏置锁定的配置和使用有关的所有选项。
++
+* Product options: BiasedLockingStartupDelay, BiasedLockingBulkRebiasThreshold, BiasedLockingBulkRevokeThreshold, BiasedLockingDecayTime and UseOptoBiasInlining
+* Diagnostic options: PrintBiasedLockingStatistics and PrintPreciseBiasedLockingStatistics
+
+这些选项仍将被接受并执行，但是将发出弃用警告。
+
+[[java-15-feature-biased-risk]]
+=== 风险和假设
+
+一些 Java 应用程序可能会在禁用偏向锁的情况下看到性能下降。 允许在命令行上重新启用偏向锁可以帮助减轻这种情况，并提供可能的洞察力，使您仍然可以从中受益。
 
 [[java-15-feature-instanceof]]
 == 模式匹配(第二次预览)
@@ -866,52 +946,123 @@ ReferenceType Identifier
 
 可以通过在 `if` 语句或通过 switch 构造来获得类型测试模式的好处。模式匹配概括了这两种结构。
 
-[[java-15-feature]]
+[[java-15-feature-zgc]]
 == ZGC: 可伸缩低延迟垃圾收集器
 
-[[java-15-feature-sealed-summary]]
+[[java-15-feature-zgc-summary]]
 === 简介
 
-[[java-15-feature-sealed-goals]]
-=== 目标
+Z Garbage Collector（ZGC）是在JAVA 11中引入的垃圾回收器，但一直都是实验版本，在JDK 15中，终于要上线了。
 
-[[java-15-feature-sealed-non-goals]]
+[[java-15-feature-zgc-non-goals]]
 === 非目标实现
 
-[[java-15-feature-sealed-motivation]]
+这个 JEP 不会更改默认的 GC，默认仍然是 G1。
+
+[[java-15-feature-zgc-motivation]]
 === 动机
 
-[[java-15-feature-sealed-description]]
+ZGC 被 https://openjdk.java.net/jeps/333[JEP 333] 集成到 JDK 11 中。对于这种规模大，复杂的新特性，最好是小心翼翼、循序渐进地引入，因此我们将其作为一个实验性的特性。这有助于设置用户期望，并允许用户提供反馈，而无需下载或构建单独的 JDK 二进制文件，如果 ZGC 开发在 JDK 之外继续进行，就会出现这种情况。
+
+自从其在 JDK 11 中引入以来，我们收到了积极的反馈，我们消除了许多错误，并添加了许多功能和增强功能。 要强调一些更重要的方面：
++
+* Concurrent class unloading
+* 取消使用未使用的内存 (https://openjdk.java.net/jeps/351[JEP 351](Release JDK 13))
+* 最大堆大小从 4TB 增加到 16TB
+* 最小堆大小减少到 8MB
+* -XX:SoftMaxHeapSize
+* 支持 JFR 泄漏分析
+* 支持类数据共享
+* 有限和不连续的地址空间
+* 支持将堆放在 NVRAM 上
+* 增强 NUMA 意识(Improved NUMA awareness)
+* 多线程堆预触 (Multi-threaded heap pre-touching)
+
+此外，现在支持所有常用平台：
++
+Linux/x86_64 ( https://openjdk.java.net/jeps/333[JEP 333])
+Linux/aarch64 (https://bugs.openjdk.java.net/browse/JDK-8214527[8214527])
+Windows ( https://openjdk.java.net/jeps/365[JEP 365])
+macOS (https://openjdk.java.net/jeps/364[JEP 364])
+
+对 ZGC 的测试表明它是稳定的，并且在撰写本文时，我们已经有几个月没有收到针对ZGC的新错误了。 借助 ZGC 如今拥有的稳定性，功能集和平台支持，是时候删除其实验状态并使其成为产品功能了。
+
+[[java-15-feature-zgc-description]]
 === 描述
 
-[[java-15-feature-sealed-alternatives]]
-=== 备选方案
+今天，通过 `-XX:+UnlockExperimentalVMOptions -XX:+UseZGC` 命令行选项启用了 ZGC。 使 ZGC 成为产品（非实验性）功能意味着不再需要 `-XX:+UnlockExperimentalVMOptions` 选项。
 
-[[java-15-feature-sealed-dependencies]]
+将 ZGC 转换为产品（非实验性）功能主要是将 UseZGC 命令行选项类型从实验更改为产品的问题。 此外，我们还将以下 ZGC 专用选项（目前标记为实验性）更改为产品。 我们不会更改这些选项的默认值。
++
+* ZAllocationSpikeTolerance
+* ZCollectionInterval
+* ZFragmentationLimit
+* ZMarkStackSpaceLimit
+* ZProactive
+* ZUncommit
+* ZUncommitDelay
+
+当前标记为实验的以下 ZGC 特定的 JFR 事件也将更改为产品。
++
+* ZAllocationStall
+* ZPageAllocation
+* ZPageCacheFlush
+* ZRelocationSet
+* ZRelocationSetGroup
+* ZUncommit
+
+
+[[java-15-feature-zgc-testing]]
+=== 测试
+
+ZGC 的测试已作为 https://openjdk.java.net/jeps/333[JEP 333] 的一部分添加，此后又添加了其他测试。 此JEP不会开发其他测试。
+
+启用ZGC时，某些测试当前提供 `-XX:+UnlockExperimentalVMOptions` 命令行选项。 不再需要它，并且将相应地调整这些测试。
+
+[[java-15-feature-zgc-dependencies]]
 === 依赖
 
-[[java-15-feature]]
+[[java-15-feature-text]]
 == 文本块
 
-[[java-15-feature-sealed-summary]]
+[[java-15-feature-text-summary]]
 === 简介
 
-[[java-15-feature-sealed-goals]]
+将文本块添加到 Java 语言特性。 文本块是多行字符串文字，它避免了大多数转义的需要，以一种可预测的方式自动设置字符串的格式，并在需要时使开发人员可以控制格式。
+
+[[java-15-feature-text-history]]
+=== 历史
+
+https://openjdk.java.net/jeps/355[JEP 355] 在 2019 年初提出了文本块，然后在 https://openjdk.java.net/jeps/326[JEP 326（原始字符串文字）] 中开始进行探索，该探索最初针对 JDK 12，但最终被撤回并且没有出现在该发行版中。
+https://openjdk.java.net/jeps/355[JEP 355] 于 2019 年 6 月针对 JDK 13 作为预览功能。 根据 JDK 13 的反馈建议在 JDK 14 中再次预览文本块，并增加两个新的转义序列。
+因此，https://openjdk.java.net/jeps/368[JEP 368] 在 2019 年 11 月针对 JDK 14 作为预览功能。 对 JDK 14 的反馈表明，文本块已准备好在 JDK 15 中成为最终的和永久的，而无需进行进一步的更改。
+
+[[java-15-feature-text-goals]]
 === 目标
 
-[[java-15-feature-sealed-non-goals]]
+* 简化跨越多行的字符串,避免对换行等特殊字符进行转义,简化编写 Java 程序.
+* 增强 Java 程序中用字符串表示的其他语言的代码的可读性
+* 通过规定任何新构造都可以表示与字符串文字相同的字符串集,解释相同的转义序列并以与字符串文字相同的方式进行操作,来支持从字符串文字的迁移.
+* 解析新的转义序列
+
+[[java-15-feature-text-non-goals]]
 === 非目标实现
 
-[[java-15-feature-sealed-motivation]]
+* 不为任何新构造的字符串定义不同于 `java.lang.String` 的新引用类型。
+* 不定义操作字符串操作的新操作符(与+不同)。
+* 文本块不直接支持字符串插值。 将来的 JEP 中可能会考虑内插。 同时，新的实例方法 `String::formatted` 在可能需要插值的情况下提供了帮助。
+* 文本块不支持原始字符串，即不以任何方式处理其字符的字符串。
+
+[[java-15-feature-text-motivation]]
 === 动机
 
-[[java-15-feature-sealed-description]]
+[[java-15-feature-text-description]]
 === 描述
 
-[[java-15-feature-sealed-alternatives]]
+[[java-15-feature-text-alternatives]]
 === 备选方案
 
-[[java-15-feature-sealed-dependencies]]
+[[java-15-feature-text-dependencies]]
 === 依赖
 
 [[java-15-feature]]
@@ -938,77 +1089,518 @@ ReferenceType Identifier
 [[java-15-feature-sealed-dependencies]]
 === 依赖
 
-[[java-15-feature]]
+[[java-15-feature-ports]]
 == 删除 Solaris 和 SPARC 端口
 
-[[java-15-feature-sealed-summary]]
+[[java-15-feature-ports-summary]]
 === 简介
 
-[[java-15-feature-sealed-goals]]
+删除源代码并构建对 Solaris/SPARC, Solaris/x64 和 Linux/SPARC 端口的支持。 不建议在 https://openjdk.java.net/jeps/362[JDK 14] 中删除这些端口，并明确表示打算在将来的版本中删除它们。
+
+[[java-15-feature-ports-goals]]
 === 目标
 
-[[java-15-feature-sealed-non-goals]]
+* 尝试为其中一个不推荐使用的端口配置构建时，增强构建系统以发出错误消息。 通过新的配置选项可以抑制该错误消息。
+
+* 在相关的 JDK 文档中将端口和相关的特定于端口的功能标记为不建议删除。
+
+[[java-15-feature-ports-non-goals]]
 === 非目标实现
 
-[[java-15-feature-sealed-motivation]]
+更改任何先前发行版中受影响端口的状态不是此 JEP 的目标。 该 JEP 可以针对的最早的发行版是 JDK 14。
+
+[[java-15-feature-ports-motivation]]
 === 动机
 
-[[java-15-feature-sealed-description]]
+放弃对这些端口的支持将使 OpenJDK 社区中的贡献者能够加速新功能的开发,这些新功能将推动平台向前发展.
+
+[[java-15-feature-ports-description]]
 === 描述
 
-[[java-15-feature-sealed-alternatives]]
+[[java-15-feature-ports-description-build-configuration]]
+==== 构建配置更改
+
+尝试配置 Solaris and/or SPARC 构建将产生以下输出：
+
+[source,shell]
+----
+$ bash ./configure
+...
+checking compilation type... native
+configure: error: The Solaris and SPARC ports are deprecated and may be removed in a future release. \
+Use --enable-deprecated-ports=yes to suppress this error.
+configure exiting with result code 1
+$
+----
+
+新的构建配置选项 `--enable-deprecated-ports=yes` 将消除该错误并继续：
+
+[source,shell]
+----
+$ bash ./configure --enable-deprecated-ports=yes
+...
+checking compilation type... native
+configure: WARNING: The Solaris and SPARC ports are deprecated and may be removed in a future release.
+...
+Build performance summary:
+* Cores to use:   32
+* Memory limit:   96601 MB
+
+The following warnings were produced. Repeated here for convenience:
+WARNING: The Solaris and SPARC ports are deprecated and may be removed in a future release.
+$
+----
+
+为 Solaris 和 SPARC（包括 Solaris/SPARC，Solaris/x64，Linux/SPARC）配置内部版本时，将发出错误/警告。
+
+[[java-15-feature-ports-description-solaris]]
+==== 不建议删除 Solaris 特定功能
+
+`jdk.crypto.ucrypto` 模块中的 OracleUcrypto JCE 提供程序（https://bugs.openjdk.java.net/browse/JDK-8234870[8234870]）
+
+`jdk.net.SocketFlow` https://docs.oracle.com/en/java/javase/13/docs/api/jdk.net/jdk/net/SocketFlow.html[套接字选项]（https://bugs.openjdk.java.net/browse/JDK-8234871[8234871]）
+
+
+[[java-15-feature-ports-alternatives]]
 === 备选方案
 
-[[java-15-feature-sealed-dependencies]]
+就像 https://openjdk.java.net/jeps/291[JEP 291（不建议使用CMS垃圾收集器）]和 https://openjdk.java.net/jeps/335[JEP 335（不建议使用Nashorn JavaScript引擎）] 一样，另一种方法是让一组可靠的开发人员明确表示希望继续保持这些端口。 如果在集成此 JEP 之前发生这种情况，则可以撤回此 JEP。 如果在集成此 JEP 之后但在删除端口之前发生这种情况，则后续的JEP可以还原弃用状态。
+
+[[java-15-feature-foreign-memory]]
+== 外部内存访问 API(二次孵化)
+
+
+[[java-15-feature-foreign-memory-summary]]
+=== 简介
+
+引入一个API,以允许 Java 程序安全有效地访问 Java 堆之外的外部内存.
+
+[[java-15-feature-foreign-memory-history]]
+=== 历史
+
+外部内存访问 API 由 https://openjdk.java.net/jeps/370[JEP 370] 提出，并在 2019 年末发布的 Java 14 中作为孵化 API。 该 JEP 建议根据反馈合并改进，并在 Java 15 中重新孵化该API。已包含以下更改
+
+* 丰富的 VarHandle 组合器 API，用于自定义内存访问 var 句柄；
+* 有目标的支持通过 `Spliterator` 接口并行处理内存段；
+* 增强了对映射内存段的支持（例如 `MappedMemorySegment::force`）；
+* 安全 API 指向支持串行限制（例如，在两个线程之间转移线程所有权）； 和
+* 不安全的 API 指向操纵和取消引用来自本机调用的地址，或将此类地址包装到合成内存段中。
+
+[[java-15-feature-foreign-memory-goals]]
+=== 目标
+
+* 通用性：单个API应该能够在各种外部存储器（例如，本机存储器，持久性存储器，托管堆存储器等）上运行。
+* 安全性：无论操作哪种内存，API都不可能破坏JVM的安全性。
+* 确定性：对外部存储器的解除分配操作应在源代码中明确。
+* 可用性：对于需要访问外部内存的程序，该API应该是诸如 `sun.misc.Unsafe` 之类的传统 Java API 的引人注目的替代品。
+
+[[java-15-feature-foreign-memory-non-goals]]
+=== 非目标
+
+不在外部存储访问 API 之上重新实现旧版 Java API（例如 sun.misc.Unsafe）。
+
+[[java-15-feature-foreign-memory-motivation]]
+=== 动机
+
+许多现有的 Java 库和程序都访问外部存储器,例如 https://apacheignite.readme.io/v1.0/docs/off-heap-memory[Ignite], http://www.mapdb.org/[mapDB], https://github.com/dustin/java-memcached-client[memcached] 和 Netty 的 https://netty.io/wiki/using-as-a-generic-library.html[ByteBuf] API. 这样,他们可以
+
+* 避免与垃圾回收相关的成本和不可预测性(尤其是在维护大型缓存时)
+* 跨多个进程共享内存,并且通过将文件映射到内存中(例如通过 https://en.wikipedia.org/wiki/Mmap[mmap])来序列化和反序列化内存内容.
+
+但是,Java API 不能为访问外部内存提供令人满意的解决方案.
+
+Java 1.4中引入的 https://docs.oracle.com/en/java/javase/13/docs/api/java.base/java/nio/ByteBuffer.html[ByteBuffer] API允许创建直接字节缓冲区,这些缓冲区是按堆分配的,并允许用户直接从Java处理堆内存. 但是,直接缓冲区是有限的. 例如,由于 `ByteBuffer` API使用基于int的索引方案,因此无法创建大于 `2GB` 的缓冲区. 而且,使用直接缓冲区可能很麻烦,因为与直接缓冲区相关联的内存的重新分配留给了垃圾回收器.
+也就是说,只有在垃圾回收器认为直接缓冲区不可访问之后,才能释放关联的内存. 多年来,为了克服这些和其他局限性,已经提出了许多增强请求(例如, https://bugs.openjdk.java.net/browse/JDK-4496703[4496703]、 https://bugs.openjdk.java.net/browse/JDK-6558368[6558368]、
+https://bugs.openjdk.java.net/browse/JDK-4837564[4837564] 和 https://bugs.openjdk.java.net/browse/JDK-5029431[5029431]).这些限制中的许多限制是由于 `ByteBuffer` API不仅设计用于堆外内存访问,而且还用于批量数据的生产者/消费者交换,这对于例如字符集编码/解码和部分 I/O 操作至关重要.
+
+开发人员可以从Java代码访问外部内存的另一种常见途径是 `sun.misc.Unsafe` API. `Unsafe` 公开了许多内存访问操作(例如 `Unsafe::getInt` 和 `putInt`),这归功于聪明且相对通用的寻址模型,可用于堆内和堆外访问. 使用 `Unsafe` 访问内存非常高效:所有内存访问操作都定义为JVM内在函数,因此JIT会定期优化内存访问操作.
+不幸的是,根据定义,`Unsafe` API是不安全的-它允许访问任何内存位置(例如,`Unsafe::getInt` 需要很长的地址). 如果访问某些已释放的内存位置,则 Java 程序可能会使 JVM 崩溃. 最重要的是,`Unsafe` API不是受支持的 Java API,并且强烈建议不要使用它.
+
+尽管也可以使用 JNI 访问内存,但是与该解决方案相关的固有成本使其在实践中很少适用. 整个开发流程很复杂,因为 JNI 要求开发人员编写和维护 C 代码段. JNI 本质上也很慢,因为每次访问都需要 Java 到本地的转换.
+
+总而言之,在访问外部内存时,开发人员面临一个难题:开发人员应该使用安全但受限(可能效率较低)的路径(例如 `ByteBuffer`),还是应该放弃安全保证并接受不受支持和危险的路径？ API不安全？
+
+该 JEP 引入了受支持的,安全且有效的外部内存访问 API. 通过为访问外部内存的问题提供有针对性的解决方案,开发人员将摆脱现有 API 的限制和危险. 由于新的API是从头开始设计的,并且考虑到JIT优化,因此他们还将享受改进的性能.
+
+[[java-15-feature-foreign-memory-description]]
+=== 描述
+
+名为 `jdk.incubator.foreign` 的 https://openjdk.java.net/jeps/11[孵化器模块] 以相同的名称包形式提供了 `Foreign-Memory Access` API。 它引入了三个主要的抽象：`MemorySegment`，`MemoryAddress` 和 `MemoryLayout`：
+
+* `MemorySegment` 对具有给定空间和时间范围的连续内存区域进行建模。
+* `MemoryAddress` 对地址进行建模。 地址通常有两种：被检查的地址是给定内存段内的偏移量，而未检查的地址是其时空界限未知的地址，例如从不安全地从中获取内存地址的情况 本机代码。
+* `MemoryLayout` 是内存段内容的程序描述。
+
+可以从多种来源创建内存段，例如本机内存缓冲区，内存映射文件，Java 数组和字节缓冲区（直接或基于堆）。 例如，可以如下创建本机内存段：
+
+[source,java]
+----
+try (MemorySegment segment = MemorySegment.allocateNative(100)) {
+   ...
+}
+----
+
+这将创建一个与本地内存缓冲区关联的内存段，该缓冲区的大小为 100 字节。
+
+内存段在空间上是有界的，这意味着它们具有上限和下限。 任何尝试使用该段来访问这些界限之外的内存的操作都会导致异常。 正如使用 `try-with-resource` 构造所证明的那样，内存段也受到时间限制，这意味着它们必须先创建，使用并在不再使用时关闭。 关闭段始终是一个明确的操作，并且可能导致其他副作用，例如与该段关联的内存的重新分配。
+任何访问已关闭的内存段的尝试都将导致异常。 总之，空间和时间上的边界保证了外部存储器访问API的安全性，从而保证了它的使用不会使 JVM 崩溃。
+
+通过获取 var 句柄可以取消对与段相关联的内存的引用，这是Java 9中引入的数据访问的抽象。特别是，使用内存访问var句柄对段进行了解引用。 这种 var 句柄具有类型为 `MemoryAddress` 的访问坐标，该地址充当发生取消引用的地址。
+
+内存访问 var 句柄是使用 `MemoryHandles` 类中的工厂方法获得的。 例如，要设置本机内存段的元素，我们可以使用如下所示的 `memory-access` var句柄：
+
+[source,java]
+----
+VarHandle intHandle = MemoryHandles.varHandle(int.class,
+        ByteOrder.nativeOrder());
+
+try (MemorySegment segment = MemorySegment.allocateNative(100)) {
+    MemoryAddress base = segment.baseAddress();
+    for (int i = 0; i < 25; i++) {
+        intHandle.set(base.addOffset(i * 4), i);
+    }
+}
+----
+
+内存访问var句柄可以获取长类型的额外访问坐标，以支持更复杂的寻址方案，例如对原本平坦的内存段进行多维寻址。 通常通过调用在 `MemoryHandles` 类中定义的组合器方法来获得这种内存访问var句柄。
+例如，设置本机内存段元素的一种更直接的方法是通过索引的内存访问var句柄，其构造如下：
+
+[source,java]
+----
+VarHandle intHandle = MemoryHandles.varHandle(int.class,
+        ByteOrder.nativeOrder());
+VarHandle indexedElementHandle = MemoryHandles.withStride(intHandle, 4);
+
+try (MemorySegment segment = MemorySegment.allocateNative(100)) {
+    MemoryAddress base = segment.baseAddress();
+    for (int i = 0; i < 25; i++) {
+        indexedElementHandle.set(base, (long) i, i);
+    }
+}
+----
+
+为了增强API的表达能力，并减少对诸如上述示例中的显式数值计算的需求，可以使用 `MemoryLayout` 来以编程方式描述 `MemorySegment` 的内容。 例如，以上示例中使用的本机内存段的布局可以通过以下方式描述：
+
+[source,java]
+----
+SequenceLayout intArrayLayout
+    = MemoryLayout.ofSequence(25,
+        MemoryLayout.ofValueBits(32,
+            ByteOrder.nativeOrder()));
+----
+
+这将创建一个顺序存储器布局，其中给定的元素布局（32位值）重复 25 次。 一旦有了内存布局，就可以摆脱代码中的所有手动数值计算，还可以简化所需内存访问 var 句柄的创建，如以下示例所示：
+
+[source,java]
+----
+SequenceLayout intArrayLayout
+    = MemoryLayout.ofSequence(25,
+        MemoryLayout.ofValueBits(32,
+            ByteOrder.nativeOrder()));
+
+VarHandle indexedElementHandle
+    = intArrayLayout.varHandle(int.class,
+        PathElement.sequenceElement());
+
+try (MemorySegment segment = MemorySegment.allocateNative(intArrayLayout)) {
+    MemoryAddress base = segment.baseAddress();
+    for (int i = 0; i < intArrayLayout.elementCount().getAsLong(); i++) {
+        indexedElementHandle.set(base, (long) i, i);
+    }
+}
+----
+
+在此示例中，布局对象通过创建布局路径来驱动内存访问 var 句柄的创建，该路径用于从复杂的布局表达式中选择嵌套的布局。 布局对象还基于从布局派生的大小和对齐信息来驱动本机内存段的分配。
+先前示例（25）中的循环常数已被序列布局的元素计数替换。
+
+[[java-15-feature-foreign-memory-description-uncheck]]
+=== 已检查与未检查的地址
+
+取消引用操作仅适用于已检查的内存地址。 经检查的地址是API中的典型地址，例如从上述代码（segment.baseAddress（））中的内存段获得的地址。 但是，如果未检查内存地址并且没有任何关联的段，则无法安全地对其进行取消引用，因为运行时无法知道与该地址关联的空间和时间范围。 未检查地址的示例包括：
+
+* NULL地址（`MemoryAddress::NULL`）
+* 从长值构造的地址（通过 `MemoryAddress::ofLong` 工厂）
+
+要取消引用未检查的地址，客户端有两个选择。 如果已知地址位于客户端已经拥有的内存段内，则客户端可以执行所谓的 rebase 操作（`MemoryAddress::rebase`），其中相对于段的基址重新解析未检查地址的偏移量，
+从而得出 可以安全地取消引用的新地址实例。 或者，如果不存在这样的段，则客户端可以使用特殊的 `MemorySegment::ofNativeRestricted` 工厂不安全地创建一个段。
+该工厂有效地将空间和时间范围附加到原本未经检查的地址上，以允许取消引用操作。
+
+顾名思义，此操作本质上是不安全的，必须小心使用。 因此，仅当 JDK 属性 `foreign.restricted` 设置为 `deny` 以外的值时，外部存储访问API才允许调用此工厂。 该属性的可能值为：
+
+* deny - issues a runtime exception on each restricted call. This is the default value;
+* permit - allows restricted calls;
+* warn - like permit, but also prints a one-line warning on each restricted call.
+* debug - like permit, but also dumps the stack corresponding to any given restricted.
+
+我们计划在将来使对受限操作的访问与模块系统更加集成； 也就是说，某些模块可能需要受限的本机访问； 当执行依赖于所述模块的应用程序时，用户可能需要向所述模块提供权限以执行受限的本机操作，否则运行时将拒绝构建该应用程序的模块图。
+
+[[java-15-feature-foreign-memory-description-confinement]]
+=== 限制
+
+除了空间和时间范围外，片段还具有线程限制功能。 也就是说，一个段是由创建它的线程所拥有的，其他任何线程都不能访问该段上的内容或对其执行某些操作（例如关闭）。 线程限制虽然是限制性的，但即使在多线程环境中，对于保证最佳的内存访问性能也至关重要。 如果要删除线程约束限制，则可能有多个线程同时访问和关闭同一段，这可能会使Foreign Memory Access API提供的安全保证无效，除非引入了某种非常昂贵的锁定形式 阻止进入与近距离比赛。
+
+外部内存访问API提供了两种方法来放松线程限制的障碍。 首先，线程可以通过执行显式的切换操作来协作地共享段，其中一个线程在给定的段上释放其所有权并将其转移到另一个线程上。 考虑以下代码：
+
+[source,java]
+----
+MemorySegment segmentA = MemorySegment.allocateNative(10); // confined by thread A
+...
+var segmentB = segmentA.withOwnerThread(threadB); // confined by thread B
+----
+
+这种访问模式也称为串行限制，并且在每次仅需要一个线程访问一个段的生产者/消费者用例中可能有用。 请注意，为了确保切换操作的安全性，API会杀死原始段（就像调用了close一样，但不释放底层内存），并返回具有正确所有者的新段。 该实现还确保在第二个线程访问该段时，第一个线程的所有写操作均已刷新到内存中。
+
+其次，通过从存储段中获取一个 `Splitter` 实例，仍然可以并行处理存储段的内容（例如，使用诸如 Fork/Join 之类的框架）。 例如，要对一个内存段的所有 32 位值进行并行求和，我们可以使用以下代码：
+
+[source,java]
+----
+SequenceLayout seq = MemoryLayout.ofSequence(1_000_000, MemoryLayouts.JAVA_INT);
+SequenceLayout seq_bulk = seq.reshape(-1, 100);
+VarHandle intHandle = seq.varHandle(int.class, PathElement.sequenceElement());
+
+int sum = StreamSupport.stream(MemorySegment.spliterator(segment, seq_bulk), true)
+                .mapToInt(slice -> {
+					int res = 0;
+        			MemoryAddress base = slice.baseAddress();
+        			for (int i = 0; i < 100 ; i++) {
+            			res += (int)intHandle.get(base, (long)i);
+        			}
+        			return res;
+                }).sum();
+----
+
+`MemorySegment::spliterator` 获取一个片段，一个序列布局，然后返回一个分割器实例，该实例将片段分割成与提供的序列布局中的元素相对应的块。 在这里，我们要对包含一百万个元素的数组中的元素求和； 现在，进行并行求和时，每个计算只处理一个元素，效率低下，因此我们使用 layout API 来导出批量序列布局。
+批量布局是一种顺序布局，其大小与原始布局相同，但是元素以 100 个元素为一组进行排列-这应该使其更易于并行处理。
+
+有了分隔符后，就可以使用它来构造并行流并并行地对段的内容求和。 虽然从多个线程同时访问此处的段，但是访问是以常规方式发生的：从原始段创建切片，并将其分配给线程以执行一些计算。 外部存储器访问运行时知道线程当前是否正在通过拆分器访问该段的一部分，因此可以通过在同一段上进行并行处理时不允许关闭该段来加强安全性。
+
+[[java-15-feature-foreign-memory-alternatives]]
+=== 备择方案
+
+继续使用现有的 API，例如 `java.nio.ByteBuffer` 或 `sun.misc.Unsafe` 或更糟的是 JNI。
+
+[[java-15-feature-foreign-memory-risk]]
+=== 风险与假设
+
+创建一种以安全高效的方式访问外部存储器的 API 是一项艰巨的任务。 由于需要在每次访问时执行前几节中描述的空间和时间检查，因此至关重要的是，JIT编译器能够通过例如将其提升到热循环之外来优化这些检查。 JIT实现可能需要做一些工作，以确保API的使用与现有API（例如ByteBuffer和Unsafe）的使用一样高效和可优化。
+
+[[java-15-feature-foreign-memory-dependencies]]
 === 依赖
 
-[[java-15-feature]]
-== 外部内存访问 API(二次孵化)
+该 JEP 中描述的 API 可能会帮助开发本机互操作支持，这是 https://openjdk.java.net/projects/panama/[Panama 项目] 的目标。 该 API 还可以用于访问非易失性存储器，这已经可以通过 https://openjdk.java.net/jeps/352[JEP 352（非易失性映射字节缓冲区）]以更通用，更有效的方式访问。
+
 
 [[java-15-feature-record]]
 == Record (第二次预览)
 
-[[java-15-feature-sealed-summary]]
+[[java-15-feature-record-summary]]
 === 简介
 
-[[java-15-feature-sealed-goals]]
-=== 目标
+通过 https://cr.openjdk.java.net/~briangoetz/amber/datum.html[records] 增强 Java 编程语言。Record 提供了一种紧凑的语法来声明类，这些类是不变数据的持有者。这是 JDK 14 中的 https://openjdk.java.net/jeps/12[预览语言功能]。
 
-[[java-15-feature-sealed-non-goals]]
+[[java-15-feature-record-motivation]]
+=== 动机和目标
+
+很多程序员一样抱怨 “Java 太啰嗦” 或有太多的 “繁文缛节 ”,开发人员想要创建纯数据载体类(plain data carriers)通常都必须编写大量低价值、
+重复的、容易出错的代码.如:构造函数、 `getter/setter`、 `equals()`、 `hashCode()` 以及 `toString()` 等 .
+
+以至于很多人选择使用 IDE 的功能来自动生成这些代码.还有一些开发会选择使用一些第三方类库,如 Lombok 等来生成这些方法,从而会导致了令人吃惊的表现( surprising behavior )和糟糕的可调试性 (poor debuggability) .
+
+从表面上看，records 主要作用是减少代码量，但是我们选择了一个更语义的目标：为数据建模。 （如果语义正确，则样例将自行处理。）声明不可变的，行为良好的名义数据聚合应该容易，清楚且简洁。
+
+[[java-15-feature-record-non-goals]]
 === 非目标实现
 
-[[java-15-feature-sealed-motivation]]
-=== 动机
+这不是挑起 "war on boilerplate"； 特别是，使用 JavaBean 命名约定来解决可变类的问题并不是目标。 添加特性（例如属性，元编程和注释驱动的代码生成）不是目标，即使它们经常被提议作为解决此问题的“解决方案”。
 
-[[java-15-feature-sealed-description]]
+[[java-15-feature-record-description]]
 === 描述
 
-[[java-15-feature-sealed-alternatives]]
+Records 是 Java 语言中一种新型的类型声明。 像枚举一样，Records 是类的一种受限形式。 它声明其表示形式，并提交与该表示形式匹配的 API。 Records 放弃了类通常享有的自由：将 API 与表示分离的能力。 因此，Records 获得了很大程度的简洁性。
+
+Records 有名称和状态描述。状态描述声明 Records 的组件。可选地，Records 有一个主体。例如:
+
+[source,java]
+----
+record Point(int x, int y) { }
+----
+
+当你用 record 声明一个类时,该类将自动拥有以下功能:
+
+* 状态描述每个组成部分的私有最终字段；
+* 状态描述的每个组件的公共读访问器方法，与组件具有相同的名称和类型
+* 一个公共构造函数，其签名与状态描述相同，该构造函数根据相应的参数初始化每个字段；
+* equals 和 hashCode 的实现表示两个记录如果类型相同且包含相同的状态，则它们相等。 和
+* toString 的实现，其中包括所有记录组件的字符串表示形式及其名称。
+
+换句话说，record 的表示是从状态描述中机械地，完全地从状态描述中得出的，构造，解构（最初是访问器，当我们有模式匹配时是解构模式），相等性和显示的协议也是如此。
+
+[[java-15-feature-record-description-restrictions]]
+==== records 限制
+
+Records 不能扩展任何其他类，并且不能声明与状态描述组件相对应的私有最终字段以外的实例字段。 声明的任何其他字段都必须是静态的。 这些限制确保状态描述仅定义表示形式。
+
+Records 是隐式最终的，并且不能是抽象的。 这些限制强调 Records 的API仅由其状态描述定义，并且以后不能由另一个类或 Records 进行增强。
+
+Records 的组成部分是隐式最终的。 此限制体现了一种不可更改的默认策略，该策略广泛适用于数据聚合。
+
+除了上述限制之外，Records 的行为类似于普通类：可以将它们声明为顶级或嵌套，可以是通用的，可以实现接口，并且可以通过 new 关键字实例化。 Records 的主体可以声明静态方法，静态字段，静态初始化器，构造函数，实例方法和嵌套类型。 可以对记录以及状态描述中的各个组件进行注释。 如果记录是嵌套的，则它是隐式静态的； 这避免了立即封闭的实例，该实例将以静默方式将状态添加到记录中。
+
+[[java-15-feature-record-description-explicitly]]
+==== 显式声明 record 的成员
+
+也可以显式声明从状态描述自动派生的任何成员。 但是，不小心实现访问器或 equals/hashCode 可能会破坏记录的语义不变性。
+
+为明确声明规范构造函数（签名与记录的状态描述匹配的规范构造函数）提供了特殊考虑。 可以在没有正式参数列表的情况下声明构造函数（在这种情况下，假定与状态描述相同），并且在正常构造函数主体正常完成时绝对未分配的任何记录字段都从其对应的形式参数(this.x = x)。
+这允许显式规范构造函数仅执行其参数的验证和规范化，并省略明显的字段初始化。 例如：
+
+[source,java]
+----
+record Range(int lo, int hi) {
+  public Range {
+    if (lo > hi)  /* referring here to the implicit constructor parameters */
+      throw new IllegalArgumentException(String.format("(%d,%d)", lo, hi));
+  }
+}
+----
+
+[[java-15-feature-record-description-grammar]]
+==== 语法
+
+[source,java]
+----
+RecordDeclaration:
+  {ClassModifier} record TypeIdentifier [TypeParameters]
+    (RecordComponents) [SuperInterfaces] [RecordBody]
+
+RecordComponents:
+  {RecordComponent {, RecordComponent}}
+
+RecordComponent:
+  {Annotation} UnannType Identifier
+
+RecordBody:
+  { {RecordBodyDeclaration} }
+
+RecordBodyDeclaration:
+  ClassBodyDeclaration
+  RecordConstructorDeclaration
+
+RecordConstructorDeclaration:
+  {Annotation} {ConstructorModifier} [TypeParameters] SimpleTypeName
+    [Throws] ConstructorBody
+----
+
+[[java-15-feature-record-description-annotations]]
+==== record 组件上的注解
+
+如果声明注释适用于记录组件，参数，字段或方法，则可以在记录组件上使用声明注释。 适用于这些目标中任何一个的声明注释将传播到任何强制成员的隐式声明。
+
+修改记录组件类型的类型批注会传播到授权成员的隐式声明中的类型（例如，构造函数参数，字段声明和方法声明）。 强制成员的显式声明必须与相应记录组件的类型完全匹配，但不包括类型注释。
+
+[[java-15-feature-record-description-reflection]]
+==== Reflection API
+
+以下公共方法将添加到java.lang.Class：
+
+* RecordComponent[] getRecordComponents()
+* boolean isRecord()
+
+方法 `getRecordComponents()` 返回一个 `java.lang.reflect.RecordComponent` 对象的数组，其中 `java.lang.reflect.RecordComponent` 是一个新类。
+此数组的元素与 Record 的组件相对应，其顺序与 Record 声明中出现的顺序相同。 可以从数组中的每个 `RecordComponent` 提取其他信息，包括其名称，类型，泛型类型，注解及其访问器方法。
+
+如果将给定的类声明为 Record，则 `isRecord()` 方法将返回 `true`。 （与 `isEnum()` 比较。）
+
+[source,java]
+----
+record Point(int x, int y) { }
+----
+[[java-15-feature-record-alternatives]]
 === 备选方案
 
-[[java-15-feature-sealed-dependencies]]
+记录可以视为元组的名义形式。 代替记录，我们可以实现结构化元组。 但是，虽然元组可以提供表示某些聚合的轻量级方法，但结果通常是劣等的聚合：
++
+* Java 哲学的中心方面是名称很重要。 类及其成员具有有意义的名称，而元组和元组组件则没有。 也就是说，具有 firstName 和 lastName 属性的 Person 类比 String 和 String 的匿名元组更清晰和安全。
+* 类通过其构造函数支持状态验证。 元组不。 某些数据集合（例如数字范围）具有不变量，如果由构造函数强制实施，则此后可以依赖这些不变量； 元组不提供此功能。
+* 类可以具有基于其状态的行为。 将状态和行为并置放置可以使行为更易于发现和访问。 元组是原始数据，不提供此类功能。
+
+[[java-15-feature-record-dependencies]]
 === 依赖
 
-[[java-15-feature]]
+https://openjdk.java.net/jeps/360[封闭类类型] 的 Record 效果很好； Record 和封闭类一起构成通常称为 https://en.wikipedia.org/wiki/Algebraic_data_type[代数数据类型]的构造。
+此外，Record 自然会适合 https://cr.openjdk.java.net/~briangoetz/amber/pattern-match.html[模式匹配]。 由于 Record 将其 API 与其状态描述相结合，因此我们最终也将能够导出记录的解构模式，并使用封闭类类型信息来确定具有类型模式或解构模式的 switch 的穷举性。
+
+[[java-15-feature-rmi]]
 == 弃用RMI激活机制
 
-[[java-15-feature-sealed-summary]]
+[[java-15-feature-rmi-summary]]
 === 简介
 
-[[java-15-feature-sealed-goals]]
-=== 目标
+弃用 https://docs.oracle.com/en/java/javase/14/docs/specs/rmi/activation.html[RMI 激活机制] 以便将来删除。 RMI激活是RMI的过时部分，自 Java 8  开始，RMI 激活是可选的。不会弃用RMI的其他部分。
 
-[[java-15-feature-sealed-non-goals]]
-=== 非目标实现
-
-[[java-15-feature-sealed-motivation]]
+[[java-15-feature-rmi-motivation]]
 === 动机
 
-[[java-15-feature-sealed-description]]
+[[java-15-feature-rmi-motivation-obsolete]]
+==== RMI 激活实际上已经过时了
+
+分布式系统至少在过去十年中一直基于Web技术。 Web服务领域已解决了有关穿越防火墙，过滤请求，身份验证和安全性的问题。 延迟实例化资源由负载平衡器，业务流程和容器处理。 这些机制在分布式系统的RMI激活模型中均不存在。
+
+[[java-15-feature-rmi-motivation-disused]]
+==== RMI 激活通常被废弃
+
+RMI激活的使用量几乎消失了。 没有证据表明有任何新的应用程序被编写为使用RMI激活，并且有证据表明很少有现有应用程序使用RMI激活。 对各种开放源代码库的搜索几乎没有发现任何与激活相关的API。 几年来没有收到有关RMI激活的外部生成的错误报告。 在Stack Overflow Q＆A网站上进行的查询显示了大约2,200个有关RMI的问题，但其中只有14个提到“激活”。 关于RMI激活的最新JavaRanch论坛问题发布于2003年，而该论坛每天都会收到数十个其他主题的帖子。
+
+RMI激活在 https://docs.oracle.com/javase/8/docs/api/java/rmi/activation/package-summary.html#package.description[Java 8] 中成为可选的。对此规范的更改没有异议，也没有关于激活的可选性的错误报告。
+
+[[java-15-feature-rmi-motivation-maintenance]]
+==== RMI 激活会带来持续的维护负担
+
+维护 RMI 激活（作为 Java 平台的一部分）会产生持续的维护成本。 它增加了 RMI 的复杂性。 RMI 仍在维护中，RMI激活增加了该维护的费用。
+
+RMI 激活在 JDK 中具有一组测试。 这些测试通常调用RMI激活服务（rmid）以及客户端和服务器 JVM。 这导致测试运行缓慢，并且这些测试的多进程性质导致源源不断的间歇性虚假故障。
+
+RMI 激活的规范，实施和测试都会带来持续的维护开销。 可以删除RMI激活，而不会影响其余的 RMI。 取消 RMI 激活并不会降低 Java 对开发人员的价值，但确实会降低 JDK 的长期维护成本。
+
+[[java-15-feature-rmi-description]]
 === 描述
 
-[[java-15-feature-sealed-alternatives]]
+RMI激活机制允许基于RMI的服务导出其存根超过其远程对象或包含该对象的JVM生存期的存根。 使用常规的（不可激活的）RMI，一旦远程对象被破坏，存根就变得无效。 要从这种情况中恢复过来，需要客户端实施复杂的错误处理逻辑。
+当客户端在可激活的存根上调用方法时，RMI激活服务将按需实例化远程对象，从而减轻了客户端处理无效存根的负担。 这似乎是一种有价值的机制，但是，正如“动机”部分中所述，RMI激活的实际使用量正在逐渐减少。
+
+该 JEP 将弃用 RMI 激活机制，以备将来删除。 这需要对 Java 平台进行以下更改：
++
+* 将 `@Deprecated(forRemoval=true)` 添加到 `java.rmi.activation` 包中的所有公共类和接口。
+* 在 https://docs.oracle.com/en/java/javase/14/docs/api/java.rmi/java/rmi/activation/package-summary.html[`java.rmi.activation`] 包声明中添加 `@deprecated` javadoc标记和说明。
+* 在 https://docs.oracle.com/en/java/javase/14/docs/api/java.rmi/module-summary.html[`java.rmi`] 模块规范中添加有关弃用激活的通知。
+* 在 RMI 规范的 https://docs.oracle.com/en/java/javase/14/docs/specs/rmi/activation.html[RMI 激活章节] 中添加弃用通知。
+
+JDK也将进行以下更改：
+
+* 将 `@Deprecated(forRemoval=true)` 添加到 `com.sun.rmi.rmid.ExecOptionPermission` 和以及 `com.sun.rmi.rmid` 包中  `ExecPermission` 类。
+* 更改 https://docs.oracle.com/en/java/javase/14/docs/specs/man/rmid.html[rmid] 工具以发出有关弃用的警告消息。
+* 向 https://docs.oracle.com/en/java/javase/14/docs/specs/man/rmid.html[rmid工具文档] 页面添加警告通知。 这将包括弃用rmid工具本身的通知。 它还将包括在com.sun.rmi.rmid中弃用权限类的通知，因为该页面似乎是JDK中记录这些权限类的唯一位置。
+
+[[java-15-feature-rmi-alternatives]]
 === 备选方案
 
-[[java-15-feature-sealed-dependencies]]
-=== 依赖
+[[java-15-feature-rmi-alternatives-leave]]
+=== 保留 RMI 激活
+
+一种替代方法是像过去几年一样保留 RMI 激活。 它将继续施加持续的质量风险和维护负担。 持续的成本是连续的，并且不能由这种基本未使用的机制带给平台的最小值来证明。
+
+[[java-15-feature-rmi-alternatives-builds]]
+=== 从 JDK 构建中删除RMI激活
+
+RMI 激活是 Java 平台的可选部分，因此可以从 JDK 构建中省略。 可以删除实际的实现，并用引发 `UnsupportedOperationException` 的方法代替。 测试也可以删除。
+
+但是，JDK 是 Java 平台的参考实现，并且参考实现要求包含所有可选功能，以便可以对其进行测试。 因此，不能简单地从 JDK 中删除 RMI 激活实施和测试。 相反，它们必须由构建系统有条件地配置。 激活将包含在参考实现的构建中，以便可以对其进行正确的测试，并且有可能在生产构建中将其省略。
+
+这将增加系统的复杂性。 构建过程将需要增强以支持两种模式。 持续集成系统将需要添加运行以构建和测试这两种配置。 实施和测试仍存在于系统中，并且必须持续进行维护。 因此，从JDK构建中删除RMI激活不会减少总体维护负担，这是本JEP的目标。
+
+[[java-15-feature-rmi-risks]]
+=== 风险与假设
+
+第三方产品可能会使用激活，因此它们的弃用和最终移除会对其造成影响。 鉴于过去几年缺乏有关激活更改的意见，这不太可能。 在早期的JDK版本中，激活仍然存在，其中一些版本具有长期支持。 依赖于激活的应用程序在迁移到更新的技术时，可以继续依靠现有的受支持JDK一段时间。
+
+https://river.apache.org/[Apache River] 项目包含 RMI 和 Jini 技术的分支版本，包括激活机制。 River 的这一部分取决于 Java 的 `java.rmi.activation` 类型。 从 Java 删除 RMI 激活将阻止 River 项目迁移到 Java 的最新版本，除非他们能够删除对 Java 类型的依赖。
