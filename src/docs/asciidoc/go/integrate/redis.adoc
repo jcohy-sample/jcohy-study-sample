@@ -314,7 +314,7 @@ func setOperation(client *redis.Client) {
 
 | hvals(key) | 返回名称为 key 的 hash 中所有键对应的 value
 
-| hgetall(key) | 返回名称为 key 的 hash 中所有的键（field）及其对应的 value
+| hgetall(key) | 返回名称为 key 的 hash 中所有的键(field)及其对应的 value
 |===
 
 同样地, 在 go-redis 中也可以找到对应的方法, 下面是一个简单的示例:

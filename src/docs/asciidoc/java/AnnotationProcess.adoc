@@ -8,7 +8,7 @@ element指的是一系列与之相关的接口集合，它们位于javax.lang.mo
 
 image::{base-images}/java-annotation1.png[]
 
-element 是代表程序的一个元素，这个元素可以是：包、类/接口、属性变量、方法/方法形参、泛型参数。element是java-apt(编译时注解处理器)技术的基础，因此如果要编写此类框架，熟悉element是必须的。
+element 是代表程序的一个元素，这个元素可以是: 包、类/接口、属性变量、方法/方法形参、泛型参数。element是java-apt(编译时注解处理器)技术的基础，因此如果要编写此类框架，熟悉element是必须的。
 
 === element及其子接口
 

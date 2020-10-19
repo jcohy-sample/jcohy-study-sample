@@ -118,7 +118,7 @@ Redis:REmote DIctionary Server(远程字典服务器).它是是完全开源免�
 
 | tcp-keepalive 0 | 单位为秒,如果设置为 0,则不会进行 Keepalive 检测,建议设置成 60 
 
-| loglevel notice | 指定了服务端日志的级别. 级别包括: debug（很多信息, 方便开发、测试）, verbose（许多有用的信息, 但是没有debug级别信息多）, notice（适当的日志级别, 适合生产环境）, warn（只有非常重要的信息）
+| loglevel notice | 指定了服务端日志的级别. 级别包括: debug(很多信息, 方便开发、测试), verbose(许多有用的信息, 但是没有debug级别信息多), notice(适当的日志级别, 适合生产环境), warn(只有非常重要的信息)
 
 | logfile "" | 指定了记录日志的文件. 空字符串的话, 日志会打印到标准输出设备. 后台运行的redis标准输出是/dev/null.
 
@@ -168,7 +168,7 @@ save 60 10000 | RDB是整个内存的压缩过的Snapshot,RDB的数据结构,可
 
 如果slave-serve-stale-data 设置为 no, 除去 INFO 和 SLAVOF 命令之外的任何请求都会返回一个错误 ”SYNC with master in progress”
 
-| slave-read-only yes | 作为从服务器, 默认情况下是只读的（yes）, 可以修改成NO, 用于写（不建议）.
+| slave-read-only yes | 作为从服务器, 默认情况下是只读的(yes), 可以修改成NO, 用于写(不建议).
 
 | repl-diskless-sync no | 是否使用 socket 方式复制数据. 目前 redis 复制提供两种方式, disk 和 socket. 如果新的 slave 连上来或者重连的 slave 无法部分同步, 就会执行全量同步, master 会生成 rdb 文件. 有2种方式: disk 方式是 master 创建一个新的进程把 rdb 文件保存到磁盘, 再把磁盘上的 rdb 文件传递给 slave. socket 是 master 创建一个新的进程,
 直接把 rdb 文件以 socket 的方式发给 slave. disk 方式的时候, 当一个 rdb 保存的过程中, 多个 slave 都能共享这个 rdb 文件. socket 的方式就的一个个 slave 顺序复制. 在磁盘速度缓慢, 网速快的情况下推荐用 socket 方式.
@@ -239,7 +239,7 @@ volatile-lru: 利用LRU算法移除设置过过期时间的 key.
 
 volatile-random: 随机移除设置过过期时间的 key.
 
-volatile-ttl: 移除即将过期的 key, 根据最近过期时间来删除（辅以TTL）
+volatile-ttl: 移除即将过期的 key, 根据最近过期时间来删除(辅以TTL)
 
 allkeys-lru: 利用 LRU 算法移除任何 key.
 
@@ -277,11 +277,11 @@ everysec: 表示每秒执行一次fsync, 可能会导致丢失这1s数据.
 | no-appendfsync-on-rewrite no | 在 aof 重写或者写入 rdb 文件的时候, 会执行大量IO, 此时对于 everysec 和 always 的 aof 模式来说, 执行 fsync 会造成阻塞过长时间, `no-appendfsync-on-rewrite` 字段设置为默认设置为 `no`.
 如果对延迟要求很高的应用, 这个字段可以设置为 `yes`, 否则还是设置为 `no`, 这样对持久化特性来说这是更安全的选择. 设置为 `yes` 表示 rewrite 期间对新写操作不 fsync,暂时存在内存中,等 rewrite 完成后再写入, 默认为 `no`, 建议 `yes`. Linux的默认 fsync 策略是 `30` 秒. 可能丢失 `30` 秒数据.
 
-| auto-aof-rewrite-percentage 100 | aof 自动重写配置. 当目前 aof 文件大小超过上一次重写的 aof 文件大小的百分之多少进行重写, 即当 aof 文件增长到一定大小的时候 Redis 能够调用 bgrewriteaof 对日志文件进行重写. 当前 AOF 文件大小是上次日志重写得到 AOF 文件大小的二倍（设置为 `100`）时, 自动启动新的日志重写过程.
+| auto-aof-rewrite-percentage 100 | aof 自动重写配置. 当目前 aof 文件大小超过上一次重写的 aof 文件大小的百分之多少进行重写, 即当 aof 文件增长到一定大小的时候 Redis 能够调用 bgrewriteaof 对日志文件进行重写. 当前 AOF 文件大小是上次日志重写得到 AOF 文件大小的二倍(设置为 `100`)时, 自动启动新的日志重写过程.
 
 | auto-aof-rewrite-min-size 64mb | 设置允许重写的最小 aof 文件大小, 避免了达到约定百分比但尺寸仍然很小的情况还要重写
 
-| aof-load-truncated yes | aof 文件可能在尾部是不完整的, 当 redis 启动的时候, aof 文件的数据被载入内存. 重启可能发生在 redis 所在的主机操作系统宕机后, 尤其在 ext4 文件系统没有加上 `data=ordered` 选项（redis 宕机或者异常终止不会造成尾部不完整现象. ）出现这种现象,
+| aof-load-truncated yes | aof 文件可能在尾部是不完整的, 当 redis 启动的时候, aof 文件的数据被载入内存. 重启可能发生在 redis 所在的主机操作系统宕机后, 尤其在 ext4 文件系统没有加上 `data=ordered` 选项(redis 宕机或者异常终止不会造成尾部不完整现象. )出现这种现象,
 可以选择让 redis 退出, 或者导入尽可能多的数据. 如果选择的是 `yes`, 当截断的 aof 文件被导入的时候, 会自动发布一个 log 给客户端然后 load. 如果是 `no`, 用户必须手动 redis-check-aof 修复 AOF 文件才可以.
 |===
 
@@ -293,7 +293,7 @@ everysec: 表示每秒执行一次fsync, 可能会导致丢失这1s数据.
 |===
 | 参数 | 描述
 
-| lua-time-limit 5000 | 如果达到最大时间限制（毫秒）, redis 会记个 log, 然后返回 error. 当一个脚本超过了最大时限. 只有 SCRIPT KILL 和 SHUTDOWN NOSAVE 可以用. 第一个可以杀没有调 write 命令的东西. 要是已经调用了 write, 只能用第二个命令杀.
+| lua-time-limit 5000 | 如果达到最大时间限制(毫秒), redis 会记个 log, 然后返回 error. 当一个脚本超过了最大时限. 只有 SCRIPT KILL 和 SHUTDOWN NOSAVE 可以用. 第一个可以杀没有调 write 命令的东西. 要是已经调用了 write, 只能用第二个命令杀.
 |===
 
 [[nosql-redis-conf-cluster]]
@@ -404,7 +404,7 @@ A 参数 g$lshzxe 的别名
 
 | zset-max-ziplist-value 64  | value 大小小于等于 `zset-max-ziplist-value` 用 ziplist, 大于 `zset-max-ziplist-value` 用 zset.
 
-| hll-sparse-max-bytes 3000  | value大小小于等于 `hll-sparse-max-bytes` 使用稀疏数据结构（sparse）, 大于 `hll-sparse-max-bytes` 使用稠密的数据结构（dense）. 一个比 16000 大的 value 是几乎没用的, 建议的 value 大概为 `3000`. 如果对 CPU 要求不高, 对空间要求较高的, 建议设置到 `10000` 左右.
+| hll-sparse-max-bytes 3000  | value大小小于等于 `hll-sparse-max-bytes` 使用稀疏数据结构(sparse), 大于 `hll-sparse-max-bytes` 使用稠密的数据结构(dense). 一个比 16000 大的 value 是几乎没用的, 建议的 value 大概为 `3000`. 如果对 CPU 要求不高, 对空间要求较高的, 建议设置到 `10000` 左右.
 
 | activerehashing yes  | Redis 将在每 100 毫秒时使用 1 毫秒的 CPU 时间来对 redis 的 hash 表进行重新 hash, 可以降低内存的使用. 当你的使用场景中, 有非常严格的实时性需要, 不能够接受 Redis 时不时的对请求有 2 毫秒的延迟的话, 把这项配置为 `no`. 如果没有这么严格的实时性要求, 可以设置为 `yes`, 以便能够尽可能快的释放内存.
 

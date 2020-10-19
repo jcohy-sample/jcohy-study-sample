@@ -248,7 +248,7 @@ func TestStruct(a interface{}) {
 	fmt.Printf("struct has %d methods\n", numOfMethod)
 
 	//var params []reflect.Value
-	//方法的排序默认是按照 函数名的排序（ASCII码）
+	//方法的排序默认是按照 函数名的排序(ASCII码)
 	val.Method(1).Call(nil) //获取到第二个方法. 调用它
 
 

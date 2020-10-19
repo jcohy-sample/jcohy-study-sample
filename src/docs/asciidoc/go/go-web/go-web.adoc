@@ -113,9 +113,9 @@ type Server struct {
 	// 请求的头域最大长度，如为0则用DefaultMaxHeaderBytes
 	MaxHeaderBytes int
 
-	// TLSNextProto（可选地）指定一个函数来在一个NPN型协议升级出现时接管TLS连接的所有权。
+	// TLSNextProto(可选地)指定一个函数来在一个NPN型协议升级出现时接管TLS连接的所有权。
     // 映射的键为商谈的协议名；映射的值为函数，该函数的Handler参数应处理HTTP请求，
-    // 并且初始化Handler.ServeHTTP的*Request参数的TLS和RemoteAddr字段（如果未设置）。
+    // 并且初始化Handler.ServeHTTP的*Request参数的TLS和RemoteAddr字段(如果未设置)。
     // 连接在函数返回时会自动关闭。
 	TLSNextProto map[string]func(*Server, *tls.Conn, Handler)
 
@@ -137,7 +137,7 @@ type Server struct {
 	ConnContext func(ctx context.Context, c net.Conn) context.Context
 
 	disableKeepAlives int32     // 原子访问。
-	inShutdown        int32     // 原子访问（非零表示我们处于关机状态）
+	inShutdown        int32     // 原子访问(非零表示我们处于关机状态)
 	nextProtoOnce     sync.Once // guards setupHTTP2_* init
 	nextProtoErr      error     // 如果使用了 http2.ConfigureServer 的结果
 
@@ -224,13 +224,13 @@ type ServeMux struct {
 
 ServeMux 类型是 HTTP 请求的多路转接器。它会将每一个接收的请求的 URL 与一个注册模式的列表进行匹配，并调用和URL最匹配的模式的处理器。
 
-模式是固定的、由根开始的路径，如 `"/favicon.ico"`，或由根开始的子树，如 `"/images/"`（注意结尾的斜杠）。较长的模式优先于较短的模式，因此如果模式 `"/images/"` 和 `"/images/thumbnails/"` 都注册了处理器，后一个处理器会用于路径以 `"/images/thumbnails/"` 开始的请求，前一个处理器会接收到其余的路径在 `"/images/"` 子树下的请求。
+模式是固定的、由根开始的路径，如 `"/favicon.ico"`，或由根开始的子树，如 `"/images/"`(注意结尾的斜杠)。较长的模式优先于较短的模式，因此如果模式 `"/images/"` 和 `"/images/thumbnails/"` 都注册了处理器，后一个处理器会用于路径以 `"/images/thumbnails/"` 开始的请求，前一个处理器会接收到其余的路径在 `"/images/"` 子树下的请求。
 
 注意，因为以斜杠结尾的模式代表一个由根开始的子树，模式 `"/"` 会匹配所有的未被其他注册的模式匹配的路径，而不仅仅是路径 `"/"`。
 
-模式也能（可选地）以主机名开始，表示只匹配该主机上的路径。指定主机的模式优先于一般的模式，因此一个注册了两个模式 `"/codesearch"` 和 `"codesearch.google.com/"` 的处理器不会接管目标为 `"http://www.google.com/"` 的请求。
+模式也能(可选地)以主机名开始，表示只匹配该主机上的路径。指定主机的模式优先于一般的模式，因此一个注册了两个模式 `"/codesearch"` 和 `"codesearch.google.com/"` 的处理器不会接管目标为 `"http://www.google.com/"` 的请求。
 
-ServeMux 还会注意到请求的 URL 路径的无害化，将任何路径中包含 `"."` 或 `".."` 元素的请求重定向到等价的没有这两种元素的 URL。（参见 `path.Clean` 函数）
+ServeMux 还会注意到请求的 URL 路径的无害化，将任何路径中包含 `"."` 或 `".."` 元素的请求重定向到等价的没有这两种元素的 URL。(参见 `path.Clean` 函数)
 
 == 操作数据库
 
@@ -244,32 +244,32 @@ Go 语言的 `net/http` 包提供了一系列用于表示 HTTP 报文的结构�
 [source,go]
 ----
 type Request struct {
-    // Method指定HTTP方法（GET、POST、PUT等）。对客户端，""代表GET。
+    // Method指定HTTP方法(GET、POST、PUT等)。对客户端，""代表GET。
     Method string
     // URL在服务端表示被请求的URI，在客户端表示要访问的URL。
     //
-    // 在服务端，URL字段是解析请求行的URI（保存在RequestURI字段）得到的，
+    // 在服务端，URL字段是解析请求行的URI(保存在RequestURI字段)得到的，
     // 对大多数请求来说，除了Path和RawQuery之外的字段都是空字符串。
-    // （参见RFC 2616, Section 5.1.2）
+    // (参见RFC 2616, Section 5.1.2)
     //
     // 在客户端，URL的Host字段指定了要连接的服务器，
-    // 而Request的Host字段（可选地）指定要发送的HTTP请求的Host头的值。
+    // 而Request的Host字段(可选地)指定要发送的HTTP请求的Host头的值。
     URL *url.URL
     // 接收到的请求的协议版本。本包生产的Request总是使用HTTP/1.1
     Proto      string // "HTTP/1.0"
     ProtoMajor int    // 1
     ProtoMinor int    // 0
-    // Header字段用来表示HTTP请求的头域。如果头域（多行键值对格式）为：
+    // Header字段用来表示HTTP请求的头域。如果头域(多行键值对格式)为:
     //	accept-encoding: gzip, deflate
     //	Accept-Language: en-us
     //	Connection: keep-alive
-    // 则：
+    // 则:
     //	Header = map[string][]string{
     //		"Accept-Encoding": {"gzip, deflate"},
     //		"Accept-Language": {"en-us"},
     //		"Connection": {"keep-alive"},
     //	}
-    // HTTP规定头域的键名（头名）是大小写敏感的，请求的解析器通过规范化头域的键名来实现这点。
+    // HTTP规定头域的键名(头名)是大小写敏感的，请求的解析器通过规范化头域的键名来实现这点。
     // 在客户端的请求，可能会被自动添加或重写Header中的特定的头，参见Request.Write方法。
     Header Header
     // Body是请求的主体。
@@ -293,7 +293,7 @@ type Request struct {
     // 根据RFC 2616，该值可以是Host头的值，或者URL自身提供的主机名。
     // Host的格式可以是"host:port"。
     //
-    // 在客户端，请求的Host字段（可选地）用来重写请求的Host头。
+    // 在客户端，请求的Host字段(可选地)用来重写请求的Host头。
     // 如过该字段为""，Request.Write方法会使用URL字段的Host。
     Host string
     // Form是解析好的表单数据，包括URL字段的query参数和POST或PUT的表单数据。
@@ -309,12 +309,12 @@ type Request struct {
     // Trailer指定了会在请求主体之后发送的额外的头域。
     //
     // 在服务端，Trailer字段必须初始化为只有trailer键，所有键都对应nil值。
-    // （客户端会声明哪些trailer会发送）
+    // (客户端会声明哪些trailer会发送)
     // 在处理器从Body读取时，不能使用本字段。
     // 在从Body的读取返回EOF后，Trailer字段会被更新完毕并包含非nil的值。
-    // （如果客户端发送了这些键值对），此时才可以访问本字段。
+    // (如果客户端发送了这些键值对)，此时才可以访问本字段。
     //
-    // 在客户端，Trail必须初始化为一个包含将要发送的键值对的映射。（值可以是nil或其终值）
+    // 在客户端，Trail必须初始化为一个包含将要发送的键值对的映射。(值可以是nil或其终值)
     // ContentLength字段必须是0或-1，以启用"chunked"传输编码发送请求。
     // 在开始发送请求后，Trailer可以在读取请求主体期间被修改，
     // 一旦请求主体返回EOF，调用者就不可再修改Trailer。
@@ -327,7 +327,7 @@ type Request struct {
     // 客户端会忽略请求中的RemoteAddr字段。
     RemoteAddr string
     // RequestURI是被客户端发送到服务端的请求的请求行中未修改的请求URI
-    // （参见RFC 2616, Section 5.1）
+    // (参见RFC 2616, Section 5.1)
     // 一般应使用URI字段，在客户端设置请求的本字段会导致错误。
     RequestURI string
     // TLS字段允许HTTP服务器和其他软件记录接收到该请求的TLS连接的信息
@@ -356,18 +356,18 @@ type URL struct {
     Host     string    // host或host:port
     Path     string
     RawQuery string // 编码后的查询字符串，没有'?'
-    Fragment string // 引用的片段（文档位置），没有'#'
+    Fragment string // 引用的片段(文档位置)，没有'#'
 }
 ----
 
-URL类型代表一个解析后的URL（或者说，一个URL参照）。URL基本格式如下：
+URL类型代表一个解析后的URL(或者说，一个URL参照)。URL基本格式如下:
 
 [source,shell]
 ----
 scheme://[userinfo@]host/path[?query][#fragment]
 ----
 
-scheme 后不是冒号加双斜线的URL被解释为如下格式：
+scheme 后不是冒号加双斜线的URL被解释为如下格式:
 
 [source,shell]
 ----
@@ -386,7 +386,7 @@ scheme:opaque[?query][#fragment]
 
 通过 Request 结果中的 Header 字段 用来 获取请求头中的所有信息， Header 字段
 的类型是 Header 类型，而 Header 类型是 一个 `map[string][]string string` 类型的 key
-string 切片类型的值。 下面是 Header 类型及它的方法：
+string 切片类型的值。 下面是 Header 类型及它的方法:
 
 [[go-web-handler-header-tbl]]
 .方法
@@ -432,7 +432,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
     body := make([]byte, length)
     // 读取请求体
     r.Body.Read(body)
-    fmt.Fprintln(w, " 请求体中的内容是： ：", string(
+    fmt.Fprintln(w, " 请求体中的内容是:  : ", string(
 }
 ----
 
@@ -454,7 +454,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
     // 解析表单
     r.ParseForm()
     // 获取请求参数
-    fmt.Fprintln(w, " 请求参数为： ：", r.Form)
+    fmt.Fprintln(w, " 请求参数为:  : ", r.Form)
 }
 ----
 . 如果对表单请求和 url 请求有相同的参数，那么表单中的请求参数的值排在 URL 请求参数数值的前面，如果我们只想获取表单中的请求参数，可以使用 Request 结构中的 <<go-web-handler-param-postform>>
@@ -470,7 +470,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
     // 解析表单
     r.ParseForm()
     // 获取请求参数
-    fmt.Fprintln(w, " 请求参数为： ：", r.PostForm)
+    fmt.Fprintln(w, " 请求参数为:  : ", r.PostForm)
 }
 ----
 . 但是 PostForm 字段只支持 `application/x-www-form-urlencoded` 编码，如果 form 表单的 enctype 属性值为 `multipart/form-data` ，那么使用 PostForm 字段无法获取表单中的数据，此时需要使用 <<go-web-handler-param-multipartform>>
@@ -610,7 +610,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 Go 为我们提供了 `text/template` 库和 `html/template` 库这两个模板引擎，模板引擎通过将数据和模板组合在一起生成最终的 HTML ，而处理器负责调用模板引擎并将引擎生成的 HTMl 返回给客户端。
 
-Go 的模板都是文本文档（其中 Web 应用的模板通常都是 HTML ），它们都嵌入了一些称为动作的指令。从模板引擎的角度来说，模板就是嵌入了动作的文本（这些文本通常包含在模板文件里面），而模板引擎则通过分析并执行这些文本来生成出另外一些文本。
+Go 的模板都是文本文档(其中 Web 应用的模板通常都是 HTML )，它们都嵌入了一些称为动作的指令。从模板引擎的角度来说，模板就是嵌入了动作的文本(这些文本通常包含在模板文件里面)，而模板引擎则通过分析并执行这些文本来生成出另外一些文本。
 
 [[go-web-template-hello]]
 === Hello World
@@ -657,14 +657,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 ==== ParseFiles 函数
 
 当我们调用 ParseFiles 函数解析模板文件时， Go 会创建一个新的模板，并将给定的模板文件的名字作为新模板的名字 如果该函数中传入了多个文件名，那么也只会返回一个模板， 而且以第一个文件的文件名作为模板
-的名字至于其他文件对应的模板 则会被放到一个 map 中。 让我们再来看一下 HelloWorld 中的代码：
+的名字至于其他文件对应的模板 则会被放到一个 map 中。 让我们再来看一下 HelloWorld 中的代码:
 
 ====
 [source,go]
 ----
 t, _ := template.ParseFiles("hello.html")  // <1>
 ----
-<1> 以上代码相当于调用 New 函数创建一个新模板，然后再调用 template 的 ParseFiles 方法：
+<1> 以上代码相当于调用 New 函数创建一个新模板，然后再调用 template 的 ParseFiles 方法:
 ====
 
 [[go-web-template-parse-must]]
@@ -680,7 +680,7 @@ t := template.Must(template.ParseFiles("hello.html"))
 [[go-web-template-parse-parseglob]]
 ==== ParseGlob 函数
 
-通过该函数可以通过指定一个规则一次性传入多个模板文件，如：
+通过该函数可以通过指定一个规则一次性传入多个模板文件，如:
 
 [source,go]
 ----
@@ -713,7 +713,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 [[go-web-template-action]]
 === 动作
 
-Go 模板的动作就是一些嵌入到模板里面的命令，这些命令在模板中需要 放到两个大括号里 `{{动作}}` 之前我们已经用过一个 很重要的动作 ：点 `(.)` ,它代表了传递给模板的数据。下面我们再介绍几个常用的动作，如果还想了解其他类型的动作，可以参考 `text/template` 库的文档。
+Go 模板的动作就是一些嵌入到模板里面的命令，这些命令在模板中需要 放到两个大括号里 `{{动作}}` 之前我们已经用过一个 很重要的动作 : 点 `(.)` ,它代表了传递给模板的数据。下面我们再介绍几个常用的动作，如果还想了解其他类型的动作，可以参考 `text/template` 库的文档。
 
 [[go-web-template-action-if]]
 ==== 条件动作
@@ -840,7 +840,7 @@ func main() {
 ----
 
 . 如果迭代之后是一个个 的结构体，获取结构体中的字段值使用字段名方式获取.例如 `{{ .Name }}`
-. 迭代 Map 时可以设置变量，变量以 `$` 开头,例如：`{{rang $k,$v := .}}`
+. 迭代 Map 时可以设置变量，变量以 `$` 开头,例如: `{{rang $k,$v := .}}`
 . 迭代管道.例如 `{{ c1 | c2 | c3 }}` .c 1 、 c 2 和 c 3 可以是参数或者函数。管道允许用户将一个参数的输出传递给下一个参数，各个参数之间使用 `|` 分割。
 
 [[go-web-template-action-setup]]
@@ -989,7 +989,7 @@ func main() {
 [[go-web-template-action-define]]
 ==== 定义动作
 
-当我们访问 一些网站时，经常会看到好多网页中有相同的部分：比如导航栏、版权信息、联系方式等。这些相同的布局我们可以通过定义动作在模板文件中定义模板来实现。 定义模板的格式是：以 `{{ define "layout" }}` 开头，以 `{{ end }}` 结尾。
+当我们访问 一些网站时，经常会看到好多网页中有相同的部分: 比如导航栏、版权信息、联系方式等。这些相同的布局我们可以通过定义动作在模板文件中定义模板来实现。 定义模板的格式是: 以 `{{ define "layout" }}` 开头，以 `{{ end }}` 结尾。
 
 [source,html,indent=0,subs="verbatim,quotes",role="primary"]
 .定义单个模板(hello6.html)
@@ -1198,7 +1198,7 @@ func main() {
 [[go-web-session]]
 == 会话控制
 
-HTTP 是无状态协议，服务器不能记录浏览器的访问状态，也就是说服务器不能区分中两次请求是否由一个客户端发出。这样的设计严重阻碍的 Web 程序的设计。 如：在我们进行网购时，买了一条裤子，又买了一个手机。由于 http 协议是无状态的，如果不通过其他手段，服务器是不能知道用户到底买了什么。而 Cookie 就是解决方案之一。
+HTTP 是无状态协议，服务器不能记录浏览器的访问状态，也就是说服务器不能区分中两次请求是否由一个客户端发出。这样的设计严重阻碍的 Web 程序的设计。 如: 在我们进行网购时，买了一条裤子，又买了一个手机。由于 http 协议是无状态的，如果不通过其他手段，服务器是不能知道用户到底买了什么。而 Cookie 就是解决方案之一。
 
 [[go-web-session-cookie]]
 === Cookie
@@ -1345,7 +1345,7 @@ Session 的作用就是在服务器端保存一些用户的数据 ，然后传�
 [[go-web-session-session-principle]]
 ==== Session 运行原理
 
-. 第一次向服务器发送请求时创建 Session ，给它设置一个全球唯一的 ID （可以通过 UUID 生成）
+. 第一次向服务器发送请求时创建 Session ，给它设置一个全球唯一的 ID (可以通过 UUID 生成)
 . 创建一个 Cookie ，将 Cookie 的 Value 设置为 Session 的 ID 值，并将 Cookie 发送给浏览器
 . 以后再发送请求浏览器就会携带着该 Cookie
 . 服务器获取 Cookie 并根据它的 Value 值找到服务器中对应的 Session ，也就知道了请求是那个用户发的

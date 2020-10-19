@@ -2,17 +2,43 @@
 = 概述
 include::attributes.adoc[]
 
-版本回顾:
+== Java的现状
+2020 年是 Java 诞生的第 25 个年头。Oracle 表示，目前 java 仍然流行编程语言，广泛使用在企业中。目前全世界有超过 69％ 的专职开发人员使用 Java，全世界有 510 亿台活动 Java 虚拟机(JVM)在部署中，目前 Java 主要被用于分析，数据管理，大数据，DevOps，移动，持续开发工具和聊天机器人等服务。
 
-image::{oss-images}/java-14-2.png[]
+== 历史版本的主要新特性
 
-image::{oss-images}/java-14-3.png[]
+在过去的这些年中，Java 在过去增强功能的推动下为用户提供了超过二十年的创新。例如:
 
-image::{oss-images}/java-14-1.png[]
+* JDK 5:enum、泛型、自动装箱与拆箱、可变参数、增强循环等
+* JDK 6:支持脚本语言、JDBC4.0API
+* JDK 7:支持try-with-resources、switch语句块增加String支持、NIO2.0包
+* JDK 8:lambda表达式、Stream API、新的日期时间的API、方法引用、构造器引用
+* JDK 9:模块化系统、jshell
+* JDK 10:局部变量的类型推断
+* JDK 11:ZGC的引入、Epsilon GC
+* JDK 12:switch表达式、Shenandoah GC、增强G1
+* JDK 13:switch表达式引入yield、文本块
+* JDK 14:instanceof 模式匹配、Records、弃用 Parallel Scavenge+Serial GC组合、删除CMS GC
 
-* “孵化器模块”:将 尚未定稿的 API 和工具先交给开发者使用,以获得反馈,并用这些反馈 进一步改进 Java 平台的质量.
+== 近期版本发布及维护时间
 
-* “预览特性”:是 规格已经成型、实现已经确定,但还未最终定稿的功能.它们 出现在 Java 中的目的是收集在真实世界中使用后的反馈信息,促进这些功能的最终定稿.这些特性可能会随时改变,根据反馈结果, 这些特性甚至可能会被移除,**但通常所有预览特性最后都会在 Java 中固定下来**
+=== OpenJDK 发版路线图:
+
+image::{oss-images}/java-1.jpeg[]
+
+=== Oracle JDK支持路线图:
+
+image::{oss-images}/java-2.jpeg[]
+
+=== 历年版本对应的 JEPS
+
+image::{oss-images}/java-3.jpeg[]
+
+=== 名词解释
+
+* 孵化器模块(Incubator/孵化版/实验版):将 尚未定稿的 API 和工具先交给开发者使用,以获得反馈,并用这些反馈 进一步改进 Java 平台的质量.
+
+* 预览特性(Preview/预览版):是 规格已经成型、实现已经确定,但还未最终定稿的功能.它们 出现在 Java 中的目的是收集在真实世界中使用后的反馈信息,促进这些功能的最终定稿.这些特性可能会随时改变,根据反馈结果, 这些特性甚至可能会被移除,**但通常所有预览特性最后都会在 Java 中固定下来**
 
 include::java/java8.adoc[leveloffset=+1]
 

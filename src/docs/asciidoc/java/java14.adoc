@@ -53,9 +53,9 @@
 
 * JDK下载地址:
 +
-OpenJDK版本：https://jdk.java.net/14/
+OpenJDK版本: https://jdk.java.net/14/
 +
-Oracle版本：https://www.oracle.com/java/technologies/javase-jdk14-downloads.html
+Oracle版本: https://www.oracle.com/java/technologies/javase-jdk14-downloads.html
 
 * 修改环境变量.
 
@@ -177,7 +177,7 @@ Pattern::
 
 === 依赖
 
-该实现可以利用 https://openjdk.java.net/jeps/309[JEP 309（动态类文件常数）]。
+该实现可以利用 https://openjdk.java.net/jeps/309[JEP 309(动态类文件常数)]。
 
 [[java-14-feature-packaging]]
 == 打包工具(孵化器模式)
