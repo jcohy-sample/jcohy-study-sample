@@ -14,8 +14,8 @@ http://docs.jcohy.com[*http://docs.jcohy.com*]
 ****
 
 [horizontal]
-<<java.adoc#java-overview, Java基础>> :: java 基础,Java 8,9,10,11,12,13,14新特性
-<<designpattern.adoc#design-overview, 设计模式>> :: Java 23种设计模式
+<<java.adoc#java-overview, Java基础>> :: java 基础,Java 8,9,10,11,12,13,14,15 新特性
+<<designpattern.adoc#design-overview, 设计模式>> :: Java 23 种设计模式
 <<algorithm.adoc#algorithm-overview, 数据结构和算法>>  :: ACM 常见算法精题.各种排序算法, 常见的问题等
 <<other.adoc#other-overview, 其他组件>>  :: Quartz,Swagger,Jenkins,WenSite等
 <<linux.adoc#linux-overview, linux>>  :: Linux 介绍

@@ -776,7 +776,7 @@ jdk/jdk 存储库中的微基准包括 `DatagramChannel` 的基准。 如果缺�
 
 该建议的主要风险是，在旧的和新的实现方式行为不同的极端情况下，现有代码依赖于未指定的行为。 为了最大程度地降低这种风险，在 JDK 14 和 JDK 15 中已经进行了一些准备工作，以澄清 `DatagramSocket` 和 `MulticastSocket` 的规范，并最小化这些类与 `DatagramChannel::socket` 适配器之间的行为差异。 但是，可能仍然存在。 这些差异在极端情况下可能是可以观察到的，但对于绝大多数 API 用户来说应该是透明的。
 到目前为止，我们已经确定了差异。 通过运行 `-Djdk.net.usePlainDatagramSocketImpl` 或 `-Djdk.net.usePlainDatagramSocketImpl=true`，可以缓解除前两个以​​外的所有问题。
-+
+
 * 在这些类的实例上同步的自定义 API 或 `DatagramSocket` 和 `MulticastSocket` 的子类可能需要重新访问，因为 `DatagramSocket` 和 `MulticastSocket` 不再与此同步。 任何锁定或同步都留给委托，而委托在 `java.net` 包之外无法访问，并且可以自由使用它认为合适的任何机制。
 * 同样，扩展 `DatagramSocket` 或 `MulticastSocket` 并覆盖诸如 `bind` 和 `setReuseAddress` 之类的方法的自定义类在构造过程中不会调用覆盖的方法。 任何人这样做都取决于未记录的和特定于实现的行为。
 * 新的实现在所有平台上都使用本机 `connect` 方法。 旧版实现仍在 macOS 上使用 emulation 。 特别是，这意味着旧的实现无法检测到端口无法到达的状况，而新的实现则应该检测到。 另外，如果本机连接失败，则旧的实现将退回到使用仿真。 新的实现将报告错误。 此外，新的实现将在连接时刷新接收缓冲区，确保丢弃在调用连接之前缓冲的所有数据报。
@@ -1293,7 +1293,7 @@ String html = """
 
 因此，对文本块内容的适当解释是将每行开头和结尾处的附带空白与必要空白区分开。 Java 编译器通过删除附带的空白来处理内容，以产生开发人员想要的内容。 如果需要，可以使用 `String::indent` 进一步处理缩进。 使用 `|` 可视化边距:
 
-[source,java]
+[source,text]
 ----
 |<html>|
 |    <body>|
@@ -1317,13 +1317,13 @@ String html = """
 重新缩进算法在 Java 语言规范中是规范性的。 开发人员可以通过 `String::stripIndent`(一种新的实例方法)访问它。
 
 重要的尾部策略:
-+
+
 通常，可以采用两种方式设置文本块的格式: 首先，将内容的左边缘放置在开头定界符的第一个“下”，其次，将结尾定界符放在其自己的行上，以恰好出现在开头定界符的下 。结果字符串在任何行的开头都将没有空格，并且将不包含结束定界符的尾随空白行。
-+
+
 但是，由于尾随的空白行被视为确定行，因此将其向左移动具有减少公用空白前缀的效果，因此减少了从每行开头剥离的空白量。 在极端情况下，关闭分隔符一直向左移动，这会将公共空白前缀减少为零，从而有效地退出了空白剥离。
-+
+
 例如，当关闭定界符一直向左移动时，没有附带的空格可以用点显示:
-+
+
 [source,java]
 ----
 String html = """
@@ -1334,9 +1334,9 @@ String html = """
               </html>
 """;
 ----
-+
+
 包括结尾的空白行和结束定界符在内，公共空白前缀为零，因此从每行的开头删除零空白。 该算法因此产生: (使用|可视化左边距)
-+
+
 [source,java]
 ----
 |              <html>
@@ -1345,9 +1345,9 @@ String html = """
 |                  </body>
 |              </html>
 ----
-+
+
 或者，假设关闭定界符没有一直移到最左侧，而是移到html的t下，因此它比变量声明深了8个空格:
-+
+
 [source,java]
 ----
 String html = """
@@ -1358,9 +1358,9 @@ String html = """
               </html>
         """;
 ----
-+
+
 用点显示的空间被认为是偶然的:
-+
+
 [source,java]
 ----
 String html = """
@@ -1371,8 +1371,9 @@ String html = """
 ........      </html>
 ........""";
 ----
-+
+
 包括结尾的空白行和结束定界符在内，公共空白前缀为8，因此从每行的开头删除了八个空白。 因此，该算法保留了内容相对于结束定界符的本质缩进:
+
 [source,java]
 ----
 |      <html>
@@ -1381,9 +1382,9 @@ String html = """
 |          </body>
 |      </html>
 ----
-+
+
 最后，假设将结束定界符稍微移到内容的右侧:
-+
+
 [source,java]
 ----
 String html = """
@@ -1394,9 +1395,9 @@ String html = """
               </html>
                   """;
 ----
-+
+
 用点显示的空间被认为是偶然的:
-+
+
 [source,java]
 ----
 String html = """
@@ -1407,9 +1408,9 @@ String html = """
 ..............</html>
 ..............    """;
 ----
-+
+
 常见的空白前缀为14，因此从每行的开头删除了14个空白。 删除尾随的空白行以留下空白行，然后丢弃该空白行。 换句话说，将结束定界符移到内容的右侧无效，并且该算法再次保留了内容的基本缩进:
-+
+
 [source,java]
 ----
 |<html>
@@ -2383,7 +2384,7 @@ RMI 激活机制允许基于 RMI 的服务导出其存根超过其远程对象�
 当客户端在可激活的存根上调用方法时，RMI激活服务将按需实例化远程对象，从而减轻了客户端处理无效存根的负担。 这似乎是一种有价值的机制，但是，正如“动机”部分中所述，RMI 激活的实际使用量正在逐渐减少。
 
 该 JEP 将弃用 RMI 激活机制，以备将来删除。 这需要对 Java 平台进行以下更改:
-+
+
 * 将 `@Deprecated(forRemoval=true)` 添加到 `java.rmi.activation` 包中的所有公共类和接口。
 * 在 https://docs.oracle.com/en/java/javase/14/docs/api/java.rmi/java/rmi/activation/package-summary.html[`java.rmi.activation`] 包声明中添加 `@deprecated` javadoc标记和说明。
 * 在 https://docs.oracle.com/en/java/javase/14/docs/api/java.rmi/module-summary.html[`java.rmi`] 模块规范中添加有关弃用激活的通知。
@@ -2418,7 +2419,6 @@ RMI 激活是 Java 平台的可选部分，因此可以从 JDK 构建中省略�
 第三方产品可能会使用激活，因此它们的弃用和最终移除会对其造成影响。 鉴于过去几年缺乏有关激活更改的意见，这不太可能。 在早期的JDK版本中，激活仍然存在，其中一些版本具有长期支持。 依赖于激活的应用程序在迁移到更新的技术时，可以继续依靠现有的受支持JDK一段时间。
 
 https://river.apache.org/[Apache River] 项目包含 RMI 和 Jini 技术的分支版本，包括激活机制。 River 的这一部分取决于 Java 的 `java.rmi.activation` 类型。 从 Java 删除 RMI 激活将阻止 River 项目迁移到 Java 的最新版本，除非他们能够删除对 Java 类型的依赖。
-
 
 [[java-15-feature-other]]
 == 其他
