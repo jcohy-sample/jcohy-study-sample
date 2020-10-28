@@ -1,0 +1,335 @@
+[[linux-base]]
+= Linux 简介
+
+== Unix 和 Linux 发展史
+
+. 1965 年，美国麻省理工学院（ MIT ）、通用电气 公司（ GE ）及 AT&T 的贝尔实验室联合开发 Multics 工程计划，其目标是开发一种交互式的具有多道程序处理能力分时操作系统，但因 Multics 追求的目标过于庞大复杂，项目进度远远落后于计划，最后贝尔实验室宣布退出。
+. 1969年，美国贝尔实验室的 肯•汤普森 在 DECPDP-7 机器上开发出了 UNIX 系统。
+. 1971年，肯•汤普森的同事 丹尼斯•里奇 发明了 C 语言；1973年，UNIX 系统的绝大部分源代码用 C 语言重写，这为提高 UNIX 系统的可移植性打下基础。
+. Linux 系统诞生于1991年，由芬兰大学生李纳斯（Linus Torvalds）和后来陆续加入的众多爱好者共同开发完成。
+
+Linux 是自由软件，源代码开放的 UNIX。
+
+.UNIX 主要发行版
+|===
+|操作系统 |公司 |硬件平台
+
+|AIX
+|IBM
+|PowerPC
+
+|UX
+|HP
+|PA-RISC
+
+|Solaris
+|SUN
+|SPARC
+
+|Linux BSD
+|Red Hat Linux,Ubuntu,FreeBSD
+|IA(Inter,AMD,Cyrix,RISE...)
+|===
+
+== Linux 版本分类
+
+* 内核版
+** RHEL6.X 2.6.X
+** RHEL7.x 3.10.X
+* 发行版
+** RedHat 系列
+*** 个人版：Fedora
+*** 服务器版：RHEL(Red Hat Enterprise Linux)
+** Debian 系列
+
+== Linux 安装
+
+[[linux-base-mirror]]
+=== Linux 镜像地址
+
+*  CentOS 官网: http://www.centos.org[http://www.centos.org]
+*  CentOS 阿里云镜像: http://mirrors.aliyun.com/centos[http://mirrors.aliyun.com/centos]
+*  CentOS 搜狐镜像: http://mirrors.sohu.com/centos[http://mirrors.sohu.com/centos]
+*  CentOS 网易镜像: http://mirrors.163.com/centos[http://mirrors.163.com/centos]
+*  CentOS 北京理工大学镜像: http://mirror.bit.edu.cn/centos[http://mirror.bit.edu.cn/centos]
+
+=== 虚拟机网络设置
+
+
+|===
+|连接方式 |连接网卡 |是否能连接本机 |是否能连接局域网 |是否能连接到公网
+
+|桥接
+|本地真实网卡
+|可以
+|可以
+|可以
+
+|NAT
+|VMnet8
+|可以
+|不可以
+|可以
+
+|仅主机
+|VMnet1
+|可以
+|不可以
+|不可以
+
+|Column 1, row 4
+|Column 2, row 4
+|Column 3, row 4
+|Column 4, row 4
+|Column 5, row 4
+|===
+
+=== 修改主机名
+
+[source,shell script]
+----
+vi /etc/sysconfig/network
+    NETWORKING=yes
+    HOSTNAME=username
+----
+
+=== 修改ip地址
+
+[source,shell script]
+----
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
+    DEVICE=eth0
+    TYPE=Ethernet
+    ONBOOT=yes
+    BOOTPROTO=static
+    IPADDR=192.168.0.101
+    NETMASK=255.255.255.0
+service network restart
+----
+
+
+*  修改ip地址和主机名的映射关系
+
+[source,shell script]
+----
+vi /etc/hosts
+    127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+    ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+192.168.0.101 username
+----
+
+*  关闭 iptables 并设置其开机启动/不启动
+
+[source,shell script]
+----
+service iptables stop
+chkconfig iptables on
+chkconfig iptables off
+----
+
+== 磁盘分区
+
+* MBR 分区表：最大支持 2.1 TB 的硬盘，最多支持 4 个分区
+* GPT 分区表（全局唯一标识分区表）：GPT支持 9.4 ZB 硬盘。理论上支持的分区数没有限制，但 windows 限制 128 个分区
+
+=== 分区类型
+
+* 主分区：最多只能有 4 个
+* 扩展分区：
+** 最多只能有 1 个
+** 主分区加扩展分区最多有 4 个
+** 不能写入数据，只能包含逻辑分区
+* 逻辑分区
+
+== 硬件设备文件名
+
+
+|===
+|硬件 |设备文件名
+
+|IDE 硬盘
+|/dev/hd[a-d]
+
+|SCIC/SATA/USB 硬盘
+|/dev/sd[a-d]
+
+|光驱
+|/dev/carom 或 /dev/sr0
+
+|软盘
+|/dev/fd[0-1]
+
+|打印机(25 针)
+|/dev/lp[0-2]
+
+|打印机（USB）
+|/dev/usb/lp[0-15]
+
+|鼠标
+|/dev/dev/mouse
+|===
+
+== 挂载
+
+* 必须分区
+** / ：根分区
+** swap : 交换分区
+*** 如果真实内存小于 4G,swap 是内存的两倍
+*** 如果真实内存大于 4G，swap 和内存一致
+*** 实验环境，不大于 2G.
+* 推荐分区
+** /boot ： （启动分区）
+* 常用分区
+** /home: 用于文件服务器
+** /www : 用于 web 服务器
+
+[[linux-base-dir]]
+== Linux 目录结构
+
+
+|===
+|目录名 |作用
+
+|/bin/
+|存放系统命令的目录，普通用户和超级用户都可以执行，是 `/usr/bin/` 目录的软链接
+
+|/sbin/
+|(super user binaries) 存放系统命令的目录，只有超级用户才可以执行，是 `/usr/sbin/` 目录的软链接
+
+|/usr/bin/
+|存放系统命令的目录，普通用户和超级用户都可以执行
+
+|/usr/sbin/
+|存放系统命令的目录，只有超级用户才可以执行
+
+|/boot/
+|系统启动目录，保存与系统启动相关的文件，如内核文件和启动引导程序(grub)文件等
+
+|/dev/
+|设备文件保存目录
+
+|/etc/
+|配置文件保存位置，系统内所有采用默认安装方式(`rpm` 安装) 的服务配置文件全部保存在此目录中，如用户信息，服务的启动脚本，常用的服务配置文件等
+
+|/home/
+|普通用户的家目录，在创建用户时，每个用户要有一个默认登录和保存自己数据的位置，就是用户的家目录，所有普通用户的宿主目录是在 `/home/` 下建立一个和用户名相同的目录，如 `user1` 的家目录就是 `/home/user1/`
+
+|/lib/
+|系统调用的函数库保存位置，是 `/usr/lib` 的软链接
+
+|/lib64/
+|64 位的函数库保存位置，是 `/usr/lib64` 的软链接
+
+|/lost+found/
+| 当系统意外崩溃或者关机，而产生的一些文件碎片在这里，当系统启动过程中 fsck 工具会检查这里，并修复已经损坏的文件系统。这个目录只在每个分区中出现，例如 `/lost+found` 就是根分区的备份恢复目录，`/boot/lost+found` 就是 `/boot` 分区的备份恢复目录
+
+|/media/
+| 挂载目录，系统建议是用来挂载媒体设备的，如软盘和光盘
+
+|/misc/
+| 挂载目录，系统建议用来挂载 NFS 服务的共享目录
+
+|/mnt/
+|挂载目录，系统建议用来挂载额外的设备 如：U盘，移动硬盘和其他操作系统的分区
+
+|/opt/
+| 第三方安装的软件保存的位置，这个目录是放置和安装其他软件的目录，手工安装的源码包软件都可以安装到这个目录中，不过也可以把软件安装到 `/usr/local` 目录中。按照个人习惯即可
+
+|/proc/
+| 虚拟文件系统，该目录中的数据并不保存在硬盘上，而是保存在内存中，主要保存系统的内核、进程、外部设备状态和网络状态等。如 `proc/cpuinfo` 是保存 cpu 信息的。 `/proc/devices` 是保存设备驱动列表的。 `/proc/filesystems` 是保存文件系统的。`/proc/net` 是保存网络协议信息的
+
+|/sys/
+|虚拟文件系统，和 `/proc/` 目录相似，该目录的数据都保存在内存中，主要保存与内核相关的信息
+
+|/root/
+| root 的宿主目录。普通用户的宿主目录在 `/home/` 下，root 宿主目录直接在 `/` 下
+
+|/run/
+| 系统运行时产生的数据。如 ssid，pid 等相关数据。`/var/run` 是此目录的软链接
+
+|/srv/
+| 服务数据目录。一些系统服务启动之后，可以在这个目录中保存所需要的数据
+
+|/tmp/
+| 临时目录。系统存放临时文件的目录，在该目录下，所有用户都可以访问和写入。建议不要将重要的数据保存在此目录。
+
+|/usr/
+|UNIX Software Resource(系统软件资源目录)。系统中安装的软件大多数保存在这里
+
+|/usr/lib/
+| 应用程序调用的函数库保存位置
+
+|/usr/local/
+| 手工安装的软件保存位置。一般建议源码包软件安装在这个位置
+
+|/usr/share/
+| 应用程序的资源文件保存位置。如帮助文档，说明文档和字体目录。
+
+|/usr/src/
+| 源码包保存位置。我们手工下载的源码包和内核源码包都可以保存在这里。
+
+|/usr/src/kernels
+| 内核源码保存位置
+
+|/var/
+| 动态数据保存位置。注意保存缓存，日志以及软件运行所产生的文件
+
+|/var/www/html/
+| RPM 包安装的 Apache 的网页主目录
+
+|/var/lib/
+| 程序运行中需要调用或改变的数据保存位置。如 mysql 的数据库保存在 `var/lib/mysql/` 目录中
+
+|/var/log/
+|系统日志保存位置
+
+|/var/run/
+| 一些服务和程序运行后，他们的 pid 保存的位置。是 `/run/` 目录的软链接
+
+|/var/spool/
+| 放置队列数据的目录。就是排队等待其他程序使用的数据，比如邮件队列和打印队列。
+
+|/var/spool/mail/
+|新收到的邮件队列保存位置。系统新收到的邮件会保存在此目录
+
+|/var/spool/cron/
+| 系统的定时任务队列保存位置。系统的计划任务会保存在这里
+|===
+
+
+== 学习 Linux 注意事项
+
+. Linux 严格区分大小写
+. Linux 一切皆文件
+Linux 中的所有内容都是以文件的形式保存和管理的，硬件设备也是文件，这和 windows 完全不同，Windows 是通过设备管理器来管理硬件的，Linux 的设备文件保存在
+`/dev/` 目录下，硬盘文件是 `/dev/sd[a-p]` ，光盘文件是 `/dev/hdc` 等
+
+. Linux 不考扩展名区分文件类型
+Windows 是通过扩展名来区分文件类型的，比如，`.txt` 是文本类型，`.exe` 是可执行文件，`.ini` 是配置文件。但 Linux 是不通过扩展名区分文件类型的，
+而是靠权限位标识来确定的文件类型的，而且文件类型的种类也不像 Windows 下那么多，常见的文件类型只有普通文件、目录、链接文件、块设备文件、字符设备文件几种。
+Linux 中的可执行文件不过是普通文件被赋值了可执行权限而已
++
+但 Linux 中的一些特殊文件还是需要写 "扩展名" 的，但是并不是 Linux 一定要靠扩展名来识别文件类型，写这些扩展名是为了帮助管理员来区分不同的文件类型。这样的文件扩展名主要有以下几个：
++
+* 压缩包：Linux 常见的压缩包有 `*.gz,*.bz2,*.zip,*.tar.gz,*.tar.bz2,*.tgz` 等等。写这些扩展名是为了区分是压缩包格式。及时是不写，也可以解压缩，可以使用命令判断是那种格式。
+* 二进制软件包：CentOS 中所使用的二进制安装包是 RPM 包，所有的 RPM 包都可以使用 `.rpm` 扩展名结尾
+* 程序文件：Shell 脚本一般用 `.sh` 结尾
+* 网页文件：网页文件一般用 `.html`,`.php` 结尾，不过，这一般是网页服务器的要求，不是 Linux 的要求
+
+. Linux 中所有的存储设备必须挂载后才能使用
+Linux 中所有的存储设备都有自己的设备文件名，这些设备文件必须挂载之后才能使用，包括硬盘，U盘和光盘。挂载其实就是给这些存储设备分配盘符，只不过 Windows 中的盘符用英文字母表示，
+而 Linux 中的盘符则是一个已经建立好的空目录，我们把这些空目录叫做挂载点。
+
+. Windows 下的程序不能直接在 Linux 中运行
+
+== 服务器管理建议
+
+. <<linux-base-dir>>
+. 远程服务器关机重启
+.. 远程服务器在重启前，要终止正在执行的服务
+.. 重启命令选项：建议使用 `shutdown -r now` 重启。这条命令在重启时会正常保存和终止服务器中正在运行的程序，是安全重启命令。
+. 不要在服务器访问高峰运行高负载命令
+. 远程配置防火墙时不要把自己踢出服务器
+. 指定合理的密码规范并定期更新
+. 合理分配权限
+. 定期备份重要数据和日志
