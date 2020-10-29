@@ -1106,14 +1106,606 @@ grep 命令用于在文件中搜索符合条件的字符串，如果需要模糊
 [[linux-command-package]]
 == 打包与压缩
 
+在 Linux 中可以识别的常见的压缩 格式有十几种。比如 `.zip`,`.gz`,`.bz2`,`.tar`,`.tar.gz`,`.tar.bz2`  等
+
+[[linux-command-package-whereis]]
+=== `.zip` 格式
+
+`.zip` 格式是 Windows 中最常见的压缩格式，Linux 也可以正常识别 `.zip` 格式。这可以方便地和 Windows 系统通用压缩文件。
+
+==== 压缩
+
+压缩的命令就是 `zip`
+
+* 命令名称: zip
+* 英文原意: package and compress(archive) files
+* 所在路径: /usr/bin/zip
+* 执行权限: 所有用户
+* 功能描述: 压缩文件或目录
+
+[source,shell]
+----
+[root@localhost ~]# zip [选项] 压缩包名 源文件或源目录
+----
+
+选项 `-r` : 压缩目录
+
+==== 解压
+
+解压的命令就是 `unzip`
+
+* 命令名称: unzip
+* 英文原意: list,test and extract compressed files in a ZIP archive
+* 所在路径: /usr/bin/unzip
+* 执行权限: 所有用户
+* 功能描述: 列表，测试和提取压缩文件中的文件
+
+[source,shell]
+----
+[root@localhost ~]# unzip [选项] 压缩包名
+----
+
+选项 `-d` : 指定解压目录
+
+[[linux-command-package-gz]]
+=== `.gz` 格式（不会打包）
+
+`.gz` 格式是 Linux 中最常用的压缩格式，使用 `gzip` 命令进行压缩
+
+
+==== 压缩
+
+压缩的命令就是 `gzip`
+
+* 命令名称: gzip
+* 英文原意: compress or expand files
+* 所在路径: /bin/gzip
+* 执行权限: 所有用户
+* 功能描述: 压缩文件或目录
+
+[source,shell]
+----
+[root@localhost ~]# gzip [选项] 源文件
+----
+
+.`gzip` 选项
+|===
+|选项 |说明
+
+| -c
+|将压缩数据输出到标准输出中，可以用于保留源文件
+
+|-d
+|解压缩
+
+|-r
+|压缩目录
+|===
+
+==== 解压
+
+如果要解压 `.gz` 文件，那么可以使用 `gzip -d 压缩包` 和 `gunzip 压缩包` 命令都可以。我们看看 `gunzip` 命令的基本信息。
+
+* 命令名称: gunzip
+* 英文原意: compress or expand files
+* 所在路径: /bin/gunzip
+* 执行权限: 所有用户
+* 功能描述: 解压缩文件或目录
+
+[[linux-command-package-bz]]
+=== `.bz2` 格式（不能压缩目录）
+
+`.bz2` 格式是 Linux 的另一种压缩格式，从理论上来讲。`.bz2` 格式的算法更先进、压缩比更好。而 `.gz` 格式相对来讲压缩的时间更快。
+
+==== 压缩
+
+`.bz2` 格式的压缩命令是 `bzip2`
+
+* 命令名称: bzip2
+* 英文原意: a block-sorting file compressor
+* 所在路径: /usr/bin/bzip2
+* 执行权限: 所有用户
+* 功能描述: 压缩
+
+.`bzip2` 选项
+|===
+|选项 |说明
+
+| -d
+|解压缩
+
+|-k
+|压缩时，保留源文件
+
+|-v
+|显示压缩的详细信息
+|===
+
+==== 解压
+
+如果要解压 `.bz2` 文件，那么可以使用 `bzip2 -d 压缩包` 和 `bunzip2 压缩包` 命令都可以。我们看看 `bunzip2` 命令的基本信息。
+
+* 命令名称: bunzip2
+* 英文原意: a block-sorting file compressor
+* 所在路径: /usr/bin/bunzip2
+* 执行权限: 所有用户
+* 功能描述: 解压缩
+
+[[linux-command-package-tar]]
+=== `.tar` 格式（打包不会压缩）
+
+`.tar` 格式的打包和解打包都是用 `tar` 命令,区别只是选项不同。
+
+* 命令名称: tar
+* 英文原意: tar
+* 所在路径: /bin/tar
+* 执行权限: 所有用户
+* 功能描述: 打包和解打包命令
+
+.`tar` 选项
+|===
+|选项 |说明
+
+| -c
+|打包
+
+|-f
+|指定压缩包的文件名。压缩包的扩展名是用来给管理员识别格式的，所有一定要正确指定扩展名
+
+|-v
+|显示打包/解打包过程
+
+|-x
+|解打包
+
+|-t
+|测试，就是不解打包，只是查看包中有哪些文件
+
+|-C 目录
+|指定解打包目录
+|===
+
+[[linux-command-package-tars]]
+=== `.tar.gz`  和 `.tar.bz2` 格式
+
+使用 `tar` 命令直接打包压缩
+
+[source,shell]
+----
+[root@localhost ~]# tar [选项] 压缩包 源文件或目录
+----
+
+-z : 压缩和解压缩 `.tar.gz` 格式
+-j : 压缩和解压缩 `.tar.bz2` 格式
+
+[[linux-command-shutdown]]
+== 关机和重启命令
+
+[[linux-command-shutdown-sync]]
+=== `sync` 数据同步
+
+* 命令名称: sync
+* 英文原意: flush file system buffers
+* 所在路径: /bin/sync
+* 执行权限: 所有用户
+* 功能描述: 刷新文件系统缓冲区
+
+[[linux-command-shutdown-shutdown]]
+=== `shutdown` 数据同步
+
+* 命令名称: shutdown
+* 英文原意: bring the system down
+* 所在路径: /sbin/shutdown
+* 执行权限: 超级用户
+* 功能描述: 关机和重启
+
+[source,shell]
+----
+[root@localhost ~]# shutdown [选项] 时间 [警告信息]
+----
+
+.`shutdown` 选项
+|===
+|选项 |说明
+
+| -c
+|取消已经执行的 `shutdown` 命令
+
+|-h
+|关机
+
+|-r
+|重启
+|===
+
+[[linux-command-shutdown-reboot]]
+=== `reboot` 数据同步
+
+在现在的系统中，reboot 命令也是安全的，而且不需要加入过多的选项
+
+[[linux-command-shutdown-halt]]
+=== `halt` 和 `poweroff` 命令
+
+这两个命令不会完整的关闭和保存系统的服务，不建议使用
+
+[[linux-command-shutdown-init]]
+=== `init` 命令
+
+`init` 是修改 Linux 运行级别的命令，也可以用于关机和重启。这个命令并不安全。不建议使用
+
+[source,shell]
+----
+[root@localhost ~]# init 0
+# 关机，也就是调用系统的 0 级别
+[root@localhost ~]# init 6
+# 重启，也就是调用系统的 6 级别
+----
+
 [[linux-command-network]]
-== 网络命令
+== 常用网络命令
+
+[[linux-command-network-ip]]
+=== 配置 ip 地址
+
+配置 IP 地址有两种方法
+
+. setup 工具
+. vi /etc/sysconfig/network-scripts/ifcfg-eth0
+
+重启网络服务
+
+[source,shell]
+----
+[root@localhost ~]# service network restart
+----
+
+[[linux-command-network-ifconfig]]
+=== `ifconfig`
+
+`ifconfig` 命令主要是用来查看 ip 地址。
+
+* 命令名称: ifconfig
+* 英文原意: configure a network interface
+* 所在路径: /sbin/ifconfig
+* 执行权限: 超级用户
+* 功能描述: 配置网络接口
+
+[[linux-command-network-ping]]
+=== `ping` 命令
+
+`ping` 是常用的网络命令，主要通过 ICMP 协议进行网络探测，测试网络中主机的通信情况。
+
+* 命令名称: ping
+* 英文原意: send ICMP ECHO_REQUEST to network hosts
+* 所在路径: /bin/ping
+* 执行权限: 所有用户
+* 功能描述: 向网络主机发送 ICMP 请求
+
+[source,shell]
+----
+[root@localhost ~]# ping [选项] IP
+----
+
+.`ping` 选项
+|===
+|选项 |说明
+
+| -b
+|后面加入广播地址，用于对整个网段进行探测
+
+|-c 次数
+|用于指定 `ping` 的次数
+
+|-s 字节
+|指定探测包大小
+|===
+
+[[linux-command-network-netstat]]
+=== `netstat`
+
+`netstat` 是网络状态查看命令，既可以查看到本机开启的端口，也可以查看到有哪些客户端连接。在 CentOS 7.x 中 `netstat` 命令默认没有安装，需要安装 `net-snmp` 和 `net-tools` 软件包
+
+* 命令名称: netstat
+* 英文原意: Print network connections ,routing tables,interface statistics,masquerade connections,and multicast memberships
+* 所在路径: /bin/netstat
+* 执行权限: 所有用户
+* 功能描述: 输出网络连接，路由表，接口统计，伪装连接和组播成员
+
+
+[source,shell]
+----
+[root@localhost ~]# netstat [选项]
+----
+
+.`netstat` 选项
+|===
+|选项 |说明
+
+| -a
+| 列出所有网络状态，包括 Socket 程序
+
+|-c 秒数
+|指定每隔 几秒 刷新一下网络状态
+
+|-p
+|显示 pid 和程序名
+
+|-t
+|显示使用 TCP 协议端口的连接状况
+
+|-u
+|显示使用 UDP 协议端口的连接状况
+
+|-l
+|仅显示监听状态的连接
+
+|-r
+|显示路由表
+|===
+
+[[linux-command-network-write]]
+=== `write`
+
+* 命令名称: write
+* 英文原意: send a message to another user
+* 所在路径: /usr/bin/write
+* 执行权限: 所有用户
+* 功能描述: 向其他用户发送信息
+
+[source,shell]
+----
+[root@localhost ~]# write user1 pts/1
+hello
+I will be in 5 minutes to restart ,please save you data
+# 向在 pts/1 (远程终端 1) 登录的 user1 用户发送信息，使用 "Ctrl+D" 快捷键保存发送的数据
+----
+
+[[linux-command-network-wall]]
+=== `wall`
+
+`write` 命令用于向指定用户发送信息，而 `wall` 命令用于向所有登录用户发送信息。包括自己
+
+[source,shell]
+----
+[root@localhost ~]# wall "I will be in 5 minutes to restart ,please save you data"
+----
+
+[[linux-command-network-mail]]
+=== `mail`
+
+`mail` 是 Linux 的邮件客户端命令，可以利用这个命令给其他用户发送邮件。
+
+* 命令名称: mail
+* 英文原意: send and receive Internet mail
+* 所在路径: /bin/mail
+* 执行权限: 所有用户
+* 功能描述: 发送和接收电子邮件
+
+发送邮件:
+
+.发送邮件有 user1
+[source,shell]
+----
+[root@localhost ~]# mail user1
+Subject: hello      # 邮件标题
+Nice to meet you    # 邮件内容
+.                   # 以 . 来结束邮件输入
+----
+
+我们接收到的邮件都保存在 `/var/spool/mail/用户名` 中，每个用户都有一个以自己的用户名命名的邮箱。
+
+发送文件内容:
+
+.发送邮件有 user1
+[source,shell]
+----
+[root@localhost ~]# mail -s "test mail" root < /root/anaconda-ks.cfg
+# 把 /root/anaconda-ks.cfg 文件的内容发送给 root 用户
+----
+
+查看接收的文件:
+
+.
+[source,shell]
+----
+[root@localhost ~]# mail
+----
+
 
 [[linux-command-network-top]]
 === top
 
-[[linux-command-network-netstat]]
-=== netstat
+[[linux-command-history]]
+== 系统痕迹命令
+
+[[linux-command-history-w]]
+=== `w`
+
+* 命令名称: w
+* 英文原意: show who is logged and what they are doing
+* 所在路径: /usr/bin/w
+* 执行权限: 所有用户
+* 功能描述: 显示登录用户正在做什么。
+
+[source,shell]
+----
+[root@localhost ~]# w
+----
+
+.第一行信息
+|===
+|内容 |说明
+
+| -c
+|系统当前时间
+
+|-h
+|系统的运行时间（当前系统已经运行了 天 小时 分钟）
+
+|-r
+|当前登录了两个用户
+
+|-r
+|系统在之前 1 分钟，5 分钟，10 分钟 的平均负载。如果 CPU 是单核的，则这个数值超过 `1` 就是高负载。如果 CPU 是四核的，这个值超过 `4` 就是高负载
+|===
+
+.第二行信息
+|===
+|内容 |说明
+
+| USER
+| 当前登录的用户
+
+| TTY
+| 登录的终端: tty1-6：本地字符终端(alt+F1-6 切换)。tty7: 本地图形终端(ctrl+alt+F7 切换，必须安装图形化界面)。pts/0-255: 远程终端
+
+| FROM
+| 登录的 ip 地址，如果是本地地址，则为空
+
+| LOGIN@
+| 登录时间
+
+| IDLE
+| 用户闲置时间
+
+| JCPU
+| 所以的进程占用的 CPU 时间
+
+| PCPU
+| 当前进程占用的 CPU 时间
+
+| WHAT
+| 用户正在进行的操作
+|===
+
+[[linux-command-history-who]]
+=== `who`
+
+`who` 命令 和 `w` 命令类似，用于查看正在登录的用户，但是显示的内容更加简单。也是查看 `/var/run/utmp` 日志
+
+[[linux-command-history-last]]
+=== `last`
+
+`last` 命令是查看系统所有登录过的用户信息的。包括正在登录的用户和之前登录过的用户。这个命令查看的是 `/var/log/wtmp` 痕迹日志文件
+
+[[linux-command-history-lastlog]]
+=== `lastlog`
+
+`lastlog` 命令是查看系统中所有用户最后一次的登录时间的命令，他查看的是 `/var/log/lastlog` 文件
+
+[[linux-command-history-lastb]]
+=== `lastb`
+
+`lastb` 是查看错误登录信息的，查看的是 `、/var/log/btmp` 文件
+
+[[linux-command-mount]]
+== 挂载命令
+
+linux 所有存储设备都必须挂载使用，包括硬盘。
+
+* 命令名称: mount
+* 所在路径: /bin/mount
+* 执行权限: 所有用户
+
+
+.`mount` 选项
+|===
+|参数|说明
+
+| atime/noatime
+| 更新访问时间/不更新访问时间。访问分区文件时，是否更新文件的访问时间，默认更新
+
+| async/sync
+| 异步/同步，默认异步
+
+| auto/noauto
+| 自动/手动。 mount -a 命令执行时，是否会自动安装 `/etc/fstab` 文件内容挂载，默认自动
+
+| defaults
+| 定义默认值，相当于 `rw`,`suid`,`dev`,`exec`,`auto`,`nouser`,`async` 这七个选项
+
+| exec/noexec
+| 执行/不执行。设定是否在文件系统中执行可执行文件，默认是 exec 执行。
+
+| remount
+| 重新挂载已经挂载的文件系统，一般用于指定修改特殊权限
+
+| rw/ro
+| 读写/只读。文件系统挂载时，是否具有读写权限，默认 `rw`
+
+| suid/nosuid
+| 具有/不具有 SUID 权限。设定文件系统是否具有 SUID 和 SGID 的权限，默认是具有
+
+| user/nouser
+| 允许/不允许 普通用户挂载。设定文件系统是否允许普通用户挂载。默认是不允许，只有 `root` 用户才能挂载分区
+
+| usrquota
+| 写入代表文件系统支持用户磁盘配额，默认不支持
+
+| grpquota
+| 写入代表文件系统支持组磁盘配额，默认不支持
+|===
+
+
+=== 光盘挂载
+
+光盘挂载的前提依然是指定光盘的设备文件名，不同版本的 Linux，设备文件名并不相同
+
+* 在 CentOS 5.x 以前的系统，光盘设备文件名是 `/etc/hdc`
+* 在 CentOS 6.x 以后的系统，光盘设备文件名是 `/etc/sr0`
+
+不论哪个系统都有软链接 `/dev/cdrom`,与可以作为光盘的设备文件名
+
+用完之后记得卸载
+
+[NOTE]
+====
+卸载的需要退出光盘目录，才能正常卸载
+====
+
+=== U 盘挂载
+
+U 盘和硬盘公用设备文件名，所有 U 盘的设备文件名不是固定的，需要手工查询。查询命令：
+
+[source,shell]
+----
+[root@localhost ~]# fdisk -l
+----
+
+然后及时挂载了，挂载命令如下:
+
+[source,shell]
+----
+[root@localhost ~]# mount -t vfat /dev/sdb1 /mnt/usb/
+----
+
+如果 U 盘中有中文，会发现中文是乱码，Linux 要想正常显示中文，需要具备以下两个条件
+
+* 安装了中文编码和中文字体
+* 操作终端需要支持中文显示（纯字符终端，是不支持中文编码的）
+
+=== 挂载 NTFS 分区
+
+Linux 驱动加载顺序
+
+. 驱动直接放入系统内核之中，这种驱动主要是系统启动加载必须的驱动，数量较少。
+. 驱动以模块的方式放入硬盘。大多数驱动都以这种方法保存，保存位置在 `/lib/modules/3.10-862.el7.x86_64/kernel` 中
+. 驱动可以被 Linux 识别，但是系统认为这种驱动一般不常用，默认不加载。如果需要加载这种驱动，需要重新编译内核，而 NTFS 文件系统的驱动就属于这种情况
+. 硬件不能被 Linux 内核识别，需要手动安装驱动。当然前提是厂商提供了该硬件针对 Linux 的驱动，否则就需要自己开发驱动了。
+
+使用 NTFS-3G 安装 NTFS 文件系统模块
+
+. 下载 NTFS-3G 插件
++
+http://www.tuxera.com/community/ntfs-3g-download/[http://www.tuxera.com/community/ntfs-3g-download/] 下载 NTFS-3G 插件到服务器上
+
+. 安装 NTFS-3G 插件
+
+在编译安装 NTFS-3G 插件之前，确保 gcc 编译器已经安装。
+
+安装就完成了，已经可以挂在和使用 Windows 的 NTFS 分区了。不过需要注意挂在分区时的文件系统不是 `ntfs`，而是 `ntfs-3g`.挂载命令如下
+
+
 
 [[linux-command-other]]
 == 其他命令
