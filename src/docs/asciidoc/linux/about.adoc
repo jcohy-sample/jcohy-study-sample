@@ -127,7 +127,7 @@ chkconfig iptables on
 chkconfig iptables off
 ----
 
-== 磁盘分区
+=== 磁盘分区
 
 * MBR 分区表：最大支持 2.1 TB 的硬盘，最多支持 4 个分区
 * GPT 分区表（全局唯一标识分区表）：GPT支持 9.4 ZB 硬盘。理论上支持的分区数没有限制，但 windows 限制 128 个分区
@@ -141,7 +141,7 @@ chkconfig iptables off
 ** 不能写入数据，只能包含逻辑分区
 * 逻辑分区
 
-== 硬件设备文件名
+=== 硬件设备文件名
 
 
 |===
@@ -169,7 +169,7 @@ chkconfig iptables off
 |/dev/dev/mouse
 |===
 
-== 挂载
+=== 挂载
 
 * 必须分区
 ** / ：根分区
@@ -296,6 +296,33 @@ chkconfig iptables off
 | 系统的定时任务队列保存位置。系统的计划任务会保存在这里
 |===
 
+[[linux-base-shortkey]]
+== Linux 常用快捷键
+
+|===
+|快捷键 |作用
+
+|Tab 键
+|命令或文件补全
+
+|Ctrl+A
+|把光标移动到命令行开头
+
+|Ctrl+E
+|把光标移动到命令行结尾
+
+|Ctrl+C
+|强制终止当前命令
+
+|Ctrl+L
+|清屏，相当于 `clear` 命令
+
+|Ctrl+U
+|删除或剪贴光标之前的命令
+
+|Ctrl+Y
+|粘贴 Ctrl+U 剪贴的命令
+|===
 
 == 学习 Linux 注意事项
 
