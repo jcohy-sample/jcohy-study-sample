@@ -2,7 +2,7 @@
 = 概述
 include::attributes.adoc[]
 
-include::linux/base.adoc[leveloffset=+1]
+include::linux/about.adoc[leveloffset=+1]
 
 include::linux/command.adoc[leveloffset=+1]
 

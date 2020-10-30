@@ -211,8 +211,8 @@ rmdir 命令作用十分有限，因为只能删除空目录。所有一旦目�
 权限：(0600/-rw-------)  Uid：(    0/    root)   Gid：(    0/    root)
 环境：system_u:object_r:admin_home_t:s0
 最近访问：2020-10-28 17:09:35.345425586 +0800
-最近更改：2020-10-22 14:48:38.846449902 +0800
-最近改动：2020-10-22 14:48:38.846449902 +0800
+最近更改：2020-10-22 14:48:38.846449902 +0800 # 数据修改时间
+最近改动：2020-10-22 14:48:38.846449902 +0800 # 状态修改时间
 创建时间：-
 ----
 
@@ -1130,6 +1130,11 @@ grep 命令用于在文件中搜索符合条件的字符串，如果需要模糊
 
 选项 `-r` : 压缩目录
 
+[source,shell]
+----
+[root@localhost ~]# zip ana.zip anaconda-ks.cfg
+----
+
 ==== 解压
 
 解压的命令就是 `unzip`
@@ -1146,6 +1151,11 @@ grep 命令用于在文件中搜索符合条件的字符串，如果需要模糊
 ----
 
 选项 `-d` : 指定解压目录
+
+[source,shell]
+----
+[root@localhost ~]# unzip -d /tmp/ ana.zip
+----
 
 [[linux-command-package-gz]]
 === `.gz` 格式（不会打包）
@@ -1182,6 +1192,12 @@ grep 命令用于在文件中搜索符合条件的字符串，如果需要模糊
 |压缩目录
 |===
 
+[source,shell]
+----
+[root@localhost ~]# gz -c anaconda-ks.cfg > anaconda-ks.cfg.gz
+# 使用 -c 选项，可以不让压缩数据输出到屏幕上，而是重定向到压缩文件中。这样可以在压缩文件的时候不删除源文件
+----
+
 ==== 解压
 
 如果要解压 `.gz` 文件，那么可以使用 `gzip -d 压缩包` 和 `gunzip 压缩包` 命令都可以。我们看看 `gunzip` 命令的基本信息。
@@ -1191,6 +1207,12 @@ grep 命令用于在文件中搜索符合条件的字符串，如果需要模糊
 * 所在路径: /bin/gunzip
 * 执行权限: 所有用户
 * 功能描述: 解压缩文件或目录
+
+[source,shell]
+----
+[root@localhost ~]# gunzip  anaconda-ks.cfg.gz
+[root@localhost ~]# gzip -d  anaconda-ks.cfg.gz
+----
 
 [[linux-command-package-bz]]
 === `.bz2` 格式（不能压缩目录）
@@ -1221,6 +1243,12 @@ grep 命令用于在文件中搜索符合条件的字符串，如果需要模糊
 |显示压缩的详细信息
 |===
 
+[source,shell]
+----
+[root@localhost ~]# bzip2  anaconda-ks.cfg
+[root@localhost ~]# bzip2  -k anaconda-ks.cfg
+----
+
 ==== 解压
 
 如果要解压 `.bz2` 文件，那么可以使用 `bzip2 -d 压缩包` 和 `bunzip2 压缩包` 命令都可以。我们看看 `bunzip2` 命令的基本信息。
@@ -1230,6 +1258,12 @@ grep 命令用于在文件中搜索符合条件的字符串，如果需要模糊
 * 所在路径: /usr/bin/bunzip2
 * 执行权限: 所有用户
 * 功能描述: 解压缩
+
+[source,shell]
+----
+[root@localhost ~]# bunzip2  anaconda-ks.cfg.bz2
+[root@localhost ~]# bzip2  -d anaconda-ks.cfg.bz2
+----
 
 [[linux-command-package-tar]]
 === `.tar` 格式（打包不会压缩）
@@ -1265,6 +1299,11 @@ grep 命令用于在文件中搜索符合条件的字符串，如果需要模糊
 |指定解打包目录
 |===
 
+[source,shell]
+----
+[root@localhost ~]# tar -xvf  anaconda-ks.cfg.tar
+----
+
 [[linux-command-package-tars]]
 === `.tar.gz`  和 `.tar.bz2` 格式
 
@@ -1277,6 +1316,22 @@ grep 命令用于在文件中搜索符合条件的字符串，如果需要模糊
 
 -z : 压缩和解压缩 `.tar.gz` 格式
 -j : 压缩和解压缩 `.tar.bz2` 格式
+
+[source,shell]
+----
+[root@localhost ~]# tar -zcvf tmp.tar.gz /tmp/
+# 将 /tmp/ 目录直接打包压缩为 .tar.gz 文件
+[root@localhost ~]# tar -zxvf tmp.tar.gz /tmp/
+# 解压缩和解打包
+----
+
+[source,shell]
+----
+[root@localhost ~]# tar -jcvf tmp.tar.bz2 /tmp/
+# 将 /tmp/ 目录直接打包压缩为 .tar.bz2 文件
+[root@localhost ~]# tar -jxvf tmp.tar.bz2 /tmp/
+# 解压缩和解打包
+----
 
 [[linux-command-shutdown]]
 == 关机和重启命令
@@ -1360,15 +1415,32 @@ grep 命令用于在文件中搜索符合条件的字符串，如果需要模糊
 ----
 
 [[linux-command-network-ifconfig]]
-=== `ifconfig`
+=== `ifconfig` 和 `ip addr`
 
-`ifconfig` 命令主要是用来查看 ip 地址。
+`ifconfig` 和 `ip addr` 命令主要是用来查看 ip 地址。`ifconfig` 在 CentOS 6 之前可以使用。`ip addr` 在 CentOS 6 之后可以使用。
 
 * 命令名称: ifconfig
 * 英文原意: configure a network interface
 * 所在路径: /sbin/ifconfig
 * 执行权限: 超级用户
 * 功能描述: 配置网络接口
+
+[source,shell]
+----
+[root@localhost home]# ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether 00:15:5d:83:4c:00 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.11.137/24 brd 192.168.11.255 scope global noprefixroute eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::cf6e:fd49:90c1:3de2/64 scope link noprefixroute
+       valid_lft forever preferred_lft forever
+----
 
 [[linux-command-network-ping]]
 === `ping` 命令
@@ -1399,6 +1471,18 @@ grep 命令用于在文件中搜索符合条件的字符串，如果需要模糊
 |-s 字节
 |指定探测包大小
 |===
+
+.探测 192.168.103.0/24 网段中有多少可以通信的主机jcohy
+[source,shell]
+----
+[root@localhost home]# ping -b -c 3 192.168.103.255
+PING 192.168.103.255 (192.168.103.255) 56(84) bytes of data.
+64 bytes from 192.168.103.199: icmp_seq=1 ttl=64 time=0.522 ms
+64 bytes from 192.168.103.168: icmp_seq=1 ttl=64 time=0.195 ms (DUP!)
+64 bytes from 192.168.103.252: icmp_seq=1 ttl=64 time=0.195 ms (DUP!)
+...
+...
+----
 
 [[linux-command-network-netstat]]
 === `netstat`
@@ -1443,6 +1527,233 @@ grep 命令用于在文件中搜索符合条件的字符串，如果需要模糊
 |显示路由表
 |===
 
+.查看本机开启的端口
+[source,shell]
+----
+[root@localhost home]# netstat -tuln
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN
+tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN
+tcp6       0      0 :::22                   :::*                    LISTEN
+tcp6       0      0 ::1:25                  :::*                    LISTEN
+udp        0      0 127.0.0.1:323           0.0.0.0:*
+udp6       0      0 ::1:323                 :::*
+----
+
+各字段解释
+|===
+|字段 |说明
+
+|Proto
+|网络连接的协议，一般就是 TCP 或者 UDP 协议
+
+|Recv-Q
+| 表示接受到的数据，已经在本地缓存中，但是还没有被程序取走
+
+|Send-Q
+| 表示从本机发送，对方还没有收到的数据，依然在本地缓存中，一般是不具备 ACK 标志的数据包
+
+|Local Address
+| 本机的 IP 地址和端口号
+
+|Foreign Address
+| 远程主机的 IP 地址和端口号
+
+| State
+| 状态，常见的状态主要有以下几种：
+
+* LISTEN : 监听状态，只有 TCP 协议需要监听，UDP 不需要
+* ESTABLISHED : 已经建立连接的状态，如果使用 `-l` 选项，则看不到已经建立连接的选项
+* SYN_SEND : SYN 发起包，就是主动发起连接的数据包
+* SYN-RECV : 接收到主动连接的数据包
+* FIN_WAIT1 : 正在中断的连接
+* FIN_WAIT2 : 已经中断的连接，但是正在等待对方主机进行确认
+* TIME_WAIT : 连接已经中断，但是套接字依然在网络中等待结束
+* CLOSED : 套接字没有被使用
+
+在这些状态中，我们最常用的就是 `LISTEN` 和 `ESTABLISHED` 状态，一种表示正在监听，一种表示已经建立连接
+|===
+
+如果使用 `-p` 选项，可以查看到是那个程序占用了端口，并且可以知道这个程序的 PID，如下：
+
+.查看本机有哪些程序开启的端口
+[source,shell]
+----
+[root@localhost home]# netstat -tulnp
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      4340/sshd
+tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      4635/master
+tcp6       0      0 :::22                   :::*                    LISTEN      4340/sshd
+tcp6       0      0 ::1:25                  :::*                    LISTEN      4635/master
+udp        0      0 127.0.0.1:323           0.0.0.0:*                           3811/chronyd
+udp6       0      0 ::1:323                 :::*                                3811/chronyd
+----
+
+使用选项 `-an` 可以查看所有连接，包括监听状态连接(LISTEN)，已经建立连接状态的连接(ESTABLISHED)，Socket 程序连接等。
+
+.查看所有连接
+[source,shell]
+----
+[root@localhost home]# netstat -an
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN
+tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN
+tcp        0     52 192.168.11.137:22       192.168.11.109:26599    ESTABLISHED
+tcp6       0      0 :::22                   :::*                    LISTEN
+tcp6       0      0 ::1:25                  :::*                    LISTEN
+udp        0      0 127.0.0.1:323           0.0.0.0:*
+udp6       0      0 ::1:323                 :::*
+raw6       0      0 :::58                   :::*                    7
+Active UNIX domain sockets (servers and established)
+Proto RefCnt Flags       Type       State         I-Node   Path
+unix  2      [ ACC ]     STREAM     LISTENING     7425     /run/systemd/journal/stdout
+unix  5      [ ]         DGRAM                    7428     /run/systemd/journal/socket
+unix  16     [ ]         DGRAM                    7430     /dev/log
+unix  2      [ ACC ]     STREAM     LISTENING     15890    /run/systemd/private
+unix  2      [ ACC ]     STREAM     LISTENING     28624    private/tlsmgr
+unix  2      [ ACC ]     STREAM     LISTENING     28627    private/rewrite
+unix  2      [ ACC ]     STREAM     LISTENING     28630    private/bounce
+unix  2      [ ACC ]     STREAM     LISTENING     28633    private/defer
+unix  2      [ ACC ]     STREAM     LISTENING     28636    private/trace
+unix  2      [ ACC ]     STREAM     LISTENING     28639    private/verify
+unix  2      [ ACC ]     STREAM     LISTENING     28645    private/proxymap
+unix  2      [ ACC ]     STREAM     LISTENING     28648    private/proxywrite
+unix  2      [ ACC ]     STREAM     LISTENING     28651    private/smtp
+unix  2      [ ACC ]     STREAM     LISTENING     28654    private/relay
+unix  2      [ ACC ]     STREAM     LISTENING     28660    private/error
+unix  2      [ ACC ]     STREAM     LISTENING     28663    private/retry
+unix  2      [ ACC ]     STREAM     LISTENING     28669    private/discard
+unix  2      [ ACC ]     STREAM     LISTENING     28672    private/local
+unix  2      [ ACC ]     STREAM     LISTENING     28675    private/virtual
+unix  2      [ ACC ]     STREAM     LISTENING     28678    private/lmtp
+unix  2      [ ACC ]     STREAM     LISTENING     28681    private/anvil
+unix  2      [ ACC ]     STREAM     LISTENING     28684    private/scache
+unix  2      [ ACC ]     STREAM     LISTENING     28613    public/pickup
+unix  2      [ ACC ]     STREAM     LISTENING     28617    public/cleanup
+unix  2      [ ACC ]     STREAM     LISTENING     28620    public/qmgr
+unix  2      [ ACC ]     STREAM     LISTENING     28642    public/flush
+unix  2      [ ACC ]     STREAM     LISTENING     28657    public/showq
+unix  2      [ ]         DGRAM                    24508    /var/run/chrony/chronyd.sock
+unix  2      [ ACC ]     STREAM     LISTENING     16062    /run/lvm/lvmpolld.socket
+unix  2      [ ]         DGRAM                    16065    /run/systemd/shutdownd
+unix  2      [ ACC ]     SEQPACKET  LISTENING     16070    /run/udev/control
+unix  2      [ ACC ]     STREAM     LISTENING     16108    /run/lvm/lvmetad.socket
+unix  3      [ ]         DGRAM                    7415     /run/systemd/notify
+unix  2      [ ]         DGRAM                    7417     /run/systemd/cgroups-agent
+unix  2      [ ACC ]     STREAM     LISTENING     24060    /run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     27638    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     28646
+unix  2      [ ]         DGRAM                    25340
+unix  3      [ ]         STREAM     CONNECTED     24381
+unix  3      [ ]         STREAM     CONNECTED     28647
+unix  3      [ ]         STREAM     CONNECTED     28659
+unix  3      [ ]         STREAM     CONNECTED     28649
+unix  3      [ ]         STREAM     CONNECTED     28658
+unix  3      [ ]         STREAM     CONNECTED     27470    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     28643
+unix  3      [ ]         STREAM     CONNECTED     24555    /run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     28644
+unix  3      [ ]         STREAM     CONNECTED     27469
+unix  3      [ ]         STREAM     CONNECTED     28662
+unix  3      [ ]         STREAM     CONNECTED     28667
+unix  2      [ ]         DGRAM                    16950
+unix  3      [ ]         STREAM     CONNECTED     28661
+unix  3      [ ]         STREAM     CONNECTED     24939
+unix  2      [ ]         DGRAM                    27855
+unix  3      [ ]         STREAM     CONNECTED     28632
+unix  3      [ ]         STREAM     CONNECTED     24940    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     28641
+unix  3      [ ]         STREAM     CONNECTED     28626
+unix  3      [ ]         STREAM     CONNECTED     25276    /run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     24425
+unix  3      [ ]         STREAM     CONNECTED     28640
+unix  2      [ ]         DGRAM                    25019
+unix  3      [ ]         STREAM     CONNECTED     24426    /run/systemd/journal/stdout
+unix  2      [ ]         DGRAM                    25256
+unix  3      [ ]         STREAM     CONNECTED     28631
+unix  3      [ ]         STREAM     CONNECTED     25126    /run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     28638
+unix  3      [ ]         STREAM     CONNECTED     28625
+unix  3      [ ]         STREAM     CONNECTED     28628
+unix  3      [ ]         STREAM     CONNECTED     28637
+unix  3      [ ]         STREAM     CONNECTED     28629
+unix  3      [ ]         STREAM     CONNECTED     25125
+unix  3      [ ]         STREAM     CONNECTED     28635
+unix  3      [ ]         STREAM     CONNECTED     24701
+unix  2      [ ]         DGRAM                    25049
+unix  3      [ ]         STREAM     CONNECTED     24702    /run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     28614
+unix  2      [ ]         DGRAM                    24253
+unix  3      [ ]         STREAM     CONNECTED     28853    /run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     28612
+unix  2      [ ]         DGRAM                    28583
+unix  3      [ ]         STREAM     CONNECTED     24554    /run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     26046    /run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     26045
+unix  2      [ ]         DGRAM                    23523
+unix  3      [ ]         STREAM     CONNECTED     16676    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     28668
+unix  2      [ ]         DGRAM                    24488
+unix  3      [ ]         STREAM     CONNECTED     28686
+unix  3      [ ]         STREAM     CONNECTED     28671
+unix  3      [ ]         STREAM     CONNECTED     28685
+unix  3      [ ]         STREAM     CONNECTED     25194
+unix  3      [ ]         STREAM     CONNECTED     28670
+unix  3      [ ]         STREAM     CONNECTED     27637
+unix  3      [ ]         STREAM     CONNECTED     28673
+unix  2      [ ]         DGRAM                    51529
+unix  3      [ ]         STREAM     CONNECTED     23532
+unix  3      [ ]         STREAM     CONNECTED     28674
+unix  3      [ ]         STREAM     CONNECTED     16675
+unix  3      [ ]         STREAM     CONNECTED     28677
+unix  3      [ ]         STREAM     CONNECTED     24143    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     28676
+unix  3      [ ]         STREAM     CONNECTED     28679
+unix  2      [ ]         DGRAM                    16391
+unix  3      [ ]         STREAM     CONNECTED     28618
+unix  3      [ ]         STREAM     CONNECTED     28680
+unix  3      [ ]         STREAM     CONNECTED     28683
+unix  3      [ ]         STREAM     CONNECTED     28682
+unix  3      [ ]         STREAM     CONNECTED     28615
+unix  3      [ ]         STREAM     CONNECTED     25275
+unix  3      [ ]         STREAM     CONNECTED     24142
+unix  3      [ ]         STREAM     CONNECTED     27694    /run/systemd/journal/stdout
+unix  2      [ ]         DGRAM                    51675
+unix  3      [ ]         STREAM     CONNECTED     28634
+unix  3      [ ]         STREAM     CONNECTED     24252
+unix  3      [ ]         STREAM     CONNECTED     16872
+unix  3      [ ]         STREAM     CONNECTED     28619
+unix  3      [ ]         STREAM     CONNECTED     28852
+unix  3      [ ]         STREAM     CONNECTED     25195    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     24552
+unix  3      [ ]         STREAM     CONNECTED     28621
+unix  3      [ ]         DGRAM                    16975
+unix  2      [ ]         DGRAM                    27930
+unix  3      [ ]         STREAM     CONNECTED     24553
+unix  3      [ ]         STREAM     CONNECTED     28622
+unix  3      [ ]         STREAM     CONNECTED     27693
+unix  3      [ ]         DGRAM                    16974
+unix  2      [ ]         DGRAM                    24242
+unix  3      [ ]         STREAM     CONNECTED     28656
+unix  3      [ ]         STREAM     CONNECTED     28611
+unix  3      [ ]         STREAM     CONNECTED     28655
+unix  3      [ ]         STREAM     CONNECTED     24234
+unix  2      [ ]         DGRAM                    28706
+unix  3      [ ]         STREAM     CONNECTED     28653
+unix  2      [ ]         DGRAM                    52227
+unix  3      [ ]         STREAM     CONNECTED     24235    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     28652
+unix  3      [ ]         STREAM     CONNECTED     16873    /run/systemd/journal/stdout
+unix  2      [ ]         DGRAM                    52388
+unix  3      [ ]         STREAM     CONNECTED     28650
+unix  3      [ ]         STREAM     CONNECTED     23533
+----
+
+从 Active UNIX domain sockets 开始，之后的内容就是 Socket 程序产生的连接，之前的内容都是网络服务产生的连接。我们可以在 `-an` 选项的输出中看到各种网络连接状态，而之前的 `-tuln` 选项则只能看到监听状态。
+
 [[linux-command-network-write]]
 === `write`
 
@@ -1473,15 +1784,13 @@ I will be in 5 minutes to restart ,please save you data
 [[linux-command-network-mail]]
 === `mail`
 
-`mail` 是 Linux 的邮件客户端命令，可以利用这个命令给其他用户发送邮件。
+`mail` 是 Linux 的邮件客户端命令，可以利用这个命令给其他用户发送邮件。CentOS 7 简化版默认未安装邮件，需要手动安装 `yum -y install mailx`
 
 * 命令名称: mail
 * 英文原意: send and receive Internet mail
 * 所在路径: /bin/mail
 * 执行权限: 所有用户
 * 功能描述: 发送和接收电子邮件
-
-发送邮件:
 
 .发送邮件有 user1
 [source,shell]
@@ -1494,29 +1803,78 @@ Nice to meet you    # 邮件内容
 
 我们接收到的邮件都保存在 `/var/spool/mail/用户名` 中，每个用户都有一个以自己的用户名命名的邮箱。
 
-发送文件内容:
-
-.发送邮件有 user1
+.发送文件内容:
 [source,shell]
 ----
 [root@localhost ~]# mail -s "test mail" root < /root/anaconda-ks.cfg
 # 把 /root/anaconda-ks.cfg 文件的内容发送给 root 用户
 ----
 
-查看接收的文件:
+我们在写脚本时，有时需要脚本自动发送一些信息给指定用户，把要发送的信息预先写入到文件中，是一个不错的选择
 
-.
+.查看已经接收的文件
 [source,shell]
 ----
-[root@localhost ~]# mail
+[root@localhost home]# mail
+Heirloom Mail version 12.5 7/5/10.  Type ? for help.
+"/var/spool/mail/root": 3 messages 2 new
+    1 root                  Fri Oct 30 11:24  66/1953  "test mail"
+>N  2 Mail Delivery System  Fri Oct 30 11:25  72/2420  "Undelivered Mail Returned to Sender"
+ N  3 root                  Fri Oct 30 11:26  65/1942  "test mail"
+# 未阅读 编号 发件人            时间                          标题
+&
+# 等待用户输入
 ----
 
+`N` 表示未读邮件，之后的数字是邮件的编号，我们主要是通过这个编号来进行邮件的操作，如果我们想要查看第一封邮件，则只需输入邮件编号 `1` 就行了
+
+我们在命令交互中使用 `?` 查看这个交互界面支持的命令
+
+[source,shell]
+----
+& ?
+               mail commands
+type <message list>             type messages
+next                            goto and type next message
+from <message list>             give head lines of messages
+headers                         print out active message headers
+delete <message list>           delete messages
+undelete <message list>         undelete messages
+save <message list> folder      append messages to folder and mark as saved
+copy <message list> folder      append messages to folder without marking them
+write <message list> file       append message texts to file, save attachments
+preserve <message list>         keep incoming messages in mailbox even if saved
+Reply <message list>            reply to message senders
+reply <message list>            reply to message senders and all recipients
+mail addresses                  mail to specific recipients
+file folder                     change to another folder
+quit                            quit and apply changes to folder
+xit                             quit and discard changes made to folder
+!                               shell escape
+cd <directory>                  chdir to directory or home if none given
+list                            list names of all available commands
+
+A <message list> consists of integers, ranges of same, or other criteria
+separated by spaces.  If omitted, mail uses the last message typed.
+&
+----
+
+这些交互命令是可以简化的，比如 `header` 命令，就可以直接输入 `h` 这是列出邮件标题列表的命令。常用命令解释
+
+* headers : 列出邮件标题列表。直接输入 `h` 即可
+* delete : 删除指定邮件。例如: `d 2` ，删除第二封邮件
+* save : 保存邮件。可以把指定邮件保存成文件 `s 2 /tmp/test.mail`
+* quit : 退出，并把已经操作过的邮件保存。
+* xit : 退出，但是不保存任何操作
 
 [[linux-command-network-top]]
 === top
 
 [[linux-command-history]]
 == 系统痕迹命令
+
+系统中有一些重要的痕迹日志文件，比如 `/var/log/wtmp`,`/var/run/utmp` ,`/var/log/btmp` ,`/var/log/lastlog` 等日志文件，如果你用 vim 打开这些文件，你会发现这些文件是二进制乱码。这是由于这些日志保存的是系统重要的登录痕迹，
+包括某个用户何时登录了系统，何时退出了系统，错误登录等重要系统信息，不能随意编辑，只能通过对应的命令来查看。
 
 [[linux-command-history-w]]
 === `w`
@@ -1529,23 +1887,26 @@ Nice to meet you    # 邮件内容
 
 [source,shell]
 ----
-[root@localhost ~]# w
+[root@localhost home]# w
+ 11:41:39 up  3:18,  1 user,  load average: 0.00, 0.01, 0.05
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+root     pts/0    192.168.11.109   10:14    3.00s  0.04s  0.01s w
 ----
 
 .第一行信息
 |===
 |内容 |说明
 
-| -c
+| 11:41:39
 |系统当前时间
 
-|-h
-|系统的运行时间（当前系统已经运行了 天 小时 分钟）
+| up  3:18
+|系统的运行时间（当前系统已经运行了 3 小时 18 分钟）
 
-|-r
-|当前登录了两个用户
+| 1 user
+|当前登录了 1 个用户
 
-|-r
+| load average: 0.00, 0.01, 0.05
 |系统在之前 1 分钟，5 分钟，10 分钟 的平均负载。如果 CPU 是单核的，则这个数值超过 `1` 就是高负载。如果 CPU 是四核的，这个值超过 `4` 就是高负载
 |===
 
@@ -1583,20 +1944,83 @@ Nice to meet you    # 邮件内容
 
 `who` 命令 和 `w` 命令类似，用于查看正在登录的用户，但是显示的内容更加简单。也是查看 `/var/run/utmp` 日志
 
+[source,shell]
+----
+[root@localhost ~]# who
+root     pts/0        2020-10-30 11:47 (192.168.11.109)
+root     pts/1        2020-10-30 11:48 (192.168.11.109)
+# 用户名  登录终端         登录时间 (来源ip)
+----
+
 [[linux-command-history-last]]
 === `last`
 
 `last` 命令是查看系统所有登录过的用户信息的。包括正在登录的用户和之前登录过的用户。这个命令查看的是 `/var/log/wtmp` 痕迹日志文件
+
+[source,shell]
+----
+[root@localhost ~]# last
+root     pts/1        192.168.11.109   Fri Oct 30 11:48   still logged in
+root     pts/0        192.168.11.109   Fri Oct 30 11:47   still logged in
+root     pts/1        192.168.11.109   Fri Oct 30 11:44 - 11:47  (00:02)
+root     pts/0        192.168.11.109   Fri Oct 30 10:14 - 11:47  (01:32)
+root     pts/0        192.168.11.109   Thu Oct 29 17:13 - 18:59  (01:46)
+reboot   system boot  3.10.0-957.el7.x Thu Oct 29 17:12 - 11:56  (18:43)
+root     pts/0        192.168.11.109   Thu Oct 29 10:28 - crash  (06:44)
+root     pts/0        192.168.11.109   Wed Oct 28 17:09 - 19:01  (01:52)
+root     pts/0        192.168.11.109   Fri Oct 23 11:46 - 14:21  (02:35)
+root     pts/0        192.168.11.109   Thu Oct 22 14:49 - 19:00  (04:10)
+# 用户名  登录终端         来源 IP 地址    登录时间 - 退出时间
+reboot   system boot  3.10.0-957.el7.x Thu Oct 22 14:48 - 11:56 (7+21:07)
+# 系统重启信息记录
+wtmp begins Thu Oct 22 14:48:54 2020
+----
 
 [[linux-command-history-lastlog]]
 === `lastlog`
 
 `lastlog` 命令是查看系统中所有用户最后一次的登录时间的命令，他查看的是 `/var/log/lastlog` 文件
 
+[source,shell]
+----
+[root@localhost ~]# lastlog
+用户名           端口     来自             最后登陆时间
+root             pts/1    192.168.11.109   五 10月 30 11:48:16 +0800 2020
+bin                                        **从未登录过**
+daemon                                     **从未登录过**
+adm                                        **从未登录过**
+lp                                         **从未登录过**
+sync                                       **从未登录过**
+shutdown                                   **从未登录过**
+halt                                       **从未登录过**
+mail                                       **从未登录过**
+operator                                   **从未登录过**
+games                                      **从未登录过**
+ftp                                        **从未登录过**
+nobody                                     **从未登录过**
+systemd-network                            **从未登录过**
+dbus                                       **从未登录过**
+polkitd                                    **从未登录过**
+sshd                                       **从未登录过**
+postfix                                    **从未登录过**
+chrony                                     **从未登录过**
+user1                                      **从未登录过**
+----
+
 [[linux-command-history-lastb]]
 === `lastb`
 
 `lastb` 是查看错误登录信息的，查看的是 `、/var/log/btmp` 文件
+
+[source,shell]
+----
+[root@localhost ~]# lastb
+# 错误登录用户 终端         尝试登录时间
+user1    ssh:notty    192.168.11.109   Fri Oct 30 12:00 - 12:00  (00:00)
+user1    ssh:notty    192.168.11.109   Fri Oct 30 12:00 - 12:00  (00:00)
+
+btmp begins Fri Oct 30 12:00:05 2020
+----
 
 [[linux-command-mount]]
 == 挂载命令
@@ -1606,6 +2030,16 @@ linux 所有存储设备都必须挂载使用，包括硬盘。
 * 命令名称: mount
 * 所在路径: /bin/mount
 * 执行权限: 所有用户
+
+[source,shell]
+----
+[root@localhost ~]# mount [-l]
+[root@localhost ~]# mount -a
+[root@localhost ~]# mount [-t 文件系统] [-L 卷标名] [-o 特殊选项] 设备文件名 挂载点
+# 文件系统：ext3,ext4,,iso9660
+# 卷标名: 挂载指定卷标的分区，而不是安装设备文件名挂载
+# 特殊选项: 可以指定挂载的额外选项，比如读写权限，同步，异步等。具体特殊选项如下表
+----
 
 
 .`mount` 选项
@@ -1656,7 +2090,19 @@ linux 所有存储设备都必须挂载使用，包括硬盘。
 
 不论哪个系统都有软链接 `/dev/cdrom`,与可以作为光盘的设备文件名
 
+[source,shell]
+----
+[root@localhost ~]# mount -t iso9660 /dev/cdrom /mnt/cdrom
+----
+
 用完之后记得卸载
+
+[source,shell]
+----
+[root@localhost ~]# umount /dev/sr0
+[root@localhost ~]# umount /mnt/cdrom
+# 因为设备文件名和挂载点已经连接到以前，卸载那一个都可以
+----
 
 [NOTE]
 ====
@@ -1684,6 +2130,18 @@ U 盘和硬盘公用设备文件名，所有 U 盘的设备文件名不是固定
 * 安装了中文编码和中文字体
 * 操作终端需要支持中文显示（纯字符终端，是不支持中文编码的）
 
+.挂载是手动指定编码
+[source,shell]
+----
+[root@localhost ~]# mount -t vfat -o iocharset=utf8 /dev/sdb1 /mnt/usb/
+----
+
+.卸载
+[source,shell]
+----
+[root@localhost ~]# umount /mnt/usb/
+----
+
 === 挂载 NTFS 分区
 
 Linux 驱动加载顺序
@@ -1697,7 +2155,7 @@ Linux 驱动加载顺序
 
 . 下载 NTFS-3G 插件
 +
-http://www.tuxera.com/community/ntfs-3g-download/[http://www.tuxera.com/community/ntfs-3g-download/] 下载 NTFS-3G 插件到服务器上
+https://www.tuxera.com/company/open-source/[https://www.tuxera.com/company/open-source/] 下载 NTFS-3G 插件到服务器上
 
 . 安装 NTFS-3G 插件
 
@@ -1705,7 +2163,12 @@ http://www.tuxera.com/community/ntfs-3g-download/[http://www.tuxera.com/communit
 
 安装就完成了，已经可以挂在和使用 Windows 的 NTFS 分区了。不过需要注意挂在分区时的文件系统不是 `ntfs`，而是 `ntfs-3g`.挂载命令如下
 
-
+[source,shell]
+----
+[root@localhost ~]# mount -t ntfs-3g 分区设备文件名 挂载点
+# 例如
+[root@localhost ~]# mount -t ntfs-3g /dev/sdb1 /mnt/win
+----
 
 [[linux-command-other]]
 == 其他命令
@@ -1739,396 +2202,17 @@ alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-ti
 
 用命令定义的别名，是临时生效的，要想永久生效，需要写入环境变量配置文件 `~/.bashrc`
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-[[linux-command-constantly]]
-== Linux 常用命令
-
-[[linux-command-system]]
-== Linux 系统命令
-
-*  查看主机名
-
-        hostname
-*  修改主机名(重启后无效)
-
-        hostname hadoop
-*  修改主机名(重启后永久生效)
-
-        vi /ect/sysconfig/network
-*  修改IP(重启后无效)
-
-        ifconfig eth0 192.168.12.22
-*  修改IP(重启后永久生效)
-
-        vi /etc/sysconfig/network-scripts/ifcfg-eth0
-*  查看系统信息
-
-        uname -a
-        uname -r
-*  查看ID命令
-    
-        id -u
-        id -g
-
-*  日期
-
-        date
-        date +%Y-%m-%d
-        date +%T
-        date +%Y-%m-%d" "%T
-*  日历
-
-        cal 2012
-*  查看文件信息
-
-        file filename
-*  挂载硬盘
-
-        mount
-        umount
-        加载windows共享
-        mount -t cifs //192.168.1.100/tools /mnt
-*  查看文件大小
-
-        du -h
-        du -ah
-*  查看分区
-
-        df -h
-*  ssh
-
-        ssh hadoop@192.168.1.1
-*  关机
-
-        shutdown -h now /init 0
-        shutdown -r now /reboot
-
-
-
-[[linux-command-user]]
-== 用户和组
-
-*  添加一个tom用户,设置它属于users组,并添加注释信息
-        
-        分步完成: useradd tom
-                usermod -g users tom
-	            usermod -c "hr tom" tom
-        一步完成: useradd -g users -c "hr tom" tom
-
-*  设置tom用户的密码
-
-        passwd tom
-
-        修改tom用户的登陆名为tomcat
-        usermod -l tomcat tom
-*  将tomcat添加到sys和root组中
-
-        usermod -G sys,root tomcat
-
-        查看tomcat的组信息
-        groups tomcat
-*  添加一个jerry用户并设置密码
-
-        useradd jerry
-        passwd jerry
-
-*  添加一个交america的组
-
-        groupadd america
-*  将jerry添加到america组中
-      
-        usermod -g america jerry
-*  将tomcat用户从root组和sys组删除
-
-        gpasswd -d tomcat root
-        gpasswd -d tomcat sys
-
-*  将america组名修改为am
-
-        groupmod -n am america
-
-[[linux-command-permission]]
-== 权限
-
-*  创建a.txt和b.txt文件,将他们设为其拥有者和所在组可写入,但其他以外的人则不可写入:
-
-        chmod ug+w,o-w a.txt b.txt
-*  创建c.txt文件所有人都可以写和执行
-
-        chmod a=wx c.txt 或chmod 666 c.txt
-*  将/itcast目录下的所有文件与子目录皆设为任何人可读取
-
-        chmod -R a+r /itcast
-
-*  将/itcast目录下的所有文件与子目录的拥有者设为root,用户拥有组为users
-
-        chown -R root:users /itcast
-*  将当前目录下的所有文件与子目录的用户皆设为itcast,组设为users
-
-        chown -R itcast:users *
-
-[[linux-command-dir]]
-== 文件夹属性
-
-*  查看文件夹属性
-
-        ls -ld test
-
-*  文件夹的rwx
-
-        --x:可以cd进去
-        r-x:可以cd进去并ls
-        -wx:可以cd进去并touch,rm自己的文件,并且可以vi其他用户的文件
-        -wt:可以cd进去并touch,rm自己的文件
-
-*  ls -ld /tmp
-
-        drwxrwxrwt的权限值是1777(sticky)
-<p id="vim">
-
-[[linux-command-vim]]
-== Vim
-
-        i
-        a/A
-        o/O
-        r + ?替换
-        
-        0:文件当前行的开头
-        $:文件当前行的末尾
-        G:文件的最后一行开头
-        1 + G到第一行 
-        9 + G到第九行 = :9
-        
-        dd:删除一行
-        3dd: 删除3行
-        yy:复制一行
-        3yy:复制3行
-        p:粘贴
-        u:undo
-        ctrl + r:redo
-        
-        "a剪切板a
-        "b剪切板b
-        
-        "ap粘贴剪切板a的内容
-        
-        每次进入vi就有行号
-        vi ~/.vimrc
-        set nu
-        
-        :w a.txt另存为
-        :w >> a.txt内容追加到a.txt
-        
-        :e!恢复到最初状态
-        
-        :1,$s/hadoop/root/g 将第一行到追后一行的hadoop替换为root
-        :1,$s/hadoop/root/c 将第一行到追后一行的hadoop替换为root(有提示)
-
-[[linux-command-zip]]
-== 打包与压缩
-
-*  gzip压缩
-    
-        gzip a.txt
-*  解压
-
-        gunzip a.txt.gz
-        gzip -d a.txt.gz
-*  bzip2压缩
-
-        bzip2 a
-*  解压
-       
-        bunzip2 a.bz2
-        bzip2 -d a.bz2
-*  将当前目录的文件打包
-
-        tar -cvf bak.tar .
-        将/etc/password追加文件到bak.tar中(r)
-        tar -rvf bak.tar /etc/password
-*  解压
-
-        tar -xvf bak.tar
-*  打包并压缩gzip
-
-        tar -zcvf a.tar.gz
-*  解压缩
-
-        tar -zxvf a.tar.gz
-        解压到/usr/下
-        tar -zxvf a.tar.gz -C /usr
-*  查看压缩包内容
-
-        tar -ztvf a.tar.gz
-
-        zip/unzip
-*  打包并压缩成bz2
-
-        tar -jcvf a.tar.bz2
-
-*  解压bz2
-
-        tar -jxvf a.tar.bz2
-
-[[linux-command-pattern]]
-== 正则表达式
-
-*  cut截取以:分割保留第七段
-
-        grep hadoop /etc/passwd | cut -d: -f7
-*  排序
-
-        du | sort -n 
-*  查询不包含hadoop的
-
-        grep -v hadoop /etc/passwd
-*  正则表达包含hadoop
-
-        grep 'hadoop' /etc/passwd
-*  正则表达(点代表任意一个字符)
-
-        grep 'h.*p' /etc/passwd
-*  正则表达以hadoop开头
-
-        grep '^hadoop' /etc/passwd
-*  正则表达以hadoop结尾
-        
-        grep 'hadoop$' /etc/passwd
-        
-        规则:
-        .  : 任意一个字符
-        a* : 任意多个a(零个或多个a)
-        a? : 零个或一个a
-        a+ : 一个或多个a
-        .* : 任意多个任意字符
-        \. : 转义.
-        \<h.*p\> : 以h开头,p结尾的一个单词
-        o\{2\} : o重复两次
-        
-        grep '^i.\{18\}n$' /usr/share/dict/words
-        
-        查找不是以#开头的行
-        grep -v '^#' a.txt | grep -v '^$' 
-        
-        以h或r开头的
-        grep '^[hr]' /etc/passwd
-        
-        不是以h和r开头的
-        grep '^[^hr]' /etc/passwd
-        
-        不是以h到r开头的
-        grep '^[^h-r]' /etc/passwd
-
-[[linux-command-grep]]
-== 输入输出以及管道
-
-*  新建一个文件
-
-        touch a.txt
-         b.txt
-*  错误重定向:2>
-
-        find /etc -name zhaoxing.txt 2> error.txt
-*  将正确或错误的信息都输入到log.txt中
-
-        find /etc -name passwd > /tmp/log.txt 2>&1 
-        find /etc -name passwd &> /tmp/log.txt
-*  追加>>
-
-*  将小写转为大写(输入重定向)
-
-        tr "a-z" "A-Z" < /etc/passwd
-*  自动创建文件
-
-        cat > log.txt << EXIT
-        > ccc
-        > ddd
-        > EXI
-*  查看/etc下的文件有多少个？
-
-        ls -l /etc/ | grep '^d' | wc -l
-*  查看/etc下的文件有多少个,并将文件详情输入到result.txt中
-
-        ls -l /etc/ | grep '^d' | tee result.txt | wc -l
-
-[[linux-command-process]]
-== 输入输出以及管道
-
-*  查看用户最近登录情况
-
-        last
-        lastlog
-*  查看硬盘使用情况
-        
-        df
-*  查看文件大小
-        
-        du
-*  查看内存使用情况
-        
-        free
-*  查看文件系统
-        
-        /proc
-*  查看日志
-        
-        ls /var/log/
-*  查看系统报错日志
-        
-        tail /var/log/messages
-*  查看进程
-        
-        top
-*  结束进程
-
-        kill 1234
-        kill -9 4333
+[[linux-command-other-host]]
+=== 其他命令
+
+* 查看主机名 : hostname
+* 修改主机名(重启后无效) : hostname hadoop
+* 修改主机名(重启后永久生效) : vi /ect/sysconfig/network
+* 查看系统信息 : uname -a,uname -r
+* 查看ID命令 : id -u,id -g
+* 日期 : date,date +%Y-%m-%d,date +%T,date +%Y-%m-%d" "%T
+* 日历 : cal 2012
+* 查看文件信息 : file filename
+* 查看文件大小 : du -h, du -ah
+* 查看分区 : df -h
+* ssh : ssh hadoop@192.168.1.1

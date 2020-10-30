@@ -1,0 +1,382 @@
+[[software]]
+= 软件包安装
+
+[[software-sort]]
+== 软件包分类
+
+<<software-sort-source>>
+
+<<software-sort-binary>>
+
+[[software-sort-source]]
+=== 源码包
+
+优点::
+* 开源，如果有足够的能力，可以修改源代码
+* 可以自由选择所需的功能
+* 软件是编译安装，所以更适合自己的系统，更加稳定，效率也更高
+* 卸载方便
+
+缺点::
+* 安装过程步骤多
+* 编译过程时间长
+* 编译过程出现问题，不易解决
+
+[[software-sort-binary]]
+=== 二进制包
+
+二进制包分类::
+* DPKG：是由 Debian Linux 所开发出来的包管理机制，通过 DPKG 包，Debian Linux 就可以进行软件包管理，主要应用在 Debian 和 unbuntu 中
+* RPM 包：是由 RedHat 公司开发出来的包管理机制。功能强大，安装，卸载，升级，查询都非常简单和方便。目前很多 Linux 都在使用这种包管理机制。包括 Fedora，CentOS，SuSE 等。
+
+RPM 包优点::
+* 包管理系统简单，值通过几个简单命令就可以实现包的安装，升级，查询和卸载
+* 安装速度比源码包快
+
+RPM 包缺点::
+* 经过编译，看不到源码
+* 功能选择不如源码灵活
+* 依赖性(a 依赖 b，b 依赖 c)，如果依赖过多会特别繁琐。
+
+http://www.rpmfind.net/[http://www.rpmfind.net/] 可以在这个网站上找到函数库在那个包中。
+
+[[software-install]]
+== RPM 安装
+
+
+包全名: 如果系统操作的是未安装的软件，则使用包全名，需要注意绝对路径
+
+包名: 如果系统操作的是已安装的软件，则使用包名即可，系统会产生 RPM 包的数据库 `/var/lib/rpm/` ，而且可以在任意路径下操作
+
+=== RPM 包命名规则
+
+[source,shell]
+----
+httpd-2.2.15-15.e16.centos.1.i686.rpm
+----
+
+|===
+|字段 |说明
+
+|httpd
+|软件包名
+
+|2.2.15
+|软件版本
+
+|15
+|软件发布的次数
+
+|e16
+|软件的发行商。e16 是 RedHat 公司发布，适合 RHEL6.x 和 CentOS 6.x 下使用
+
+|i686
+|适合的硬件平台，RPM 包可以在不同的硬件平台安装，选择适合不同的 CPU 的软件版本，可以最大化的发挥 CPU 性能。所以出现了所谓的 i386、i586
+、i686(奔腾Ⅱ以上的计算机都可以安装，目前几乎所有的 CPU 都是奔腾Ⅱ以上了)、x86_64(64 位 CPU 可以安装)、noarch(没有硬件限制)。
+
+|rpm
+|rpm 包的扩展名
+|===
+
+=== RPM 手动安装
+
+.RPM 包默认安装位置
+|===
+|位置 |说明
+
+|/etc/
+|配置文件安装目录
+
+|/usr/bin/
+|可执行的命令安装目录
+
+|/usr/lib/
+|程序所使用的函数库保存位置
+
+|/usr/share/doc/
+|基本的软件使用手册保存位置
+
+|/usr/share/man/
+|帮助文档
+|===
+
+
+[source,shell]
+----
+[root@localhost ~]# rpm -ivh 包全名
+# 选项: -i:install 安装。-v：显示更详细的信息。 -h：打印，显示安装进度
+----
+
+.其他选项
+|===
+|命令 |作用
+
+|--nodeps
+|不检查依赖性安装。软件有时会检查依赖性，确定所需的底层软件是否安装。如果没有，会报错。如果不管依赖性，想强行安装，可以使用这个选项。注意，不检查依赖性安装的软件基本不能使用，不建议这么做。
+
+|--replacefiles
+|替换文件安装。如果安装软件包，可是包中部分文件已经存在，那么正常安装时会报错 "某个文件已经存在"，从而导致文件无法安装，使用这个选项可以忽略报错。覆盖安装
+
+|--force
+|强制安装。不管是否已经安装都重新安装。就是 `--replacefiles` 和 `--replacepkgs` 的综合
+
+|--test
+|测试安装。不会实际安装，只是检测一下依赖性
+
+|--prefix
+|指定安装路径。为安装软件指定安装路径，而不使用默认安装路径。注意：如果指定了安装路径，软件没有安装到系统默认路径中的话，系统会找不到这些安装的软件，需要手动配置才可以。建议使用默认路径安装。
+|===
+
+
+服务启动:: service 服务名 start|stop|restart|status
+* start : 服务启动
+* stop : 服务关闭
+* restart : 服务重启
+* status : 查看服务状态
+
+==== RPM 升级
+
+[source,shell]
+----
+[root@localhost ~]# rpm -Uvh 包全名
+# 升级安装，如果没有安装过，系统直接安装。如果安装过旧的版本，就升级
+[root@localhost ~]# rpm -Fvh 包全名
+# 升级安装，如果没有安装过，则不会安装。必须有较旧的版本，才能升级
+----
+
+==== RPM 卸载
+
+[source,shell]
+----
+[root@localhost ~]# rpm -e 包全名
+# --nodeps 不检查依赖性
+----
+
+==== RPM 查询
+
+[source,shell]
+----
+[root@localhost ~]# rpm -q 包名
+----
+
+.-q 选项
+|===
+|选项 |作用
+
+|-a
+|所有
+
+|-i
+|查看软件详细信息
+
+|-l
+|列出软件包中所有的文件列表和软件所安装的目录
+
+|-p
+|查询没有安装的软件包信息
+
+|-f
+|查询系统文件属于哪个软件包
+
+|-R
+|查询软件包的依赖性
+|===
+
+==== RPM 校验
+
+[source,shell]
+----
+[root@localhost ~]# rpm -V 已安装的包名
+----
+
+.-V 选项
+|===
+|选项 |作用
+
+|-a
+|校验本机已经安装的所有软件包
+
+|-f
+|校验某个系统文件是否被修改
+|===
+
+[source,shell]
+----
+[root@localhost ~]# rpm -V httpd
+S.5....T.  c /etc/httpd/conf/httpd.conf
+# 验证内容  文件类型 文件名
+----
+
+验证内容共有 8 个信息，分别如下
+
+* S : 文件大小是否改变
+* M : 文件的类型或权限是否改变
+* 5 : 文件的 MD5 校验和是否改变(可以看成文件内容是否改变)
+* D : 设备的主从代码是否改变
+* L : 文件的路径是否改变
+* U : 文件的所有者是否改变
+* G : 文件的所属组是否改变
+* T : 文件的修改时间是否改变
+
+常见的文件类型如下：
+
+* c : 配置文件(config file)
+* d : 普通文档(documentation)
+* g : "鬼" 文件，很少见，就是该文件不应该被这个 rpm 包包含
+* l : 授权文件(license file)
+* r : 描述文件(read me)
+
+==== 数字证书
+
+刚刚的校验方法只能对已经安装的 RPM 包中的文件进行校验，但是如果 RPM 包本身被动过手脚，那么校验就不起作用了。就必须使用数字证书验证了
+
+数字证书有以下特点::
+* 首先必须找到原厂的公钥文件，然后进行安装
+* 在安装 RPM 包时，会去提取 RPM 包中的证书信息，然后和本机安装的原厂证书进行验证
+* 如果验证通过，则允许安装，如果验证不通过，则不允许安装并警告
+
+系统中数字证书的位置
+
+[source,shell]
+----
+[root@localhost ~]# ll /etc/pki/rpm-gpg/
+总用量 12
+-rw-r--r--. 1 root root 1690 11月 23 2018 RPM-GPG-KEY-CentOS-7
+-rw-r--r--. 1 root root 1004 11月 23 2018 RPM-GPG-KEY-CentOS-Debug-7
+-rw-r--r--. 1 root root 1690 11月 23 2018 RPM-GPG-KEY-CentOS-Testing-7
+----
+
+数字证书导入:
+
+[source,shell]
+----
+[root@localhost ~]# rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+----
+
+查询系统安装好的数字证书
+
+[source,shell]
+----
+[root@localhost ~]# rpm -qa|grep gpg-pubkey
+gpg-pubkey-f4a80eb5-53a7ff4b
+----
+
+==== 文件提取
+
+===== cpio 命令
+
+cpio 命令主要有三种基本模式 `-o` 模式指的是 copy-out 模式，就是把数据备份到文件库中； `-i` 模式就是 copy-in 模式，就是把数据从文件库中恢复。
+`-p` 就是复制模式，就是不把数据备份到 cpio 库中，而是直接复制为其他文件.命令如下
+
+[source,shell]
+----
+[root@localhost ~]# cpio -o[vcB] > [文件|设备]
+# 备份
+# 选项
+#   -o: copy-out 模式，备份
+#   -v: 显示备份过程
+#   -c: 使用较新的 portable format 存储方式
+#   -B: 设定输入输出块为 5120bytes ，而不是模式的 512bytes
+[root@localhost ~]# cpio -i[vcdu] < [文件|设备]
+# 还原
+# 选项
+#   -o: copy-in 模式，还原
+#   -v: 显示还原过程
+#   -c: 使用较新的 portable format 存储方式
+#   -d: 还原时自动新建目录
+#   -u: 自动使用较新的文件覆盖较旧的文件
+----
+
+.利用 find 命令找到文件，备份
+[source,shell]
+----
+[root@localhost ~]# find /etc -print | cpio -ocvB > /root/etc.cpio
+# 利用 find 命令指定要备份的 /etc/ 目录，使用 > 导出到 etc.cpio 文件
+[root@localhost ~]# ll -h etc.cpio
+-rw-r--r--. 1 root root 27M 10月 30 18:01 etc.cpio
+----
+
+.还原
+[source,shell]
+----
+[root@localhost ~]# cpio -idvcu < /root/etc.cpio
+# 还原 etc 备份
+----
+
+[NOTE]
+====
+在 CentOS 5.x 版本中，是可以利用上面的命令备份和恢复指定的文件。但是在 CentOS 6.x 中，需要更加严谨。如果备份时使用绝对路径，则恢复的数据会直接到
+绝对路径指定的路径中，如果需要把数据恢复到当前目录中，则需要使用相对路径。
+====
+
+.使用相对路径备份恢复
+[source,shell]
+----
+[root@localhost ~]# cd /etc
+[root@localhost ~]# find . -print | cpio -ocvB > /root/etc.cpio
+# 利用 find 命令指定要备份的 /etc/ 目录，使用 > 导出到 etc.cpio 文件
+# 恢复
+[root@localhost ~]# cd /root
+[root@localhost ~]# mkdir etc_test
+[root@localhost ~]# cd etc_test
+[root@localhost ~]# cpio -idvcu < /root/etc.cpio
+----
+
+最后演示一下使用 `-p` 复制模式
+
+[source,shell]
+----
+[root@localhost ~]# cd /tmp/
+# 进入 /tmp 目录
+[root@localhost ~]# rm -rf *
+# 删除 /tmp 目录所有数据
+[root@localhost ~]# mkdir test
+# 建立备份目录
+[root@localhost ~]# find /boot/ -print | cpio -p > /tmp/test
+# 备份 /boot/ 目录 到 /tmp/test/ 目录中
+# 恢复
+[root@localhost ~]# ls /test
+boot
+# 在 /tmp/test/ 目录中备份出了 boot 目录
+----
+
+===== 提取 RPM 包中的文件
+
+[source,shell]
+----
+[root@localhost ~]# rpm2cpio 包全名 | cpio -idv . 文件绝对路径
+# rpm2cpio 将 rpm 包转化成为 cpio 格式的命令
+# cpio 是一个标准工具，它用于创建软件档案文件和从档案文件中提取文件
+----
+
+举个例子，现在我假设把系统中的 `/bin/ls` 命令不小心误删了，那么我可以修复回来吗？这时有两种方法修复，要不就是使用 `--force` 选项覆盖安装一遍 `coreutils-8.22-23.el7.x86_64` 包。
+要不就可以使用 `cpio` 命令取出 `/bin/ls` 命令文件，再把它拷贝到对应位置就可以了。不过我是怎么知道 `/bin/ls` 命令是属于 `coreutils-8.22-23.el7.x86_64` 包呢？ 还记得 `-qf` 选项吗？
+
+.模拟恢复 `/bin/ls` 命令
+[source,shell]
+----
+[root@localhost ~]# mv /bin/ls /root/
+# 移动文件，造成误删的假象
+[root@localhost ~]# ls
+-bash: /usr/bin/ls: 没有那个文件或目录
+[root@localhost ~]# rpm -qf /bin/ls
+coreutils-8.22-23.el7.x86_64
+# 查询 /bin/ls 在那个软件包
+# 在 http://rpm.pbone.net/ 下载对应的 rpm 包上传到服务器中
+[root@localhost ~]# rpm2cpio /root/coreutils-8.22-23.el7.x86_64.rpm | cpio -idv ./bin/ls
+./bin/ls
+28594 块
+# 提取 ls 命令文件到当前目录下
+[root@localhost ~]# cp /root/bin/ls /bin/
+# 把提取出来的 ls 命令文件复制到 /bin/ 目录下
+[root@localhost ~]# ls
+# 完成
+----
+
+=== RPM 包在线安装(yum 安装)
+
+[[software-source]]
+== 源码包安装
+
+[[software-script]]
+== 脚本安装程序
