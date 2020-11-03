@@ -26,8 +26,8 @@
 === 二进制包
 
 二进制包分类::
-* DPKG：是由 Debian Linux 所开发出来的包管理机制，通过 DPKG 包，Debian Linux 就可以进行软件包管理，主要应用在 Debian 和 unbuntu 中
-* RPM 包：是由 RedHat 公司开发出来的包管理机制。功能强大，安装，卸载，升级，查询都非常简单和方便。目前很多 Linux 都在使用这种包管理机制。包括 Fedora，CentOS，SuSE 等。
+* DPKG:是由 Debian Linux 所开发出来的包管理机制，通过 DPKG 包，Debian Linux 就可以进行软件包管理，主要应用在 Debian 和 unbuntu 中
+* RPM 包:是由 RedHat 公司开发出来的包管理机制。功能强大，安装，卸载，升级，查询都非常简单和方便。目前很多 Linux 都在使用这种包管理机制。包括 Fedora，CentOS，SuSE 等。
 
 RPM 包优点::
 * 包管理系统简单，值通过几个简单命令就可以实现包的安装，升级，查询和卸载
@@ -104,7 +104,7 @@ httpd-2.2.15-15.e16.centos.1.i686.rpm
 [source,shell]
 ----
 [root@localhost ~]# rpm -ivh 包全名
-# 选项: -i:install 安装。-v：显示更详细的信息。 -h：打印，显示安装进度
+# 选项: -i:install 安装。-v:显示更详细的信息。 -h:打印，显示安装进度
 ----
 
 .其他选项
@@ -124,7 +124,7 @@ httpd-2.2.15-15.e16.centos.1.i686.rpm
 |测试安装。不会实际安装，只是检测一下依赖性
 
 |--prefix
-|指定安装路径。为安装软件指定安装路径，而不使用默认安装路径。注意：如果指定了安装路径，软件没有安装到系统默认路径中的话，系统会找不到这些安装的软件，需要手动配置才可以。建议使用默认路径安装。
+|指定安装路径。为安装软件指定安装路径，而不使用默认安装路径。注意:如果指定了安装路径，软件没有安装到系统默认路径中的话，系统会找不到这些安装的软件，需要手动配置才可以。建议使用默认路径安装。
 |===
 
 
@@ -218,7 +218,7 @@ S.5....T.  c /etc/httpd/conf/httpd.conf
 * G : 文件的所属组是否改变
 * T : 文件的修改时间是否改变
 
-常见的文件类型如下：
+常见的文件类型如下:
 
 * c : 配置文件(config file)
 * d : 普通文档(documentation)
@@ -349,8 +349,8 @@ boot
 # cpio 是一个标准工具，它用于创建软件档案文件和从档案文件中提取文件
 ----
 
-举个例子，现在我假设把系统中的 `/bin/ls` 命令不小心误删了，那么我可以修复回来吗？这时有两种方法修复，要不就是使用 `--force` 选项覆盖安装一遍 `coreutils-8.22-23.el7.x86_64` 包。
-要不就可以使用 `cpio` 命令取出 `/bin/ls` 命令文件，再把它拷贝到对应位置就可以了。不过我是怎么知道 `/bin/ls` 命令是属于 `coreutils-8.22-23.el7.x86_64` 包呢？ 还记得 `-qf` 选项吗？
+举个例子，现在我假设把系统中的 `/bin/ls` 命令不小心误删了，那么我可以修复回来吗?这时有两种方法修复，要不就是使用 `--force` 选项覆盖安装一遍 `coreutils-8.22-23.el7.x86_64` 包。
+要不就可以使用 `cpio` 命令取出 `/bin/ls` 命令文件，再把它拷贝到对应位置就可以了。不过我是怎么知道 `/bin/ls` 命令是属于 `coreutils-8.22-23.el7.x86_64` 包呢? 还记得 `-qf` 选项吗?
 
 .模拟恢复 `/bin/ls` 命令
 [source,shell]
@@ -375,8 +375,330 @@ coreutils-8.22-23.el7.x86_64
 
 === RPM 包在线安装(yum 安装)
 
+==== yum 源文件解析
+
+yum 源配置文件保存在 `/etc/yum.repos.d/` 目录中,文件的扩展名一定是 `*.repo` 。也就是说，yum 源配置文件只要扩展名是 `{asterisk}.repo` 就会生效
+
+[source,shell]
+----
+[root@localhost ~]# ll /etc/yum.repos.d/
+总用量 32
+-rw-r--r--. 1 root root 1664 11月 23 2018 CentOS-Base.repo
+-rw-r--r--. 1 root root 1309 11月 23 2018 CentOS-CR.repo
+-rw-r--r--. 1 root root  649 11月 23 2018 CentOS-Debuginfo.repo
+-rw-r--r--. 1 root root  314 11月 23 2018 CentOS-fasttrack.repo
+-rw-r--r--. 1 root root  630 11月 23 2018 CentOS-Media.repo
+-rw-r--r--. 1 root root 1331 11月 23 2018 CentOS-Sources.repo
+-rw-r--r--. 1 root root 5701 11月 23 2018 CentOS-Vault.repo
+----
+
+这个目录中一共有 7 个 yum 源配置文件，默认情况下 `CentOS-Base.repo` 文件生效，我们打开这个文件看看
+
+[source,shell]
+----
+[root@localhost ~]# cat /etc/yum.repos.d/CentOS-Base.repo
+# ... 省略注释
+[base]
+name=CentOS-$releasever - Base
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#released updates
+[updates]
+name=CentOS-$releasever - Updates
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#additional packages that may be useful
+[extras]
+name=CentOS-$releasever - Extras
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=extras&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/extras/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#additional packages that extend functionality of existing packages
+[centosplus]
+name=CentOS-$releasever - Plus
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=centosplus&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/centosplus/$basearch/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+----
+
+这里一共由 4 个 yum 源容器，以 base 为例进行说明
+
+* [base] : 容器名称，一定要放在 `[]` 中
+* name :  容器说明，可以自己随便填写
+* mirrrorlist : 镜像站点，这个可以注释掉
+* baseurl : 我们的 yum 源服务地址，默认是 CentOS 官方的服务地址，是可以使用的，如果觉得慢，可以替换自己喜欢的 yum 源服务地址。
+* enabled : 此容器是否生效，如果不写或者写成 `enabled=1` 表示此容器生效，`enabled` 表示此容器不生效。
+* gpgcheck : 如果为 1 则表示 RPM 数字证书生效，0 则不生效
+* gpgkey : 数字证书的公钥保存位置，不用修改
+
+==== 搭建本地光盘 yum 源
+
+==== yum 命令
+
+|===
+|命令 |说明
+
+|yum list
+|查询 yum 源服务器上所有可安装的软件包列表
+
+|yum list 包名
+|查询 yum 源服务器上是否包含某个软件包
+
+|yum search 关键字
+|搜索 yum 源服务器上所有和关键字相关的软件包
+
+|yum info 包名
+|查询指定软件包信息
+
+|yum -y install 包名
+|安装
+
+|yum -y update 包名
+|升级
+
+|yum remove 包名
+|卸载
+
+|yum grouplist
+|列出所有可用的软件组列表
+
+|yum groupinfo 软件组名
+|列出软件组中包含的软件
+
+|yum groupinstall 软件组名
+|安装指定软件组
+
+|yum groupremove 软件组名
+|卸载指定软件组
+|===
+
 [[software-source]]
 == 源码包安装
 
+如果软件包是给大量用户提供访问，建议使用源码包安装。
+
+源码包安装步骤:
+
+. 下载源码包
+. 解压缩
+. 进入解压目录
+. ./configure
+
+ 编译前准备，这一步有三个作用::
+* 在安装前需要检测系统环境是否符合要求
+* 定义需要的功能选项，`./configure` 支持的功能选项较多，可以执行 `./configure --help` 命令查询其支持的功能。一般会通过 `./configure --prefix=安装路径` 来指定安装目录。
+* 把系统环境的检测结果和定义好的功能选项写入 `Makefile` 文件，后续的编译安装需要依赖这个文件。
+
+. make
++
+编译。`make` 会调用 gcc 编译器，并读取 `Makefile` 文件中的信息进行系统软件编译。编译的目的就是把源码程序变成能被 Linux 识别的可执行文件，这些可执行文件保存在当前目录下。编译过程比较耗时。
+
+. make clean
++
+清空编译内容，非必须步骤。如果在 `./configure` 或 `make` 编译中报错，我们在重新执行命令前一定要 `make clean` 一下。他会清空 `Makefile` 文件或编程产生的 `.o` 文件
+
+. make install
++
+这才是真正的安装过程，一般会写清楚程序的安装位置。如果忘记指定安装目录。则可以把这个命令的执行过程保存下来，以备将来删除使用。
+
+源码包安装没有删除命令，要想删除，直接删除安装目录即可。
+
+=== 打入补丁
+
+补丁文件的生成
+
+[source,shell]
+----
+[root@localhost ~]# diff 选项 old new
+----
+
+.diff 选项
+|===
+|参数 |作用
+
+|-a
+|将任何文档当作文本文档处理
+
+|-b
+|忽略空格造成的不同
+
+|-B
+|忽略空白行造成的不同
+
+|-I
+|忽略大小写造成的不同
+
+|-N
+|当比较两个目录时，如果某个文件只在一个目录中，则在另一个目录中视为空文件
+
+|-r
+|当比较目录时，递归比较子目录
+
+|-u
+|使用统一的输出格式
+|===
+
+示例
+
+[source,shell]
+----
+[root@localhost ~]# mkdir test
+# 建立测试目录
+[root@localhost ~]# cd test
+# 进入测试目录
+[root@localhost test]# vi old.txt
+our
+school
+is
+[root@localhost test]# vi new.txt
+our
+school
+is
+xiankejidaxue
+[root@localhost test]# diff -Naur /root/test/old.txt /root//test/new.txt > txt.patch
+# 比较两个文件的不同，并生成补丁文件
+[root@localhost test]# vi txt.patch
+--- /root/test/old.txt  2020-11-03 14:51:59.705690550 +0800
+# 前一个文件
++++ /root//test/new.txt 2020-11-03 14:52:38.014049021 +0800
+# 后一个文件
+@@ -1,4 +1,4 @@
+ our
+ school
+ is
+-
++xiankejidaxue
+# 后一个文件比前一个文件多一行(用 + 表示)
+----
+
+打入补丁:
+
+[source,shell]
+----
+[root@localhost ~]# patch -pn < 补丁文件
+----
+
+`-pn` 不好理解，我们说明下。补丁文件是要打入旧文件中的，但是你当前所在的目录和补丁文件中所记录的目录不一定是一致的，所以就需要 `-pn` 来同步两个目录。
+
+比如我现在是在 `/root/test` 下(我要打补丁的旧文件就在当前目录下)，补丁文件中记录的文件目录为 `/root/test/old.txt` ,这时候如果使用 `-p1`(在补丁文件目录中取消一级目录)，那么，补丁
+文件就会打入 `/root/test/root/test/old.txt` ，这显然是不对的。那如果写入的是 `-p2`(在补丁文件目录中取消二级目录)，那么，补丁文件打入的就是 `/root/test/test/old.txt` , 那么显然也不对。
+如果写入的是 `-p3` (在补丁文件中取消三级目录)，那么补丁文件就是打入 `/root/test/old.txt` 。我们的 `old.txt` 就在这个目录下。所以就应该是 `-p3`。
+
+那么，我们更新下 `old.txt`. 使用 patch 命令前需要安装 patch. `yum -y install patch`
+
+[source,shell]
+----
+[root@localhost ~]# patch -p3 < txt.patch
+patching file old.txt
+[root@localhost ~]# cat old.txt
+our
+school
+is
+xiankejidaxue
+# 打入成功
+----
+
 [[software-script]]
 == 脚本安装程序
+
+脚本程序包并不多见，所以在软件包分类中并没有把她们列为一类，他更类似于 Windows 下的程序安装，有一个可执行的安装程序。只要运行安装程序，然后进行简单的功能定制选择，就可以安装成功。
+
+目前常见的脚本程序以各类的硬件驱动居多，我们需要学校这类软件的安装方式。以备将来的不时之需
+
+=== Webmin 安装
+
+Webmin 是一个基于 web 的系统管理界面，借助任何支持表格和表单的浏览器，你可以设置用户帐号，apache，DNS,文件共享等。Webmin 包括一个简单的 Web 服务器和许多 CGI 程序，这些程序可以直接修改系统文件。
+比如 `/etc/inetd.conf` 和 `/etc/passwd` .Web 服务器和所有的 CGI 程序都是使用 Perl 5 写的。没有使用任何非标准 Perl 模块。也就是说，Webmin 是一个用 Perl 语言写的，可以通过浏览器管理的 Linux 软件。
+
+安装过程如下:
+
+首先下载 Webmin 软件: https://sourceforge.net/projects/webadmin/files/webmin/[https://sourceforge.net/projects/webadmin/files/webmin/],这里下载的是 webmin-1.960.tar.gz
+
+[source,shell]
+----
+[root@localhost test]# tar -zxvf webmin-1.960.tar.gz
+[root@localhost test]# cd webmin-1.960
+[root@localhost webmin-1.960]# ./setup.sh
+***********************************************************************
+*            Welcome to the Webmin setup script, version 1.960        *
+***********************************************************************
+Webmin is a web-based interface that allows Unix-like operating
+systems and common Unix services to be easily administered.
+
+Installing Webmin in /root/test/webmin-1.960 ...
+
+***********************************************************************
+Webmin uses separate directories for configuration files and log files.
+Unless you want to run multiple versions of Webmin at the same time
+you can just accept the defaults.
+
+Config file directory [/etc/webmin]:
+# 选择安装位置，默认在 /etc/webmin 目录下。如果安装到默认位置，直接回车
+Log file directory [/var/webmin]:
+# 日志文件保存位置，直接回车。
+
+***********************************************************************
+Webmin is written entirely in Perl. Please enter the full path to the
+Perl 5 interpreter on your system.
+
+Full path to perl (default /usr/bin/perl):
+# 指定 Perl 语言安装位置，直接回车，选择默认安装。
+
+Testing Perl ...
+Perl seems to be installed ok
+
+***********************************************************************
+Operating system name:    CentOS Linux
+Operating system version: 7.6.1810
+
+***********************************************************************
+Webmin uses its own password protected web server to provide access
+to the administration programs. The setup script needs to know :
+ - What port to run the web server on. There must not be another
+   web server already using this port.
+ - The login name required to access the web server.
+ - The password required to access the web server.
+ - If the webserver should use SSL (if your system supports it).
+ - Whether to start webmin at boot time.
+
+Web server port (default 10000):
+# 指定 Webmin 监听的端口，默认 10000，直接回车
+Login name (default admin): admin
+Login password:
+Password again:
+# 输入 Webmin 登录用户帐号密码，注意，登录名使用 webmin 会报错
+The Perl SSLeay library is not installed. SSL not available.
+# apache 默认没有启动 ssl 功能，所以 ssl 没有被激活
+Start Webmin at boot time (y/n): y
+# 是否在开启的同时启动 Webmin
+...
+...
+...
+# 省略安装过程
+***********************************************************************
+Webmin has been installed and started successfully. Use your web
+browser to go to
+
+  http://localhost:10000/
+
+and login with the name and password you entered previously.
+# 安装完成
+----
+
+打开浏览器，输入: http://localhost:10000/ 可以看到以下信息。如果是局域网打开，可以使用 ip 地址。注意端口号是否打开，可以考虑关闭防火墙。
+
+image::images/linux3.png[]
+
+== 常用软件安装
+
+本人自己编写了一些常用的软件<<install.adoc#linux-install,安装>> 和使用<<shell.adoc#linux-shell,脚本安装>>

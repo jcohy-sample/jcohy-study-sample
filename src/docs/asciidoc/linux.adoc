@@ -6,6 +6,14 @@ include::linux/about.adoc[leveloffset=+1]
 
 include::linux/command.adoc[leveloffset=+1]
 
+include::linux/vim.adoc[leveloffset=+1]
+
+include::linux/software.adoc[leveloffset=+1]
+
+include::linux/user.adoc[leveloffset=+1]
+
+include::linux/permission.adoc[leveloffset=+1]
+
 include::linux/install.adoc[leveloffset=+1]
 
 include::linux/shell.adoc[leveloffset=+1]

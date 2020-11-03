@@ -1,0 +1,492 @@
+[[linux-user]]
+= 用户管理
+
+== 用户相关文件
+
+=== /etc/passwd
+
+用户信息文件。用户相关的第一个文件就是 `/etc/passwd` 文件,我们先打开这个文件看看里面的内容:
+
+[source,shell]
+----
+[root@localhost test]# cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+sync:x:5:0:sync:/sbin:/bin/sync
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+halt:x:7:0:halt:/sbin:/sbin/halt
+mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+operator:x:11:0:operator:/root:/sbin/nologin
+games:x:12:100:games:/usr/games:/sbin/nologin
+ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
+nobody:x:99:99:Nobody:/:/sbin/nologin
+systemd-network:x:192:192:systemd Network Management:/:/sbin/nologin
+dbus:x:81:81:System message bus:/:/sbin/nologin
+polkitd:x:999:998:User for polkitd:/:/sbin/nologin
+sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
+postfix:x:89:89::/var/spool/postfix:/sbin/nologin
+chrony:x:998:996::/var/lib/chrony:/sbin/nologin
+user1:x:1000:1000::/home/user1:/bin/bash
+apache:x:48:48:Apache:/usr/share/httpd:/sbin/nologin
+----
+
+下面以 `root:x:0:0:root:/root:/bin/bash` 为例，以 `:` 分隔，解释每一列的含义
+
+* 第一列:用户名
+* 第二列:密码为
+* 第三列:用户id
+** 0:超级用户 UID，如果用户 id 为 0，则代表这个用户是管理员帐号。
+** 1-499:系统用户(伪用户)。这些 UID 帐号是系统保留给系统用户的 UID，也就是说 UID 是 1-499 范围内的用户是不能登录系统的，而是用来运行系统或服务的。其中 1-99 是系统保留的帐号，由系统自动创建。100-499 是留给用户创建系统帐号的。
+** 500-60000: 普通用户 UID。建立的普通用户 UID 从 500 开始，最大到 60000。这些用户足够使用了，如果不够也不用害怕，2.6.x 内核后的 Linux 系统用户 UID 已经可以支持 2^32^ 这么多了。
+* 第四列:组id。GID 添加用户时，如果不指定用户所属的初始组，那么会建立和用户名相同的组
+* 第五列:用户说明
+* 第六列:用户家目录 `~`
+* 第七列:登录 shell `/bin/bash`
+
+如果需要把普通用户变成超级用户，把用户的 UID 改为 0
+
+=== /etc/shadow
+
+用户密码文件。同样的，我们先来看看里面的内容
+
+[source,shell]
+----
+[root@localhost webmin-1.960]# cat /etc/shadow
+root:$6$VCIzx../nJD3bP0a$rkkWTX96lyWdySFyjk6FFwG3UTotAadT2DzBggtovn00/QhlNknKfLx7xcf9Yk/LTwg47bwfSiaJMw95Q4PML/::0:99999:7:::
+bin:*:17834:0:99999:7:::
+daemon:*:17834:0:99999:7:::
+adm:*:17834:0:99999:7:::
+lp:*:17834:0:99999:7:::
+sync:*:17834:0:99999:7:::
+shutdown:*:17834:0:99999:7:::
+halt:*:17834:0:99999:7:::
+mail:*:17834:0:99999:7:::
+operator:*:17834:0:99999:7:::
+games:*:17834:0:99999:7:::
+ftp:*:17834:0:99999:7:::
+nobody:*:17834:0:99999:7:::
+systemd-network:!!:18557::::::
+dbus:!!:18557::::::
+polkitd:!!:18557::::::
+sshd:!!:18557::::::
+postfix:!!:18557::::::
+chrony:!!:18557::::::
+user1:$6$PzPUydsA$wjQnEz8SkaKvGjXblWKOCyqN9HPSFYQGpKUFBGBKzV0bACabGSu6dT4T/URRahHSQDpsEzXimYJy91zdzzeEM1:18565:0:99999:7:::
+apache:!!:18565::::::
+----
+
+以 root 用户为例，使用 `:` 分隔。看看每一列的含义
+
+* 第一列:用户名
+* 第二列:加密密码。我们也可以人为的在密码前加入 `!` 或 `*` 改变加密值让密码暂时失效，是这个用户无法登录，起到暂时禁止用户登录效果
++
+注意，所有的伪用户的密码都是 `!!` 或 `*` ，代表没有密码是不能登录的。当创建的用户不设定密码，它的密码项也是 `!!` ，代表这个用户没有密码。不能登录。
+* 第三列:密码最近更改时间，以 1970 年 1 月 1 日作为标准时间
++
+.时间转换
+[source,shell]
+----
+[root@localhost webmin-1.960]# echo $(($(date --date="2020/11/03" +%s)/86400+1))
+18569
+[root@localhost webmin-1.960]# date -d "1970-01-01 18569 days"
+2020年 11月 03日 星期二 00:00:00 CST
+----
+* 第四列:两次密码的修改间隔时间(和第三列相比)
+* 第五列:密码有效期(和第三列相比)
+* 第六列:密码修改到期前的警告天数(和第五列相比)
+* 第七列:密码到期后的宽限天数(和第五列相比)
+* 第八列:密码失效时间。这里同样要写时间戳，也就是用 1970 年 1 月 1 日进行时间转换。如果超过了失效时间，就算密码没有过期，用户也就失效无法使用了。
+* 第九列:保留
+
+=== /etc/group
+
+组信息文件。我们看一看里面的内容
+
+[source,shell]
+----
+[root@localhost webmin-1.960]# cat /etc/group
+root:x:0:
+user1:x:1000:
+----
+
+* 第一列:组名
+* 第二列:组密码位
+* 第三列:GID
+* 第四列:此组中支持的其他用户.附加组是此组的用户
++
+初始组:每个用户初始组只能有一个，一般都是和用户名相同的组作为初始组
++
+附加组:每个用户可以属于多个附加组。要把用户加入组，都是加入附加组
+
+=== /etc/gshadow
+
+组密码文件，这个文件相对用户密码文件比较简单。如果我们给用户组设定了组管理员，并给改用户组设定了组密码，组密码就保存在这个文件中，组管理员就可以用这个密码管理这个用户组了。
+
+=== 用户家目录
+
+=== 用户邮件目录
+
+/var/spool/mail/
+
+=== 用户模板目录
+
+/etc/skel
+
+== 用户管理命令
+
+=== 添加用户
+
+[source,shell]
+----
+[root@localhost ~]# useradd 选项 用户名
+----
+
+.useradd 常用选项
+|===
+|常用选项 |说明
+
+|-u 550
+| 指定 UID
+
+|-g 组名
+|指定初始组，不要手工指定
+
+|-G 组名
+|指定附加组，把用户加入组，使用附加组
+
+|-c 说明
+|添加说明
+
+|-d 目录
+|手工指定家目录，目录不需要手工建立
+
+|-s shell
+|/bin/bash
+|===
+
+==== useradd 的默认值
+
+`useradd` 添加用户时参考的默认值文件主要有两个，分别是 `/etc/default/useradd` 和 `/etc/login.defs`
+
+我们先来看看 `/etc/default/useradd` 文件
+
+[source,shell]
+----
+[root@localhost webmin-1.960]# cat /etc/default/useradd
+# useradd defaults file
+GROUP=100
+# 这个选项是建立用户的默认组，也就是说添加每个用户时，用户的初始组就是 GID 为100的这个组
+HOME=/home
+# 这个选项是用户的家目录默认位置，所有新建用户的家目录默认都在 /home 下
+INACTIVE=-1
+# 这个选项就是密码过期后的宽限天数，也就是 /etc/shadow 文件的第七个字段。如果是天数，比如 10 代表密码过期后 10 天后失效。如果是 0，代表密码过期后立即生效。
+# 如果是 -1 ，则代表密码永不失效。这里默认是 -1，所以所有的新建用户密码都不会失效。
+EXPIRE=
+# 这个选项是密码失效时间。也就是 /etc/shadow 第八个字段。也就是用户到达这个日期后会直接失效。这里也是使用时间戳来表示日期的。默认值为空，所以所有新建用户没有失效时间，永不失效
+SHELL=/bin/bash
+# 这个选项是用户默认 shell，/bin/bash 是 Linux 的标志 shell，所以所有的新建用户默认都具备 shell 赋予的权限
+SKEL=/etc/skel
+# 这个选项就是定义用户的模板目录的位置，/etc/skel/ 目录中的文件都会复制到新建用户的家目录中。
+CREATE_MAIL_SPOOL=yes
+# 这个选项定义是否给新建用户建立邮箱，默认是创建。也就是说所有新建用户都会新建一个邮箱，在 /var/spool/mail 目录下和用户名同名
+----
+
+再来看看 `/etc/login.defs` 文件
+
+[source,shell]
+----
+[root@localhost webmin-1.960]# cat /etc/login.defs
+# 这个文件有很多注释，此处把注释都删掉了。
+MAIL_DIR	/var/spool/mail
+# 这行指定了新建用户的默认邮箱位置。比如 user1 用户的邮箱就是 /var/spool/mail/user1
+
+PASS_MAX_DAYS	99999
+# 这行指定密码的有效期，也就是 /etc/shadow 文件的第五个字段。代表多少天后必须修改密码。默认是 99999
+PASS_MIN_DAYS	0
+# 这行指定两次密码修改的间隔时间，也就是 /etc/shadow 文件的第四个字段。代表第一次修改密码之后，多少天后才能再次修改密码。默认为 0
+PASS_MIN_LEN	5
+# 这行代表密码的最小长度，默认不小于 5 位。但是我们现在用户登录时验证已经被 PAM 模块取代，所以这个选项并不生效
+PASS_WARN_AGE	7
+# 这行代表密码修改到期前的警告天数，也就是 /etc/shadow 文件中的第六个字段。代表密码到底有效期前多少天开始进行警告提醒，默认值是 7 天。
+
+UID_MIN                  1000
+UID_MAX                 60000
+# 这两行代表创建用户时，最小 UID 和最大 UID 范围。我们从 2.6.x 内核开始，Linux 用户的 UID 最大可以支持 2^32 这么多。但是真正使用时最大范围是 60000.还要注意如果我们手工指定了一个用户的 UID 是 550，那么下一个创建用户的 UID 会从 551 开始。哪怕 500-549 之间的 UID 没有被使用。
+SYS_UID_MIN               201
+SYS_UID_MAX               999
+
+GID_MIN                  1000
+GID_MAX                 60000
+# 这两行指定了 GID 最小值和最大值之间的范围。
+SYS_GID_MIN               201
+SYS_GID_MAX               999
+
+CREATE_HOME	yes
+# 这行指定建立用户时是否自动建立用户的家目录，默认是创建
+UMASK           077
+# 这行指定建立的用户家目录的默认权限，因为 umask 是 077，所以新建的用户家目录的权限是 700，umask 的具体作用和修改方法可以参考权限管理章节
+
+USERGROUPS_ENAB yes
+# 这行指定的是使用命令 userdel 删除用户时，是否删除用户的初始组，默认删除。
+ENCRYPT_METHOD SHA512
+# 这行指定 Linux 用户的密码使用 SHA512 散列模式加密，这是新的密码加密模式，原先的 Linux 只能使用 DES 或 MD5 加密。
+----
+
+==== 举例
+
+.添加用户
+[source,shell]
+----
+[root@localhost ~]# groupadd lamp1
+# 先手工添加 lamp1 用户组，因为等会要把 lamp1 用户的初始组指定过来，如果不先建立，等会报错(用户组不存在)。
+[root@localhost ~]# useradd -u 550 -g lamp1 -G root -d /home/lamp1 -c "test user" -s /bin/bash lamp1
+# 建立用户 lamp1 ，同时指定 UID(550) ，初始组(lamp1),附加组(root)，家目录(/home/lamp1),用户说明(test user)和登录 shell(/bin/shell)
+[root@localhost webmin-1.960]# grep lamp1 /etc/passwd /etc/shadow /etc/group
+# 同时查看这三个文件
+/etc/passwd:lamp1:x:550:1000:test user:/home/lamp1:/bin/bash
+# 用户的 UID，初始组，附加组，家目录，用户说明，和登录 shell 和命令手工指定一致
+/etc/shadow:lamp1:!!:18569:0:99999:7:::
+# lamp1 用户还没有设定密码
+/etc/group:root:x:0:lamp1
+# lamp1 用户加入了 root 组，root 组是 lamp1 用户的附加组
+/etc/group:lamp1:x:1000:
+# GID 1000 的组是 lamp1 的组
+[root@localhost ~]# ll -d /home/lamp1/
+drwx------. 2 lamp1 lamp1 62 11月  3 17:32 /home/lamp1/
+# 家目录也自动创建了。
+----
+
+=== 设定密码
+
+==== 设置密码
+
+[source,shell]
+----
+[root@localhost ~]# passwd 选项 用户名
+----
+
+.passwd 常用选项
+|===
+|常用选项 |作用
+
+|-l
+|暂时锁定用户，仅 root 用户可用
+
+|-u
+|解锁用户，仅 root 用户可用
+
+|--stdin
+|可以将通过管道符输出的数据作为用户的密码。主要在批量添加用户时使用
+
+|
+|直接使用 passwd 表示修改当前用户的密码
+|===
+
+.修改密码
+[source,shell]
+----
+[root@localhost ~]# passwd lamp1
+# 第一种方式
+[root@localhost ~]# echo "123" | passwd --stdin lamp1
+# 第二种方式，可以使用字符串修改密码
+[root@localhost ~]# change -d 0 lamp1
+# 可以通过命令，把密码修改日期归 0 ，也就是 /etc/shadow 第三个字段。这样用户已登录就是修改密码。
+----
+
+=== 修改用户信息
+
+[source,shell]
+----
+[root@localhost ~]# usermod 选项 用户名
+----
+
+.usermod 常用选项
+|===
+|常用选项 |作用
+
+|-u UID
+|修改用户的 UID
+
+|-d 家目录
+|修改用户的家目录。家目录必须写绝对路径
+
+|-c 用户说明
+|修改用户说明，就是 `/etc/passwd` 文件的第五个字段
+
+|-g 组名
+|修改用户的初始组，就是 `/etc/passwd` 文件的第四个字段
+
+|-G 组名
+|修改用户的附加组。其实就是把用户加入其它用户组。
+
+|-s shell
+|修改用户的登录 Shell，默认是 /bin/bash
+
+|-e 日期
+|修改用户的失效日期，格式为 "YYYY-MM-DD",就是 `/etc/shadow` 文件的第八个字段
+
+|-L
+|临时锁定用户
+
+|-U
+|解锁用户
+|===
+
+也可以通过 `usermod -l 新名 旧名` 选项修改用户名，但不建议那样使用，容易晕菜。建议先删除用户，在建立新用户。
+
+=== 删除用户
+
+[source,shell]
+----
+[root@localhost ~]# userdel [-r] 用户名
+# -r 选项在删除用户的同时删除用户的家目录
+----
+
+=== 切换用户身份
+
+[source,shell]
+----
+[root@localhost ~]# su [选项] 用户名
+# - : 这个选项代表连带用户的环境变量一起切换
+# -c : 仅执行一次命令，而不切换用户身份
+----
+
+== 组管理命令
+
+=== 添加用户组
+
+[source,shell]
+----
+[root@localhost ~]# groupadd 选项 组名
+----
+
+.groupadd 常用选项
+|===
+|常用选项 |说明
+
+|-g GID
+| 指定 GID
+|===
+
+==== 举例
+
+.添加用户组
+[source,shell]
+----
+[root@localhost ~]# groupadd group1
+[root@localhost ~]# grep "group1" /etc/group
+group1:x:1001:
+----
+
+=== 修改用户组
+
+[source,shell]
+----
+[root@localhost ~]# groupmod [选项] 组名
+----
+
+.groupmod 常用选项
+|===
+|常用选项 |作用
+
+|-g
+|将组 ID 改为 GID
+
+|-n
+| 改名为 NEW_GROUP
+
+|-o
+|允许使用重复的 GID
+
+|-p
+|将密码更改为(加密过的) PASSWORD
+|===
+
+=== 删除用户组
+
+[source,shell]
+----
+[root@localhost ~]# groupdel 组名
+----
+
+.删除用户组
+[source,shell]
+----
+[root@localhost ~]# groupdel group1
+----
+
+[NOTE]
+====
+要删除的组不能是其他用户的初始组，也就是说这个组内没有初始用户才能删除。如果组内有附加用户，删除组时不受影响
+====
+
+=== 把用户添加进组或从组中删除
+
+[source,shell]
+----
+[root@localhost ~]# gpasswd [选项] 组名
+----
+
+.gpasswd 常用选项
+|===
+|常用选项 |作用
+
+|-a 用户名
+|把用户加入组
+
+|-d 用户名
+| 把用户从组中删除
+|===
+
+其实 `gpasswd` 命令是用来设定组密码并指定组管理员的。但是，组密码和组管理员功能很少使用，完全可以被 `sudo` 命令取代。所以，现在 `gpasswd` 命令主要用于把命令添加进组或从组中删除。
+
+[source,shell]
+----
+[root@localhost ~]# groupadd grouptest
+# 创建测试组
+[root@localhost ~]# gpasswd -a user1 grouptest
+正在将用户“user1”加入到“grouptest”组中
+# 把用户 user1 加入 grouptest 组
+[root@localhost ~]# gpasswd -d user1 grouptest
+正在将用户“user1”从“grouptest”组中删除
+# 把用户 user1 从 grouptest 组删除
+----
+
+=== 改变有效组
+
+我们说过，每个用户可以属于一个初始组(用户是这个组的初始用户)，也可以属于多个附加组(用户是这个组的附加用户)。既然用户可以属于这么多用户组，那么用户在创建文件后，默认生效的组身份是什么呢?当然是初始用户组的组身份生效了，因为初始组是用户一旦登录就直接
+获得的组身份。也就是说，用户在创建文件后，文件的属组是用户的初始组，因为用户的有效组默认是初始组。
+
+既然用户属于多个用户组，那么能不能改变用户的有效组呢?使用 `newgrp` 命令就可以切换用户的有效组，命令格式如下:
+
+[source,shell]
+----
+[root@localhost ~]# newgrp 组名
+----
+
+举个例子，我们已经有了普通用户 user1，默认会建立 user1 用户组，user1 组是 user1 用户的初始组。我们再把 user1 加入 group1 组，那么 group1 组就是用户 user1 用户的附加组。当 user1 用户创建文件 test1 时，test1 文件的所属组是 user1 组，
+因为 user1 组是 user1 用户的有效组。通过 newgrp 命令就可以把 user1 用户的有效组变成 group1 组，当 user1 用户创建文件 test2 时，就会发现 test2 文件的属组就是 group1 组。命令如下:
+
+[source,shell]
+----
+[root@localhost ~]# groupadd group1
+[root@localhost ~]# gpasswd -a user1 group1
+正在将用户“user1”加入到“group1”组中
+[root@localhost ~]# grep "user1" /etc/group
+user1:x:1002:
+group1:x:1003:user1
+[root@localhost ~]# su - user1
+# 切换 user1 身份，超级用户切换普通用户不需要密码验证
+[user1@localhost ~]$ touch test1
+[user1@localhost ~]$ ll test1
+-rw-rw-r--. 1 user1 user1 0 11月  3 18:31 test1
+# test1 文件的默认组是 user1 组
+[user1@localhost ~]$ newgrp group1
+[user1@localhost ~]$ touch test2
+[user1@localhost ~]$ ll test2
+-rw-r--r--. 1 user1 group1 0 11月  3 18:31 test2
+# test2 文件的默认组是 group1 组
+----

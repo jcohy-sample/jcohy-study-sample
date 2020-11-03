@@ -234,7 +234,7 @@ ServeMux 还会注意到请求的 URL 路径的无害化，将任何路径中包
 
 == 操作数据库
 
-include::../integrate/sql.adoc[leveloffset=+1]
+关于数据库的操作请查看 <<go-integrate-mysql>> 章节
 
 [[go-web-handler]]
 == 处理请求
