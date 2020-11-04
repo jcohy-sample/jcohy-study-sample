@@ -2,6 +2,8 @@
 = 概述
 include::attributes.adoc[]
 
+此文档示例使用的 Linux 版本为 CentOS 6.8
+
 include::linux/about.adoc[leveloffset=+1]
 
 include::linux/command.adoc[leveloffset=+1]
@@ -13,6 +15,8 @@ include::linux/software.adoc[leveloffset=+1]
 include::linux/user.adoc[leveloffset=+1]
 
 include::linux/permission.adoc[leveloffset=+1]
+
+include::linux/file.adoc[leveloffset=+1]
 
 include::linux/install.adoc[leveloffset=+1]
 

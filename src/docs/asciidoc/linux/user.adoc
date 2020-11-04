@@ -479,7 +479,7 @@ group1:x:1001:
 user1:x:1002:
 group1:x:1003:user1
 [root@localhost ~]# su - user1
-# 切换 user1 身份，超级用户切换普通用户不需要密码验证
+# 切换 user1 身份，超级用户切换普通用户不需要密码验证.
 [user1@localhost ~]$ touch test1
 [user1@localhost ~]$ ll test1
 -rw-rw-r--. 1 user1 user1 0 11月  3 18:31 test1
@@ -490,3 +490,22 @@ group1:x:1003:user1
 -rw-r--r--. 1 user1 group1 0 11月  3 18:31 test2
 # test2 文件的默认组是 group1 组
 ----
+
+=== 切换用户身份
+
+su 可以切换不同用户的身份，命令格式如下
+
+[source,shell]
+----
+[root@localhost ~]# su [-lm] [-c 命令] [username]
+参数:
+- : 单纯使用 `-` 例如  su - ，代表使用 login-shell 的变量文件读取方式来登录系统。若用户名称没有加上去，则代表切换为 root 用户
+-l: 与 -  类似，但后面要加要切换的用户帐号，也是 login-shell 的方式
+-m: -m 和 -p 是一样的，代表使用目前的环境变量，而不读取新用户的配置文件
+-c: 仅进行一次命令，所以 -c 后面可以加命令
+----
+
+[NOTE]
+====
+如果用户的环境变量也要切换为成为新用户的环境变量，`-` 不能省略
+====

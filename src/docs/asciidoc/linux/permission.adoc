@@ -1,2 +1,507 @@
 [[permission]]
 = 权限管理
+
+[[permission-acl]]
+== ACL(Access Control List)
+
+我们之前说过，传统的权限仅有三种身份(owner,group,others) 搭配三种权限(r,w,x) 而已，并没有办法单纯的针对某一用户或者某一组来设置特定的需求。
+所以就引入了 ACL 权限，ACL 权限的主要目的是提供传统的 owner，group.others 的 read，write，excute 权限之外的具体权限的设置。ACL 可以针对单一用户，单一文件或目录来进行 r,w,x 的权限设置。
+ACL 权限是解决用户对文件身份不足的问题的
+
+image::../images/linux4.png[]
+
+=== 开启 ACL
+
+ACL 必须要有文件系统的支持才行，目前，绝大多数的文件系统都支持 ACL 。包括 ReiserFS，EXT2/EXT3，JFS,XFS等。查询文件系统是否支持可以使用下面的命令
+
+
+[source,shell]
+----
+[root@localhost ~]# dumpe2fs -h /dev/hda2
+----
+
+[NOTE]
+====
+dumpe2fs 只能打开ext3/ext4等文件类型。而在 CentOS 7 中，默认的文件系统为 xfs，xfs 默认支持 ACL，可以使用 `xfs_info | xfs_growfs` 命令查看文件系统
+
+[source,shell]
+----
+[root@localhost ~]# xfs_info  /dev/hda2
+----
+
+貌似看不到是否支持ACL权限，我也只能这样了
+====
+
+[source,shell]
+----
+[root@localhost ~]# mount -o remount,acl /
+[root@localhost ~]# mount
+/dev/hda2 on / type ext3 (rw,acl)
+# 这样就加入了，但这只是临时生效，重启后就失效,如果需要永久生效，那就修改配置文件
+[root@localhost ~]# vi /etc/fstab
+LABEL=/1 / ext3 defaults,acl 1 1
+[root@localhost ~]# mount -o remount /
+# 重新挂载使配置生效
+----
+
+=== ACL 命令
+
+[source,shell]
+----
+[root@localhost ~]# getfacl 命令
+# 查询文件的 ACL 权限
+[root@localhost ~]# setfacl 选项 文件名
+# 设置文件的 ACL 权限
+[root@localhost ~]# setfacl -m u:用户名:权限 文件名
+[root@localhost ~]# setfacl -m g:组名:权限 文件名
+----
+
+.setfacl 常用选项
+|===
+|常用选项 |作用
+
+|-m
+|设定 ACL 权限
+
+|-b
+|删除 ACL 权限
+
+|-x:用户
+|删除单个用户的 ACL 权限
+
+|-R
+|递归设置 ACL
+
+|-d
+|设置默认的 ACL 权限，只对目录有效。在该目录新建的数据会引用此默认值
+
+|-k
+|删除默认的 ACL 参数
+|===
+
+[NOTE]
+====
+如果给目录赋予 acl 权限，下面两两条命令都要输入
+
+setfacl -m u:cc:rx -R soft/     # 只对已经存在的文件生效
+setfacl -m d:u:aa:rwx -R /test # 只对以后新建的文件生效
+====
+
+最大有效权限 mask
+
+mask 的意思是用户或者组所设置的权限必须要存在于 mask 的权限设置范围内才会生效，此既有效权限。具体操作可查看下面第 3 个例子
+
+=== 范例
+
+.针对特定用户的方式
+设置规定: "u:[用户帐号列表]:[rwx]" 例如针对 user1 的权限规定 rx:
+[source,shell]
+----
+[root@localhost ~]# touch acl_test1
+[root@localhost ~]# ll acl_test1
+-rw-r--r--. 1 root root 0 11月  4 11:38 acl_test1
+[root@localhost ~]# setfacl -m u:user1:rx acl_test1
+[root@localhost ~]# ll acl_test1
+-rw-r-xr--+ 1 root root 0 11月  4 11:38 acl_test1
+# 权限部分多了一个 + ,且与原本的权限 (644) 看起来区别很大，要如何查看呢？
+
+[root@localhost ~]# setfacl -m u::rwx acl_test1
+[root@localhost ~]# ll acl_test1
+-rwxr-xr--+ 1 root root 0 11月  4 11:38 acl_test1
+# 无用户列表，代表设置该文件所有者，所以上面显示的 root 的权限成为 rwx 了
+
+[root@localhost ~]# getfacl acl_test1
+# file: acl_test1   <== 文件名
+# owner: root       <== 文件的所有者，即 ll 看到的第三个用户字段
+# group: root       <== 文件的所属组，即 ll  看到的第四个用户组字段
+user::rwx           <== 用户列表栏是空的，代表文件所有者的权限
+user:user1:r-x      <== 针对 user1 的权限设置为 rx，与所有者不同
+group::r--          <== 文件用户组的权限设置仅有 r
+mask::r-x           <== 此文件默认的有效权限(mask)
+other::r--          <== 其他人拥有的权限
+----
+
+
+.针对特定用户组的方式
+设置规定: "g:[用户组列表]:[rwx]" 例如针对 group1 的权限规定 rx:
+[source,shell]
+----
+[root@localhost ~]# setfacl -m g:group1:rx acl_test1
+[root@localhost ~]# getfacl acl_test1
+# file: acl_test1
+# owner: root
+# group: root
+user::rwx
+user:user1:r-x
+group::r--
+group:group1:r-x   <== 这里是新增的部分，多了这个用户组的权限设置
+mask::r-x
+other::r--
+----
+
+.针对有效权限 mask 的设置方式
+设置规定: "m:[rwx]" 例如针对上面的文件规定为仅有 r:
+[source,shell]
+----
+[root@localhost ~]# setfacl -m m:r acl_test1
+[root@localhost ~]# getfacl acl_test1
+# file: acl_test1
+# owner: root
+# group: root
+user::rwx
+user:user1:r-x			#effective:r--  <== user1+maks 均存在的仅有 r 而已
+group::r--
+group:group1:r-x		#effective:r--  <== group1+maks 均存在的仅有 r 而已
+mask::r--
+other::r--
+----
+
+.删除 acl 权限
+删除我们刚才设置过的 acl 权限
+[source,shell]
+----
+[root@localhost ~]# setfacl -b acl_test1
+[root@localhost ~]# ll acl_test1
+-rwxr--r--. 1 root root 0 11月  4 11:38 acl_test1
+----
+
+[[permission-sudo]]
+== sudo
+
+`sudo` 相对于 `su` 不需要连接新切换的用户密码(经常是需要 root 的密码)。甚至可以设置不需要密码即可执行。由于 `sudo` 可以让你以其他用户的身份执行命令(通常是使用 root 的身份执行命令)，
+因此并非所有人都能执行。而是仅有 `/etc/sudoers` 内的用户才能够执行 `sudo` 这个命令。
+
+[source,shell]
+----
+[root@localhost ~]# sudo [-b] [-u 新用户帐号]
+参数：
+-b: 将后续的命令让系统自动执行，而不与目前的系统产生影响
+-u: 后面可以接欲切换的用户，若无此项则代表切换 root
+----
+
+若想使用 `sudo` 执行属于 root  的权限命令，则 root 需要先使用 `visudo` 去修改  /etc/sudoers 让该帐号能够使用全部或部分的 root 命令功能。为什么要使用 visudo 呢？这是因为
+`/etc/sudoers` 是有语法的，如果设置错误会造成无法使用 `sudo` 命令。而使用 `visudo` 去修改，并在结束离开是保存，系统会去检验 `/etc/sudoers` 语法
+
+./etc/sudoers 文件参数
+[source,shell]
+----
+root    ALL=(ALL)       ALL
+用户帐号 登陆者的来源主机名=(可切换的身份) 可执行的命令
+%wheel  ALL=(ALL)       ALL
+----
+
+.参数含义
+|===
+|参数 |含义
+
+|用户帐号
+|代表 root 给那个用户或哪个组赋予命令。注意组名前加 `%`
+
+|登陆者的来源主机名
+|用户可以用指定的命令管理指定 IP 地址的服务器。如果写 ALL，代表可以管理任何主机。如果写固定 IP，代表用户可以管理指定的服务器
+
+|可切换的身份
+|这个账号可以切换成什么身份来执行后续的命令。All 代表可以切换成任意身份。这个字段可以省略
+
+|可执行的命令
+|代表 root 把什么命令授权给普通用户。默认是 ALL，代表所有命令，这个当然不行。如果需要给那个命令授权，写入命令名即可。不过需要注意一定要写成命令的绝对路径。
+|===
+
+.授权 user1 可以重启服务器
+[source,shell]
+----
+[root@localhost ~]# visudo
+user1 ALL=/bin/shutdown -r now
+[root@localhost ~]# sudo -l
+----
+
+再举个例子，授权一个用户管理你的 web 服务器。为此，我们需要满足下面几个条件
+
+* 可以使用 Apache 管理脚本
+* 可以修改 Apache 配置文件
+* 可以更新网页内容
+
+假设 Apache 管理脚本为 /etc/rc.d/init.d/httpd
+
+.满足条件一
+[source,shell]
+----
+[root@localhost ~]# visudo
+user1 192.168.0.156=/etc/rc.d/init.d/httpd reload,/etc/rc.d/init.d/httpd configtest
+# 授权 user1 用户可以连接 192.168.0.156 上的 Apache 服务器，通过 Apache 管理脚本重新配置读取配置文件让更改的设置生效(reload)和可以
+# 检测 Apache 配置文件语法错误(configtest),但不允许其 关闭(stop)，重启(restart)等操作
+----
+
+.满足条件二
+[source,shell]
+----
+[root@localhost ~]# visudo
+user1 192.168.0.156=/binvi /etc/httpd/conf/httpd.conf
+# 授权 user1 用户可以连接 192.168.0.156 上的 Apache 服务器，使用 vi 编辑 Apache 服务器配置文件
+----
+
+对于条件三就比较简单了，只要授予 user1 对目录具有写权限就行了，或者将目录的所有者变为 user1。
+
+.例子三
+授权 aa 用户可以添加普通用户
+[source,shell]
+----
+[root@localhost ~]# visudo
+aa ALL=/usr/sbin/useradd
+aa ALL=/usr/bin/passwd
+aa ALL=/usr/bin/passwd [A-Za-z]*, !/usr/bin/passwd "" ,!/usr/bin/passwd root
+# 赋予改密码权限，取消对 root 密码修改
+
+----
+
+[[permission-set]]
+== SetUID,SetGID,Sticky BIT
+
+文件特殊权限
+
+=== SUID
+
+SetUID 的功能可以这样理解
+
+* 只有可以执行的二进制程序才能设定 SUID 权限
+* 命令执行者要对该程序拥有 `x` 权限
+* 命令执行者在执行该命令时获得该程序文件的属主的身份
+* SetUID 权限只在该程序执行过程中有效。也就是说身份改变只在程序执行过程中有效
+
+举例：
+
+[source,shell]
+----
+[root@localhost ~]# ll /etc/passwd
+-rw-r--r--. 1 root root 989 11月  3 18:18 /etc/passwd
+[root@localhost ~]# ll /etc/shadow
+----------. 1 root root 855 11月  3 18:18 /etc/shadow
+[root@localhost ~]# ll /usr/bin/passwd
+-rwsr-xr-x. 1 root root 27832 6月  10 2014 /usr/bin/passwd
+----
+
+`/usr/bin/passwd` 命令具有特殊权限 SetUID，也就是在属主的权限位的执行权限上是 `s`。可以这样来理解他，当一个具有执行权限的文件设置 SetUID 后，用户
+执行这个文件时将以文件所有者的身份执行.`/usr/bin/passwd` 命令具有 SetUID 权限，所有者为 `root`（Linux 中命令默认所有者都是 root），也就是说当
+普通用户使用 `passwd` 命令修改密码的时候，那一瞬间突然灵魂附体了，实际是在用 `passwd` 命令所有者 `root` 的身份执行 `passwd` 命令。root 当然可以将
+命令写入 `/etc/shadow` 文件，所以普通用户也可以修改 `/etc/shadow` 文件，命令执行完成后该身份也随之消失。
+
+如果取消 SetUID 权限，则普通用户也不能修改自己的密码了。
+
+给有些命令赋予 SUID 是非常危险的，如下：
+
+[source,shell]
+----
+[root@localhost ~]# chmod u+s /usr/bin/vim
+[root@localhost ~]# ll /usr/bin/vim
+-rwsr-xr-x. 1 root root 2337192 8月   9 2019 /usr/bin/vim
+----
+
+关于设置 SUID 的几点建议
+
+* 关键目录应该严格控制写权限。比如 `/`,`/usr` 等
+* 用户的密码设置要严格遵守密码三原则
+* 对系统中默认应具有的 SUID 权限文件作一列表，定期进行检查有没有多余的文件被设置 SUID 文件。下面编写一个脚本来校测
+
+[source,shell]
+----
+[root@localhost ~]# vi suicheck.sh
+#/bin/bash
+
+find / -perm -4000 -o -perm -2000 > /temp/setuid.check
+# 搜索系统中所有拥有 SUID 和 SGID 的文件，并保存在 临时目录中
+for i in $(cat /temp/setuid.check)
+do
+    grep $i /root/suid.list >/dev/null
+    if["$?" != "0"]
+    # 如果在，不报错
+    then
+        echo "$i is not in list file" >> /root/suid_log_$(dade+%F)
+    fi
+done
+
+rm -rf /temp/setuid.check
+----
+
+=== SGID
+
+SGID 既可以针对文件生效，也可以针对目录生效，这和 SUID 明显不同。
+
+如果针对 文件，SGID 的含义如下
+
+* 只有可以执行的二进制程序才能设定 SUID 权限
+* 命令执行者要对该程序拥有 `x` 权限
+* 命令执行者在执行该命令时，组身份升级为该程序文件的属组
+* SetUID 权限只在该程序执行过程中有效。也就是说组身份改变只在程序执行过程中有效
+
+[source,shell]
+----
+[root@localhost ~]# ll /var/lib/mlocate/mlocate.db
+-rw-r-----. 1 root slocate 6933404 11月  4 11:35 /var/lib/mlocate/mlocate.db
+[root@localhost ~]# ll /usr/bin/locate
+-rwx--s--x. 1 root slocate 40520 4月  11 2018 /usr/bin/locate
+----
+
+当普通用户 user1 执行 locate 命令时，会发生如下事情
+
+* `/usr/bin/locate` 是可执行的二进制程序，可以赋予 SGID
+* 执行用户 user1 对 `/usr/bin/locate` 命令拥有执行权限
+* 执行 `/usr/bin/locate` 命令时，组身份会升级为 `slocate` 组，而 `slocate` 组对 `/var/lib/mlocate/mlocate.db` 数据库拥有 `r` 权限，所以普通用户可以使用 `locate` 命令查询 `mlocate.db` 数据库。
+* 命令结束，user1 用户的组身份返回为 user1 组
+
+如果针对 目录，SGID 的含义如下
+
+* 普通用户必须对此目录拥有 `r` 和 `x` 权限，才能进入此目录
+* 普通用户在此目录中的有效组会变成此目录的属组
+* 若普通用户对此目录拥有 `w` 权限时，新建文件的默认属组是这个目录的属组
+
+这可理解起来比较困难，我们举个例子来理解，如下
+
+[source,shell]
+----
+[root@localhost ~]# cd /tmp/
+# 进入临时目录做实验，因为临时目录才允许普通用户修改
+[root@localhost tmp]# mkdir dtest
+# 建立测试目录
+[root@localhost tmp]# chmod g+s dtest/
+# 给测试目录赋予 SGID 权限
+[root@localhost tmp]# ll -d dtest/
+drwxr-sr-x. 2 root root 6 11月  4 16:22 dtest/
+# SGID 已经生效
+[root@localhost tmp]# chmod 777 dtest/
+# 给测试目录权限，使普通用户可以写
+[root@localhost tmp]# su - user1
+# 切换 user1 用户
+上一次登录：二 11月  3 18:31:04 CST 2020pts/0 上
+[user1@localhost ~]$ cd /tmp/dtest/
+# 进入测试目录
+[user1@localhost dtest]$ touch abc
+# 创建文件
+[user1@localhost dtest]$ ll
+总用量 0
+-rw-rw-r--. 1 user1 root 0 11月  4 16:23 abc
+# abc 的默认属组不再是 user1 用户组，而变成了 dtest 组的属组 root
+----
+
+=== Sticky BIT
+
+Sticky BIT 粘着位，也称 SBIT，SBIT 目前仅针对目录有效。他的作用如下
+
+* 粘着位目前仅针对目录有效
+* 普通用户对该目录拥有 `w` 和 `x` 权限，即普通用户可以在此目录拥有写入权限
+* 如果没有粘着位，因为普通用户具有 `w` 权限，所以可以删除此目录下的所有文件，包括其他用户建立的文件。一旦赋予了粘着位，除了 root 可以删除所有文件，普通用户就算拥有 `w` 权限，也只能删除自己建立的文件。不能删除其他用户建立的文件。
+
+=== 设定文件特殊权限
+
+* 4 代表 SUID
+* 2 代表 SGID
+* 1 代表 SBIT
+
+[source,shell]
+----
+[root@localhost ~]# mkdir ftest
+[user1@localhost test]$ chmod 4755 ftest/
+# 赋予 SUID 权限
+[user1@localhost test]$ ll
+drwsr-xr-x. 2 user1 user1 6 11月  4 16:32 ftest
+
+[user1@localhost test]$ chmod 2755 ftest/
+# 赋予 SGID 权限
+[user1@localhost test]$ ll
+drwsr-sr-x. 2 user1 user1 6 11月  4 16:32 ftest
+
+[user1@localhost test]$ chmod 1755 ftest/
+# 赋予 SBIT 权限
+[user1@localhost test]$ ll
+drwsr-sr-t. 2 user1 user1 6 11月  4 16:32 ftest
+----
+
+[[permission-chattr]]
+== chattr 权限
+
+[source,shell]
+----
+[root@localhost ~]# chattr [+-=] [选项名] 文件或目录名
+----
+
+.chattr 常用选项
+|===
+|常用选项 |说明
+
+|+
+|增加权限
+
+|-
+|删除权限
+
+|=
+|等于某权限
+
+|i
+|如果对文件设置 `i` 属性，那么不允许对文件进行删除，改名，也不能添加和修改数据。如果对目前设置 `i` 属性，那么只能允许修改目录下文件的数据，但不允许建立和删除文件
+
+|a
+|如果对文件设置 `a` 属性，那么只能在文件中增加数据，但是不能删除也不能修改数据。如果对目录设置 `a` 属性，那么只允许在目录中建立和修改文件，但不允许删除
+
+|e
+|Linux 中绝大多数文件都默认拥有 `e` 属性。表明该文件是使用 ext 文件系统进行存储的。而且不能允许使用 `chattr -e` 命令取消 `e` 属性
+|===
+
+查看文件系统属性 lsattr
+
+[source,shell]
+----
+[root@localhost ~]# lsattr 选项 文件名
+# -a : 显示所有文件和目录
+# -d : 若目标是目录，仅列出目录本身的属性，而不是子文件的。
+----
+
+
+.举例
+[source,shell]
+----
+[root@localhost test]$ touch ftest
+[root@localhost test]$ chattr +i ftest
+[root@localhost test]$ rm -rf ftest
+rm: 无法删除 "ftest" : 不允许的操作
+# 赋予 i 属性后，root 也不能删除
+[root@localhost test]$ echo 111 >> ftest
+-bash: ftest: 权限不够
+# 也不能修改文件数据
+
+
+
+[root@localhost test]$ mkdir dtest
+[root@localhost test]$ touch dtest/abc
+[root@localhost test]$ chattr +i dtest
+# 给目录赋予 i 权限
+[root@localhost test]$ cd dtest/
+[root@localhost test]$ touch bcd
+touch: 无法创建 "bac": 权限不够
+# dtest 目录不能新建文件
+[root@localhost test]$ echo 11 >> abc
+[root@localhost test]$ cat abc
+11
+# 但是可以修改文件内容
+[root@localhost test]$ rm -rf abc
+rm: 无法删除 "abc": 权限不够
+# 不能删除
+
+
+
+
+[root@localhost test]$ mkdir -p /back/log
+# 建立备份目录
+[root@localhost test]$ chattr +a /back/log/
+# 赋予 a 属性
+[root@localhost test]$ cd /var/log/message /back/log/
+# 可以复制文件和新建文件到指定目录
+[root@localhost test]$ rm -rf /back/log/message
+rm: 无法删除 "/back/log/message": 不允许的操作
+# 但是不允许删除
+----
+
+
+[NOTE]
+====
+chattr 能用在 ext 上面。xfs 文件系统下一定是不能用 chattr
+====
