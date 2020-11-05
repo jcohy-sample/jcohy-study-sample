@@ -166,3 +166,557 @@ Extents 连续数据块概念、多块分配、延迟分配、持久预分配、
 |===
 
 == 常用的硬盘管理命令
+
+=== df 命令
+
+[source,shell]
+----
+[root@localhost ~]# df -ahT
+# -a: 显示特殊文件系统，这些文件系统几乎都是保存在内存中的，如 /proc，因为是挂载在内存中，所以占用量都是 0
+# -h: 单位不再只用 kb，而是换算成其他单位
+# -T: 多出了文件系统类型一列
+----
+
+=== du 命令
+
+[source,shell]
+----
+[root@localhost ~]# du [选项] 目录或文件名
+# -a: 显示每个子文件的磁盘占用量。默认值统计子目录的磁盘占用量
+# -h: 使用习惯的单位显示磁盘占用量
+# -T: 统计总占用量，而不列出子目录和子文件的占用量
+----
+
+.df 与 du 的区别
+****
+du 是用于统计文件大小的，统计文件大小是准确的。df 是用于统计空间大小的，统计剩余空间大小是准确的。
+****
+
+=== fsck 文件系统修复命令
+
+[source,shell]
+----
+[root@localhost ~]# fsck -y /dev/sdb1
+# 自动修复
+----
+
+=== dumpe2fs 显示磁盘状态
+
+[source,shell]
+----
+[root@localhost ~]# dumpe2fs /dev/sdb2
+----
+
+=== stat 查看文件的详细时间
+
+[source,shell]
+----
+[root@localhost ~]# stat anaconda-ks.cfg
+  文件："anaconda-ks.cfg"
+  大小：1343      	块：8          IO 块：4096   普通文件
+设备：fd00h/64768d	Inode：100663394   硬链接：1
+权限：(0600/-rw-------)  Uid：(    0/    root)   Gid：(    0/    root)
+环境：system_u:object_r:admin_home_t:s0
+最近访问：2020-10-30 11:24:29.799037528 +0800
+最近更改：2020-10-22 14:48:38.846449902 +0800
+最近改动：2020-10-22 14:48:38.846449902 +0800
+创建时间：-
+----
+
+=== 判断文件类型
+
+[source,shell]
+----
+[root@localhost ~]# file 文件名
+# 判断文件类型
+[root@localhost ~]# type 命令名
+# 判断命令类型
+----
+
+== fdisk 命令手工分区
+
+fdisk -l
+
+查看所有的硬盘及分区
+
+[source,shell]
+----
+[root@localhost ~]# fdisk /dev/sdb 进行磁盘分区
+----
+
+.fdisk 交互指令说明
+|===
+|交互指令 |说明
+
+| a
+| 设置可引导标志
+
+| b
+| 编辑 bsd 磁盘标签
+
+| c
+| 设置 DOS 操作系统兼容标志
+
+| d
+| 删除一个分区
+
+| l
+| 显示已知的文件系统类型。82 为 Linux Swap 分区。83 为 Linux 分区
+
+| m
+| 显示帮助菜单
+
+| n
+| 新建分区
+
+| o
+| 建立空白 DOS 分区表
+
+| p
+| 显示分区列表
+
+| q
+| 不保存退出
+
+| s
+| 新建空白 SUN 磁盘标签
+
+| t
+| 改表一个分区的系统 ID
+
+| u
+| 改变显示记录单位
+
+| v
+| 验证分区表
+
+| w
+| 保存退出
+
+| x
+| 附加功能
+|===
+
+== 磁盘配额
+
+=== 磁盘配额条件
+
+* 内核必须支持磁盘配额
+
+[source,shell]
+----
+[root@localhost ~]# grep CONFIG_QUOTA /boot/config-3.10.0-957.el7.x86_64
+CONFIG_QUOTA=y
+CONFIG_QUOTA_NETLINK_INTERFACE=y
+# CONFIG_QUOTA_DEBUG is not set
+CONFIG_QUOTA_TREE=y
+CONFIG_QUOTACTL=y
+CONFIG_QUOTACTL_COMPAT=y
+----
+
+* 系统必须安装 quota 工具，我们的 Linux 默认是安装了的。
+
+=== 磁盘配额的概念
+
+* 用户配额和组配额
+* 磁盘容量限制和软件个数限制
+* 软限制和硬限制
+* 宽限时间
+
+如果用户的空间占用数处于软限制和硬限制之间，系统会在用户登录是提醒用户磁盘将满，这个时间就是宽限时间，默认是 7 天。如果达到了宽限时间，用户的磁盘量还超过软限制，那么软限制就会升级为硬限制
+
+=== 磁盘配额规划
+
+我们开始磁盘配额实验，首先进行如下规划
+
+* 磁盘配额是限制普通用户在分区上使用磁盘空间和文件个数的，所以我们需要指定一个分区。那么我们手工建立一个 5 GB 的 /dev/sdb1 分区,把他挂载到 /disk 目录中
+* 建立需要被限制的用户和用户组。建立 user1,user2,user3 三个用户和一个 test 组。这三个用户都属于 test 组
+* 其中 test 组的磁盘容量硬限制为 500MB，软限制 450MB，文件个数不做限制。user1 用户为了便于测试，磁盘容量硬限制为 50MB，软限制 40MB，文件个数硬限制为 10 个，软限制为 8 个。
+user2 和 user3 用户磁盘容量硬限制为 250MB，软限制 200MB，文件个数不做限制。
+* 大家发现，user1，use2 和 user3 用户加起来的磁盘容量为 550MB，超过了 test 组的限制。这样的话，某个用户可能达不到自己的用户限制，而达到组限制时就不能再写入数据了。也就是说，如果用户限制和
+组限制同时存在，那么那个限制更小，那个限制优先生效
+* 系统宽限时间设置为 8 天
+
+. 分 5 GB 的 /dev/sdb1 分区，并将它挂载到 /disk 目录下
+. 添加需要做限制的用户和用户组
++
+[source,shell]
+----
+[root@localhost ~]# groupadd test
+[root@localhost ~]# useradd -G test user1
+[root@localhost ~]# useradd -G test user2
+[root@localhost ~]# useradd -G test user3
+[root@localhost ~]# passwd user1
+[root@localhost ~]# passwd user2
+[root@localhost ~]# passwd user3
+----
+
+. 在分区上开启磁盘配额功能
++
+[source,shell]
+----
+[root@localhost ~]# mount -o remount,usrquata,grpquota /disk
+# 重新挂载分区，并开启用户和用户组的磁盘配额功能
+----
++
+要想永久生效，需要修改 `/etc/fstab`  文件，改成
++
+[source,shell]
+----
+[root@localhost ~]# vi /etc/fstab
+/dev/sdb1 /disk ext4 defaults,usrquata,grpquota 0 0
+[root@localhost ~]# mount -o remount /disk
+----
+
+. 建立磁盘配额的配置文件
++
+[source,shell]
+----
+[root@localhost ~]# quotacheck [选项] 分区名
+----
++
+.quota 常用选项
+|===
+|常用选项 |作用
+
+| -a
+| 扫描 `/etc/mtab/` 文件中所有启用磁盘配额功能的分区。如果加入此参数，命令后面就不需要加入分区名了
+
+| -c
+| 不管原有的配置文件，重新扫描并建立新的配置文件
+
+| -u
+| 建立用户配额的配置文件，也就是生成 `aquota.user` 文件
+
+| -g
+| 建立组配额的配置文件，也就是生成 `aquota.group` 文件
+
+| -v
+| 显示扫描过程
+
+| -m
+| 强制以读写的方式扫描系统，和 `-M` 类似，一般扫描根分区时使用
+
+| -f
+| 强制扫描文件系统，并写入新的配置文件。一般扫描新添加的硬盘分区时使用
+|===
++
+[source,shell]
+----
+[root@localhost ~]# quotacheck -avugm
+----
++
+需要关闭 SELinux,否则会报错。
++
+如果我们自动扫描 /分区 建立配额配置文件时，因为 /分区 已经挂载成读写系统，而 quotacheck 需要把分区先挂载成已读分区，然后建立配置文件，最后再挂载回来。所以，不能直接在 /分区 建立配置文件，这时就需要使用
+-m 强制以读写方式扫描文件系统了。
+
+. 设置用户和组的配额限制
++
+[source,shell]
+----
+[root@localhost ~]# edquota [选项] 用户名或组名
+# -u 用户名: 设定用户配额
+# -g 组名: 设定组配额
+# -t: 设置宽限时间
+# -p: 复制配额限制。如果已经设置好某个用户的配额限制，其他用户的配额限制和这个用户相同，那么可以直接复制配额限制，而不用手工指定。
+----
++
+[source,shell]
+----
+[root@localhost ~]#
+----
+
+. 配置复制
++
+user3 和 user2 的配额是一样的，我们就可以使用 user2 配置作为模板进行复制。
++
+[source,shell]
+----
+[root@localhost ~]# edquota -p user2 -u user3
+----
+
+. 修改宽限天数
++
+[source,shell]
+----
+[root@localhost ~]# edquota -t
+----
+
+. 启动和关闭配额
++
+配额的配置已经完成，下面只需要启动配额就可以了
++
+.启用配额
+[source,shell]
+----
+[root@localhost ~]# quotaon [选项] 分区名
+# -a: 依据 `/etc/mtab` 文件启动所有的配额分区。如果不加 -a，后面就一定要指定分区名
+# -u: 启用用户配额
+# -g: 启用组配额
+# -v: 显示启动的过程信息
+
+[root@localhost ~]# quotaon -vug /disk/
+----
++
+.关闭配额
+[source,shell]
+----
+[root@localhost ~]# quotaoff [选项] 分区名
+# -a: 依据 `/etc/mtab` 文件关闭所有的配额分区。如果不加 -a，后面就一定要指定分区名
+# -u: 关闭用户配额
+# -g: 关闭组配额
+
+[root@localhost ~]# quotaoff -a
+----
+
+. 磁盘配额查询
++
+.quota 查询
+[source,shell]
+----
+[root@localhost ~]# quota [选项] [用户名或组名]
+# -u 用户名: 查询用户配额
+# -g 组名: 查询组配额
+# -v: 显示详细信息
+# -s: 以习惯的方式显示容量大小
+
+[root@localhost ~]# quota -uvs user1
+----
++
+.repquota 查询
+[source,shell]
+----
+[root@localhost ~]# repquota [选项] [分区名]
+# -a: 依据 `/etc/mtab` 文件查询配额。如果不加 -a，后面就一定要指定分区名
+# -u: 查询用户配额
+# -g: 查询组配额
+# -v: 显示详细信息
+# -s: 以习惯的方式显示容量大小
+
+[root@localhost ~]# repquota -augvs
+----
+
+. 测试
+. 非交互设定用户磁盘配额
+[source,shell]
+----
+[root@localhost ~]# setquota -u 用户名 容量软限制 容量硬限制 个数软限制 个数硬限制 分区名
+[root@localhost ~]# useradd user4
+[root@localhost ~]# passwd user4
+[root@localhost ~]# setquota -u user4 10000 20000 5 8 /disk
+# 设定 user4 用户在 /disk 分区的容量软限制为 10MB，硬限制为 20MB，文件个数软限制 5 个，硬限制 8 个
+# 这个命名在写脚本批量设置时更加方便。也可以先建立一个模板用户，设定好配额限制，再进行配额复制。
+----
+
+== LVM 逻辑卷管理
+
+=== 简介
+
+LVM 是 logical Volume Manager 的简称。中文就是逻辑卷管理
+
+image::images/linux13.png[]
+
+* 物理卷(PV,Physical Volume)：就是真正的物理硬盘或分区
+* 卷组(VG,Volume group)：将多个物理卷合起来就组成了卷组，组成同一卷组的物理卷可以是同一硬盘的不同分区，也可以是不同硬盘上的不同分区。我们把卷组想象成一个逻辑硬盘
+* 逻辑卷(LV,Logical Volume): 卷组是一个逻辑硬盘，逻辑硬盘必须分区之后才能使用，这个分区我们称为逻辑卷。逻辑卷可以格式化和写入数据。我们可以把逻辑卷想象成为分区
+* 物理扩展(PE,Physical Extend)： PE 是用来保存数据的最小单元，我们的数据实际上都是写入 PE 当中，PE 的大小是可以配置的，默认 4MB
+
+=== 建立 LVM
+
+. 首先把物理硬盘分成分区，当然也可以是整块物理硬盘
+. 把物理分区建立成物理卷(PV),也可以把整块硬盘都建立为物理卷
+. 把物理卷整合成为卷组(VG)。卷组就可以动态的调整大小了，我们把物理分区加入卷组，也可以把物理分区从卷组删除
+. 最后就是把卷组再划分成为逻辑卷(LV),当然逻辑卷也是可以直接调整大小的。我们说逻辑卷可以想象为分区，所以也需要格式化和卸载
+
+=== 物理卷管理
+
+==== 硬盘分区
+
+创建的方式就是使用 `fdisk` 命令。不过需要注意的是分区的系统 ID 不再是 Linux 系统默认的分区号 83 了，而要改成 LVM 的 ID 号 8e
+
+==== 建立分区
+
+[source,shell]
+----
+[root@localhost ~]# pvcreate [设备文件名]
+----
+
+建立物理卷时，我们说既可以也整块硬盘建立成物理卷，也可以把某个分区建立成物理卷。如果要把整块硬盘建立成物理卷，可以使用下面的命令
+
+[source,shell]
+----
+[root@localhost ~]# pvcreate /dev/sdb
+----
+
+==== 查看物理卷
+
+[source,shell]
+----
+[root@localhost ~]# pvscan
+  PV /dev/sda2   VG VolGroup        lvm2 [126.51 GiB / 0    free]
+  Total: 1 [126.51 GiB] / in use: 1 [126.51 GiB] / in no VG: 0 [0   ]
+# 总共                        使用了 1 个卷                   空闲了 0 个卷
+----
+
+也可以 `pvdisplay` 查看更详细的信息
+
+[source,shell]
+----
+[root@localhost ~]# pvdisplay
+  --- Physical volume ---
+  PV Name               /dev/sda2
+  VG Name               VolGroup
+  PV Size               126.51 GiB / not usable 3.00 MiB
+  Allocatable           yes (but full)
+  PE Size               4.00 MiB
+  Total PE              32386
+  Free PE               0
+  Allocated PE          32386
+  PV UUID               Y6sW0Q-gWP5-A5pU-dwel-Npnd-it4z-Zmecg7
+----
+
+==== 删除物理卷
+
+[source,shell]
+----
+[root@localhost ~]# pvremove [分区名]
+----
+
+=== 建立卷组
+
+==== 建立卷组
+
+[source,shell]
+----
+[root@localhost ~]# vgcreate [选项] 卷组名 物理卷名
+# -s PE大小 : 指定 PE 的大小，单位可以是 MB,GB,TB。如果不写，默认 4MB
+----
+
+==== 查看卷组
+
+同样可以使用 `vgscan` 和 `vgdisplay` 命令
+
+==== 增加卷组容量
+
+[source,shell]
+----
+[root@localhost ~]# vgextend [卷组名] [物理卷名]
+----
+
+==== 减少卷组容量
+
+[source,shell]
+----
+[root@localhost ~]# vgreduce [卷组名] [物理卷名]
+----
+
+==== 删除卷组
+
+[source,shell]
+----
+[root@localhost ~]# vgremove [卷组名]
+----
+
+=== 逻辑卷管理
+
+==== 建立逻辑卷
+
+[source,shell]
+----
+[root@localhost ~]# lvcreate [选项] [-n 逻辑卷名] 卷组名
+# -L 容量: 按照逻辑卷大小。单位 MB,GB,TB
+# -l 个数: 按照 PE 个数指定逻辑卷大小，这个参数需要换算容量
+# -n 逻辑卷名: 指定逻辑卷名
+----
+
+那我们就建立一个 1.5 GB 的 userlv 逻辑卷吧
+
+[source,shell]
+----
+[root@localhost ~]# lvcreate -L 1.5G -n userlv scvg
+----
+
+建立完逻辑卷后，还要挂载和格式化之后才能正常使用。格式化和挂载命令和操作普通分区是一样的，不过需要注意的时逻辑卷的设备文件名是 `/dev/卷组名/逻辑卷名`,如我们 `userlv` 的文件名就是 `/dev/scvg/userlv`
+
+[source,shell]
+----
+[root@localhost ~]# mkfs -t ext4 /dev/scvg/userlv
+# 格式化
+[root@localhost ~]# mkdir disklvm
+[root@localhost ~]# mount /dev/scvg/userlv /disklvm
+# 建立挂载点，挂载
+[root@localhost ~]# mount
+----
+
+[NOTE]
+====
+如果需要开机自动挂载，也要修改 `/etc/fstab` 文件
+====
+
+==== 查看逻辑卷
+
+同样也是两个命令 `lvscan` 和 `lvdisplay`
+
+==== 调整逻辑卷大小
+
+[source,shell]
+----
+[root@localhost ~]# lvresize [选项] 逻辑卷设备文件名
+# -L 容量 : 安装容量调整大小，单位 KB,GB,TB 等。使用 + 代表增加容量，- 代表减少容量。如果直接写容量，代表设定逻辑卷大小为指定大小
+# -l 个数:按照 PE 个数调整大小
+----
+
+我们先在 /disklvm 中建立一些文件，一会调整完大小，看看数据是否会丢失
+
+[source,shell]
+----
+[root@localhost ~]# cd /disklvm
+[root@localhost disklvm]# touch testf
+[root@localhost disklvm]# mkdir testd
+[root@localhost disklvm]# ls
+----
+
+userlv 逻辑卷的大小到 2.5G 吧
+
+[source,shell]
+----
+[root@localhost disklvm]# lvresize -L 2.5G /dev/scvg/userlv
+[root@localhost disklvm]# lvdisplay
+----
+
+逻辑卷大小已经改变了，但好像有点问题
+
+[source,shell]
+----
+[root@localhost disklvm]# df -h /disklvm/
+----
+
+怎么 `/disklvm/` 分区的大小还是 1.5G 啊，刚刚只是逻辑卷的大小改变了，如果需要让分区使用这个新逻辑卷，我们还要使用 `resize2fs` 命令来调整分区的大小。
+不过这里就体现出了 LVM 的优势，我们不需要卸载分区，直接就能调整分区大小
+
+
+[source,shell]
+----
+[root@localhost disklvm]# resize2fs [选项] 设备文件名 调整的大小
+# -f: 强制调整
+# 设备文件名：指定调整那个分区的大小
+# 调整的大小：指定把分区调整到多大，要加 M,G 等单位，如果不加大小，会使用整个分区
+----
+
+我们已经把逻辑卷调整到了 2.5G,这时我们就需要把整个逻辑卷都加入 /disklvm 分区。命令如下
+[source,shell]
+----
+[root@localhost disklvm]# resize2fs /dev/scvg/userlv
+----
+
+
+==== 删除逻辑卷
+
+我们要删除 /dev/scvg/userlv 这个逻辑卷，记得删除之前先卸载。
+
+[source,shell]
+----
+[root@localhost ~]# umount /dev/scvg/userlv
+[root@localhost ~]# lvremove /dev/scvg/userlv
+----
