@@ -18,6 +18,7 @@ include::linux/permission.adoc[leveloffset=+1]
 
 include::linux/file.adoc[leveloffset=+1]
 
+include::linux/shell.adoc[leveloffset=+1]
+
 include::linux/install.adoc[leveloffset=+1]
 
-include::linux/shell.adoc[leveloffset=+1]

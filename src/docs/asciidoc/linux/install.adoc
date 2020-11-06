@@ -54,16 +54,14 @@
 另外,本文档全部使用的是 `root` 权限. 如果没有,请自行添加 `sudo` 权限.
 ====
 
-[[linux-install-auto]]
-== 脚本安装
-
-<<linux-shell-install>>
+[[linux-install-common]]
+== 常规安装
 
 [[linux-install-jdk]]
-== JDK
+=== JDK
 
 [[linux-install-jdk-usually]]
-=== 常规安装
+==== 常规安装
 
 1.用 FileZilla 或其他工具将下载好的安装包上传至 Linux 服务器.放置在 **/opt/software/** 目录下.这里使用的是 **jdk-8u221-linux-x64.tar.gz**
 
@@ -99,10 +97,10 @@ java -version
 ----
 
 [[linux-install-tomcat]]
-== Tomcat
+=== Tomcat
 
 [[linux-install-tomcat-usually]]
-=== 常规安装
+==== 常规安装
 
 1.用 FileZilla 或其他工具将下载好的安装包上传至 Linux 服务器.放置在 **/opt/software/** 目录下.这里使用的是 **apache-tomcat-7.0.94.tar.gz**
 
@@ -139,10 +137,10 @@ netstat -anpt | grep 2465
 http://host:8080
 
 [[linux-install-mysql]]
-== Mysql
+=== Mysql
 
 [[linux-install-mysql-usually]]
-=== 常规安装
+==== 常规安装
 
 1.用 FileZilla 或其他工具将下载好的安装包上传至 Linux 服务器.放置在 **/opt/software/** 目录下.这里使用的是 **mysql-8.0.19-1.el7.x86_64.rpm-bundle.tar**
 
@@ -181,7 +179,7 @@ yum install -y numactl
 
 5.mysql rpm 安装顺序
 
-[source,xml]
+[source,shell]
 ----
 rpm -ivh mysql-community-common-8.0.19-1.el7.x86_64.rpm
 rpm -ivh mysql-community-libs-8.0.19-1.el7.x86_64.rpm
@@ -304,10 +302,10 @@ firewall-cmd --list-ports
 ----
 
 [[linux-install-redis]]
-== Redis
+=== Redis
 
 [[linux-install-redis-usually]]
-=== 常规安装
+==== 常规安装
 
 1.http://download.redis.io/releases/redis-5.0.5.tar.gz[下载] redis 安装包
 
@@ -352,7 +350,7 @@ redis> get foo
 ----
 
 [[linux-install-redis-docker]]
-=== docker 安装
+==== docker 安装
 
 1.使用docker安装 http://www.runoob.com/docker/docker-install-redis.html[redis]
 
@@ -364,10 +362,10 @@ docker run --restart=always --privileged=true -p 6379:6379 -v /docker/redis/data
 ----
 
 [[linux-install-nginx]]
-== nginx
+=== nginx
 
 [[linux-install-nginx-usually]]
-=== 编译安装
+==== 编译安装
 
 1.安装编译工具及库文件
 
@@ -482,7 +480,7 @@ src/core/ngx_murmurhash.c: In function ‘ngx_murmur_hash2’:
 ----
 
 [[linux-install-nginx-docker]]
-=== docker 安装
+==== docker 安装
 
 1.使用docker安装 http://www.runoob.com/docker/docker-install-nginx.html[nginx]
 
@@ -496,7 +494,7 @@ docker run -d -p 80:80 --name nginx -v /docker/nginx/www:/usr/share/nginx/html -
 ----
 
 [[linux-install-nginx-build]]
-=== 使用编译后软件包安装
+==== 使用编译后软件包安装
 
 这里本人将 `nginx` 软件进行了编译.使用编译后的文件直接解压使用即可.
 
@@ -508,10 +506,10 @@ tar -zxvf nginx-1.6.2.build.tar.gz  -C /usr/local
 ----
 
 [[linux-install-rabbit]]
-== rabbit
+=== rabbit
 
 [[linux-install-rabbit-usually]]
-=== 常规安装
+==== 常规安装
 
 1.由于RabbitMQ依赖Erlang, 所以需要先安装Erlang
 
@@ -583,7 +581,7 @@ rabbitmqctl list_user_permissions username
 ----
 
 [[linux-install-rabbit-docker]]
-=== docker 安装
+==== docker 安装
 
 1.在docker官网查找 docker 镜像,https://hub.docker.com/
 
@@ -597,10 +595,10 @@ docker run --restart=always -d -p 5672:5672 -p 15672:15672 --name myrabbitmq 3f9
 ----
 
 [[linux-install-git]]
-== git
+=== git
 
 [[linux-install-git-usually]]
-=== 常规安装
+==== 常规安装
 
 [source,shell]
 ----
@@ -609,10 +607,10 @@ git --version
 ----
 
 [[linux-install-gitlab]]
-== gitlab
+=== gitlab
 
 [[linux-install-gitlab-usually]]
-=== 常规安装
+==== 常规安装
 
 1.安装依赖
 
@@ -686,7 +684,7 @@ gitlab-ctl reconfigure 配置执行
 ----
 
 [[linux-install-gitlab-docker]]
-=== Docker 安装中文版
+==== Docker 安装中文版
 
 1.下载镜像
 
@@ -782,10 +780,10 @@ Notify.test_email('jia_chao23@126.com', 'Message Subject', 'Message Body').deliv
 ----
 
 [[linux-install-node]]
-== node
+=== node
 
 [[linux-install-node-usually]]
-=== 常规安装
+==== 常规安装
 
 1.下载并解压
 
@@ -896,7 +894,7 @@ ln -s libstdc++.so.6.0.21 libstdc++.so.6
 ----
 
 [[linux-install-node-taobao]]
-=== 淘宝镜像安装
+==== 淘宝镜像安装
 
 [source,shell]
 ----
@@ -916,13 +914,11 @@ ln -s /usr/local/node/node-v0.10.16-linux-x64/bin/node /usr/local/bin/node
 npm -v
 ----
 
-<p id ="yapi">
-
 [[linux-install-yapi]]
-== yapi
+=== yapi
 
 [[linux-install-yapi-usually]]
-=== 常规安装
+==== 常规安装
 
 . 确保 node 版本=> 7.6,请运行 node -v 查看版本号
 . 确保 mongodb 版本 => 2.6,请运行 mongo --version 查看版本号
@@ -937,10 +933,10 @@ yapi server
 ----
 
 [[linux-install-mongodb]]
-== mongodb
+=== mongodb
 
 [[linux-install-mongodb-usually]]
-=== 常规安装
+==== 常规安装
 
 [source]
 ----
@@ -949,10 +945,10 @@ wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.0.6.tgz
 ----
 
 [[linux-install-docker]]
-== docker
+=== docker
 
 [[linux-install-docker-usually]]
-=== 常规安装
+==== 常规安装
 
 1.Docker 运行在 CentOS 7.X 之上 (不支持内核在 3.8 以下的老版本)
 
@@ -1095,10 +1091,10 @@ sysctl net.ipv4.ip_forward
 ----
 
 [[linux-install-docker-compose]]
-== docker-compose
+=== docker-compose
 
 [[linux-install-docker-compose-usually]]
-=== 常规安装
+==== 常规安装
 
 [source,shell]
 ----
@@ -1119,7 +1115,7 @@ docker-compose version 1.23.1, build 1719ceb
 ----
 
 [[linux-install-docker-compose-yum]]
-=== yum源安装
+==== yum源安装
 
 [source,shell]
 ----
@@ -1135,7 +1131,7 @@ docker-compose version 1.23.1, build 1719ceb
 ----
 
 [[linux-install-harbor]]
-== Harbor
+=== Harbor
 
 [NOTE]
 ====
@@ -1305,17 +1301,16 @@ Creating nginx
 Creating harbor-jobservice ... done
 ----
 
-
 [[linux-install-jenkins]]
-== jenkins
+=== jenkins
 
 [[linux-install-jenkins-usually]]
-=== 本地安装
+==== 本地安装
 
 详情请查看官方文档: https://jenkins.io/zh/doc/book/installing[Jenkins安装]
 
 [[linux-install-jenkins-docker]]
-=== Docker 安装
+==== Docker 安装
 
 1.获取镜像
 
@@ -1339,9 +1334,8 @@ docker run \
 -v /opt/jenkins/run/docker.sock:/var/run/docker.sock  \
 jenkinsci/blueocean
 ----
-
 [[linux-install-jenkins-question]]
-=== 常见问题
+==== 常见问题
 
 * 您的jenkins处于离线模式
 +
@@ -1403,7 +1397,7 @@ sh "./gradlew -Penv=${env.ENV} clean build"
 Jenkins 其他操作请查看 <<jenkins>>
 
 [[linux-install-gcc]]
-== 安装高版本gcc
+=== 安装高版本gcc
 
 1.下载高版本 gcc,这里使用的是 8.3.0
 
@@ -1492,7 +1486,7 @@ yum install -y gcc-c++
 ----
 
 [[linux-install-ldap]]
-== LDAP
+=== LDAP
 
 1.安装LDAP
 
@@ -1669,7 +1663,7 @@ ou: Group
 [rootpwd.ldif](https://github.com/jiachao23/jcohy-study-sample/tree/master/jcohy-study-linux/bash/rootpwd.ldif)
 
 [[linux-install-confluence]]
-== Confluence
+=== Confluence
 
 参考文档:
 
@@ -1790,10 +1784,10 @@ image::{oss-images}/confluence_keygen2.png[]
 `/var/atlassian/application-data/confluence` 下 `confluence.cfg.xml` 文件:
 
 [[linux-install-zookeeper]]
-== zookeeper
+=== zookeeper
 
 [[linux-install-zookeeper-cluster]]
-=== 集群安装
+==== 集群安装
 机器部署
 
 1.用 FileZilla 或其他工具将下载好的安装包上传至 Linux 服务器.放置在 **/opt/software/** 目录下.这里使用的是 **zookeeper-3.4.5.tar.gz**
@@ -1873,7 +1867,6 @@ vi myid
     scp -r /home/user/zookeeper user@slave3:/home/user/
 ----
 
-
 9.修改其他机器的配置文件
 
 到slave2上: 修改myid为: 2
@@ -1887,18 +1880,16 @@ vi myid
 zkServer.sh start
 ----
 
-
-
 11.查看集群状态
 
 * jps(查看进程)
 * zkServer.sh status(查看集群状态,主从信息)
 
 [[linux-install-elasticsearch]]
-== ElasticSearch
+=== ElasticSearch
 
 [[linux-install-elasticsearch-docker]]
-=== Docker 安装
+==== Docker 安装
 
 . 安装elasticsearch镜像,使用国内镜像加速
 +
@@ -1931,4 +1922,66 @@ docker run -e ES_JAVA_OPTS="-Xms256m -Xmx256m" -d -p 9200:9200 -p 9300:9300 --na
     },
     "tagline": "You Know, for Search"
 }
+----
+
+[[linux-install-auto]]
+== 脚本安装
+
+本提供了五个脚本,具体说明如下
+
+* deploy.sh : 主脚本
+* docker.sh : docker安装脚本
+* native.sh : 本地安装脚本
+* unnative.sh : 本地卸载脚本
+* undocker.sh : docker 卸载脚本
+
+脚本中涉及到的目录
+
+[[linux-install-script-install-tbl]]
+.默认目录
+|===
+| 变量名 | 目录 | 说明
+
+| BASH_URL | http://software.jcohy.com/linux/ | 所有所需软件安装包所在的服务器(可以使用 httpd 或者 nginx 等服务器搭建)
+
+| BASH_CONFIG | http://software.jcohy.com/bash/ | 安装所需脚本和配置文件目录
+
+| BASE_DIR | /opt/software | 本地存放安装包的地址
+
+| DOCKER_DIR | /usr/local/docker | docker 安装软件的目录
+
+| INSTALL_DIR | /usr/local | 本地安装地址
+|===
+
+软件版本可查看 <<linux-install-tbl>>
+
+[NOTE]
+====
+注意,使用脚本安装软件之前,请替换自己的相关目录,确认脚本中的软件的版本和自己的匹配,可自行修改脚本.
+====
+
+[source,shell,indent=0,role="primary"]
+.deploy.sh
+----
+include::../bash/deploy/deploy.sh[tag=code]
+----
+.docker.sh
+[source,shell,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::../bash/deploy/docker.sh[tag=code]
+----
+.native.sh
+[source,shell,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::../bash/deploy/native.sh[tag=code]
+----
+.unnative.sh
+[source,shell,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::../bash/deploy/unnative.sh[tag=code]
+----
+.undocker.sh
+[source,shell,indent=0,subs="verbatim,quotes",role="secondary"]
+----
+include::../bash/deploy/undocker.sh[tag=code]
 ----
