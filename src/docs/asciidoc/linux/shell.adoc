@@ -1,6 +1,7 @@
 [[linux-shell]]
 = shell 编程
 
+[[linux-shell-overview]]
 == 概述
 
 === 什么是 shell
@@ -82,6 +83,7 @@ Shell 的两种主要语法有 Bourne 和 C,这两种语法彼此不兼容。Bou
 /bin/dash
 ----
 
+[[linux-shell-excute]]
 == Shell 脚本的执行方式
 
 === echo 命令
@@ -251,6 +253,7 @@ Hello World
 Hello World
 ----
 
+[[linux-shell-base]]
 == Bash 的基本功能
 
 === 历史命令
@@ -262,4 +265,1225 @@ Hello World
 -w: 把缓存中的历史命令写入历史命令保存文件。如果不手工指定历史命令保存文件，则放入默认历史命令保存文件 `~/.bash_history` 中
 ----
 
+我们可以配置系统保存历史命令的大小。如下:
+
+[source,shell]
+----
+[root@localhost ~]# vi  /etc/profile
+...省略部分输出...
+HISTSIZE=1000
+...省略部分输出...
+----
+
+我们使用 `history` 命令查看到的历史命令和 `~/.bash_history` 文件中保存的历史命令是不同的。那是因为当前登录的操作并没有直接写入 `~/.bash_history` 中，而是
+保存在缓存中的。需要等当前用户注销之后，缓存中的命令才会写入 `~/.bash_history` 中。如果我们要把内存中的命令直接写入 `~/.bash_history` 中，就需要使用 `-w` 选项了。
+
+[source,shell]
+----
+[root@localhost ~]# history -w
+----
+
+==== 如何调用历史命令
+
+* 上下箭头: 调用之前的命令
+* `!n` : 重复执行第 n 条命令
+* `!!` : 重复执行上一次的命令
+* `!字符串` : 重复执行最后一条以改字符串开始的命令
+* `!$` : 重复上一条命令的最后一个参数
+
+=== Bash 常用快捷键
+
+|===
+|快捷键 |作用
+
+| Ctrl+A
+| 把光标移动到命令行开头
+
+| Ctrl+E
+| 把光标移动到命令行结尾
+
+| Ctrl+C
+| 强制终止当前的命令
+
+| Ctrl+L
+| 清屏，相当于 clear 命令
+
+| Ctrl+U
+| 删除或剪贴光标之前的命令
+
+| Ctrl+K
+| 删除或剪贴光标之后的命令
+
+| Ctrl+Y
+| 粘贴 Ctrl+U 或 Ctrl+K 剪贴的内容。
+
+| Ctrl+R
+| 在历史命令中搜索，按下 Ctrl+R 后，就会出现搜索界面。只要输入搜索内容，就会从历史命令中搜索
+
+| Ctrl+D
+| 退出当前终端
+
+| Ctrl+Z
+| 暂停，并放入后台。这个快捷键牵扯到工作管理的内容。我们在系统管理中再介绍
+
+| Ctrl+S
+| 暂停屏幕输出
+
+| Ctrl+Q
+| 恢复屏幕输出
+|===
+
+=== 输入输出重定向
+
+==== Bash 标准输入输出
+
+|===
+|设备 |设备文件名 |文件描述符 |类型
+
+| 键盘
+| /dev/stdin
+| 0
+| 标准输入
+
+| 显示器
+| /dev/stdout
+| 1
+| 标准输出
+
+| 显示器
+| /dev/stderr
+| 2
+| 标准错误输出
+|===
+
+==== 输出重定向
+
+|===
+|类型 |符号 |作用
+
+| 标准输出重定向
+| 命令 > 文件
+| 以覆盖的形式，把命令的正确输出输出到指定的文件或设备当中
+
+| 标准输出重定向
+| 命令 >> 文件
+| 以追加的形式，把命令的正确输出输出到指定的文件或设备当中
+
+| 标准错误输出重定向
+| 错误命令 2>文件
+| 以覆盖的形式，把命令的错误输出输出到指定的文件或设备当中
+
+| 标准错误输出重定向
+| 错误命令 2>>文件
+| 以追加的形式，把命令的正确输出输出到指定的文件或设备当中
+
+| 正确输出和错误输出同时保存
+| 命令 > 文件 2>&1
+| 以覆盖的形式，把命令的正确输出和错误输出都保存到同一文件中
+
+| 正确输出和错误输出同时保存
+| 命令 >> 文件 2>&1
+| 以追加的形式，把命令的正确输出和错误输出都保存到同一文件中
+
+| 正确输出和错误输出同时保存
+| 命令 &> 文件
+| 以覆盖的形式，把命令的正确输出和错误输出都保存到同一文件中
+
+| 正确输出和错误输出同时保存
+| 命令 &>> 文件
+| 以追加的形式，把命令的正确输出和错误输出都保存到同一文件中
+
+| 正确输出和错误输出同时保存
+| 命令 >> 文件1 2>>文件2
+| 把正确输出追加到 文件1 当中，把错误输出追加到 文件2 中
+|===
+
+==== 输入重定向
+
+[source,shell]
+----
+[root@localhost ~]# wc [选项] [文件名]
+----
+
+.`wc` 选项
+|===
+|参数 |说明
+
+| -c
+| 统计字节数
+
+| -w
+| 统计单词数
+
+| -l
+| 统计行数
+|===
+
+=== 多命令顺序执行
+
+|===
+|多命令执行符 |格式 |作用
+
+| ;
+| 命令1;命令2
+| 多个命令顺序执行，命令之间没有任何逻辑联系
+
+| &&
+| 命令1 && 命令2
+| 当 命令1 正确执行 ($?=0),命令2 才正确执行。当 命令1 执行不正确 ($?≠0)，则命令2 不会执行
+
+| \|\|
+| 命令1 \|\| 命令2
+| 当 命令1 执行不正确 ($?≠0),命令2 才执行。当 命令1 正确执行 ($?=0)，则命令2 不会执行
+|===
+
+=== Bash 中其他特殊符号
+
+|===
+|符号 |说明
+
+| ''
+| 单引号，在单引号中的所有特殊字符，如 `$` 和 ``` 都没有特殊含义
+
+| ""
+| 双引号，在双引号中所有的特殊字符都没有特殊含义,但是 `$` 和 ``` 和 `\` 是例外，拥有 "调用变量的值"，"引用命令"，"转义符"的特殊含义。
+
+| ``
+| 反引号，反引号括起来的命令是系统命令。在 Bash 中会先执行它。他和 `$()` 作用一样，不过推荐使用 `$()`，因为反引号非常容易看错
+
+| $()
+| 和反引号作用一样，用来引用系统命令
+
+| ()
+| 用于一串命令执行时，() 中的命令会在子 Shell 中执行
+
+| {}
+| 用于一串命令执行时，{} 中的命令会在当前 Shell 中执行。也可以用于变量变形与替换
+
+| []
+| 用户变量的测试
+
+| #
+| 在 Shell 脚本中，# 开头代表注释
+
+| $
+| 用于调用变量的值。
+
+| \
+| 转义符，跟在 \ 之后的特殊符号将失去特殊含义，变为普通字符
+
+| ()
+| 列
+|===
+
+.单引号，双引号，反引号
+[source,shell]
+----
+[root@localhost ~]# name=sc         <== 定义变量 name，值为 sc
+[root@localhost ~]# echo '$name'
+$name                               <== 使用单引号，则 $name 原封不动的输出
+[root@localhost ~]# echo "$name"
+sc                                  <== 使用双引号，则输出变量 name 的值 sc
+[root@localhost ~]# echo `date`
+2020年 11月 07日 星期六 11:14:54 CST  <== 反引号括起来的命令会正常执行
+[root@localhost ~]# echo '`date`'
+`date`                              <== 但反引号命令被单引号括起来，那么这个命令就不会执行
+[root@localhost ~]# echo "`date`"
+2020年 11月 07日 星期六 11:15:16 CST  <== 如果是双引号括起来，那么这个命令就正常执行
+[root@localhost ~]# echo ls
+ls                                  <== 如果命令不用反引号包含，命令不会执行，而是直接输出
+[root@localhost ~]# echo `ls`       <== 只有用反引号包含，命令才正常执行
+anaconda-ks.cfg hello.sh install.log install.log.syslog
+[root@localhost ~]# echo $(date)    <== 使用 $(命令) 的方式也是可以的
+2020年 11月 07日 星期六 11:19:54 CST
+----
+
+在介绍小括号，大括号之前，我们要先知道一个概念。父 Shell 和 子 Shell。在我们的 Bash 中，是可以调用新的 Bash 的。
+
+[source,shell]
+----
+[root@localhost ~]# bash
+[root@localhost ~]# pstree
+#  通过 pstree 查看一下进程树
+init─┬─auditd───{auditd}
+     ├─console-kit-dae───63*[{console-kit-da}]
+     ├─crond
+     ├─dbus-daemon───{dbus-daemon}
+     ├─login───bash
+     ├─master─┬─pickup
+     │        └─qmgr
+     ├─5*[mingetty]
+     ├─rsyslogd───3*[{rsyslogd}]
+     ├─sshd───sshd───bash───bash───pstree
+     └─udevd───2*[udevd]
+----
+
+子进程仅会继承父进程的环境变量，子进程不会继承父进程的自定义变量。
+
+那么，大括号可小括号的主要区别如下
+
+* () 执行一串命令时，需要重新打开一个子 Shell 执行
+* {} 执行一串命令时，是在当前 Shell 执行
+* () 和 {} 都是把一串命令放在括号里面，并且命令之间用 `;` 分隔
+* () 最好一个命令可以不用分号
+* {} 最好一个命令要用分号
+* {} 的第一个命令和左括号之间必须要有一个空格
+* () 里的命令不必和括号有空格
+* () 和 {} 中括号里面的某个命令的重定向只影响该命令，但括号外的重定向则影响到括号里的所有命令
+
+.小括号，中括号，大括号
+[source,shell]
+----
+[root@localhost ~]# name=sc
+[root@localhost ~]# (name=lm;echo $name)
+# 给 name 变量重新赋值，但是这个值只在 子 Shell 中有效
+lm
+[root@localhost ~]# echo $name
+sc
+[root@localhost ~]# { name=lm;echo $name;}
+# 注意大括号格式。用大括号直接在当前 Shell 中操作。
+lm
+[root@localhost ~]# echo $name
+lm
+----
+
+[[linux-shell-var]]
+== Bash 的变量和运算符
+
+=== 什么是变量
+
+简单来说，就是让某一个特定的字符串代表不固定的内容。在定义变量的时候，要遵守以下规则
+
+* 变量名称可以由字母，数字和下划线组成，但是不能以数字开头
+* 在 Bash 中，变量的默认类型都是字符类型，如果要进行数值运算，则必须指定变量类型为数值型
+* 变量用 `=` 连接值，等号左右两侧不能有空格
+* 变量的值如果有空格，需要使用单引号或双引号包括。如："test="hello world!"".其中双引号括起来的 `$`,`\` 和反引号都有特殊含义，单引号括起来的都是普通字符
+* 在变量的值中，可以使用 `\` 转义符
+* 如果需要增加变量的值，那么可以进行变量值的叠加。不过变量需要用双引号包含 `"$变量名"` 或 `${变量名}` 包含变量名，
+* 如果是吧命令的结果作为变量值赋予变量，则需要使用 反引号 或 `()` 包含命令
+* 环境变量名建议大写，便于区分。
+
+=== 变量的分类
+
+* 用户自定义变量： 用户定义的变量
+* 环境变量： 这种变量主要保存和系统环境相关的数据。可以使用 `env` 命令查看环境变量
+* 位置参数变量： 这种变量主要是向脚本中传递参数或数据的，变量名不能自定义，变量作用是固定的。
+* 预定义变量： 是 Bash 中已经定义好的变量，变量名不能自定义，变量作用也是固定的。
+
+=== 用户自定义变量
+
+.定义变量
+[source,shell]
+----
+[root@localhost ~]# 2name="jcohy"
+-bash: 2name=jcohy: command not found
+# 变量不能以数字开头
+[root@localhost ~]# name = "jcohy"
+-bash: name: command not found
+# 等号左右两侧不能有空格
+[root@localhost ~]# name=jcoh y
+-bash: y: command not found
+# 如果变量包含空格，必须使用引号包含
+----
+
+.调用变量
+[source,shell]
+----
+[root@localhost ~]# name=jcohy
+[root@localhost ~]# echo $name
+jcohy
+----
+
+.查看变量
+[source,shell]
+----
+[root@localhost ~]# set [选项]
+# -u: 如果设定此选项，调用未声明变量时会报错(默认无提示)
+# -x: 如果设定此选项，在命令执行之前，会把命令先输出一遍
+# +x: 取消 -x 设定
+
+[root@localhost ~]# set
+# 直接使用 set 命令，会查询系统中所有的变量，包含用户自定义变量和环境变量
+
+
+[root@localhost ~]# set -u
+[root@localhost ~]# echo $file
+-bash: file: unbound variable
+# 当设置了 -u 选项后，如果调用没有设定的变量会报错。
+
+[root@localhost ~]# set -x
+++ printf '\033]0;%s@%s:%s\007' root localhost '~'
+[root@localhost ~]# ls
++ ls --color=auto
+anaconda-ks.cfg  hello.sh  install.log  install.log.syslog
+++ printf '\033]0;%s@%s:%s\007' root localhost '~'
+----
+
+.调用变量
+[source,shell]
+----
+[root@localhost ~]# unset 变量名
+----
+
+=== 环境变量
+
+.定义环境变量
+[source,shell]
+----
+[root@localhost ~]# export 变量名=变量值
+# 使用 export 声明的变量时环境变量
+
+[root@localhost ~]# export age="18"
+----
+
+.查看环境变量
+[source,shell]
+----
+[root@localhost ~]# env
+[root@localhost ~]# set
+# 上面两个命令都可以查询变量。不同的是，env 只能查看环境变量，而 set 可以查看到所有的变量
+----
+
+.删除环境变量
+[source,shell]
+----
+[root@localhost ~]# unset 变量名
+[root@localhost ~]# unset age
+----
+
+==== PATH 变量
+
+先查询一下 PATH 变量的值
+
+[source,shell]
+----
+[root@localhost ~]# echo $PATH
+/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin
+----
+
+`PATH` 变量的值是用 `:` 分隔的路径，这些路径就是系统查找命令的路径。也就是说当我们输入了一个程序名，如果没有写入路径，系统就会到 `PATH` 变量定义的路径下去寻找，是否有可执行的程序。
+如果找到就执行，没找到就报 "命令没有发现" 的错误
+
+如果我们把自己的脚本拷贝到 PATH 变量定义的路径中，可以不输入路径直接执行。当然也可以给 PATH 变量追加我们编写的脚本的路径。
+
+[source,shell]
+----
+[root@localhost ~]# cp /root/sh/hello.sh /bin/
+[root@localhost ~]# hello.sh
+hello world
+
+[root@localhost ~]# PATH="PATH":/root/sh
+[root@localhost ~]# hello.sh
+hello world
+----
+
+注意，上面定义的 PATH 变量只能临时生效，一旦重启或注销就会失效。如果需要永久生效，需要写入环境变量配置文件。我们在 "<<linux-shell-profile>>" 一节中详细介绍
+
+==== PS1 变量: 命令提示符设置
+
+PS1 是一个用来定义命令提示符的变量。我们可以按照自己的需求定义自己喜欢的提示符。PS1 支持如下选项
+
+.`PS1` 选项
+|===
+|参数 |说明
+
+| \d
+| 显示日期。格式为 "星期 月 日"
+
+| \H
+| 显示完整的主机名。如默认主机名 "localhost.localdomain"
+
+| \h
+| 显示简写的主机名。如默认主机名 "localhost"
+
+| \t
+| 显示 24 小时制时间，格式为 "HH:MM:SS"
+
+| \T
+| 显示 12 小时制时间，格式为 "HH:MM:SS"
+
+| \A
+| 显示 24 小时制时间，格式为 "HH:MM"
+
+| \@
+| 显示 12 小时制时间，格式为 "HH:MM am/pm"
+
+| \u
+| 显示当前用户名
+
+| \v
+| 显示 Bash 的版本信息
+
+| \w
+| 显示当前目录所在的完整名称
+
+| \W
+| 显示当前目录所在的最后一个目录
+
+| \#
+| 执行的第几个命令
+
+| \$
+| 提示符。如果是 root，会提示 "#",如果是普通用户会显示为 "$"
+|===
+
+在 PS1 变量中，如果是可以解释的符号，如 `\u`,`\h` 等，则显示这个符合的作用。如果不能解释，如 `@`,`空格` ，则原符号输出。我们先来看看系统的默认 PS1 变量，然后再修改他，看会出现什么情况。
+
+[source,shell]
+----
+[root@localhost ~]# echo $PS1
+[\u@\h \W]\$
+# PS1 系统默认值。
+
+[root@localhost ~]# PS1='[\u@\t \w]\$'
+# 修改提示符为 "[用户名@当前时间 当前所在完整目录]提示符"
+[root@15:05:20 ~]#
+[root@15:06:44 ~]#cd /usr/local/src
+[root@15:06:56 /usr/local/src]#
+----
+
+[NOTE]
+====
+PS1 变量的值要用单引号包含，否则不生效
+====
+
+==== LANG 语系变量
+
+LANG 变量定义了 Linux 系统的主语系环境，这个变量的默认值是
+
+[source,shell]
+----
+[root@localhost ~]#echo $LANG
+zh_CN.UTF-8
+----
+
+这是因为我们安装 Linux 的时候，选择的是中文安装，所以默认主语系是 `zh_CN.UTF-8`,那么 Linux 能支持多少语系呢？我们可以使用下面的命令查询:
+
+[source,shell]
+----
+[root@localhost ~]#locale -a |more
+# 太多了，这里就不列出来了。我们可以统计下有多少条
+[root@localhost ~]#locale -a | wc -l
+735
+----
+
+既然支持那么多语系，当前系统到底是什么语系呢，使用 `locate` 命令直接查询
+
+[source,shell]
+----
+[root@localhost ~]#locale
+LANG=zh_CN.UTF-8
+LC_CTYPE="zh_CN.UTF-8"
+LC_NUMERIC="zh_CN.UTF-8"
+LC_TIME="zh_CN.UTF-8"
+LC_COLLATE="zh_CN.UTF-8"
+LC_MONETARY="zh_CN.UTF-8"
+LC_MESSAGES="zh_CN.UTF-8"
+LC_PAPER="zh_CN.UTF-8"
+LC_NAME="zh_CN.UTF-8"
+LC_ADDRESS="zh_CN.UTF-8"
+LC_TELEPHONE="zh_CN.UTF-8"
+LC_MEASUREMENT="zh_CN.UTF-8"
+LC_IDENTIFICATION="zh_CN.UTF-8"
+LC_ALL=
+----
+
+我们还要通过 `/etc/sysconfig/i18n` 定义系统的默认语系。
+
+[source,shell]
+----
+[root@localhost ~]#cat /etc/sysconfig/i18n
+LANG="zh_CN.UTF-8"
+----
+
+又是当前系统语系，又是默认语系。这两个到底有什么区别？可以这样理解，默认语系是下次重启之后系统所要使用的语系，而当前系统的语系是当前系统使用的语系。如果系统重启，会从默认语系配置文件
+`/etc/sysconfig/i18n` 中读出语系，然后赋予变量 `LANG` 让这个语系生效。也就是说，`LANG` 定义的语系只对当前系统生效，要想永久生效就要修改 `/etc/sysconfig/i18n` 文件了
+
+如果是纯字符界面(本地终端 tty1-tty6) 是不能显示中文的，因为 Linux 的纯字符界面是不能显示这么复杂的编码的。我们非要在纯字符界面显示中文，只能安装中文插件，如 `zhcon` 等
+
+=== 位置参数变量
+
+|===
+|位置参数变量 |说明
+
+| $n
+| n 为数字，$0 代表这个命令本身，$1-$9 代表第一到第九个参数，十以上的参数需要用大括号包含，如 ${10}
+
+| $*
+| 这个变量代表命令行中的所有参数，$* 把所有参数看成一个整体
+
+| $@
+| 这个变量代表命令行中的所有参数，不过 $@ 把每个参数区分对待
+
+| $#
+| 这个参数代表命令行中所有参数的个数
+|===
+
+=== 预定义变量
+
+|===
+|预定义变量 |说明
+
+| $?
+| 最后一次执行的命令的返回状态，如果为 0 ，证明上一个命令执行正确，如果为 非 0 ，则证明命令执行错误
+
+| $$
+| 当前进程的进程号
+
+| $!
+| 后台运行的最后一个进程的进程号
+|===
+
+=== 系统默认变量
+
+系统默认环境变量
+
+[source,shell]
+----
+[root@localhost ~]# env
+HOSTNAME=localhost.localdomain      <== 主机名
+SELINUX_ROLE_REQUESTED=
+TERM=xterm                          <== 终端环境
+SHELL=/bin/bash                     <== 当前的shell
+HISTSIZE=1000                       <== 历史命令条数
+SSH_CLIENT=192.168.11.109 17665 22  <== 当前操作环境是用 ssh 连接的，这里记录客户端 ip
+SELINUX_USE_CURRENT_RANGE=
+SSH_TTY=/dev/pts/0                  <== ssh 连接的终端时 pts/1
+USER=root                           <== 当前登录的用户
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=01;05;37;41:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lz=01;31:*.xz=01;31:*.bz2=01;31:*.tbz=01;31:*.tbz2=01;31:*.bz=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=01;36:*.au=01;36:*.flac=01;36:*.mid=01;36:*.midi=01;36:*.mka=01;36:*.mp3=01;36:*.mpc=01;36:*.ogg=01;36:*.ra=01;36:*.wav=01;36:*.axa=01;36:*.oga=01;36:*.spx=01;36:*.xspf=01;36:   <== 定义颜色显示
+MAIL=/var/spool/mail/root           <== 用户邮箱
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin     <== 系统查找命令的路径
+PWD=/root                           <== 当前所在目录
+LANG=zh_CN.UTF-8                    <== 语系
+SELINUX_LEVEL_REQUESTED=
+HISTCONTROL=ignoredups
+SHLVL=1                             <== 第 2 层 Shell
+HOME=/root                          <== 当前登录用户的家目录
+LOGNAME=root                        <== 登录用户
+SSH_CONNECTION=192.168.11.109 17665 192.168.11.136 22
+LESSOPEN=||/usr/bin/lesspipe.sh %s
+DISPLAY=localhost:10.0
+G_BROKEN_FILENAMES=1
+_=/bin/env                           <== 上次执行命令的最后一个参数或者命令本身
+----
+
+`env` 命令可以查询到所有环境变量，可是还有一些变量虽然不是环境变量，却是和 Bash 操作接口相关的变量，这些变量也对我们操作 Bash 终端起到了重要的作用，这些变量就只能使用 `set` 查看了。
+
+[source,shell]
+----
+[root@localhost ~]# set
+BASH=/bin/bash              <== Bash 位置
+BASHOPTS=checkwinsize:cmdhist:expand_aliases:extquote:force_fignore:hostcomplete:interactive_comments:login_shell:progcomp:promptvars:sourcepath
+BASH_ALIASES=()
+BASH_ARGC=()
+BASH_ARGV=()
+BASH_CMDS=()
+BASH_LINENO=()
+BASH_SOURCE=()
+BASH_VERSINFO=([0]="4" [1]="1" [2]="2" [3]="1" [4]="release" [5]="x86_64-redhat-linux-gnu")             <== Bash 版本
+BASH_VERSION='4.1.2(1)-release'             <== bash 的版本
+COLORS=/etc/DIR_COLORS                      <== 颜色记录文件
+COLUMNS=146
+DIRSTACK=()
+DISPLAY=localhost:10.0
+EUID=0
+GROUPS=()
+G_BROKEN_FILENAMES=1
+HISTCONTROL=ignoredups
+HISTFILE=/root/.bash_history                <== 历史命令保存文件
+HISTFILESIZE=1000                           <== 在文件中记录的历史命令最大条数
+HISTSIZE=1000                               <== 在缓存中记录的历史命令最大条数
+HOME=/root
+HOSTNAME=localhost.localdomain
+HOSTTYPE=x86_64
+ID=0
+IFS=$' \t\n'
+LANG=zh_CN.UTF-8
+LESSOPEN='||/usr/bin/lesspipe.sh %s'
+LINES=36
+LOGNAME=root
+LS_COLORS='rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=01;05;37;41:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lz=01;31:*.xz=01;31:*.bz2=01;31:*.tbz=01;31:*.tbz2=01;31:*.bz=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=01;36:*.au=01;36:*.flac=01;36:*.mid=01;36:*.midi=01;36:*.mka=01;36:*.mp3=01;36:*.mpc=01;36:*.ogg=01;36:*.ra=01;36:*.wav=01;36:*.axa=01;36:*.oga=01;36:*.spx=01;36:*.xspf=01;36:'
+MACHTYPE=x86_64-redhat-linux-gnu            <== 软件类型是 x86_64 兼容类型
+MAIL=/var/spool/mail/root
+MAILCHECK=60                                <== 每 60 秒扫描一次邮件
+OPTERR=1
+OPTIND=1
+OSTYPE=linux-gnu
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin
+PIPESTATUS=([0]="0")
+PPID=3244                                   <== 父 Shell 的 PID
+PROMPT_COMMAND='printf "\033]0;%s@%s:%s\007" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/~}"'
+PS1='[\u@\h \W]\$ '                         <== 命令提示符
+PS2='> '                                    <== 如果命令一行没有输完，第二行命令的提示符
+PS4='+ '
+PWD=/root
+SELINUX_LEVEL_REQUESTED=
+SELINUX_ROLE_REQUESTED=
+SELINUX_USE_CURRENT_RANGE=
+SHELL=/bin/bash
+SHELLOPTS=braceexpand:emacs:hashall:histexpand:history:interactive-comments:monitor:nounset
+SHLVL=1
+SSH_CLIENT='192.168.11.109 17665 22'
+SSH_CONNECTION='192.168.11.109 17665 192.168.11.136 22'
+SSH_TTY=/dev/pts/0
+TERM=xterm
+UID=0                                       <== 当前用户的 UID
+USER=root
+_=env
+colors=/etc/DIR_COLORS
+name=jcohy
+----
+
+=== 接受键盘输入
+
+[source,shell]
+----
+[root@localhost ~]# read [选项] [变量名]
+----
+
+.`read` 选项
+|===
+|参数 |说明
+
+| -p "提示信息"
+| 在等待 read 输入时，输出提示信息
+
+| -t 秒数
+| 指定等待时间。否则就一直等待
+
+| -n 字符数
+| read 命令只接受指定的字符数，就会执行
+
+| -s
+| 隐藏输入的数据，适用于机密数据的输入
+|===
+
+变量名:
+
+* 变量名可以是自定义，如果不指定变量名，会把输入保存到默认变量 `REPLY`
+* 如果只提供了一个变量名，则整个输入行赋予这个变量
+* 如果提供了一个以上的变量名，则输入行分为若干字，一个接一个的赋予各个变量。而命令行上的最后一个变量取得剩余的所有字
+
+[source,shell]
+----
+[root@localhost sh]#cat read.sh
+#!/bin/bash
+# Author: jcohy
+
+read -t 30 -p "Please input your name:" name
+
+echo "Name is $name"
+
+read -s -t 30 -p "Please input your age:" age
+
+echo -e "\n"
+
+echo "Age is $age"
+
+read -n 1 -t 30 -p "Please select your gender[M/F]:" gender
+# 使用 -n 1  只执行一个字符就会执行。都不用输入回车
+echo -e "\n"
+
+echo "Sex is $gender"
+----
+
+=== Shell 的运算符
+
+==== 数值运算
+
+如果我们需要进行数值运算，可以采用以下三种方法中的任意一种
+
+**1、使用 `declare` 声明变量类型**
+
+在 Bash 中，所有的变量默认类型都是字符串型，我们可以通过 `declare` 命令将变量声明为整数型。
+
+[source,shell]
+----
+[root@localhost ~]# declare [+/-][选项] 变量名
+----
+
+.`declare` 选项
+|===
+|参数 |说明
+
+| -
+| 给变量设定类型属性
+
+| +
+| 取消变量的类型属性
+
+| -a
+| 将变量声明为数组型
+
+| -i
+| 将变量声明为整数型(integer)
+
+| -r
+| 将变量声明为只读变量。注意，一旦设置为只读变量，既不能修改变量的值，也不能删除变量，甚至不能通过 `+r` 取消只读属性
+
+| -x
+| 将变量声明为环境变量
+
+| -p
+| 显式指定被声明的变量的类型
+|===
+
+.简单运算
+[source,shell]
+----
+[root@localhost ~]# aa=11
+[root@localhost ~]# bb=22
+[root@localhost ~]# declare -i cc=$aa+$bb
+[root@localhost ~]# echo $cc
+33
+----
+
+.数组变量类型
+[source,shell]
+----
+[root@localhost ~]#name[0]=jcohy01
+[root@localhost ~]#name[1]=jcohy02
+[root@localhost ~]#name[2]=jcohy03
+[root@localhost ~]#echo ${name}
+# 输出数组内容，如果只写数组名，只会输出第一个下标变量
+jcohy01
+[root@localhost ~]#echo ${name[*]}
+jcohy01 jcohy02 jcohy03
+# 输出数组所有内容
+----
+
+.环境变量
+[source,shell]
+----
+[root@localhost ~]# declare -x test=123
+[root@localhost ~]# env
+...省略部分输出...
+MAIL=/var/spool/mail/root
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin
+PWD=/root/sh
+LANG=zh_CN.UTF-8
+test=123
+HOME=/root
+LOGNAME=root
+...省略部分输出...
+# 可以查看到刚才定义的变量已经在环境变量了
+----
+
+.只读属性
+[source,shell]
+----
+[root@localhost ~]#declare -r test
+[root@localhost ~]#test=456
+-bash: test: readonly variable
+# test 变量不能修改
+[root@localhost ~]#declare +r test
+-bash: declare: test: readonly variable
+# test 变量不能取消只读属性
+[root@localhost ~]#unset test
+-bash: unset: test: cannot unset: readonly variable
+# 也不能删除变量。还好是命令行定义的，只要重启这个变量就消失了。
+----
+
+.查询和权限变量属性
+[source,shell]
+----
+[root@localhost ~]#declare -p cc
+declare -i cc="33"
+# cc 是整型
+[root@localhost ~]#declare -p name
+declare -a name='([0]="jcohy01" [1]="jcohy02" [2]="jcohy03")'
+# name 是数组型
+[root@localhost ~]#declare -p test
+declare -rx test="123"
+# test 是环境变量和只读变量
+[root@localhost ~]#declare +x test
+# 取消 test 变量的环境变量属性
+[root@localhost ~]#declare -p test
+declare -r test="123"
+# test 是只读变量。只读变量属性是不能取消的
+----
+
+**2、 使用 `expr` 和 `let` 数值运算工具**
+
+.简单运算
+[source,shell]
+----
+[root@localhost ~]#aa=11
+[root@localhost ~]#bb=22
+[root@localhost ~]#dd=$(expr $aa + $bb)
+# 注意，+ 号左右两侧必须有空格。否则输出结果为 11+22
+[root@localhost ~]#echo $dd
+33
+
+
+[root@localhost ~]#let ee=$aa+$bb
+[root@localhost ~]#echo $ee
+33
+[root@localhost ~]#n=20
+[root@localhost ~]#let n+=1
+[root@localhost ~]#echo $n
+21
+----
+
+**3、 使用 `$((运算式))` 和 `$[运算式]` 方式运算**
+
+.简单运算
+[source,shell]
+----
+[root@localhost ~]#aa=11
+[root@localhost ~]#bb=22
+[root@localhost ~]#ff=$(($aa+$bb))
+[root@localhost ~]#echo $ff
+33
+[root@localhost ~]#gg=$[$aa+$bb]
+[root@localhost ~]#echo $gg
+33
+----
+
+==== Shell 常用运算符
+
+运算符的优先级表明在每个表达式或子表达式中那一个运算对象首先被求值，数值越大优先级越高，具有较高级别的运算符先于较低级别的运算符进行求值运算。
+
+|===
+|优先级 |运算符 |说明
+
+| 13
+| -,+
+| 单目负，单目正
+
+| 12
+| !,~
+| 逻辑非，按位取反或补码
+
+| 11
+| *,/,%
+| 乘，除，取模
+
+| 10
+| +,-
+| 加，减
+
+| 9
+| <<,>>
+| 按位左移，按位右移
+
+| 8
+| <=,>=,<,>
+| 小于或等于，大于或等于，小于，大于
+
+| 7
+| ==,!=
+| 等于，不等于
+
+| 6
+| &
+| 按位与
+
+| 5
+| ^
+| 按位异或
+
+| 4
+| \|
+| 按位或
+
+| 3
+| &&
+| 逻辑与
+
+| 2
+| \|\|
+| 逻辑或
+
+| 1
+| =,+=,-=,*=,/=,%=,&=,^=,\|=,<<=,>>=
+| 赋值，运算且赋值
+|===
+
+==== 变量的测试与内容置换
+
+|===
+|变量置换方式 |变量 y 没有设置|变量 y 为空值 |变量 y 设置值
+
+| x=${y-新值}
+| x=新值
+| x 为空
+| x=$y
+
+| x=${y:-新值}
+| x=新值
+| x=新值
+| x=$y
+
+| x=${y+新值}
+| x 为空
+| x=新值
+| x=新值
+
+| x=${y:+新值}
+| x=新值,y=新值
+| x=新值,y=新值
+| x=$y,y值不变
+
+| x=${y?新值}
+| 新值输出到标准错误输出
+| x 为空
+| x=$y
+
+| x=${y:?新值}
+| 新值输出到标准错误输出
+| 新值输出到标准错误输出
+| x=$y
+|===
+
+如果大括号里没有 `:` ，则变量 y 是为空，还是没有设置，处理方法是不同的。如果大括号内有 `:` ，则变量 y 无论是为空，还是没有设置，处理方法是一样的。
+
+如果大括号内是 `+` 或 `-` ,则在改变变量 x 的值时，变量 y 是不改变的；如果大括号内是 `=` ，则在改变变量 x 的值的同时，变量 y 的值也会改变
+
+如果大括号内是 `?`，则当变量 y 不存在或为空时，会把 "新值" 当成报错输出到屏幕上。
+
+看下面的例子
+
+[source,shell]
+----
+[root@localhost ~]# unset y
+# 删除变量 y
+[root@localhost ~]#x=${y-new}
+# 进行测试
+[root@localhost ~]#echo $x
+new
+# 因为变量 y 不存在，所以 x=new
+[root@localhost ~]#echo $y
+-bash: y: unbound variable
+
+
+# 上面是变量 y 不存在的情况下，如果变量 y 为 空呢？
+[root@localhost ~]#y=""
+[root@localhost ~]#x=${y-new}
+[root@localhost ~]#echo $x
+
+[root@localhost ~]#echo $y
+
+# 变量 x 和变量 y 的值都为空
+
+
+# 如果变量 y 有值呢
+[root@localhost ~]#y=old
+[root@localhost ~]#x=${y-new}
+[root@localhost ~]#echo $x
+old
+[root@localhost ~]#echo $y
+old
+# 变量 x 和变量 y 的值都为 old
+----
+
+如果大括号内是 `=` 号，又该是什么情况？
+
+[source,shell]
+----
+[root@localhost ~]#unset y
+# 删除变量 y
+[root@localhost ~]#x=${y:=new}
+# 进行测试
+[root@localhost ~]#echo $x
+new
+[root@localhost ~]#echo $y
+new
+# 变量 x 和变量 y 的值都为 new
+
+
+[root@localhost ~]#y=""
+# y 为空
+[root@localhost ~]#x=${y:=new}
+[root@localhost ~]#echo $x
+new
+[root@localhost ~]#echo $y
+new
+# 变量 x 和变量 y 的值都为 new
+
+
+[root@localhost ~]#y=old
+# y 已经有值
+[root@localhost ~]#x=${y:=new}
+[root@localhost ~]#echo $x
+old
+[root@localhost ~]#echo $y
+old
+# 变量 x 和变量 y 的值都为 old
+----
+
+再来测试大括号中的 `?`.
+
+[source,shell]
+----
+[root@localhost ~]#y=old
+[root@localhost ~]#x=${y?new}
+[root@localhost ~]#echo $x
+old
+[root@localhost ~]#echo $y
+old
+# 变量 x 和变量 y 的值都为 old
+----
+
+[[linux-shell-profile]]
+== 环境变量配置文件
+
+刷新环境变量
+
+[source,shell]
+----
+[root@localhost ~]# source [配置文件]
+[root@localhost ~]# . [配置文件]
+----
+
+=== 环境变量配置文件
+
+1、登录时生效的环境变量配置文件主要有以下五个
+
+* /etc/profile
+* /etc/profile.d/*.sh
+* ~/.bash_profile
+* ~/.bashrc
+* /etc/bashrc
+
+环境变量配置文件调用过程
+
+image::images/linux14.png[]
+
+在用户登录过程中会先调用 `/etc/profile` 文件，在这个环境变量配置文件中会定义一些默认的环境变量
+
+* USER 变量 : 根据登录的用户，给这个变量赋值
+* LOGNAME 变量 : 根据 USER 变量的值，给这个用户赋值
+* MAIL 变量 : 根据登录的用户，定义用户的邮箱为 `/var/spool/mail/用户名`
+* PATH 变量 : 根据登录的用户 UID 是否为 0，判断 PATH 变量是否包含 `/sbin`,`/usr/sbin` 和 `/usr/local/sbin` 这三个系统命令目录
+* HOSTNAME 变量 : 主机名
+* HISTSIZE 变量 : 定义历史命令保存条数
+* umask : 定义 umask 默认权限。注意 `/etc/profile` 中的 umask 权限是在 有用户登录过程(也就是输入了用户名和密码) 时才会生效
+* 调用 `/etc/profile.d/*.sh` 文件,也就是调用 `/etc/profile.d/` 目录下所有以 `.sh` 结尾的文件
+* 由 `/etc/profile` 文件调用 `~/.bash_profile` 文件
+
+[source,shell]
+----
+[root@localhost ~]#ll /etc/profile.d/
+总用量 44
+-rw-r--r--. 1 root root 1150 4月  12 2016 colorls.csh
+-rw-r--r--. 1 root root 1179 4月  12 2016 colorls.sh
+-rw-r--r--. 1 root root  192 1月  21 2016 glib2.csh
+-rw-r--r--. 1 root root  192 1月  21 2016 glib2.sh
+-rw-r--r--. 1 root root 1745 5月  12 2016 lang.csh
+-rw-r--r--. 1 root root 2706 5月  12 2016 lang.sh
+-rw-r--r--. 1 root root  123 6月   4 2014 less.csh
+-rw-r--r--. 1 root root  121 6月   4 2014 less.sh
+-rw-r--r--. 1 root root  105 7月  17 2019 vim.csh
+-rw-r--r--. 1 root root  269 7月  17 2019 vim.sh
+-rw-r--r--. 1 root root  169 5月  20 2009 which2.sh
+# 这里有个 lang.sh 文件。而这个文件又会调用 `/etc/sysconfig/i18n` 文件。 `/etc/sysconfig/i18n` 文件我们之前说过，是默认语系配置文件
+----
+
+`~/.bash_profile` 文件就没有那么复杂了，他主要实现了两个功能
+
+* 调用了 `~/.bashrc` 文件
+* 在 PATH 变量后面加入了 `:$HOME/bin` 这个目录。也就是说，如果我们在自己家目录建立 bin 文件，然后把自己的脚本放入 `~/bin` 目录，就可以直接执行脚本，而不用通过目录执行了
+
+`~/.bashrc` 文件主要实现了
+
+* 定义默认别名
+* 调用 `/etc/bashrc`
+
+`/etc/bashrc` 文件中主要定义以下内容
+
+* PS1 变量: 也就是用户提示符
+* umask： 定义 umask 默认权限，这个文件定义的 umask 是针对没有登录(也就是不需要输入用户名和密码时，比如从一个终端切换到另一个终端，或进入子 Shell)时生效的。如果是 有用户登录，那么 `/etc/profile` 文件中的 umask 生效
+* PATH 变量： 会给 PATH 变量追加值，当然也是在 "没有登录时" 过程生效
+* 调用 `/etc/profile.d/*.sh` 文件： 也是在 "没有登录时" 才调用，在有用户登录是，这个文件已经被 `/etc/profile` 文件调用过了。
+
+这样这五个环境变量配置文件会被依次调用，那么如果我们自己定义的环境变量应该放在那一个配置文件里呢？如果你的修改是打算对所有用户生效的，那么可以放入 `/etc/profile` 中，如果你的
+修改只是给自己使用的，那么可以放在 `~/.bash_profile` 或 `~/.bashrc` 这两个配置文件中的任一个
+
+可是如果我们误删除了这些环境变量，比如删除了 `/etc/bashrc` 文件，或者删除了 `~/.bashrc` 文件，那么这些文件中配置就会失效( `~/.bashrc` 文件会调用 `/etc/bashrc`)，那么我们的提示符就会变成
+
+[source,shell]
+----
+-bash-4.1#
+----
+
+==== 注销时生成的环境变量配置文件
+
+在用户退出登录是，只会调用一个环境变量配置文件，就是 `~/.bash_logout` .这个文件默认没有写入任何内容，可是如果我们希望在退出登录时执行一些操作，比如，清除历史命令，数据备份等。就可以把命令写入这个文件
+
+==== 其他配置文件
+
+还有一些环境变量配置文件，最常见的就是 `~/.bash_history` 文件，也就是历史命令保存文件。
+
+=== Shell 登录信息
+
+/etc/issus
+
+我们在登录 tty1-tty6 这六个本地终端时，会有几行欢迎界面。这些欢迎信息是保存在哪里的？没错，就是 `/etc/issus` 文件中，我们来看看把
+
+[source,shell]
+----
+[root@localhost ~]#cat /etc/issue
+CentOS release 6.8 (Final)
+Kernel \r on an \m
+
+----
+
+可以支持的转义符我们可以通过 `man agetty` 命令查询
+
+|===
+|转义符 |说明
+
+| \d
+| 显示当前系统日期
+
+| \s
+| 显示操作系统名称
+
+| \l
+| 显示登录的终端号
+
+| \m
+| 显示硬件体系结构，如 i386,i686等
+
+| \n
+| 显示主机名
+
+| \o
+| 显示域名
+
+| \r
+| 显示内核版本
+
+| \t
+| 显示当前系统时间
+
+| \u
+| 显示当前登录用户的序列号
+|===
+
+
+`/etc/issue.net` 这个是远程登录时的欢迎信息。这个文件有两点需要注意
+
+* 首先，在 `/etc/issue` 中支持的转义符，在 `/etc/issue.net`  中不能使用
+* 其次，ssh 远程登录是否显示 `/etc/issue.net` 文件中的欢迎信息，是由 ssh 的配置文件 (`/etc/ssh/sshd_config`)决定的。加入以下内容
+
+[source,shell]
+----
+[root@localhost ~]# vi /etc/ssh/sshd_config
+Banner /etc/issue.net
+----
+
+`/etc/motd` 文件中也是显示欢迎信息的，这个文件和上面两个文件的区别就是，上面两个文件是在用户登录之前显示欢迎信息的，`/etc/motd` 是在用户输入用户名和密码，正确登录之后显示欢迎信息的。
+在 `/etc/motd` 文件中的欢迎信息，不论是本地登录，还是远程登录都能显示。
+
+=== 定义 Bash 快捷键
+
+[source,shell]
+----
+[root@localhost ~]# stty 关键字 快捷键
+
+[root@localhost ~]# stty intr ^p
+# 定义 ctrl+p 快捷键为强行终止，
+----
 

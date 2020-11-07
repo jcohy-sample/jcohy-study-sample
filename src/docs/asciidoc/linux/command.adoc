@@ -1031,6 +1031,15 @@ find / -name "hadooop*" -ok rm {} \;
 |===
 |参数 |说明
 
+| -A 数字
+| 列出符合条件的行，并列出后续的 n 行
+
+| -B 数字
+| 列出符合条件的行，并列出前面的 n 行
+
+| -c
+| 统计找到的符合条件的字符串的次数
+
 | -i
 | 忽略大小写
 
@@ -1041,7 +1050,7 @@ find / -name "hadooop*" -ok rm {} \;
 | 反向查找
 
 | --color=auto
-| 搜索出的关键字用颜色显示
+| 搜索出的关键字用颜色表示
 |===
 
 .find 和 grep 的区别
@@ -1102,6 +1111,88 @@ grep 命令用于在文件中搜索符合条件的字符串，如果需要模糊
 |匹配行尾
 |===
 ****
+
+
+下面举几个例子说明一下:
+
+[source,shell]
+----
+[root@localhost ~]# grep "/bin/bash" /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+user1:x:500:501::/home/user1:/bin/bash
+user2:x:501:502::/home/user2:/bin/bash
+user3:x:503:504::/home/user3:/bin/bash
+# 查找有多少个可以登录的用户
+
+[root@localhost ~]# grep -A 3 "root" /etc/passwd
+# 查找包含有 root 的行，并列出后续的 3 行
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+--
+operator:x:11:0:operator:/root:/sbin/nologin
+games:x:12:100:games:/usr/games:/sbin/nologin
+gopher:x:13:30:gopher:/var/gopher:/sbin/nologin
+ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
+
+
+[root@localhost ~]# grep -n "/bin/bash" /etc/passwd
+# 查找有多少个可以登录的用户，显示行号
+1:root:x:0:0:root:/root:/bin/bash
+21:user1:x:500:501::/home/user1:/bin/bash
+22:user2:x:501:502::/home/user2:/bin/bash
+23:user3:x:503:504::/home/user3:/bin/bash
+
+
+[root@localhost ~]# grep -v "/bin/bash" /etc/passwd
+# 查找不能登录的用户，也就是伪用户
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+sync:x:5:0:sync:/sbin:/bin/sync
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+halt:x:7:0:halt:/sbin:/sbin/halt
+mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+uucp:x:10:14:uucp:/var/spool/uucp:/sbin/nologin
+operator:x:11:0:operator:/root:/sbin/nologin
+games:x:12:100:games:/usr/games:/sbin/nologin
+gopher:x:13:30:gopher:/var/gopher:/sbin/nologin
+ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
+nobody:x:99:99:Nobody:/:/sbin/nologin
+dbus:x:81:81:System message bus:/:/sbin/nologin
+vcsa:x:69:69:virtual console memory owner:/dev:/sbin/nologin
+saslauth:x:499:76:Saslauthd user:/var/empty/saslauth:/sbin/nologin
+postfix:x:89:89::/var/spool/postfix:/sbin/nologin
+sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
+----
+
+[[linux-command-search-channel]]
+=== 管道符
+
+管道命令符的作用也可以用一句话来概括“把前一个命令原本要输出到屏幕的标准正常数据当作是后一个命令的标准输入”，管道符格式如下
+
+[source,shell]
+----
+[root@localhost ~]# 命令1 | 命令2
+----
+
+举例：
+
+[source,shell]
+----
+[root@localhost ~]# ll -a /etc/ | more
+
+[root@localhost ~]# netstat -an | grep "ESTABLISHED"
+# 查询本地所有网络连接，提取包含 ESTABLISHED 的行
+tcp        0     64 192.168.11.136:22           192.168.11.109:17665        ESTABLISHED
+
+
+[root@localhost ~]# netstat -an | grep "ESTABLISHED" | wc -l
+# 如果想知道具体的网络连接数量，可以使用 wc 命令统计行数
+1
+----
 
 [[linux-command-package]]
 == 打包与压缩
@@ -2178,7 +2269,15 @@ https://www.tuxera.com/company/open-source/[https://www.tuxera.com/company/open-
 
 命令的别名，也就是小名。主要是用于照顾管理员习惯用的。
 
-.查询别名
+[source,shell]
+----
+[root@localhost ~]# alias
+# 查询别名
+[root@localhost ~]# alias 别名='原命令'
+# 设定别名
+----
+
+.查询系统已定义好的别名
 [source,shell]
 ----
 [root@localhost opt]# alias
@@ -2200,7 +2299,14 @@ alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-ti
 [root@localhost opt]# alias 别名='原命令'
 ----
 
-用命令定义的别名，是临时生效的，要想永久生效，需要写入环境变量配置文件 `~/.bashrc`
+用命令定义的别名，是临时生效的，要想永久生效，需要写入环境变量配置文件 `/root/.bashrc`
+
+既然我们说别名的优先级比命令高，那么命令执行时的具体顺序是什么呢？
+
+. 执行用绝对路径或相对路径执行的命令
+. 别名
+. 执行 Bash 的内部命令
+. 执行按照 $PATH 环境变量定义的目录查找顺序找到的第一个命令
 
 [[linux-command-other-host]]
 === 其他命令
