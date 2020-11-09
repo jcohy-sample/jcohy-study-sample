@@ -2912,6 +2912,105 @@ fi
 
 === 特殊流程控制语句
 
-==== exit 语句
+==== `exit` 语句
 
-系统是由 exit 命令的，用户退出当前用户的登录状态。可是在 Shell 脚本中，exit 语句是用来退出当前脚本的
+系统是由 exit 命令的，用户退出当前用户的登录状态。可是在 Shell 脚本中，exit 语句是用来退出当前脚本的。也就是说，在 Shell 脚本中，只要碰到了 exit 语句，后续的程序就不再执行，而直接退出脚本。
+
+[source,shell]
+----
+[root@localhost ~]# exit 返回值
+----
+
+如果 `exit` 命令之后定义的返回值，那么这个脚本执行之后的返回值就是我们自己定义的返回值。可以通过 `$?` 查看这个变量，来查看这个返回值。如果 `exit` 之后没有返回值，脚本执行之后的返回值是执行
+`exit` 语句之前，最后执行的一条命令的返回值。如下:
+
+[source,shell]
+----
+[root@localhost ~]# vi sh/exit.sh
+#!/bin/bash
+
+read -P "Please input a number : -t 30 num"
+
+y=$(echo $num | sed 's/[0-9]//g')
+
+[ -n "$y"] && echo "Error!! Please input a number!" && exit 18
+# 判断变量 y 的值如果不为空，输出报错信息，退出脚本，退出返回值为 18
+
+echo "The number is : &num"
+----
+
+[source,shell]
+----
+[root@localhost ~]# chmod 777 sh/exit.sh
+[root@localhost ~]# sh/exit.sh
+Please input a number :test
+Error!! Please input a number!
+[root@localhost ~]# echo $?
+18
+[root@localhost ~]# sh/exit.sh
+Please input a number :10
+The number is : 10
+----
+
+==== `break` 语句
+
+再来看看特殊流程控制语句 `break` 的作用，当程序执行到 `break` 语句时，会结束整个当前循环。而 `continue` 语句也是结束循环的语句，不过 `continue` 语句结束当前循环，而下次循环会继续。
+
+[source,shell]
+----
+[root@localhost ~]# vi sh/break.sh
+#!/bin/bash
+
+for (( i=0;i<=10;i++ ))
+    do
+        if [ "$i" -eq 4 ];then
+            break
+        fi
+        echo $i
+    done
+----
+
+[source,shell]
+----
+[root@localhost ~]# chmod 777 sh/break.sh
+[root@localhost ~]# sh/break.sh
+1
+2
+3
+----
+
+==== `continue` 语句
+
+再来看看 `continue` 语句，`continue` 语句也是结束流程控制的语句。如果在循环中，`continue` 语句只会结束单词当前循环。我们还是使用刚才的例子做演示
+
+[source,shell]
+----
+[root@localhost ~]# vi sh/continue.sh
+#!/bin/bash
+
+for (( i=0;i<=10;i++ ))
+    do
+        if [ "$i" -eq 4 ];then
+            continue
+            # 退出语句换成 continue
+        fi
+        echo $i
+    done
+----
+
+[source,shell]
+----
+[root@localhost ~]# chmod 777 sh/continue.sh
+[root@localhost ~]# sh/continue.sh
+1
+2
+3
+5
+6
+7
+8
+9
+10
+----
+
+`continue` 只会退出当前循环，所以不影响后续的循环。所以只会少 4 的输出。
