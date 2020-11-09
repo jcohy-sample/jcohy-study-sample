@@ -1487,3 +1487,1431 @@ Banner /etc/issue.net
 # 定义 ctrl+p 快捷键为强行终止，
 ----
 
+== 正则表达式
+
+我们在 <<linux-command-search-grep>> 章节中说过正则表达式和通配符的区别，其实这种区别只在 Shell 中适用，因为用来在文件中搜索字符串的命令(如 `grep`,`awk`,`sed`) 等命令可以支持正则表达式，
+而在系统中搜索文件的命令(如 `ls`,`find`,`cp`)等这些命令不支持正则表达式。所以只能使用 Shell 自己的通配符来匹配了。
+
+.基础正则表达式
+|===
+|元字符 |作用
+
+|?
+|匹配前一个字符重复 0 次或者 1 次(`?` 是扩展正则，需要使用 `egrep` 命令)
+
+|*
+|匹配前一个字符重复 0 次或任意多次
+
+|\.
+|匹配除了换行符外的任意一个字符
+
+|[]
+|匹配中括号中的任意一个字符。例如:[abc] 代表一定匹配一个字符，要么是a,要么是b,要么是c
+
+|[-]
+|匹配中括号中的任意一个字符，代表一个范围。例如 [a-z] 代表匹配一个小写字母
+
+|[^]
+|逻辑非，表示匹配不是中括号内的一个字符。例如: [^0-9] 代表匹配一个不是数字的字符
+
+|^
+|匹配行首
+
+|$
+|匹配行尾
+
+|\
+|转义符
+
+|\{n\}
+|表示其前面的字符恰好出现 n 次。如 [0-9]\{4\} 匹配四位数字。
+
+|\{n,\}
+|表示其前面的字符出现不小于 n 次。[0-9]\{4,\} 匹配四位及以上的数据
+
+|\{n,m\}
+|表示其前面的字符至少出现 n 次，最多 m 次。[a-z]\{6,8\} 匹配 6-8 位小写字母。
+|===
+
+我们下面的例子来说明正则表达式
+
+.创建测试文件 test.rule.txt
+[source,txt]
+----
+Mr. Jcohy said:
+he was the most honest man.
+123 despise hime
+
+But since Mr. jiac came.
+he never saaaid those words.
+5555nice!
+
+because,actuaaaally,
+Mr. Jcohy is the most honest man
+
+Later,Mr. jiac soid hist hot body
+----
+
+.`*` 前一个字符匹配 0 次或多次
+[source,shell]
+----
+[root@localhost ~]# grep "a*" test_rule.txt             <== 这个会匹配到所有的文本，没有什么意义
+Mr. Jcohy said:
+he was the most honest man.
+123 despise hime
+
+But since Mr. jiac came.
+he never saaaid those words.
+5555nice!
+
+because,actuaaaally,
+Mr. Jcohy is the most honest man
+
+Later,Mr. jiac soid hist hot body
+
+[root@localhost ~]# grep "aa*" test_rule.txt            <== 这个代表这行字符串必须有一个 a，后面有没有 a 都可以
+Mr. Jcohy said:
+he was the most honest man.
+But since Mr. jiac came.
+he never saaaid those words.
+because,actuaaaally,
+Mr. Jcohy is the most honest man
+Later,Mr. jiac soid hist hot body
+[root@localhost ~]# grep "aaa*" test_rule.txt           <== 这个代表这行字符串必须有两个 a，后面有没有 a 都可以
+he never saaaid those words.
+because,actuaaaally,
+[root@localhost ~]# grep "aaaa*" test_rule.txt          <== 这个代表这行字符串必须有三个 a，后面有没有 a 都可以
+he never saaaid those words.
+because,actuaaaally,
+[root@localhost ~]# grep "aaaaa*" test_rule.txt         <== 这个代表这行字符串必须有四个 a，后面有没有 a 都可以
+because,actuaaaally,
+[root@localhost ~]# grep "aaaaaa*" test_rule.txt        <== 这个代表这行字符串必须有五个 a，后面有没有 a 都可以，我们的文本中最多连续出现了 4 个 a，所以就没有输出了。
+----
+
+.`.` 匹配除了换行符外的任意一个字符
+[source,shell]
+----
+[root@localhost ~]# grep "s..d" test_rule.txt           <== s..d 会匹配在 s 和 d 之间一定有两个字符的单词
+Mr. Jcohy said:
+Later,Mr. jiac soid hist hot body
+[root@localhost ~]# grep "s.*d" test_rule.txt           <== s.*d 会匹配在 s 和 d 之间一定有任意多字符的单词
+Mr. Jcohy said:
+he never saaaid those words.
+Later,Mr. jiac soid hist hot body
+# 匹配到的字符为 soid hist hot bod
+[root@localhost ~]# grep ".*" test_rule.txt
+----
+
+.`^` 匹配行首，`$` 匹配行尾
+[source,shell]
+----
+[root@localhost ~]# grep "^M" test_rule.txt         <== 匹配以大写 M 开头的行
+Mr. Jcohy said:
+Mr. Jcohy is the most honest man
+[root@localhost ~]# grep "n$" test_rule.txt         <== 匹配以小写 n 结尾的行
+Mr. Jcohy is the most honest man
+[root@localhost ~]# grep -n "^$" test_rule.txt      <== 匹配空白行
+4:
+8:
+11:
+13:
+----
+
+.`[]` 匹配中括号中的任意一个字符
+[source,shell]
+----
+[root@localhost ~]# grep "s[ao]id" test_rule.txt    <== 要不匹配一个 a，要不匹配一个 o
+Mr. Jcohy said:
+Later,Mr. jiac soid hist hot body
+[root@localhost ~]# grep "[0-9]" test_rule.txt      <== 匹配任意一个数字
+123 despise hime
+5555nice!
+[root@localhost ~]# grep "[A-Z]" test_rule.txt      <== 匹配一个大写字母
+Mr. Jcohy said:
+But since Mr. jiac came.
+Mr. Jcohy is the most honest man
+Later,Mr. jiac soid hist hot body
+[root@localhost ~]# grep "^[a-z]" test_rule.txt     <== 匹配用小写字母开头的行
+he was the most honest man.
+he never saaaid those words.
+because,actuaaaally,
+----
+
+.`[^]` 表示匹配不是中括号内的一个字符
+[source,shell]
+----
+[root@localhost ~]# grep "^[^a-zA-Z]" test_rule.txt   <== 匹配不用字母开头的行
+123 despise hime
+5555nice!
+----
+
+.`\` 转义符
+[source,shell]
+----
+[root@localhost ~]# grep "\.$" test_rule.txt        <== 匹配以 . 结尾的行
+he was the most honest man.
+But since Mr. jiac came.
+he never saaaid those words.
+----
+
+.`\{n\}`,`\{n,\}`,`\{n,m\}`
+----
+[root@localhost ~]# grep "a\{3\}" test_rule.txt             <== 匹配包含三个连续的 a 的字符串
+he never saaaid those words.
+because,actuaaaally,
+[root@localhost ~]# grep "[su]a\{3\}[il]" test_rule.txt     <== 只匹配包含三个连续的 a
+he never saaaid those words.
+[root@localhost ~]# grep "[0-9]\{3\}" test_rule.txt         <== 匹配包含连续 3 个数字的字符串
+123 despise hime
+5555nice!
+
+[root@localhost ~]# grep "^[0-9]\{3,\}[a-z]" test_rule.txt  <== 最少用连续三个数字开头的字符串
+5555nice!
+
+[root@localhost ~]# grep "sa\{1,3\}i" test_rule.txt         <== 匹配在字母 s 和字母 i 之间至少有一个 a，最多有三个 a
+Mr. Jcohy said:
+he never saaaid those words.
+----
+
+在正则表达式中应该还可以支持一些元字符(如 `+`,`?`,`|`,`()` 等)，其实 Linux 是支持这些元字符的，只是 grep 命令默认不支持。如果要想支持这些元字符，必须使用 `egrep` 或 `grep -E` 选项。所以，我们又把这些元字符称为扩展元字符.
+
+.扩展元字符
+|===
+|元字符 |作用
+
+| +
+| 前一个字符匹配一次或任意多次。
+
+| ?
+| 前一个字符匹配 0 次或 1 次
+
+| \|
+| 匹配两个或多个分支选择。如 was\|his, 会匹配既包含 was 的行，也匹配包含 his 的行
+
+| ()
+| 匹配其整体为一个字符，即模式单元。
+|===
+
+== 字符串截取和替换命令
+
+=== cut 列提取命令
+
+[source,shell]
+----
+[root@localhost ~]# cut [选项] 文件名
+----
+
+.`cut` 选项
+|===
+|参数 |说明
+
+| -f 列号
+| 提取第几列
+
+| -d 分隔符
+| 按照指定分隔符分割列
+
+| -c 字符范围
+| 不依赖分隔符来区分列，而是通过字符范围（行首为 0 ）来进行字段提取。`n-` 表示从第 n 个字符到行尾。`n-m` 表示从第 n 个字符到第 m 个字符。`-m` 表示从第一个字符到第 m 个字符。
+|===
+
+cut 命令默认的分隔符是制表符
+
+=== `awk` 命令
+
+在介绍 `awk` 之前，先来看看 `printf` 格式化输出
+
+==== `printf`
+
+[source,shell]
+----
+[root@localhost ~]# printf '输出类型输出格式' 输出内容
+----
+
+.输出类型
+|===
+|输出类型 |说明
+
+| %ns
+| 输出字符串，n 是数字，表示输出几个字符
+
+| %ni
+| 输出整数，n 是数字，表示输出几个数字
+
+| %m.nf
+| 输出浮点数，m 和 n 是数字，指代输出的整数位数和小数位数
+|===
+
+.输出格式
+|===
+|输出格式 |说明
+
+| \a
+| 输出警告声音
+
+| \b
+| 输出退格键
+
+| \f
+| 清楚屏幕
+
+| \n
+| 换行
+
+| \r
+| 回车
+
+| \t
+| 水平输出退格键
+
+| \v
+| 垂直输出退格键
+|===
+
+为了说明 printf 的用法，我们新建 `student.txt` 的文件，内容如下，然后，使用 `printf` 格式化输出，看看效果
+
+[source,shell]
+----
+[root@localhost ~]# vi student.txt
+ID      Name    PHP     Linux   MySQL   Average
+1       Zs      82      95      86      87.66
+2       Ls      74      96      87      85.66
+3       Ww      99      83      93      91.66
+
+[root@localhost ~]# printf '%s' $(cat student.txt)
+IDNamePHPLinuxMySQLAverage1Zs82958687.662Ls74968785.663Ww99839391.66[root@localhost ~]#
+# 如果不指定输出格式，会将所有输出内容连在一起输出。为了输出合理的格式，使用下面的命令
+
+[root@localhost ~]# printf '%s\t %s\t %s\t %s\t %s\t %s\t \n' $(cat student.txt)
+ID	 Name	 PHP	 Linux	 MySQL	 Average
+1	 Zs	 82	 95	 86	 87.66
+2	 Ls	 74	 96	 87	 85.66
+3	 Ww	 99	 83	 93	 91.66
+----
+
+==== `awk` 基本使用
+
+[source,shell]
+----
+[root@localhost ~]# awk '条件1{动作1} 条件2{动作2} ...' 文件名
+# 条件：
+#   一般使用关系表达式作为条件
+# 动作：
+#   格式化输出
+#   流程控制语句
+----
+
+我们先来看看 awk 的基本用法。
+
+[source,shell]
+----
+[root@localhost ~]# awk '{printf $2 "\t" $6 "\n"}' student.txt  <== 输出第二列和第六列
+Name	Average
+Zs	87.66
+Ls	85.66
+Ww	91.66
+----
+
+==== `awk` 条件
+
+.`awk` 条件
+|===
+|条件 |说明
+
+| BEGIN
+| awk 保留字.在 awk 程序一开始时，尚未读取任何数据之前执行。BEGIN 后的动作只在程序开始时执行一次
+
+| END
+| awk 保留字.在 awk 程序处理完所有数据，即将结束时执行。BEGIN 后的动作只在程序结束时执行一次
+
+| >
+| 大小
+
+| <
+| 小于
+
+| >=
+| 大于等于
+
+| <=
+| 小于等于
+
+| ==
+| 等于。用于判读两个值是否相等。如果是赋值，请使用 `=`
+
+| !=
+| 不等于
+
+| A~B
+| 判断字符串 A 中是否包含能匹配 B 表达式的子字符串
+
+| A!~B
+| 判断字符串 A 中是否不包含能匹配 B 表达式的子字符串
+
+| /正则/
+| 在 // 中可以写入字符，也可以支持正则表达式
+|===
+
+命令只要检测不到完整的单引号就不会执行。上面的条件使用示例如下:
+
+[source,shell]
+----
+# BEGIN 是一种特殊的条件类型，在 awk 程序一开始，尚未读取任何数据之前执行
+[root@localhost ~]# awk 'BEGIN{printf "This is a transcript \n"} {printf $2 "\t" $6 "\n"}' student.txt
+This is a transcript
+Name	Average
+Zs	87.66
+Ls	85.66
+Ww	91.66
+
+
+# END 和 BEGIN 相反
+[root@localhost ~]# awk 'END{printf "The END \n"} {printf $2 "\t" $6 "\n"}' student.txt
+Name	Average
+Zs	87.66
+Ls	85.66
+Ww	91.66
+The END
+
+
+# 关系运算符
+[root@localhost ~]# cat student.txt | grep -v Name | awk '$6 >= 87 {printf $2 "\n"}'        <== 查看平均成绩大于等于 87 的学员名
+Zs
+Ww
+# awk 的执行过程
+#   1.如果有 BEGIN 条件，先执行 BEGIN 条件定义的动作
+#   2.如果没有 BEGIN 条件，则读取第一行，把第一行的数据一次赋予 $0,$1,$2,...等变量。其中 $0 代表此行整体的数据。$1 代表第一个字段
+#   3.依据条件类型判断条件是否执行。如果条件符合，执行动作，否则读入下一行数据。如果没有条件，则每行都执行动作
+#   4.读入下一行数据，重复执行以上步骤
+#   5.当数据读取完成，如果有 END 条件，则执行 END 条件定义的动作
+
+# 正则表达式
+[root@localhost ~]# awk '$2 ~ /Zs/ {printf $6 "\n"}' student.txt        <== 查看 Zs 学员的平均成绩。这里要注意，使用 `//` 包含的字符串，awk 才会去查找。
+87.66
+
+----
+
+==== `awk` 内置变量
+
+.`awk` 内置变量
+|===
+|`awk` 内置变量 |作用
+
+| $0
+| 代表目前 awk 所读入的整行数据
+
+| $n
+| 代表目前读入行的第 n 个字段
+
+| NF
+| 当前行拥有的字段(列)总数
+
+| NR
+| 当前 awk 处理的行，是总数据的第几行
+
+| FS
+| 用户定义分隔符。awk 的默认分隔符是任何空格，如果需要使用其他分隔符，需要使用 FS 变量定义。如果把 FS="分隔符" 写在 {...} 中，每行被解析完毕后，FS="分隔符"都会被执行一次。那么，第一行在解析时，域分隔符FS尚未被设置，使用默认的空白字符作为分隔符。
+如果需要在每行都使用 FS="分隔符"，可以将 FS="分隔符" 添加到 BEGIN 条件中
+
+| ARGC
+| 命令行参数个数
+
+| ARGV
+| 命令行参数数组
+
+| FNR
+| 当前文件中的当前记录数(对输入文件起始为 1)
+
+| OFMT
+| 数值的输出格式(默认为 %.6g)
+
+| OFS
+| 输出字段的分隔符(默认为空格)
+
+| ORS
+| 输出记录分隔符(默认为换行符)
+
+| RS
+| 输入记录分隔符(默认为换行符)
+|===
+
+[source,shell]
+----
+[root@localhost ~]# cat /etc/passwd | grep "/bin/bash" | awk '{FS=":"} {printf $1 "\t" $3 "\n"}'
+# 查询可以登录的用户的用户名和 UID，但是第一行好像没有起作用。原来是 忘了加 BEGIN 条件
+root:x:0:0:root:/root:/bin/bash
+user1	500
+user2	501
+user3	503
+[root@localhost ~]# cat /etc/passwd | grep "/bin/bash" | awk 'BEGIN{FS=":"} {printf $1 "\t" $3 "\n"}'
+root	0
+user1	500
+user2	501
+user3	503
+[root@localhost ~]# cat /etc/passwd | grep "/bin/bash" | awk 'BEGIN{FS=":"} {printf $1 "\t" $3 "\t 行号: " NR "\t 字段数: " NF "\n"}'
+root	0	 行号: 1	 字段数: 7
+user1	500	 行号: 2	 字段数: 7
+user2	501	 行号: 3	 字段数: 7
+user3	503	 行号: 4	 字段数: 7
+
+[root@localhost ~]# cat /etc/passwd | awk 'BEGIN{FS=":"} $1=="sshd" {printf $1 "\t" $3 "\t 行号: " NR "\t 字段数: " F "\n"}'
+# 查看为用户 sshd 的相关信息
+sshd	74	 行号: 20	 字段数:
+----
+
+==== `awk` 流程控制
+
+我们使用上面使用的 student.txt 文件来练习
+
+[source,shell]
+----
+[root@localhost ~]# cat student.txt
+ID	Name	PHP	Linux	MySQL	Average
+1	Zs	82	95	86	87.66
+2	Ls	74	96	87	85.66
+3	Ww	99	83	93	91.66
+----
+
+我们先来看看如何在 `awk` 中定义变量和调用变量的值。假设我想统计 php 成绩的总分。
+
+[source,shell]
+----
+[root@localhost ~]# awk 'NR==2{php1=$3} NR==3{php2=$3} NR==4{php3=$3;totle=php1+php2+php3;print "total php is " totle}' student.txt
+total php is 255
+# 统计 php 成绩总分
+----
+
+我们解释下这条命令。`NR==2{php1=$3}` (条件是 `NR==2`,动作是 `php1=$3`)这句话是指如果输入数据是第二行(第一行是标题)，就把第二行第三个字段的值赋值给变量 `php1`.`NR==3{php2=$3}` 是把
+第三行第三个字段的值赋值给变量 `php2`,`NR==4{php3=$3;totle=php1+php2+php3;print "total php is " totle` 是把第四行第三个字段的值赋值给变量 `php3`，定义变量 `total` 的值为 `php1+php2+php3`.然后输出 `total php is ` 加 `total` 变量
+
+在 `awk` 编程中，因为有的命令语句非常长，再输入格式时要注意一下几点
+
+* 多个条件(动作)可以用空格分割，也可以用回车分割
+* 在一个动作中，如果需要执行对个命令，需要用 `;` 分割
+* 在 `awk` 中，变量的赋值与调用都不需要加 `$` 符
+* 条件中判断两个值是否想等，请使用 `==` 以便和变量赋值进行区分
+
+我们再举个例子，假设 Linux 成绩大于 90，就是一个好学生
+
+[source,shell]
+----
+[root@localhost ~]# awk '{if (NR>=2) {if ($4>90) printf $2 " is a good student!\n"}}' student.txt
+Zs is a good student!
+Ls is a good student!
+----
+
+其实 awk 中的 if 判断语句，完全可以直接利用 awk 自带的条件来取代，刚刚的脚本可以改写成这样。
+
+[source,shell]
+----
+[root@localhost ~]# awk  'NR>=2 {test=$4} test>90 {printf $2 " is a good student!\n"}' student.txt
+Zs is a good student!
+Ls is a good student!
+----
+
+==== `awk` 函数
+
+awk 编程也允许在编程时使用函数，awk 函数的定义方法如下:
+
+[source,shell]
+----
+function 函数名(参数列表){
+    函数体
+}
+----
+
+我们定义一个简单的函数，使用函数来答应 student.txt 的学员姓名和平均成绩
+
+[source,shell]
+----
+[root@localhost ~]# awk 'function test(a,b) {printf a"\t" b "\n"} {test($2,$6)}' student.txt
+Name	Average
+Zs	87.66
+Ls	85.66
+Ww	91.66
+----
+
+==== `awk` 调用脚本
+
+对于小的单行程序来说，将脚本作为命令行自变量传递给 `awk` 是非常简单的，而对于多行程序就比较难处理。当程序是多行的时候，使用外部脚本比较合适。首先在外部文件中写好脚本，然后可以使用 `awk` 的 `-f` 选项，使其读入脚本并执行。
+
+我们可以先编写一个 `awk` 脚本
+
+[source,shell]
+----
+[root@localhost ~]# vi pass.awk
+BEGIN {FS=":"}
+{print $1 "\t" $3}
+
+[root@localhost ~]# awk -f pass.awk /etc/passwd
+root	0
+bin	1
+daemon	2
+adm	3
+lp	4
+sync	5
+shutdown	6
+halt	7
+mail	8
+uucp	10
+operator	11
+games	12
+gopher	13
+ftp	14
+nobody	99
+dbus	81
+vcsa	69
+saslauth	499
+postfix	89
+sshd	74
+user1	500
+user2	501
+user3	503
+----
+
+=== `sed` 命令
+
+`sed` 命令主要是用来将数据进行选取，替换，删除，新增的命令。我们看看 `sed` 的语法
+
+[source,shell]
+----
+[root@localhost ~]# sed [选项] '[动作]' 文件名
+----
+
+.`sed` 选项
+|===
+|参数 |说明
+
+| -n
+| 一般 sed 命令会把所有的数据输出到屏幕，如果加入此选择，则只会把经过 sed 命令处理的行输出到屏幕
+
+| -e
+| 允许对输入数据应用多条 sed 命令编辑
+
+| -f 脚本文件名
+| 从 sed 脚本中读入 sed 操作。和 awk 命令的 -f 选项非常类似
+
+| -r
+| 在 sed 中支持扩展正则表达式
+
+| -i
+| 用 sed 的修改结果直接修改读取数据的文件，而不是用屏幕输出
+|===
+
+.`sed` 动作
+|===
+|参数 |说明
+
+| a \
+| 追加，在当前行后添加一行或多行。调假多行时，除最后一行外，每行末尾需要用 `\` 代表数据未完结。
+
+| c \
+| 行替换，用 c 后面的字符串替换原数据行，替换多行时，除最后一行外，每行末尾需要用 `\` 代表数据未完结。
+
+| i \
+| 插入，在当前行前插入一行或多行。插入多行时，除最后一行外，每行末尾需要用 `\` 代表数据未完结。
+
+| d
+| 删除指定的行
+
+| p
+| 打印，输出指定的行
+
+| s
+| 字串替换，用一个字符串替换另外一个字符串。格式为 "行范围s/旧字串/新字串/g"
+|===
+
+对于 `sed` 命令要注意，`sed` 所做的修改并不会直接修改原文件内容。而是把修改的结果显示到屏幕上，除非使用 `-i` 选项才会直接修改文件
+
+话不多说，实战演练一下。还是以 student.txt 文件为例：
+
+[source,shell]
+----
+[root@localhost ~]# sed '2p' student.txt            <== 查看 student.txt  第二行数据，但是好像它还把所有的数据都输出了一次。
+ID	Name	PHP	Linux	MySQL	Average
+1	Zs	82	95	86	87.66
+1	Zs	82	95	86	87.66
+2	Ls	74	96	87	85.66
+3	Ww	99	83	93	91.66
+
+[root@localhost ~]# sed -n '2p' student.txt         <== 查看 student.txt  第二行数据，`-n` 值输出指定行
+1	Zs	82	95	86	87.66
+
+
+[root@localhost ~]# sed '2,4d' student.txt          <== 删除第二行到第四行数据。注意，文件本身并没有修改
+ID	Name	PHP	Linux	MySQL	Average
+
+[root@localhost ~]# sed '2a hello' student.txt      <== 在第二行后加入 hello
+ID	Name	PHP	Linux	MySQL	Average
+1	Zs	82	95	86	87.66
+hello
+2	Ls	74	96	87	85.66
+3	Ww	99	83	93	91.66
+
+[root@localhost ~]# sed '2i hello \                 <== 在第二行前插入两行数据
+> world' student.txt
+ID	Name	PHP	Linux	MySQL	Average
+hello
+world
+1	Zs	82	95	86	87.66
+2	Ls	74	96	87	85.66
+3	Ww	99	83	93	91.66
+
+
+[root@localhost ~]# sed -n '2i hello \              <== -n 只查看 sed 命令操作的数据，而不是查看所有数据
+> world' student.txt
+hello
+world
+
+
+[root@localhost ~]# sed -i '2c No such person' student.txt          <== -i 直接修改原文件
+[root@localhost ~]# cat student.txt
+ID	Name	PHP	Linux	MySQL	Average
+No such person
+2	Ls	74	96	87	85.66
+3	Ww	99	83	93	91.66
+----
+
+`c` 动作是进行整行替换的，如果是仅仅想替换行中的部分数据，就要使用 `s` 动作了。`s` 动作格式如下:
+
+[source,shell]
+----
+[root@localhost ~]# sed 's/旧字符串/新字符串/g' 文件名
+
+[root@localhost ~]# sed '3s/74/99/g' student.txt            <== 把第三行中的 74 换成 99
+ID	Name	PHP	Linux	MySQL	Average
+1	Zs	82	95	86	87.66
+2	Ls	99	96	87	85.66
+3	Ww	99	83	93	91.66
+
+[root@localhost ~]# sed '4s/^/#/g' student.txt              <== 注释第四行
+ID	Name	PHP	Linux	MySQL	Average
+1	Zs	82	95	86	87.66
+2	Ls	74	96	87	85.66
+#3	Ww	99	83	93	91.66
+
+[root@localhost ~]# sed -e '2s/^/#/g;4s/^/#/g' student.txt  <== -e 选项同时注释第二行和第四行
+ID	Name	PHP	Linux	MySQL	Average
+#1	Zs	82	95	86	87.66
+2	Ls	74	96	87	85.66
+#3	Ww	99	83	93	91.66
+----
+
+== 字符处理命令
+
+=== `sort` 排序命令
+
+[source,shell]
+----
+[root@localhost ~]# sort [选项] 文件名
+----
+
+.`sort` 选项
+|===
+|参数 |说明
+
+| -f
+| 忽略大小写
+
+| -b
+| 忽略每行前面的空白部分
+
+| -n
+| 以数值型进行排序，默认使用字符串型排序
+
+| -r
+| 反向排序
+
+| -u
+| 删除重复行，就是 uniq 命令
+
+| -t
+| 指定分隔符，默认分隔符是制表符
+
+| -k n[,m]
+| 按照指定的字段范围进行排序。从第 n 个字段开始，m 个 字段结束
+|===
+
+sort 命令默认是按照每行开头第一个字符来进行排序的
+
+[source,shell]
+----
+[root@localhost ~]# sort /etc/passwd                <== 排序
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+dbus:x:81:81:System message bus:/:/sbin/nologin
+ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
+games:x:12:100:games:/usr/games:/sbin/nologin
+gopher:x:13:30:gopher:/var/gopher:/sbin/nologin
+halt:x:7:0:halt:/sbin:/sbin/halt
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+nobody:x:99:99:Nobody:/:/sbin/nologin
+operator:x:11:0:operator:/root:/sbin/nologin
+postfix:x:89:89::/var/spool/postfix:/sbin/nologin
+root:x:0:0:root:/root:/bin/bash
+saslauth:x:499:76:Saslauthd user:/var/empty/saslauth:/sbin/nologin
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
+sync:x:5:0:sync:/sbin:/bin/sync
+user1:x:500:501::/home/user1:/bin/bash
+user2:x:501:502::/home/user2:/bin/bash
+user3:x:503:504::/home/user3:/bin/bash
+uucp:x:10:14:uucp:/var/spool/uucp:/sbin/nologin
+vcsa:x:69:69:virtual console memory owner:/dev:/sbin/nologin
+
+
+[root@localhost ~]# sort -r /etc/passwd             <== 反向排序
+vcsa:x:69:69:virtual console memory owner:/dev:/sbin/nologin
+uucp:x:10:14:uucp:/var/spool/uucp:/sbin/nologin
+user3:x:503:504::/home/user3:/bin/bash
+user2:x:501:502::/home/user2:/bin/bash
+user1:x:500:501::/home/user1:/bin/bash
+sync:x:5:0:sync:/sbin:/bin/sync
+sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+saslauth:x:499:76:Saslauthd user:/var/empty/saslauth:/sbin/nologin
+root:x:0:0:root:/root:/bin/bash
+postfix:x:89:89::/var/spool/postfix:/sbin/nologin
+operator:x:11:0:operator:/root:/sbin/nologin
+nobody:x:99:99:Nobody:/:/sbin/nologin
+mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+halt:x:7:0:halt:/sbin:/sbin/halt
+gopher:x:13:30:gopher:/var/gopher:/sbin/nologin
+games:x:12:100:games:/usr/games:/sbin/nologin
+ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
+dbus:x:81:81:System message bus:/:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+bin:x:1:1:bin:/bin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+
+
+[root@localhost ~]# sort -t ":" -k 3,3 /etc/passwd              <== 指定分隔符 `:`, 用第三个字段排序
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+uucp:x:10:14:uucp:/var/spool/uucp:/sbin/nologin
+operator:x:11:0:operator:/root:/sbin/nologin
+games:x:12:100:games:/usr/games:/sbin/nologin
+gopher:x:13:30:gopher:/var/gopher:/sbin/nologin
+ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+saslauth:x:499:76:Saslauthd user:/var/empty/saslauth:/sbin/nologin
+sync:x:5:0:sync:/sbin:/bin/sync
+user1:x:500:501::/home/user1:/bin/bash
+user2:x:501:502::/home/user2:/bin/bash
+user3:x:503:504::/home/user3:/bin/bash
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+vcsa:x:69:69:virtual console memory owner:/dev:/sbin/nologin
+halt:x:7:0:halt:/sbin:/sbin/halt
+sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
+mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+dbus:x:81:81:System message bus:/:/sbin/nologin
+postfix:x:89:89::/var/spool/postfix:/sbin/nologin
+nobody:x:99:99:Nobody:/:/sbin/nologin
+
+
+# 上面的结果中，仔细查看，会发现。daemon 用户的 UID 为 2 ，为什么排在了下面。这是因为 sort 默认是使用字符排序的，前面用户的 UID 第一个字符都为 1 ，所以排在了后面。如果要按照数字排序，可以使用 -n 选项
+
+[root@localhost ~]# sort -n -t ":" -k 3,3 /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+sync:x:5:0:sync:/sbin:/bin/sync
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+halt:x:7:0:halt:/sbin:/sbin/halt
+mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+uucp:x:10:14:uucp:/var/spool/uucp:/sbin/nologin
+operator:x:11:0:operator:/root:/sbin/nologin
+games:x:12:100:games:/usr/games:/sbin/nologin
+gopher:x:13:30:gopher:/var/gopher:/sbin/nologin
+ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
+vcsa:x:69:69:virtual console memory owner:/dev:/sbin/nologin
+sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
+dbus:x:81:81:System message bus:/:/sbin/nologin
+postfix:x:89:89::/var/spool/postfix:/sbin/nologin
+nobody:x:99:99:Nobody:/:/sbin/nologin
+saslauth:x:499:76:Saslauthd user:/var/empty/saslauth:/sbin/nologin
+user1:x:500:501::/home/user1:/bin/bash
+user2:x:501:502::/home/user2:/bin/bash
+user3:x:503:504::/home/user3:/bin/bash
+----
+
+=== `uniq` 命令
+
+`uniq` 命令其实和 `sort -u` 选项是一样的，是用来取消重复行的命令。
+
+[source,shell]
+----
+[root@localhost ~]# uniq [选项] 文件名
+# -i : 忽略大小写
+----
+
+=== `wc` 统计命令
+
+[source,shell]
+----
+[root@localhost ~]# wc [选项] 文件名
+# -l : 只统计行数
+# -w : 只统计单词数
+# -m : 只统计字符数
+----
+
+== 条件判断
+
+=== 按照文件类型进行判断
+
+我们先来看看 test 可以进行哪些文件类型的判断
+
+|===
+|测试选项 |作用
+
+| -b 文件
+| 判断该文件是否存在，并且是否为块设备文件(是块设备文件为真)
+
+| -c 文件
+| 判断该文件是否存在，并且是否为字符设备文件(是字符设备文件为真)
+
+| -d 文件
+| 判断该文件是否存在，并且是否为目录文件(是目录文件为真)
+
+| -e 文件
+| 判断该文件是否存在(存在为真)
+
+| -f 文件
+| 判断该文件是否存在，并且是否为普通文件(是普通文件为真)
+
+| -L 文件
+| 判断该文件是否存在，并且是否为符号链接文件(是符号链接文件为真)
+
+| -p 文件
+| 判断该文件是否存在，并且是否为管道文件(是管道文件为真)
+
+| -s 文件
+| 判断该文件是否存在，并且是否为非空(非空为真)
+
+| -S 文件
+| 判断该文件是否存在，并且是否为套接字文件(是套接字文件为真)
+|===
+
+
+[source,shell]
+----
+[root@localhost ~]# [ -e /root/sh/ ]
+[root@localhost ~]# echo $?
+0
+# 判断结果为 0 ，/root/sh/ 目录是存在的
+[root@localhost ~]# [ -e /root/test/ ]
+[root@localhost ~]# echo $?
+1
+# 判断结果为 1 ，/root/test/ 目录是不存在的
+
+[root@localhost ~]# [ -d /root/sh/ ] && echo "yes" || echo "no"
+yes
+
+----
+
+=== 按照文件权限进行判断
+
+test 是非常完善的判断命令，还可以判断文件的权限
+
+|===
+|测试选项 |作用
+
+| -r 文件
+| 判断该文件是否存在，并且该文件是否有读权限(有读权限为真)
+
+| -w 文件
+| 判断该文件是否存在，并且该文件是否有写权限(有写权限为真)
+
+| -x 文件
+| 判断该文件是否存在，并且该文件是否有执行权限(有执行权限为真)
+
+| -u 文件
+| 判断该文件是否存在，并且该文件是否有 SUID 权限(有 SUID 权限为真)
+
+| -g 文件
+| 判断该文件是否存在，并且该文件是否有 SGID 权限(有 SGID 权限为真)
+
+| -k 文件
+| 判断该文件是否存在，并且该文件是否有 SBIT 权限(有 SBIT 权限为真)
+|===
+
+[source,shell]
+----
+[root@localhost ~]# [ -w student.txt ] && echo "yes" || echo "no"
+yes
+----
+
+=== 两个文件之间进行比较
+
+|===
+|测试选项 |作用
+
+| 文件1 -nt 文件2
+| 判断 文件1 的修改时间是否比 文件2 的新 (如果新则为真)
+
+| 文件1 -ot 文件2
+| 判断 文件1 的修改时间是否比 文件2 的旧 (如果旧则为真)
+
+| 文件1 -ef 文件2
+| 判断 文件1 是否和 文件2 的 Inode 号一致(如果是则为真)，可以理解为两个文件是否是同一个文件。这个判断用于判断硬链接是个很好的方法
+|===
+
+[source,shell]
+----
+[root@localhost ~]# ln /root/student.txt /tmp/stu.txt
+[root@localhost ~]# [ /root/student.txt -ef /tmp/stu.txt ] && echo "yes" || echo "no"
+yes
+----
+
+=== 两个整数之间比较
+
+|===
+|测试选项 |作用
+
+| 整数1 -eq 整数2
+| 判断 整数1 是否和 整数2 相等(相等为真)
+
+| 整数1 -ne 整数2
+| 判断 整数1 是否和 整数2 不相等(不相等为真)
+
+| 整数1 -gt 整数2
+| 判断 整数1 是否大于 整数2(大于为真)
+
+| 整数1 -lt 整数2
+| 判断 整数1 是否小于 整数2(小于为真)
+
+| 整数1 -ge 整数2
+| 判断 整数1 是否大于等于 整数2(大于等于为真)
+
+| 整数1 -le 整数2
+| 判断 整数1 是否小于等于 整数2(小于等于为真)
+|===
+
+[source,shell]
+----
+[root@localhost ~]# [ 23 -ge 22 ] && echo "yes" || echo "no"
+yes
+[root@localhost ~]# [ 23 -le 22 ] && echo "yes" || echo "no"
+no
+----
+
+=== 字符串的判断
+
+|===
+|测试选项 |作用
+
+| -z 字符串
+| 判断字符串是否为空(为空返回真)
+
+| -n 字符串
+| 判断字符串是否为非空(非空返回真)
+
+| 字符串1 == 字符串2
+| 判断 字符串1 是否和 字符串2 相等(相等为真)
+
+| 字符串1 != 字符串2
+| 判断 字符串1 是否和 字符串2 不相等(不相等为真)
+|===
+
+[source,shell]
+----
+[root@localhost ~]# name=jcohy
+[root@localhost ~]# [ -z "$name" ] && echo "yes" || echo "no"
+no
+# 判断 name 变量是否为空，不为空，所以返回 no
+[root@localhost ~]# aa=11
+[root@localhost ~]# bb=22
+[root@localhost ~]# [ "$aa" == "bb" ] && echo "yes" || echo "no"
+no
+# 判断两个变量的值是否相等，明显不相等，返回 no
+----
+
+=== 多重条件判断
+
+|===
+|测试选项 |作用
+
+| 判断1 -a 判断2
+| 逻辑与，判断1 和 判断2 都成立，最终的结果才为真
+
+| 判断1 -o 判断2
+| 逻辑或，判读1 和 判断2 有一个成立，最终的结果就为真
+
+| !判断
+| 逻辑非，使原始的判断式取反
+|===
+
+[source,shell]
+----
+[root@localhost ~]# [ -n "$aa" -a "$aa" -gt 23 ] && echo "yes" || echo "no"
+no
+[root@localhost ~]# [ -n "$aa" -o "$aa" -gt 23 ] && echo "yes" || echo "no"
+yes
+[root@localhost ~]# [ -n "$aa" ] && echo "yes" || echo "no"
+yes
+[root@localhost ~]# [ ! -n "$aa" ] && echo "yes" || echo "no"
+no
+----
+
+== 流程控制
+
+=== if 条件判断
+
+单分支 if 语句
+
+[source,shell]
+----
+if [ 条件判断式 ];then
+    程序
+fi
+----
+
+单分支条件语句需要注意几个点
+
+* if 语句使用 fi 结尾
+* [ 条件判断式 ] 就是使用 test 命令判断，所以中括号和条件判断式之间必须有空格
+* then 后面跟符合条件之后执行的程序，可以放在 []  之后，用 `:` 分割。也可以换行写入，就不需要 `;`了。也可以这样写
+
+[source,shell]
+----
+if [ 条件判断式 ]
+    then
+        程序
+fi
+----
+
+双分支条件语句
+
+[source,shell]
+----
+if [ 条件判断式 ]
+    then
+        条件成立时，执行的程序
+    else
+        条件不成立时，执行的程序
+fi
+----
+
+.数据库备份
+[source,shell]
+----
+[root@localhost ~]# vi sh/bakmysql.sh
+#!/bin/bash
+
+ntpdate asia.pool.ntp.org &>/dev/null
+#同步系统时间
+
+data=$(date+%y%m%d)
+#把当前系统时间按照年月日格式赋予变量 date
+
+size=$(du -sh /var/lib/mysql)
+#统计mysql数据库的大小，并把大小赋予 size 变量
+
+if [ -d /tmp/dbbak ]
+#判断备份目录是否存在，是否为目录
+	then
+	# 如果判断为真
+		echo "Data: $date!" > /tmp/dbbak/dbinfo.txt
+		# 把当前日期写入临时文件
+		echo "Data size : $size" >> /tmp/dbbak/dbinfo.txt
+		# 把数据库大小写入临时文件
+		cd /tmp/dbbak
+		# 进入备份目录
+		tar -zcf mysql-lib-$date.tar.gz /var/lib/mysql dbinfo.txt &>/dev/null
+		# 打包压缩数据库与临时文件，把所有输出丢入垃圾箱
+		rm -rf /tmp/dbbak/dbinfo.txt
+		# 删除临时文件
+	else
+	# 如果判断为假，则建立备份目录
+		mkdir /tmp/dbbak
+		echo "Data: $date!" > /tmp/dbbak/dbinfo.txt
+        # 把当前日期写入临时文件
+        echo "Data size : $size" >> /tmp/dbbak/dbinfo.txt
+        # 把数据库大小写入临时文件
+		cd /tmp/dbbak
+        # 进入备份目录
+        tar -zcf mysql-lib-$date.tar.gz /var/lib/mysql dbinfo.txt &>/dev/null
+        # 打包压缩数据库与临时文件，把所有输出丢入垃圾箱
+        rm -rf /tmp/dbbak/dbinfo.txt
+        # 删除临时文件
+fi
+----
+
+.判断 Apache 是否启动，如果没有就自动启动
+[source,shell]
+----
+[root@localhost ~]# vi sh/autostart.sh
+#!/bin/bash
+
+port=$(nmap -sT 192.168.4.210 | grep tcp | grep http| awk '{printf $2}')
+# 使用 nmap 命令扫描服务器，并截取 apache 服务的状态，赋予变量 port
+
+if [ "$post" == "open" ]
+    then
+        echo "$(date) httpd is ok!" >> /tmp/autostart-acc.log
+    else
+        /etc/rc.d/init.d/httpd start &>/dev/null
+        echo "$(date) restart httpd!!" >> /tmp/autostart-err.log
+fi
+----
+
+我们使用 nmap 端口扫面命令，`nmap` 命令格式如下:
+
+[source,shell]
+----
+[root@localhost ~]# nmap -sT 域名会Ip
+# -s : 扫描
+# -T : 扫描所有开启的 TCP 端口
+----
+
+多分支 if 语句
+
+[source,shell]
+----
+if [ 条件判断式1 ]
+    then
+        条件判断式1成立时，执行的程序1
+elif [ 条件判断式2 ]
+    then
+        条件判断式2成立时，执行的程序2
+...省略更多条件...
+else
+    当所有条件都不成立时，最后执行此条件
+fi
+----
+
+
+
+.`cat` 选项
+|===
+|参数 |说明
+
+| -A
+| 相
+
+| -E
+| 列
+
+| -n
+| 显
+
+| -T
+| 把
+
+| -v
+| 列
+|===
+
+=== 多分支 case 条件语句
+
+`case` 语句和 `if...elif...if` 语句一样都是多分支条件语句，不过和 if 多条件分支语句不同的是，case 语句只能判断一种条件关系。而 if 语句可以判断多种条件关系。case 语句语法如下
+
+[source,txt]
+----
+case $变量名 in
+    "值1")
+    执行程序1
+    ;;
+    "值2")
+    执行程序2
+    ;;
+    "值3")
+    执行程序1
+    ;;
+    ...
+    *)
+    如果变量的值都不是以上值，则执行此程序
+    ;;
+esac
+----
+
+=== for 循环
+
+for 循环是固定循环，也就是在循环时已经知道要进行几次循坏，有时也把 for 循环成为计数循环。 for 循环的语法有以下两种
+
+[source,shell]
+----
+for 变量 in 值1 值2 值3
+    do
+        程序
+    done
+
+for(( 初始值;循环控制条件;变量变化 ))
+    do
+        程序
+    done
+----
+
+.例子1：批量解压缩
+[source,shell]
+----
+[root@localhost ~]# vi sh/auto-tar.sh
+#!/bin/bash
+
+cd /lamp
+# 进入压缩包目录
+ls *.tar.gz > /tmp/ls.log
+# 把所有 .tar.gz 结尾的文件覆盖到 /tmp/ls.log 文件中
+
+for i in $(cat ls.log)
+    do
+        tar -zxf $i &>/dev/null
+    done
+
+rm -rf /lamp/ls.log
+----
+
+.例子2：批量添加指定数量的用户
+[source,shell]
+----
+[root@localhost ~]# vi sh/useradd.sh
+#!/bin/bash
+
+read -P "Please input user name: " -t 30 name
+read -P "Please input the number of users: " -t 30 num
+read -P "Please input the password of users: " -t 30 pass
+
+if [ ! -z "$name" -a ! -z "$num" -a ! -z "$pass" ]
+# 判断三个变量不为空
+    then
+    y=$(echo $sum | sed 's/[0-9]//g')
+    # 定义变量的值为后续命令的结果
+    # 后续命令的作用是，把变量 num 的值替换为空，如果能替换为空，证明 num 的值为数字。否则不为数字。使用这种方法来判断 num 的值是否为数字
+    if [ -z "$y" ]
+        then
+        for (( i=1;i<=$num;i=i+1 ))
+            do
+                /usr/sbin/useradd $name$i &>/dev/null
+                # 添加用户
+                echo $pass | /usr/bin/passwd --stdin $name$i &>/dev/null
+                # 设置密码
+            done
+    fi
+fi
+----
+
+.例子3：批量删除用户
+[source,shell]
+----
+[root@localhost ~]# vi sh/userdel.sh
+#!/bin/bash
+
+user=$( cat /etc/passwd | grep "/bin/bash" | grep -v "root" | cut -d ":" f 1)
+# 读取用户信息文件，提取可以登录的用户，取消 root 用户，截取第一列用户名
+
+for i in $user
+    do
+        userdel -r $i
+    done
+----
+
+=== while 循环
+
+[source,shell]
+----
+while [条件判断式]
+    do
+        程序
+    done
+----
+
+对 while 循环来讲，只要条件判断式成立，循环就会一直执行，知道条件判断式不成立，循环才停止。我们实现一个简单的例子：从 1 加到 100
+
+[source,shell]
+----
+[root@localhost ~]# vi sh/while-example.sh
+#!/bin/bash
+
+i=1;
+s=0
+
+while [ $i -le 100 ]
+    do
+        s=$(( $s+$i ))
+        i=$(( $i+1 ))
+    done
+
+echo "The sum is: $s"
+----
+
+=== until 循环
+
+until 循环和 while 循环相反，until 循环只要判断条件不成立则进行循环。并执行循环程序，一旦循环条件成立，则终止循环。语法如下:
+
+[source,shell]
+----
+until [条件判断式]
+    do
+        程序
+    done
+----
+
+还是以上面的那个例子为例，
+
+[source,shell]
+----
+[root@localhost ~]# vi sh/while-example.sh
+#!/bin/bash
+
+i=1;
+s=0
+
+until [ $i -gt 100 ]
+    do
+        s=$(( $s+$i ))
+        i=$(( $i+1 ))
+    done
+
+echo "The sum is: $s"
+----
+
+=== 函数
+
+[source,shell]
+----
+function 函数名 () {
+    程序名
+}
+----
+
+还是上面的例子，我们使用函数来实现累加
+
+[source,shell]
+----
+[root@localhost ~]# vi sh/function.sh
+#!/bin/bash
+
+function sum(){
+    s=0
+    for (( i=0;i<=$1;i=i+1 ))
+        do
+            s=(( $s+$i ))
+        done
+    echo "The sum of 1+2+3+...+$i is: $s"
+
+}
+
+read -P "Please input a number : -t 30 num"
+
+y=$(echo $num | sed 's/[0-9]//g')
+
+if [ -z "$y"]
+    then
+        sum $sum
+    else
+        echo "Error!! Please input a number"
+fi
+----
+
+=== 特殊流程控制语句
+
+==== exit 语句
+
+系统是由 exit 命令的，用户退出当前用户的登录状态。可是在 Shell 脚本中，exit 语句是用来退出当前脚本的
