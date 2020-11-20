@@ -1,0 +1,99 @@
+[[linux-service]]
+= 服务管理
+
+== 服务的分类
+
+在 Linux 中，服务可分为 RPM 包默认安装的服务和源码包安装的服务。在RPM 包默认安装的服务中又分为 独立的服务和基于 xinetd 服务。如图
+
+image::images/linux15.png[]
+
+RPM 包默认安装的服务:
+
+* 独立的服务
+
+就是独立启动的意思，这些服务可以自行启动，而不依赖其他的服务管理
+
+* 基于 xinetd 服务
+
+这种服务就不能自动启动了，而是要依靠服务管理来启动这种服务。这个服务管理的服务就是 xinetd 服务，xinetd 服务是系统的超级守护进程。xinetd 服务
+的作用就是管理不能独立启动的服务。当有客户端请求时，先请求 xinetd 服务，由 xinetd 服务去唤醒相对应的服务。当客户端请求结束时，被唤醒的服务会关闭并释放资源。
+
+源码包安装的服务
+
+查询已经安装的服务
+
+[source,shell]
+----
+[root@localhost ~]# [root@localhost grub]# chkconfig --list [服务名]
+# --list 列出所有 RPM 默认安装服务的自启动状态
+----
+
+== RPM 包默认安装的服务管理
+
+=== 独立服务的管理
+
+==== 独立服务的启动管理
+
+* 使用 `/etc/init.d/` 目录中的启动脚本启动服务
+
+[source,shell]
+----
+[root@localhost ~]# /etc/init.d/httpd start
+----
+
+* 使用 `service` 命令来启动独立的服务
+
+[source,shell]
+----
+[root@localhost ~]# service [独立服务名] start | stop| restart | ...
+----
+
+==== 独立服务的自启动管理
+
+* 使用 `chkconfig` 服务自启动管理命令
+
+[source,shell]
+----
+[root@localhost ~]# chkconfig [--level 运行级别] 独立服务名 | on|off
+# --level 设置在那个运行级别中开机自启动或关闭
+----
+
+* 修改 `/etc/rc.d/rc.local/` 文件，设置服务自启动
+
+[source,shell]
+----
+[root@localhost ~]# vi /etc/rc.d/rc.local
+
+#!/bin/sh
+#
+# This script will be executed *after* all the other init scripts.
+# You can put your own initialization stuff in here if you don't
+# want to do the full Sys V style init stuff.
+
+touch /var/lock/subsys/local
+/etc/rc.d/init.d/httpd start
+----
+
+* 使用 `ntsysv` 命令管理自启动
+
+[source,shell]
+----
+[root@localhost ~]# ntsysv [--level 运行级别]
+# --level 设置在那个运行级别中开机自启动或关闭
+----
+
+这个命令的操作是这样的:
+
+* 上下键: 在不同服务之间移动
+* 空格键: 选定或取消服务的自启动
+* tab 键: 在不同项目间切换
+* F1 键: 显示服务的说明
+
+=== 基于 xinetd 服务的管理
+
+==== 基于 xinetd 服务的启动
+
+我们使用 telnet 服务为例，telnet 服务是用来进程系统远程管理的，端口是 23，不过需要注意的是 telnet 服务的远程管理数据在网络当中是明文传输的，非常不安全。所以在生产环境不建议启动 telnet 服务。
+
+== 源码包安装的服务管理
+

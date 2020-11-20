@@ -1,0 +1,413 @@
+[[boot]]
+= 启动引导与修复
+
+== 系统运行级别
+
+=== 运行级别
+
+Linux 默认一共有 7 个运行级别
+
+|===
+|运行级别 |含义
+
+| 0
+| 关机
+
+| 1
+| 单用户默认，可以想象为 Windows 的安全模式，主要用来修复系统
+
+| 2
+| 不完全的命令模式，不含 NFS 服务
+
+| 3
+| 系统保留
+
+| 4
+| 系统保留
+
+| 5
+| 图形模式
+
+| 6
+| 重启
+|===
+
+在 Linux 系统中可以使用 `runlevel` 命令来查看系统的运行级别
+
+[source,shell]
+----
+[root@localhost ~]# runlevel
+N 3
+# N 代表进入这个级别前，上一级是那个级别。3 代表当前级别
+# 这里的 N 就是 "NONE" 的意思。也就是系统开机直接进入到 3 这个级别
+----
+
+手工改变当前级别，可以使用 `init` 命令
+
+[source,shell]
+----
+[root@localhost ~]# init 0
+# 关机
+[root@localhost ~]# init 6
+# 重启
+----
+
+[NOTE]
+====
+使用 init 命令关机重启是不安全的，容易造成数据丢失
+====
+
+=== 默认运行级别
+
+知道了运行级别的作用，我们回到系统启动过程来。`/etc/init/rcS.conf` 配置文件调用 `/etc/inittab` 配置文件的目的就是为了确定系统的默认运行级别。也就是系统一开机就会进入到那个运行级别。这个文件的内容如下
+
+[source,shell]
+----
+[root@localhost ~]# vim /etc/inittab
+
+# inittab is only used by upstart for the default runlevel.
+#
+# ADDING OTHER CONFIGURATION HERE WILL HAVE NO EFFECT ON YOUR SYSTEM.
+#
+# System initialization is started by /etc/init/rcS.conf
+# 系统会先调用 /etc/init/rcS.conf 文件
+# Individual runlevels are started by /etc/init/rc.conf
+# 再调用 /etc/init/rc.conf，在不同的运行级别启动不同的服务
+# Ctrl-Alt-Delete is handled by /etc/init/control-alt-delete.conf
+# 通过这个配置文件判断 Ctrl-Alt-Delete 热启动键是否可用
+# Terminal gettys are handled by /etc/init/tty.conf and /etc/init/serial.conf,
+# with configuration in /etc/sysconfig/init.
+# 判断系统可以启动的本地终端数量，及终端的基本设置(颜色等)
+# For information on how to write upstart event handlers, or how
+# upstart works, see init(5), init(8), and initctl(8).
+#
+# Default runlevel. The runlevels used are:
+#   0 - halt (Do NOT set initdefault to this)
+#   1 - Single user mode
+#   2 - Multiuser, without NFS (The same as 3, if you do not have networking)
+#   3 - Full multiuser mode
+#   4 - unused
+#   5 - X11
+#   6 - reboot (Do NOT set initdefault to this)
+#
+id:3:initdefault:
+# 这就是系统的默认运行级别也就是系统开机后直接进入那个运行级别
+----
+
+[NOTE]
+====
+这里的运行级别只能写 3 或 5 ，其他的级别要么就是关机重启，要么就是保留或单用户，都不能作为系统默认运行级别的
+====
+
+=== /etc/rc.d/rc.local 文件
+
+这个配置文件会在用户登录之前读取，这个文件中写入什么命令，在每次系统启动时都会执行一次。也就是说，我如果有任何需要在系统启动就运行的工作，只需要写入 `/etc/rc.d/rc.local` 这个配置文件即可。
+
+[source,shell]
+----
+[root@localhost ~]# ll /etc/rc.local
+lrwxrwxrwx. 1 root root 13 11月  5 17:26 /etc/rc.local -> rc.d/rc.local
+# 有个链接文件，两个文件修改那一个都可以
+[root@localhost ~]# vi /etc/rc.d/rc.local
+
+#!/bin/sh
+#
+# This script will be executed *after* all the other init scripts.
+# You can put your own initialization stuff in here if you don't
+# want to do the full Sys V style init stuff.
+
+touch /var/lock/subsys/local
+# 默认会 touch 这个文件，每次系统启动时 touch 这个文件，这个文件的修改时间就是系统的启动时间了
+
+/etc/rc.d/init.d/httpd start
+# 如果写入 rpm 包安装的 apache 的启动命令，apache 服务就会开机启动了。
+----
+
+== 启动引导程序
+
+早期的 Lilo 引导程序已经不是很常见了，grub 相比来讲有很大的优势。主要有：
+
+* 支持更多的文件系统
+* grub 的主程序可以直接在文件系统中查找内核文件
+* 在系统启动时，可以利用 grub 的交互界面编辑和修改启动项
+* 可以动态的修改 grub 的配置文件，这样在修改配置文件之后不需要重新安装 grub，而只需要重新启动就可以生效了。
+
+=== /boot/grub 目录
+
+grub 的作用有以下几个。
+
+* 加载操作系统的内核
+* 拥有一个可以让用户选择的菜单，来选择到底启动那个系统
+* 调用其他的启动引导程序，实现多系统引导
+
+grub 的配置文件主要放在 `/boot/grub` 目录，我们来看看这个目录下到底有哪些文件吧。
+
+[source,shell]
+----
+[root@localhost ~]# cd /boot/grub/
+[root@localhost grub]# ll -h
+总用量 274K
+-rw-r--r--. 1 root root   63 11月  5 17:30 device.map
+# grub 中硬盘的设备文件名和系统设备文件名的对应文件
+-rw-r--r--. 1 root root  14K 11月  5 17:30 e2fs_stage1_5
+# ext2/ext3 文件系统的 stage 1.5 文件
+-rw-r--r--. 1 root root  13K 11月  5 17:30 fat_stage1_5
+# FAT 文件系统的 stage 1.5 文件
+-rw-r--r--. 1 root root  12K 11月  5 17:30 ffs_stage1_5
+# FFS 文件系统的 stage 1.5 文件
+-rw-------. 1 root root  795 11月  5 17:30 grub.conf
+# grub 的配置文件
+-rw-r--r--. 1 root root  12K 11月  5 17:30 iso9660_stage1_5
+# ISO9660 文件系统的 stage 1.5 文件
+-rw-r--r--. 1 root root  13K 11月  5 17:30 jfs_stage1_5
+# JFS 文件系统的 stage 1.5 文件
+lrwxrwxrwx. 1 root root   11 11月  5 17:30 menu.lst -> ./grub.conf
+# grub 的配置文件.和 grub.conf 是软链接，所以两个文件修改那个都可以
+-rw-r--r--. 1 root root  12K 11月  5 17:30 minix_stage1_5
+# minix 文件系统的 stage 1.5 文件
+-rw-r--r--. 1 root root  15K 11月  5 17:30 reiserfs_stage1_5
+# reiserfs 文件系统的 stage 1.5 文件
+-rw-r--r--. 1 root root 1.4K 11月 15 2010 splash.xpm.gz
+# 系统启动时，grub 程序的背景图像
+-rw-r--r--. 1 root root  512 11月  5 17:30 stage1
+# 安装到引导扇区的 stage1 的备份文件
+-rw-r--r--. 1 root root 124K 11月  5 17:30 stage2
+# 安装到引导扇区的 stage2 的备份文件
+-rw-r--r--. 1 root root  12K 11月  5 17:30 ufs2_stage1_5
+# UFS 文件系统的 stage 1.5 文件
+-rw-r--r--. 1 root root  12K 11月  5 17:30 vstafs_stage1_5
+# vstafs 文件系统的 stage 1.5 文件
+-rw-r--r--. 1 root root  14K 11月  5 17:30 xfs_stage1_5
+# xfs 文件系统的 stage 1.5 文件
+----
+
+其实这个目录中主要就是 grub 的配置文件和各个文件系统的 stage1.5 文件。不过 grub 的配置文件有两个，他们是软链接，所以修改那一个都可以
+
+=== Grub 配置文件
+
+在 Grub 中分区表示方法
+
+.第一块 SCSI 硬盘
+|===
+|分区 |Linux 中的分区设备名 | Grub 中的设备文件名
+
+| 第一个主分区
+| /dev/sda1
+| hd(0,0)
+
+| 第二个主分区
+| /dev/sda2
+| hd(0,1)
+
+| 扩展分区
+| /dev/sda3
+| hd(0,2)
+
+| 第一个逻辑分区
+| /dev/sda5
+| hd(0,4)
+|===
+
+.第二块 SCSI 硬盘
+|===
+|分区 |Linux 中的分区设备名 | Grub 中的设备文件名
+
+| 第一个主分区
+| /dev/sdb1
+| hd(1,0)
+
+| 第二个主分区
+| /dev/sdb2
+| hd(1,1)
+
+| 扩展分区
+| /dev/sdb3
+| hd(1,2)
+
+| 第一个逻辑分区
+| /dev/sdb5
+| hd(1,4)
+|===
+
+Grub 的配置文件
+
+[source,shell]
+----
+[root@localhost grub]# vi /boot/grub/grub.conf
+
+# grub.conf generated by anaconda
+#
+# Note that you do not have to rerun grub after making changes to this file
+# NOTICE:  You have a /boot partition.  This means that
+#          all kernel and initrd paths are relative to /boot/, eg.
+#          root (hd0,0)
+#          kernel /vmlinuz-version ro root=/dev/mapper/VolGroup-lv_root
+#          initrd /initrd-[generic-]version.img
+#boot=/dev/sda
+default=0
+timeout=5
+splashimage=(hd0,0)/grub/splash.xpm.gz
+hiddenmenu
+title CentOS 6 (2.6.32-642.el6.x86_64)
+        root (hd0,0)
+        kernel /vmlinuz-2.6.32-642.el6.x86_64 ro root=/dev/mapper/VolGroup-lv_root rd_NO_LUKS rd_NO_MD rd_LVM_LV=VolGroup/lv_swap crashkernel=auto LANG=zh_CN.UTF-8 rd_LVM_LV=VolGroup/lv_root  KEYBOARDTYPE=pc KEYTABLE=us rd_NO_DM rhgb quiet
+        # 以上四行为一行，只是内容过多换行
+        initrd /initramfs-2.6.32-642.el6.x86_64.img
+
+----
+
+* default=0: 默认启动第一个系统，也就是如果在等待时间结束后，用户没有选择系统，那么系统就会自动进入第一个系统。如果有多系统共存，每个系统都有自己的 `title` 字段，如果需要默认进入第二个系统，这里就可以设为 default=1
+* timeout=5: 等待时间，默认是 5s。如果 timeout=0 则不会等待直接进入系统。如果 timeout=-1 则一直等待用户输入，不会直接进入系统
+* splashimage=(hd0,0)/grub/splash.xpm.gz: 这里是指定 grub 启动时背景图像文件的保存位置的。也就是 CentOS 6.x 启动时的后台蓝色图像
+* hiddenmenu: 隐藏菜单，启动时默认只能看到读秒，而不能看到菜单。如果想要看到菜单，需要按任意键。如果注释了这句话，就能直接看到菜单了。
+
+以上就是 grub 的整体设置，下面介绍 CentOS 启动时设置
+
+* title CentOS 6 (2.6.32-642.el6.x86_64): `title` 就是标题的意思。也就是 `title` 后面写入的是什么，那么系统启动时在 grub 的启动菜单中看到的就是什么
+* root (hd0,0): 是指启动程序的保存分区，注意，这里的 `root` 并不是管理员。在我的系统系统中，`/boot/` 分区是独立划分的，而且设备文件名为 /dev/sda1,所以在 grub 中，被描述为 hd(0,0)
+* kernel
+** /vmlinuz-2.6.32-642.el6.x86_64: 指定了内核文件的位置，这里的 `/` 是指 `/boot` 分区。
+** ro: 启动时以只读方式挂载跟文件系统，这是为了让启动过程不影响磁盘内的文件系统
+** root=/dev/mapper/VolGroup-lv_root: 指定根文件系统所在的位置
+** rd_NO_LUKS: 禁用 LUKS，LUKS 用来给磁盘加密
+** rd_NO_MD: 禁用软 RAID
+** rd_NO_DM: 禁用硬 RAID
+** rd_LVM_LV=VolGroup/lv_swap:
+** crashkernel=auto: 自动为 crashkernel 预留内存
+** LANG=zh_CN.UTF-8: 语言环境
+** rd_LVM_LV=VolGroup/lv_root:
+** KEYBOARDTYPE=pc KEYTABLE=us: 键盘类型
+** rhgb: 用图片代替启动过程中的文字信息，启动完成之后可以使用 `dmesg` 命令来查看这些文件信息
+** quiet: 隐藏启动信息，只显示重要信息
+* initrd /initramfs-2.6.32-642.el6.x86_64.img: 指定了 `initramfs` 内存文件系统镜像文件所在位置
+
+=== Grub 加密
+
+[source,shell]
+----
+[root@localhost grub]# grub-md5-crypt
+Password:
+Retype password:
+$1$g9Z/C1$Z8OC70GTz8x6TtN5IgH0u1
+----
+
+这样就可以生成加密密码串，这个字串是采用 MD5 加密的，我们可以利用这个加密字串来加密 grub 的配置文件
+
+grub 菜单整体加密
+
+如果只是加密单个启动菜单，grub 的编辑模式是不能锁定的，还是可以按 `e` 进入编辑模式。而且进入到编辑模式后，是可以直接删除 `password` 字段，再按 `b` (boot 启动)键
+就可以不用密码直接进入系统。这时就需要给菜单整体加密，整体加密后，想要进入 grub 编辑界面，必须输入密码。加密的方法只是把 `password` 字段换个位置而已，如下
+
+[source,shell]
+----
+[root@localhost grub]# vi /boot/grub/grub.conf
+
+# grub.conf generated by anaconda
+#
+# Note that you do not have to rerun grub after making changes to this file
+# NOTICE:  You have a /boot partition.  This means that
+#          all kernel and initrd paths are relative to /boot/, eg.
+#          root (hd0,0)
+#          kernel /vmlinuz-version ro root=/dev/mapper/VolGroup-lv_root
+#          initrd /initrd-[generic-]version.img
+#boot=/dev/sda
+default=0
+timeout=5
+password --md5 $1$g9Z/C1$Z8OC70GTz8x6TtN5IgH0u1
+splashimage=(hd0,0)/grub/splash.xpm.gz
+hiddenmenu
+title CentOS 6 (2.6.32-642.el6.x86_64)
+        root (hd0,0)
+        kernel /vmlinuz-2.6.32-642.el6.x86_64 ro root=/dev/mapper/VolGroup-lv_root rd_NO_LUKS rd_NO_MD rd_LVM_LV=VolGroup/lv_swap crashkernel=auto LANG=zh_CN.UTF-8 rd_LVM_LV=VolGroup/lv_root  KEYBOARDTYPE=pc KEYTABLE=us rd_NO_DM rhgb quiet
+        initrd /initramfs-2.6.32-642.el6.x86_64.img
+----
+
+但是这样加密，启动 CentOS 时，是不需要密码就能正常启动的，那我如果需要既要 grub 整体加密，又需要系统启动时输入密码。可以按下面的方法做
+
+[source,shell]
+----
+[root@localhost grub]# vi /boot/grub/grub.conf
+
+# grub.conf generated by anaconda
+#
+# Note that you do not have to rerun grub after making changes to this file
+# NOTICE:  You have a /boot partition.  This means that
+#          all kernel and initrd paths are relative to /boot/, eg.
+#          root (hd0,0)
+#          kernel /vmlinuz-version ro root=/dev/mapper/VolGroup-lv_root
+#          initrd /initrd-[generic-]version.img
+#boot=/dev/sda
+default=0
+timeout=5
+password --md5 $1$g9Z/C1$Z8OC70GTz8x6TtN5IgH0u1
+splashimage=(hd0,0)/grub/splash.xpm.gz
+hiddenmenu
+title CentOS 6 (2.6.32-642.el6.x86_64)
+        lock
+        # 在 title 字段加入 lock，代表锁死。如果不输入正确的 grub 密码也无法启动
+        root (hd0,0)
+        kernel /vmlinuz-2.6.32-642.el6.x86_64 ro root=/dev/mapper/VolGroup-lv_root rd_NO_LUKS rd_NO_MD rd_LVM_LV=VolGroup/lv_swap crashkernel=auto LANG=zh_CN.UTF-8 rd_LVM_LV=VolGroup/lv_root  KEYBOARDTYPE=pc KEYTABLE=us rd_NO_DM rhgb quiet
+        initrd /initramfs-2.6.32-642.el6.x86_64.img
+----
+
+== 系统修复模式
+
+=== 单用户模式
+
+Linux 的单用户模式有点类似 Windows 的安全模式，只启动最少的程序用于系统修复。在单用户模式(运行级别为 1)中，Linux 引导进入根 shell，网络
+被禁用，只有少数进程运行。单用户模式可以用来修改文件系统损坏，还原配置文件，移动用户数据等
+
+=== 单用户模式常见错误修复
+
+==== 遗忘 root 密码
+
+单用户模式的最大特点就是不需要帐号密码就能登录。既然已经登录了单用户模式，直接给 root 设置新密码即可
+
+[source,shell]
+----
+[root@localhost ~]# passwd root
+----
+
+==== 修改系统默认运行级别
+
+[source,shell]
+----
+[root@localhost ~]# vi /etc/inittab
+id:3:initdefault:
+# 把默认运行级别修改为 3 或 5
+----
+
+绝大多数系统错误都可以通过单用户模式进行修复，理论上是只要能进入单用户模式，系统错误就可以被单用户模式修复。
+
+=== 光盘修复
+
+首先，你需要有系统光盘，或系统修复光盘。我们只需要把光盘放入光驱，然后重启系统，修改 BIOS 启动顺序，让系统从光盘启动即可。
+
+光盘修复常见的错误
+
+* 系统文件丢失
+
+如果系统中重要的文件丢失，导致系统无法正常启动，我们可以通过光盘来修复。假设我们的系统 `/etc/inittab` 文件丢失了，如果我们曾经备份过，则只需要将备份文件复制到 `/etc/` 目录下即可。
+如果没有备份，则需要从 rpm 包中提取 `inittab` 文件了。
+
+[source,shell]
+----
+bash-4.1# chroot /mnt/sysimage
+# 改变主目录
+# chroot 是改变系统根目录的意思。我们是通过光盘启动的光盘修复模式，所以我们现在所在的根目录不是真正的系统根目录，而是光盘的模拟根目录。系统根目录被当成外来设备放在了 /mnt/sysimage 目录下。
+# 这时就需要 chroot 命令把我们现在所在的根目录移动成真正的系统根目录
+sh-4.1# cd /root
+# 进入 root 目录。因为默认进入的是 / 目录。如果不进入 root，一会提取 inittab 文件会报错
+sh-4.1# rpm -qf /etc/inittab initscripts-9.03.31-2.el16.centos.i686
+# 查询 /etc/inittab 属于哪个包
+sh-4.1# mkdir /mnt/cdrom
+# 建立挂载点
+sh-4.1# mount /dev/sr0 /mnt/cdrom
+# 挂载光盘
+sh-4.1# rpm2cpio /mnt/cdrom/Packages/inittab initscripts-9.03.31-2.el16.centos.i686 | cpio -idv ./etc/inittab
+# 提取 inittab 文件到当前目录
+sh-4.1# cp etc/inittab /etc/inittab
+# 复制 inittab 到指定位置
+----
+
+注意此命令执行时不能直接将文件直接恢复到 `/etc/` 目录，只能提取到当前目录下，且恢复的文件名称所在路径要写完整的绝对路径。提取文件成功后，将其复制到 根分区所在的 `/mnt/sysimage`/etc/rc.d/rc.local 目录下相应位置即可
