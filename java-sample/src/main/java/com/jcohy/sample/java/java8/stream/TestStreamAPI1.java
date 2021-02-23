@@ -92,5 +92,7 @@ public class TestStreamAPI1 {
                     }
                 }).forEach(System.out::println);
     }
+
+    
 }
 
