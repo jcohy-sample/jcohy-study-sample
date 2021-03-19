@@ -152,6 +152,36 @@ symbol
 反应 ----------------- 响应
 度量 ----------------- 指标
 
+[[linux-command-search-whereis]]
+=== `whereis` 命令
+
+`whereis` 是搜索系统命令的命令。也就是说 whereis 命令不能搜索普通文件。
+
+* 命令名称: whereis
+* 英文原意: locate the binary,source,and manual page files for a command
+* 所在路径: /usr/bin/whereis
+* 执行权限: 所有用户
+* 功能描述: 查找二进制命令，源文件和帮助文档的命令
+
+.`shutdown` 选项
+|===
+|选项 |说明
+
+| -c
+|取消已经执行的 `shutdown` 命令
+
+|-h
+|关机
+
+|-r
+|重启
+|===
+
+[source,shell]
+----
+[root@localhost ~]# zip [选项] 压缩包名 源文件或源目录
+----
+
 [[linux-command-file-rm]]
 === `ls` 命令
 

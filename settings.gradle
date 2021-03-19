@@ -10,7 +10,7 @@ include 'algorithm-sample'
 
 include 'java-sample'
 
-include 'buildSrc'
+//include 'buildSrc'
 
 include 'mybatisplus-sample-8082'
 

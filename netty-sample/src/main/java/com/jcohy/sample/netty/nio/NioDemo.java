@@ -14,6 +14,7 @@ import java.nio.file.AccessMode;
 public class NioDemo {
 
 	public static void main(String[] args) {
-		AccessMode.READ
+
+		//		AccessMode.READ
 	}
 }
