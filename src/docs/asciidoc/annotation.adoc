@@ -1,0 +1,37 @@
+= 常见注解
+
+== Java
+
+
+|===
+|注解 |含义
+
+| @Inherited
+| 1、类继承关系中，子类会继承父类使用的注解中被@Inherited修饰的注解
+2、接口继承关系中，子接口不会继承父接口中的任何注解，不管父接口中使用的注解有没有被@Inherited修饰
+3、类实现接口时不会继承任何接口中定义的注解
+
+|Column 1, row 2
+|Column 2, row 2
+
+|Column 1, row 3
+|Column 2, row 3
+
+|Column 1, row 4
+|Column 2, row 4
+
+|Column 1, row 5
+|Column 2, row 5
+
+|Column 1, row 6
+|Column 2, row 6
+
+|Column 1, row 7
+|Column 2, row 7
+
+|Column 1, row 8
+|Column 2, row 8
+
+|Column 1, row 9
+|Column 2, row 9
+|===

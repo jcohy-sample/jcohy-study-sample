@@ -713,11 +713,16 @@ docker pull twang2218/gitlab-ce-zh
 
 3.数据存储
 
-| **本地的位置**     | **docker位置**  | **用法**               |
-| ------------------ | --------------- | ---------------------- |
-| /opt/gitlab/config | /etc/gitlab     | 用于存储应用数据       |
-| /opt/gitlab/logs   | /var/log/gitlab | 用于存储日志           |
-| /opt/gitlab/config | /var/opt/gitlab | 用于存储GitLab配置文件 |
+
+|===
+|**本地的位置** | **docker位置** | **用法**
+
+| /opt/gitlab/config | /etc/gitlab     | 用于存储应用数据
+
+| /opt/gitlab/logs   | /var/log/gitlab | 用于存储日志
+
+| /opt/gitlab/config | /var/opt/gitlab | 用于存储GitLab配置文件
+|===
 
 4.配置GitLab
 
@@ -727,11 +732,12 @@ docker exec -it gitlab /bin/bash
 docker exec -it gitlab vi /etc/gitlab/gitlab.rb
 
 #修改 external_url
+gitlab-ctl reconfigure
 
 docker restart gitlab
 ----
 
-5.查看log
+5.查看 log
 
 [source,shell]
 ----
@@ -777,6 +783,178 @@ gitlab-ctl restart
 gitlab-rake gitlab:incoming_email:check
 gitlab-rails console
 Notify.test_email('jia_chao23@126.com', 'Message Subject', 'Message Body').deliver_now
+----
+
+9.配置 LDAP
+
+[source,shell]
+----
+docker exec -it gitlab vi /etc/gitlab/gitlab.rb
+
+gitlab_rails['ldap_enabled'] = false
+
+###! **remember to close this block with 'EOS' below**
+gitlab_rails['ldap_servers'] = YAML.load <<-EOS
+   main: # 'main' is the GitLab 'provider ID' of this LDAP server
+     label: 'LDAP'
+     host: '192.168.11.229'
+     port: 389
+     uid: 'cn'
+     bind_dn: 'cn=admin,dc=xuanwuai,dc=com'
+     password: '123456'
+     encryption: 'plain' # "start_tls" or "simple_tls" or "plain"
+     verify_certificates: true
+     active_directory: true
+     allow_username_or_email_login: true
+     lowercase_usernames: false
+     block_auto_created_users: false
+     base: 'ou=people,dc=xuanwuai,dc=com'
+     user_filter: ''
+	 attributes:
+		username: ['cn']
+		email:    ['mail', 'email', 'userPrincipalName']
+		name:       'displayName'
+		first_name: 'givenName'
+		last_name:  'sn'
+     ## EE only
+#     group_base: 'ou=develope,dc=xuanwuai,dc=com'
+#     admin_group: 'admin_group'
+#     sync_ssh_keys: false
+
+#   secondary: # 'secondary' is the GitLab 'provider ID' of second LDAP server
+#     label: 'LDAP'
+#     host: '_your_ldap_server'
+#     port: 389
+#     uid: 'sAMAccountName'
+#     bind_dn: '_the_full_dn_of_the_user_you_will_bind_with'
+#     password: '_the_password_of_the_bind_user'
+#     encryption: 'plain' # "start_tls" or "simple_tls" or "plain"
+#     verify_certificates: true
+#     active_directory: true
+#     allow_username_or_email_login: false
+#     lowercase_usernames: false
+#     block_auto_created_users: false
+#     base: ''
+#     user_filter: ''
+#     ## EE only
+#     group_base: ''
+#     admin_group: ''
+#     sync_ssh_keys: false
+EOS
+----
+
+[[linux-install-gitlab-upgrade]]
+==== Docker gitlab 升级
+
+由于官方已经开始支持 gitlab 的汉化了，所以开源的社区中文汉化已经不在更新了。最新版的 `twang2218/gitlab-ce-zh` 汉化镜像是基于官方 `gitlab/gitlab-ce:11.1.4-ce.0` 版本进行汉化的。现在我们需要将 gitlab 的版本升级到最新的 13.4.3。
+
+docker 环境部署 gitlab 的升级很简单，直接基于高版本的镜像运行容器即可；
+需要注意的是 gitlab 的升级不能跨大版本升级，我们必须先先升级到当前大版本号到最高版本，方可升级到下一个大版本号。可以参考官方给出的版本升级参考 https://docs.gitlab.com/ee/update/README.html[官方推荐升级路线]
+
+现在我们要从 `11.1.4` 升级到 `13.4.3`, 我们的升级路线为 `11.3.4 -&gt; 11.11.8 -&gt; 12.0.12 -&gt; 12.1.17 -&gt; 12.10.14 -&gt; 13.0.14 -&gt; 13.4.3`
+
+===== 1、数据备份
+
+首先进入 `gitlab/gitlab-ce:11.1.4-ce.0` 镜像，将数据进行备份
+
+[source,shell]
+----
+docker exec -it gitlab /bin/bash
+gitlab-rake gitlab:backup:create
+----
+
+执行完成后会生成一个 `1613965005_2021_02_22_11.1.4_gitlab_backup.tar` 文件， 完成备份后，需要将文件复制出来留作备份。
+
+===== 2、获取镜像
+
+获取我们需要的镜像版本
+
+[source,shell]
+----
+docker pull gitlab/gitlab-ce:11.3.4-ce.0
+docker pull gitlab/gitlab-ce:11.11.8-ce.0
+docker pull gitlab/gitlab-ce:12.0.12-ce.0
+docker pull gitlab/gitlab-ce:12.1.17-ce.0
+docker pull gitlab/gitlab-ce:12.10.14-ce.0
+docker pull gitlab/gitlab-ce:13.0.14-ce.0
+docker pull gitlab/gitlab-ce:13.4.3-ce.0
+----
+
+===== 3、逐步升级镜像
+
+重复执行以下操作
+
+[source,shell]
+----
+# 进入容器
+1、docker exec -i -t gitlab /bin/bash
+
+# 停止全部服务
+2、gitlab-ctl stop
+
+# 退出容器
+3、exit
+
+# 删除容器
+4、docker stop gitlab && docker rm gitlab
+
+# 运行高版本容器
+5、docker run -d \
+    --hostname 192.168.11.121 \
+    -p 80:80 \
+    -p 443:443 \
+    -p 222:22 \
+    --privileged=true \
+    --name gitlab \
+    --restart always \
+    -v /opt/gitlab/gitlab-config:/etc/gitlab \
+    -v /opt/gitlab/gitlab-logs:/var/log/gitlab \
+    -v /opt/gitlab/gitlab-data:/var/opt/gitlab \
+     gitlab/gitlab-ce:13.0.14-ce.0
+----
+
+[NOTE]
+====
+在最后一步中，注意切换 gitlab 镜像版本
+====
+
+=== 数据恢复
+
+. 在上一步将数据备份了后，我们重新使用一台机器，重新下载，运行 `twang2218/gitlab-ce-zh` 容器(也可以是 `gitlab/gitlab-ce:11.1.4-ce.0` 容器)。
++
+[NOTE]
+====
+数据恢复的目标版本和源版本必须一致
+====
++
+[source,shell]
+----
+docker pull twang2218/gitlab-ce-zh
+
+docker run -d \
+    --hostname 192.168.11.238 \
+    -p 80:80 \
+    -p 443:443 \
+    -p 222:22 \
+    --privileged=true \
+    --name gitlab \
+    --restart always \
+    -v /opt/gitlab/gitlab-config:/etc/gitlab \
+    -v /opt/gitlab/gitlab-logs:/var/log/gitlab \
+    -v /opt/gitlab/gitlab-data:/var/opt/gitlab \
+     twang2218/gitlab-ce-zh
+----
+
+. 将备份的数据上传到 `/opt/gitlab/gitlab-data/backups` 目录
+. 进入容器，执行备份
++
+[source,shell]
+----
+# 进入dokcer 容器 gitlab
+docker exec -i -t gitlab /bin/bash
+
+# 恢复备份
+gitlab-rake gitlab:backup:restore BACKUP=1613965005_2021_02_22_11.1.4
 ----
 
 [[linux-install-node]]

@@ -1,8 +1,8 @@
 pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        maven { url 'https://repo.spring.io/plugins-release' }
-    }
+	repositories {
+		gradlePluginPortal()
+		maven { url 'https://repo.spring.io/plugins-release' }
+	}
 }
 rootProject.name = 'jcohy-study-sample'
 
@@ -36,4 +36,5 @@ include 'spring-boot-sample:spring-boot-bloomfilter-sample-19002'
 include 'spring-sample'
 include 'jcohy-commons'
 include 'netty-sample'
+include 'kotlin-sample'
 
