@@ -37,4 +37,5 @@ include 'spring-sample'
 include 'jcohy-commons'
 include 'netty-sample'
 include 'kotlin-sample'
+include 'go-sample'
 
