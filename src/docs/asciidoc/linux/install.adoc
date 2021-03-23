@@ -301,6 +301,24 @@ firewall-cmd --reload
 firewall-cmd --list-ports
 ----
 
+[[linux-install-mysql-docker]]
+==== Docker 安装
+
+启动容器 mysql
+
+[source,shell]
+----
+docker pull mysql:5.7
+docker run --name mysql \
+    --restart always \
+    -p 3306:3306 \
+    -e MYSQL_ROOT_PASSWORD=root \
+    -v /mydata/mysql/var:/var/lib/mysql \
+    -v /mydata/mysql/conf:/etc/mysql/conf.d \
+    -v /mydata/mysql/data:/backup \
+    -d mysql:5.7
+----
+
 [[linux-install-redis]]
 === Redis
 
@@ -918,7 +936,7 @@ docker pull gitlab/gitlab-ce:13.4.3-ce.0
 在最后一步中，注意切换 gitlab 镜像版本
 ====
 
-=== 数据恢复
+==== 数据恢复
 
 . 在上一步将数据备份了后，我们重新使用一台机器，重新下载，运行 `twang2218/gitlab-ce-zh` 容器(也可以是 `gitlab/gitlab-ce:11.1.4-ce.0` 容器)。
 +
@@ -1666,6 +1684,9 @@ yum install -y gcc-c++
 [[linux-install-ldap]]
 === LDAP
 
+[[linux-install-ldap-usually]]
+==== 常规安装
+
 1.安装LDAP
 
 [source,shell]
@@ -1840,8 +1861,50 @@ ou: Group
 
 [rootpwd.ldif](https://github.com/jiachao23/jcohy-study-sample/tree/master/jcohy-study-linux/bash/rootpwd.ldif)
 
+[[linux-install-ldap-docker]]
+==== Docker 安装
+
+安装 LDAP
+
+[source,shell]
+----
+docker pull osixia/openldap
+
+docker run -d \
+-p 389:389 \
+-v /data/ldap/ldap:/var/lib/ldap \
+-v /data/ldap/slapd.d:/etc/ldap/slapd.d \
+--name ldap \
+--env LDAP_TLS=false \
+--env LDAP_ORGANISATION="system" \
+--env LDAP_DOMAIN="xuanwuai.com" \
+--env LDAP_ADMIN_PASSWORD="ldap@1405" \
+--env LDAP_CONFIG_PASSWORD="ldap@1405" \
+--restart always \
+--detach osixia/openldap
+----
+
+安装 phpldapadmin
+
+[source,shell]
+----
+docker pull osixia/phpldapadmin
+
+docker run -d \
+-p 9999:80 \
+--link ldap \
+--name ldap_mgr \
+--env PHPLDAPADMIN_HTTPS=false \
+--env PHPLDAPADMIN_LDAP_HOSTS=192.168.11.229 \
+--restart always \
+--detach osixia/phpldapadmin
+----
+
 [[linux-install-confluence]]
 === Confluence
+
+[[linux-install-confluence-usually]]
+==== 常规安装
 
 参考文档:
 
@@ -1960,6 +2023,198 @@ image::{oss-images}/confluence_keygen2.png[]
 第三步:进入 `confluence.home` 配置的文件夹,打开这个文件夹看到 有一个 `confluence.cfg.xml` 文件,打开这个文件,发现配置的数据库连接池一类的东西,真正的算是找到了,修改 `hibernate.connection.url` 的 `value` 为新的数据库地址 重新启动服务;
 
 `/var/atlassian/application-data/confluence` 下 `confluence.cfg.xml` 文件:
+
+[[linux-install-conflurnce-docker]]
+==== docker 安装
+
+- Docker 镜像: https://github.com/cptactionhank[Github链接]
+- 破解工具: https://gitee.com/pengzhile/atlassian-agent[Gitee链接]
+
+===== 安装 mysql。请参考 <<linux-install-mysql-docker>> 章节进行安装
+
+1.1. 创建数据库用户脚本
+
+[source,shell]
+----
+-- 创建confluence数据库及用户
+-- drop database confluence;
+create database confluence character set 'UTF8';
+create user confluence identified by 'confluence';
+grant all privileges on `confluence`.* to 'confluence'@'%' identified by 'confluence' with grant option;
+grant all privileges on `confluence`.* to 'confluence'@'localhost' identified by 'confluence' with grant option;
+flush privileges;
+-- 设置confluence字符集
+alter database confluence character set utf8 collate utf8_bin;
+-- confluence要求设置事务级别为READ-COMMITTED
+set global tx_isolation='READ-COMMITTED';
+-- set session transaction isolation level read committed;
+-- show variables like 'tx%';
+----
+
+1.2. 修改 mysql 配置
+
+https://www.cwiki.us/display/CONFLUENCEWIKI/Database+Setup+For+MySQL#DatabaseSetupForMySQL-%E4%BD%BF%E7%94%A8JDBC%E8%BF%9E%E6%8E%A5%EF%BC%88%E9%BB%98%E8%AE%A4%EF%BC%89[修改 mysql 配置]
+
+[source,shell]
+----
+[mysqld]
+...
+character-set-server=utf8
+collation-server=utf8_bin
+default-storage-engine=INNODB
+max_allowed_packet=256M
+innodb_log_file_size=2GB
+transaction-isolation=READ-COMMITTED
+binlog_format=row
+...
+----
+
+===== 安装 Confluence
+
+. 编写 Dockerfile 文件：
++
+[source,shell]
+----
+FROM cptactionhank/atlassian-confluence:6.13.0
+
+USER root
+
+# 将代理破解包加入容器
+COPY "atlassian-agent.jar" /opt/atlassian/confluence/
+
+# 设置启动加载代理包
+RUN echo 'export CATALINA_OPTS="-javaagent:/opt/atlassian/confluence/atlassian-agent.jar ${CATALINA_OPTS}"' >> /opt/atlassian/confluence/bin/setenv.sh
+----
+
+. 下载 https://www.oschina.net/action/GoToLink?url=https%3A%2F%2Fgithub.com%2Fpengzhile%2Fatlassian-agent%2Freleases%2Fdownload%2Fv1.2%2Fatlassian-agent-v1.2.zip[atlassian-agent.jar] 文件，放置在 Dockerfile 同目录下，例如：
++
+[source,shell]
+----
+- Confluence
+  --Dockerfile
+  --atlassian-agent.jar
+----
+
+. 构建镜像，执行命令：
++
+[source,shell]
+----
+docker build -f Dockerfile -t confluence/confluence:6.13.0 .
+----
+
+. 启动容器
++
+[source,shell]
+----
+docker run --name confluence \
+    --restart always \
+    -p 8090:8090 \
+    -v data_confluence_vol:/home/confluence_data \
+    -v data_confluence_opt:/opt/atlassian/confluence \
+    -v data_confluence_var:/var/atlassian/confluence \
+    -d confluence/confluence:6.13.0
+----
+
+.  打开页面，在要求输入 license 的页面，使用以下命令进行破解 `BXIR-8CP2-3CTL-HW07` 为 id
++
+[source,shell]
+----
+java -jar atlassian-agent.jar -d -m dsf@xuanwuai.com -n BAT -p conf -o http://127.0.0.1 -s BXIR-8CP2-3CTL-HW07
+----
+
+[[linux-install-jira]]
+=== Jira
+
+[[linux-install-jira-docker]]
+==== docker 安装
+
+- Docker 镜像: https://github.com/cptactionhank[Github链接]
+- 破解工具: https://gitee.com/pengzhile/atlassian-agent[Gitee链接]
+
+===== 安装 mysql。请参考 <<linux-install-mysql-docker>> 章节进行安装
+
+1.1. 创建数据库用户脚本
+
+[source,shell]
+----
+-- 创建 jira 数据库及用户
+-- drop database jira;
+create database jira CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+create user jira identified by 'jira';
+grant all privileges on `jira`.* to 'jira'@'%' identified by 'jira' with grant option;
+grant all privileges on `jira`.* to 'jira'@'localhost' identified by 'jira' with grant option;
+flush privileges;
+----
+
+1.2. 修改 mysql 配置
+
+https://www.cwiki.us/display/CONFLUENCEWIKI/Database+Setup+For+MySQL#DatabaseSetupForMySQL-%E4%BD%BF%E7%94%A8JDBC%E8%BF%9E%E6%8E%A5%EF%BC%88%E9%BB%98%E8%AE%A4%EF%BC%89[修改 mysql 配置]
+
+[source,shell]
+----
+[mysqld]
+...
+character-set-server=utf8
+collation-server=utf8_bin
+default-storage-engine=INNODB
+max_allowed_packet=256M
+innodb_log_file_size=2GB
+transaction-isolation=READ-COMMITTED
+binlog_format=row
+...
+----
+
+===== 安装 Jira
+
+. 编写 Dockerfile 文件：
++
+[source,shell]
+----
+FROM cptactionhank/atlassian-jira-software:7.12.0
+
+USER root
+
+# 将代理破解包加入容器
+COPY "atlassian-agent.jar" /opt/atlassian/jira/
+
+# 设置启动加载代理包
+RUN echo 'export CATALINA_OPTS="-javaagent:/opt/atlassian/jira/atlassian-agent.jar ${CATALINA_OPTS}"' >> /opt/atlassian/jira/bin/setenv.sh
+----
+
+. 下载 https://www.oschina.net/action/GoToLink?url=https%3A%2F%2Fgithub.com%2Fpengzhile%2Fatlassian-agent%2Freleases%2Fdownload%2Fv1.2%2Fatlassian-agent-v1.2.zip[atlassian-agent.jar] 文件，放置在 Dockerfile 同目录下，例如：
++
+[source,shell]
+----
+- JIRA
+  --Dockerfile
+  --atlassian-agent.jar
+----
+
+. 构建镜像，执行命令：
++
+[source,shell]
+----
+docker build -t jira/jira:v7.12.0 .
+----
+
+. 启动容器
++
+[source,shell]
+----
+docker run --name jira \
+    --restart always \
+    -p 8080:8080 \
+    -v data_jira_var:/var/atlassian/jira \
+    -v data_jira_opt:/opt/atlassian/jira \
+    -d jira/jira:v7.12.0
+----
+
+.  打开页面，在要求输入 license 的页面，使用以下命令进行破解 `BXIR-8CP2-3CTL-HW07` 为 id
++
+[source,shell]
+----
+java -jar atlassian-agent.jar -d -m dsf@xuanwuai.com -n BAT -p jira -o http://127.0.0.1 -s BHD4-LKOJ-02MI-SLWO
+----
 
 [[linux-install-zookeeper]]
 === zookeeper
