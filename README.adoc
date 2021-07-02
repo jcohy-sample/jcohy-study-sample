@@ -6,69 +6,6 @@
 
 使用 Asciidoc 重新编写文档。
 
-[[plan-tbl]]
-.文档迁移计划
-|===
-| 模块 | 进度
-
-| jcohy-study-algorithm
-| 100%
-
-| jcohy-study-ansyc
-| 0%(暂不计划)
-
-| jcohy-study-designpattern
-| 100%
-
-| jcohy-study-docker
-| 0%(暂不计划)
-
-| jcohy-study-files
-| 0
-
-| jcohy-study-framework
-| 80%(已迁移，暂未整理)
-
-| jcohy-study-java
-| 100%
-
-| jcohy-study-linux
-| 80%
-
-| jcohy-study-nginx
-| 100%
-
-| jcohy-study-nosql
-| 100%
-
-| jcohy-study-quartz
-| 100%
-
-| jcohy-study-security
-| 0%(暂不迁移)
-
-| jcohy-study-spring
-| 70%(已迁移，暂未整理)
-
-| jcohy-study-springboot
-| 100%
-
-| jcohy-study-utils
-| 100%(已迁移，暂未整理)
-
-| jcohy-study-ViewGuide
-| 100%
-
-| jcohy-study-zookeeper
-| 100%
-
-| Swagger
-| 100%
-
-| website
-| 100%
-|===
-
 == 文档构建
 
 [source,shell]

@@ -243,15 +243,4 @@ configure(rootProject) {
     description = "Jcohy Document"
     apply plugin: "org.asciidoctor.jvm.convert"
     apply from: "${rootDir}/gradle/docs.gradle"
-
-
-//    publishing {
-//        publications {
-//            mavenJava(MavenPublication) {
-//                artifact docsZip
-//                artifact schemaZip
-//                artifact distZip
-//            }
-//        }
-//    }
 }
