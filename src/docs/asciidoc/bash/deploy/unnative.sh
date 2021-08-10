@@ -1,4 +1,5 @@
 #./bin/bash
+# tag::code[]
 # 定义颜色
 BLUE_COLOR="\033[36m"
 RES="\033[0m"
@@ -30,10 +31,10 @@ tomcat(){
 
 mysql(){
 	echo -e "${BLUE_COLOR}正在卸载 mysql${RES}"
-	rpm -e mysql-community-server-8.0.16-2.el7.x86_64
-	rpm -e mysql-community-client-8.0.16-2.el7.x86_64 
-	rpm -e mysql-community-libs-8.0.16-2.el7.x86_64
-	rpm -e mysql-community-common-8.0.16-2.el7.x86_64
+	rpm -e mysql-community-server-8.0.19-1.el7.x86_64
+	rpm -e mysql-community-client-8.0.19-1.el7.x86_64
+	rpm -e mysql-community-libs-8.0.19-1.el7.x86_64
+	rpm -e mysql-community-common-8.0.19-1.el7.x86_64
 	   
 	   
 	#groupdel mysql
@@ -86,3 +87,4 @@ case "$1" in
 	usage
 ;;
 esac
+# end::code[]

@@ -1,5 +1,7 @@
 #!/bin/bash
+# tag::code[]
 # 定义颜色
+
 BLUE_COLOR="\033[36m"
 RED_COLOR="\033[31m"
 GREEN_COLOR="\033[32m"
@@ -7,16 +9,16 @@ VIOLET_COLOR="\033[35m"
 YELLOW_COLOR="\033[33m"
 RES="\033[0m"
 
-#软件所在http服务器。
-BASE_URL=192.168.11.232/centos
+#软件所在http服务器.
+BASE_URL=http://software.jcohy.com/linux
 #软件下载目录
 BASE_DIR=/opt/software
-
+INSTALL_DIR=/usr/local
 
 
 JDK_PACKAGE=OpenJDK11U-jdk_x64_linux_hotspot_11.0.11_9.tar.gz
 TOMCAT_PACKAGE=apache-tomcat-7.0.94.tar.gz
-MYSQL_PACKAGE=mysql-8.0.16-2.el7.x86_64.rpm-bundle.tar
+MYSQL_PACKAGE=mysql-8.0.19-1.el7.x86_64.rpm-bundle.tar
 GCC_PACKAGE=gcc-8.3.0.tar.gz
 NGINX_PACKAGE=nginx-1.6.2.build.tar.gz
 #使用说明，用来提示输入参数
@@ -37,9 +39,9 @@ jdk(){
 	else
 		echo "====================== 开始安装 JDK ======================"
 		wget -N $BASE_URL/$JDK_PACKAGE -P $BASE_DIR
-		tar -zxvf $BASE_DIR/$JDK_PACKAGE -C /usr/local
+		tar -zxvf $BASE_DIR/$JDK_PACKAGE -C ${INSTALL_DIR}
 		cat >> /etc/profile << EOF
-export JAVA_HOME=/usr/local/jdk-11.0.11+9
+export JAVA_HOME=${INSTALL_DIR}/jdk-11.0.11+9
 export PATH=\$PATH:\$JAVA_HOME/bin
 EOF
 		echo "====================== JDK 已安装完成，JAVA_HOME='$JAVA_HOME' ======================"
@@ -54,8 +56,8 @@ nginx(){
 	else
 		echo "====================== 开始安装 NGINX ======================"
 		wget -N $BASE_URL/$NGINX_PACKAGE -P $BASE_DIR
-		tar -zxvf $BASE_DIR/$NGINX_PACKAGE -C /usr/local
-		/usr/local/nginx/sbin/nginx
+		tar -zxvf $BASE_DIR/$NGINX_PACKAGE -C ${INSTALL_DIR}
+		${INSTALL_DIR}/nginx/sbin/nginx
 		ps -ef|grep nginx | awk 'NR==1{ print $2 }'
 		if [ $? -eq 0 ];then
 		echo "====================== NGINX 已安装完成! ======================"
@@ -72,13 +74,13 @@ installGCC(){
 	else
 		echo "====================== 安装 gcc ======================"
 		wget -N $BASE_URL/$GCC_PACKAGE -P $BASE_DIR
-		tar -zxvf $BASE_DIR/$GCC_PACKAGE -C /usr/local
-		cd /usr/local/gcc8.3.0build
+		tar -zxvf $BASE_DIR/$GCC_PACKAGE -C ${INSTALL_DIR}
+		cd ${INSTALL_DIR}/gcc8.3.0build
 		rm -rf /usr/bin/gcc
 		rm -rf /usr/bin/g++
-		ln -s /usr/local/gcc8.3.0build/bin/gcc /usr/bin/gcc
-		ln -s /usr/local/gcc8.3.0build/bin/g++ /usr/bin/g++
-		cp /usr/local/gcc8.3.0build/lib64/libstdc++.so.6.0.25  /usr/lib64/libstdc++.so.6.0.25
+		ln -s ${INSTALL_DIR}/gcc8.3.0build/bin/gcc /usr/bin/gcc
+		ln -s ${INSTALL_DIR}/gcc8.3.0build/bin/g++ /usr/bin/g++
+		cp ${INSTALL_DIR}/gcc8.3.0build/lib64/libstdc++.so.6.0.25  /usr/lib64/libstdc++.so.6.0.25
 		rm -f /usr/lib64/libstdc++.so.6
 		ln /usr/lib64/libstdc++.so.6.0.25 /usr/lib64/libstdc++.so.6
 		echo "====================== GCC 安装完成 ======================"
@@ -103,10 +105,10 @@ mysql(){
 		echo "---------->>安装依赖项"
 		yum install -y libaio net-tools perl numactl
 		echo "---------->>安装Mysql"
-		rpm -ivh mysql-community-common-8.0.16-2.el7.x86_64.rpm   
-		rpm -ivh mysql-community-libs-8.0.16-2.el7.x86_64.rpm   
-		rpm -ivh mysql-community-client-8.0.16-2.el7.x86_64.rpm  
-		rpm -ivh mysql-community-server-8.0.16-2.el7.x86_64.rpm 
+		rpm -ivh mysql-community-common-8.0.19-1.el7.x86_64.rpm
+		rpm -ivh mysql-community-libs-8.0.19-1.el7.x86_64.rpm
+		rpm -ivh mysql-community-client-8.0.19-1.el7.x86_64.rpm
+		rpm -ivh mysql-community-server-8.0.19-1.el7.x86_64.rpm
 		echo '---------->>启动Mysql'
 		systemctl enable mysqld
 		systemctl start mysqld
@@ -134,11 +136,11 @@ tomcat(){
 	echo '====================== 安装 tomcat ======================'
 	#pid=ps -ef | grep "tomcat" | grep -v grep | awk '{print $2}'
 	filename=${TOMCAT_PACKAGE%.tar.gz}
-	unzipUrl=/usr/local/$filename
+	unzipUrl=${INSTALL_DIR}/$filename
 	if [ ! -d "$unzipUrl" ];then
 		wget -N $BASE_URL/$TOMCAT_PACKAGE -P $BASE_DIR
-		tar -zxvf $BASE_DIR/$TOMCAT_PACKAGE -C /usr/local/
-		/usr/local/apache-tomcat-7.0.94/bin/startup.sh
+		tar -zxvf $BASE_DIR/$TOMCAT_PACKAGE -C ${INSTALL_DIR}/
+		${INSTALL_DIR}/apache-tomcat-7.0.94/bin/startup.sh
 		echo "====================== tomcat安装完成 ======================"	
 	else
 		echo "====================== tomcat目录已存在 ======================"
@@ -174,3 +176,4 @@ case "$1" in
 ;;
 esac
 
+# end::code[]
