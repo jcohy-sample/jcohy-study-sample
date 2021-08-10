@@ -1,5 +1,4 @@
-#!/bin/bash
-# tag::code[]
+#./bin/bash
 # 定义颜色
 BLUE_COLOR="\033[36m"
 RES="\033[0m"
@@ -26,4 +25,3 @@ echo -e "${BLUE_COLOR}===================> 7、delete data dir <================
 rm -rf /var/lib/docker
 rm -rf /usr/local/docker
 echo -e "${BLUE_COLOR}===================> remove docker-ce end <=========================${RES}"
-# end::code[]

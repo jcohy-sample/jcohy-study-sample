@@ -1,32 +1,34 @@
 #!/bin/bash
-# tag::code[]
 # 定义颜色
-
 BLUE_COLOR="\033[36m"
 RED_COLOR="\033[31m"
 GREEN_COLOR="\033[32m"
+VIOLET_COLOR="\033[35m"
+YELLOW_COLOR="\033[33m"
 RES="\033[0m"
 
 #软件安装目录
 DOCKER_DIR=/usr/local/docker
 
-BASH_CONFIG=http://software.jcohy.com/bash/common
-#使用说明,用来提示输入参数
+BASH_URL=http://192.168.11.232/deploy
+#使用说明，用来提示输入参数
 usage() {
-	echo -e "${BLUE_COLOR}安装 elk 之前,请确保vm.max_map_count大小至少为 262144.执行${RES}"
-	echo -e "${BLUE_COLOR}安装 nacos,请执行  source ./docker.sh nacos${RES}"
-	echo -e "${BLUE_COLOR}安装 sentinel,请执行  ./docker.sh sentinel${RES}"
-	echo -e "${BLUE_COLOR}安装 api-nginx,请执行  ./docker.sh api-nginx${RES}"
-	echo -e "${BLUE_COLOR}安装 web-nginx,请执行  ./docker.sh web-nginx${RES}"
-	echo -e "${BLUE_COLOR}安装 redis-master,请执行  ./docker.sh redis${RES}"
-	echo -e "${BLUE_COLOR}安装 rabbitmq,请执行  ./docker.sh rabbitmq${RES}"
-	echo -e "${BLUE_COLOR}安装 zipkin,请执行  ./docker.sh zipkin${RES}"
-	echo -e "${BLUE_COLOR}安装 minio,请执行  ./docker.sh minio${RES}"
-	echo -e "${BLUE_COLOR}安装 elk,请执行  ./docker.sh elk${RES}"
-	echo -e "${BLUE_COLOR}启动基础模块,请执行  ./docker.sh base${RES}"
-	echo -e "${BLUE_COLOR}关闭所有模块,请执行  ./docker.sh stop${RES}"
-	echo -e "${BLUE_COLOR}删除所有模块,请执行  ./docker.sh rm${RES}"
-	echo -e "${BLUE_COLOR}删除Tag为空的镜像,请执行  ./docker.sh rmiNoneTag${RES}"
+	echo -e "${BLUE_COLOR}安装 elk 之前，请确保vm.max_map_count大小至少为 262144。执行${RES}"
+	echo -e "${BLUE_COLOR}安装 nacos，请执行  source ./docker.sh nacos${RES}"
+	echo -e "${BLUE_COLOR}安装 sentinel，请执行  ./docker.sh sentinel${RES}"
+	echo -e "${BLUE_COLOR}安装 api-nginx，请执行  ./docker.sh api-nginx${RES}"
+	echo -e "${BLUE_COLOR}安装 web-nginx，请执行  ./docker.sh web-nginx${RES}"
+	echo -e "${BLUE_COLOR}安装 redis-master，请执行  ./docker.sh redis${RES}"
+	echo -e "${BLUE_COLOR}安装 rabbitmq，请执行  ./docker.sh rabbitmq${RES}"
+	echo -e "${BLUE_COLOR}安装 zipkin，请执行  ./docker.sh zipkin${RES}"
+	echo -e "${BLUE_COLOR}安装 minio，请执行  ./docker.sh minio${RES}"
+	echo -e "${BLUE_COLOR}安装 elk，请执行  ./docker.sh elk${RES}"
+	echo -e "${BLUE_COLOR}启动基础模块，请执行  ./docker.sh base${RES}"
+	#echo -e "${BLUE_COLOR}启动监控模块，请执行  ./docker.sh monitor${RES}"
+	#echo -e "${BLUE_COLOR}启动程序模块，请执行  ./docker.sh modules${RES}"
+	echo -e "${BLUE_COLOR}关闭所有模块，请执行  ./docker.sh stop${RES}"
+	echo -e "${BLUE_COLOR}删除所有模块，请执行  ./docker.sh rm${RES}"
+	echo -e "${BLUE_COLOR}删除Tag为空的镜像，请执行  ./docker.sh rmiNoneTag${RES}"
 	exit 1
 }
 
@@ -35,7 +37,7 @@ usage() {
 echo -e "${RED_COLOR}>>>>>>>>>>>>>>>>>>>>>>>>>> Init The Start <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<${RES}"
 # 安装docker
 if ! [ -x "$(command -v docker)" ]; then
-   echo -e "${GREEN_COLOR}---------->>检测到 Docker 尚未安装.正在试图从网络安装...所需时间与你的网络环境有关${RES}"
+   echo -e "${GREEN_COLOR}---------->>检测到 Docker 尚未安装。正在试图从网络安装...所需时间与你的网络环境有关${RES}"
    echo -e "${GREEN_COLOR}---------->>安装一些必要的系统工具${RES}"
    yum install -y yum-utils device-mapper-persistent-data lvm2 bridge-utils net-tools
    echo -e "${GREEN_COLOR}---------->>添加软件源信息${RES}"
@@ -48,7 +50,7 @@ if ! [ -x "$(command -v docker)" ]; then
    tee /etc/docker/daemon.json <<-'EOF'
 {
   "registry-mirrors": ["https://iip73wnl.mirror.aliyuncs.com"],
-  "insecure-registries":["192.168.11.239"] 
+  "insecure-registries":["192.168.11.103"] 
 }
 EOF
 
@@ -67,8 +69,8 @@ fi
 
 if ! [ -x "$(command -v docker-compose)" ]; then
 	echo -e "${GREEN_COLOR}---------->>开始安装 docker-compose${RES}"
-	echo -e "${GREEN_COLOR}---------->>检测到 docker-compose 尚未安装.正在试图从网络安装...所需时间与你的网络环境有关${RES}"
-	curl -L https://dn-dao-github-mirror.daocloud.io/docker/compose/releases/download/1.23.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+	echo -e "${GREEN_COLOR}---------->>检测到 docker-compose 尚未安装。正在试图从网络安装...所需时间与你的网络环境有关${RES}"
+	curl -L https://get.daocloud.io/docker/compose/releases/download/1.29.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
 	chmod +x /usr/local/bin/docker-compose
 	if ! [ -x "$(command -v docker-compose)" ]; then
 		echo -e "${RED_COLOR}docker-compose 自动安装失败,建议你手动安装好 docker-compose 环境后再启动本脚本${RES}"
@@ -78,14 +80,14 @@ if ! [ -x "$(command -v docker-compose)" ]; then
 fi
 
 
-test ! -e "./.env" && wget -N $BASH_CONFIG/.env
-test ! -e "./docker-compose.yml" && wget -N $BASH_CONFIG/docker-compose.yml
+test ! -e "./.env" && wget -N $BASH_URL/.env
+test ! -e "./docker-compose.yml" && wget -N $BASH_URL/docker-compose.yml
 
 
 
 #创建docker目录
 if [ ! -d "$DOCKER_DIR" ]; then
-	echo '创建目录.'$DOCKER_DIR
+	echo '创建目录。'$DOCKER_DIR
     mkdir -p $DOCKER_DIR
 fi
 
@@ -198,26 +200,26 @@ download(){
 
 
 # 移动配置文件
-test ! -e "${DOCKER_DIR}/nacos/master/init.d/custom.properties" && download $BASH_CONFIG/nacos/init.d/custom.properties ${DOCKER_DIR}/nacos/master/init.d
+test ! -e "${DOCKER_DIR}/nacos/master/init.d/custom.properties" && download $BASH_URL/nacos/init.d/custom.properties ${DOCKER_DIR}/nacos/master/init.d
 
-test ! -e "${DOCKER_DIR}/nginx/api/conf/nginx.conf" && download $BASH_CONFIG/nginx/api/nginx.conf ${DOCKER_DIR}/nginx/api/conf
-test ! -e "${DOCKER_DIR}/nginx/web/conf/nginx.conf" && download $BASH_CONFIG/nginx/web/nginx.conf ${DOCKER_DIR}/nginx/web/conf
-test ! -e "${DOCKER_DIR}/nginx/web/html/index.html" && download $BASH_CONFIG/nginx/web/html/index.html ${DOCKER_DIR}/nginx/web/html
+test ! -e "${DOCKER_DIR}/nginx/api/conf/nginx.conf" && download $BASH_URL/nginx/api/nginx.conf ${DOCKER_DIR}/nginx/api/conf
+test ! -e "${DOCKER_DIR}/nginx/web/conf/nginx.conf" && download $BASH_URL/nginx/web/nginx.conf ${DOCKER_DIR}/nginx/web/conf
+test ! -e "${DOCKER_DIR}/nginx/web/html/index.html" && download $BASH_URL/nginx/web/html/index.html ${DOCKER_DIR}/nginx/web/html
 
-test ! -e "${DOCKER_DIR}/redis/conf/redis.conf" && download $BASH_CONFIG/redis.conf ${DOCKER_DIR}/redis/conf
-
-
-test ! -e "${DOCKER_DIR}/elasticsearch/master/conf/es-master.yml" && download $BASH_CONFIG/es-master.yml ${DOCKER_DIR}/elasticsearch/master/conf
-test ! -e "${DOCKER_DIR}/elasticsearch/slave1/conf/es-slave1.yml" && download $BASH_CONFIG/es-slave1.yml ${DOCKER_DIR}/elasticsearch/slave1/conf
-test ! -e "${DOCKER_DIR}/elasticsearch/slave2/conf/es-slave2.yml" && download $BASH_CONFIG/es-slave2.yml ${DOCKER_DIR}/elasticsearch/slave2/conf
+test ! -e "${DOCKER_DIR}/redis/conf/redis.conf" && download $BASH_URL/redis.conf ${DOCKER_DIR}/redis/conf
 
 
-test ! -e "${DOCKER_DIR}/kibana/conf/kibana.yml" && download  $BASH_CONFIG/kibana.yml ${DOCKER_DIR}/kibana/conf
+test ! -e "${DOCKER_DIR}/elasticsearch/master/conf/es-master.yml" && download $BASH_URL/es-master.yml ${DOCKER_DIR}/elasticsearch/master/conf
+test ! -e "${DOCKER_DIR}/elasticsearch/slave1/conf/es-slave1.yml" && download $BASH_URL/es-slave1.yml ${DOCKER_DIR}/elasticsearch/slave1/conf
+test ! -e "${DOCKER_DIR}/elasticsearch/slave2/conf/es-slave2.yml" && download $BASH_URL/es-slave2.yml ${DOCKER_DIR}/elasticsearch/slave2/conf
 
-test ! -e "${DOCKER_DIR}/logstash/conf/logstash-filebeat.conf" && download  $BASH_CONFIG/logstash-filebeat.conf ${DOCKER_DIR}/logstash/conf
-test ! -e "${DOCKER_DIR}/logstash/conf/logstash.yml" && download  $BASH_CONFIG/logstash.yml ${DOCKER_DIR}/logstash/conf
 
-test ! -e "${DOCKER_DIR}/filebeat/conf/filebeat.yml" && download  $BASH_CONFIG/filebeat.yml ${DOCKER_DIR}/filebeat/conf
+test ! -e "${DOCKER_DIR}/kibana/conf/kibana.yml" && download  $BASH_URL/kibana.yml ${DOCKER_DIR}/kibana/conf
+
+test ! -e "${DOCKER_DIR}/logstash/conf/logstash-filebeat.conf" && download  $BASH_URL/logstash-filebeat.conf ${DOCKER_DIR}/logstash/conf
+test ! -e "${DOCKER_DIR}/logstash/conf/logstash.yml" && download  $BASH_URL/logstash.yml ${DOCKER_DIR}/logstash/conf
+
+test ! -e "${DOCKER_DIR}/filebeat/conf/filebeat.yml" && download  $BASH_URL/filebeat.yml ${DOCKER_DIR}/filebeat/conf
 
 
 
@@ -227,6 +229,17 @@ echo -e "${RED_COLOR}>>>>>>>>>>>>>>>>>>>>>>>>>> Init The End   <<<<<<<<<<<<<<<<<
 # 部署项目
 echo -e "${BLUE_COLOR}=========================> Docker deploy Start <========================${RES}"
 #docker-compose up --build -d
+
+
+#启动监控模块
+monitor(){
+	docker-compose up -d aix-admin aix-turbine aix-zipkin
+}
+
+#启动程序模块
+modules(){
+	docker-compose up -d aix-gateway1 aix-gateway2 aix-auth1 aix-auth2 aix-user aix-desk aix-system aix-logger aix-flow aix-flow-design aix-resource
+}
 
 #关闭所有模块
 stop(){
@@ -244,7 +257,7 @@ rmiNoneTag(){
 }
 
 
-#根据输入参数,选择执行对应方法,不输入则执行使用说明
+#根据输入参数，选择执行对应方法，不输入则执行使用说明
 case "$1" in
 "nacos")
 	docker-compose up -d --build nacos
@@ -262,7 +275,7 @@ case "$1" in
 	docker-compose up -d --build redis-master
 ;;
 "rabbitmq")
-	docker-compose up -d --build rabbitmq
+	docker-compose up -d --build rabbitmq-management
 ;;
 "zipkin")
 	docker-compose up -d --build zipkin
@@ -274,7 +287,7 @@ case "$1" in
 	docker-compose up -d --build es-master es-slave1 es-slave2 es-head kibana filebeat logstash
 ;;
 "base")
-	docker-compose up -d  nacos sentinel api-nginx web-nginx redis-master rabbitmq zipkin
+	docker-compose up -d  nacos sentinel api-nginx web-nginx redis-master aix-rabbitmq zipkin
 ;;
 "stop")
 	stop
@@ -289,4 +302,4 @@ case "$1" in
 	usage
 ;;
 esac
-# end::code[]
+

@@ -1,18 +1,16 @@
-#!/bin/bash
-# tag::code[]
+#./bin/bash
 # 定义颜色
 BLUE_COLOR="\033[36m"
 RES="\033[0m"
 
 usage(){
-	echo -e "${BLUE_COLOR}卸载 jdk,请执行  source ./unnative.sh jdk${RES}"
-	echo -e "${BLUE_COLOR}卸载 tomcat,请执行  ./unnative.sh tomcat${RES}"
-	echo -e "${BLUE_COLOR}卸载 mysql,请执行  ./unnative.sh mysql${RES}"
-	echo -e "${BLUE_COLOR}卸载 nginx,请执行  ./unnative.sh nginx${RES}"
-	echo -e "${BLUE_COLOR}卸载,请执行  ./unnative.sh all${RES}"
+	echo -e "${BLUE_COLOR}卸载 jdk，请执行  source ./unnative.sh jdk${RES}"
+	echo -e "${BLUE_COLOR}卸载 tomcat，请执行  ./unnative.sh tomcat${RES}"
+	echo -e "${BLUE_COLOR}卸载 mysql，请执行  ./unnative.sh mysql${RES}"
+	echo -e "${BLUE_COLOR}卸载 nginx，请执行  ./unnative.sh nginx${RES}"
+	echo -e "${BLUE_COLOR}卸载，请执行  ./unnative.sh all${RES}"
 	exit 1
 }
-
 jdk(){
 	echo -e "${BLUE_COLOR}正在卸载 jdk.${RES}"
 	rm -rf /usr/local/jdk1.8.0_221
@@ -32,10 +30,10 @@ tomcat(){
 
 mysql(){
 	echo -e "${BLUE_COLOR}正在卸载 mysql${RES}"
-	rpm -e mysql-community-server-8.0.19-1.el7.x86_64
-	rpm -e mysql-community-client-8.0.19-1.el7.x86_64
-	rpm -e mysql-community-libs-8.0.19-1.el7.x86_64
-	rpm -e mysql-community-common-8.0.19-1.el7.x86_64
+	rpm -e mysql-community-server-8.0.16-2.el7.x86_64
+	rpm -e mysql-community-client-8.0.16-2.el7.x86_64 
+	rpm -e mysql-community-libs-8.0.16-2.el7.x86_64
+	rpm -e mysql-community-common-8.0.16-2.el7.x86_64
 	   
 	   
 	#groupdel mysql
@@ -88,4 +86,3 @@ case "$1" in
 	usage
 ;;
 esac
-# end::code[]
