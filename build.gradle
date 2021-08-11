@@ -6,8 +6,6 @@ configure(allprojects) { abjects ->
 	version = "1.0.1"
 
 	repositories {
-		maven { url = 'http://192.168.11.230:8081/repository/releases' }
-		maven { url = 'http://192.168.11.230:8081/repository/snapshot' }
 		mavenLocal()
 		maven { url = 'https://maven.aliyun.com/repository/central'}
 		maven { url = 'https://repo.spring.io/libs-milestone'}
