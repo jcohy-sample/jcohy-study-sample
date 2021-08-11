@@ -6,7 +6,7 @@
 
 element指的是一系列与之相关的接口集合，它们位于javax.lang.model.element包下面
 
-image::{base-images}/java-annotation1.png[]
+image::{oss-images}/java-annotation1.png[]
 
 element 是代表程序的一个元素，这个元素可以是: 包、类/接口、属性变量、方法/方法形参、泛型参数。element是java-apt(编译时注解处理器)技术的基础，因此如果要编写此类框架，熟悉element是必须的。
 
@@ -14,7 +14,7 @@ element 是代表程序的一个元素，这个元素可以是: 包、类/接口
 
 各种element所代表的元素类型
 
-image::{base-images}/java-annotation2.png[]
+image::{oss-images}/java-annotation2.png[]
 
 通过上图可以看到 element 元素及其子接口所指代的元素，有点类似 `Type` 类型，那么 element 接口族和 Type 接口族之间有什么区别呢？element 所代表的元素只在编译期可见，用于保存元素在编译期的各种状态，而 Type 所代表的元素是运行期可见，用于保存元素在编译期的各种状态
 

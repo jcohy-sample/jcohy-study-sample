@@ -5,7 +5,7 @@
 
 在 Linux 中，服务可分为 RPM 包默认安装的服务和源码包安装的服务。在RPM 包默认安装的服务中又分为 独立的服务和基于 xinetd 服务。如图
 
-image::images/linux15.png[]
+image::{oss-images}/linux15.png[]
 
 RPM 包默认安装的服务:
 

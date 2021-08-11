@@ -7,7 +7,7 @@ vin 是一个全屏幕纯文本编辑器，是 vi 编辑器的增强版。
 
 vim 的工作模式
 
-image::.images/linux2.png[]
+image::{oss-images}/linux2.png[]
 
 命令模式:是主要使用快捷键的模式，命令模式想要进入输入模式，可以使用以下几种方法
 

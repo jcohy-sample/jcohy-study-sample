@@ -469,7 +469,7 @@ rmdir 命令作用十分有限，因为只能删除空目录。所有一旦目�
 
 首先第一列就代表了权限位，如果不计算最后的 `.` (`.` 在 <<perrmission.adoc#permission>> 中说明)。 则共有 `10` 位.这 10 位的含义为下
 
-image::../images/linux1.png[]
+image::{oss-images}/linux1.png[]
 
 * 第一位代表文件类型:Linux 中不像 Windows 那样使用扩展名表示文件类型。而是使用权限位的第一位表示文件类型。详细情况可以使用 `info ls` 命令查看，下面是一些常见的文件类型。
 +

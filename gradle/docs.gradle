@@ -37,7 +37,7 @@ asciidoctorMultipage.dependsOn(asciidoctor)
 
 task aggregatedAsciidoctor(type: Copy) {
 	dependsOn rootProject.asciidoctor
-	dependsOn rootProject.asciidoctorPdf
+//	dependsOn rootProject.asciidoctorPdf
 	dependsOn rootProject.asciidoctorMultipage
 
 	destinationDir = rootProject.file "${buildDir}"

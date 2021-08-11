@@ -8,7 +8,7 @@
 所以就引入了 ACL 权限，ACL 权限的主要目的是提供传统的 owner，group.others 的 read，write，excute 权限之外的具体权限的设置。ACL 可以针对单一用户，单一文件或目录来进行 r,w,x 的权限设置。
 ACL 权限是解决用户对文件身份不足的问题的
 
-image::../images/linux4.png[]
+image::{oss-images}/linux4.png[]
 
 === 开启 ACL
 

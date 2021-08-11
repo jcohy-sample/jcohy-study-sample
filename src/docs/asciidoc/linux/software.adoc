@@ -697,7 +697,7 @@ and login with the name and password you entered previously.
 
 打开浏览器，输入: http://localhost:10000/ 可以看到以下信息。如果是局域网打开，可以使用 ip 地址。注意端口号是否打开，可以考虑关闭防火墙。
 
-image::images/linux3.png[]
+image::{oss-images}/linux3.png[]
 
 == 常用软件安装
 
