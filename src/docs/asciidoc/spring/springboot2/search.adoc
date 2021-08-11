@@ -20,7 +20,7 @@ image::{oss-images}/spring-spring-boot34.png[]
 [[spring-advanced-search-install]]
 == 安装
 
-<<linux-install-elasticsearch>>
+<<../../linux.adoc#linux-install-elasticsearch>>
 
 [[spring-advanced-search-integration]]
 == 整合 ElasticSearch 测试

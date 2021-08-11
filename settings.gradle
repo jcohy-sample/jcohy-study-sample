@@ -7,13 +7,9 @@ pluginManagement {
 rootProject.name = 'jcohy-study-sample'
 
 include 'algorithm-sample'
-
 include 'java-sample'
-
-//include 'buildSrc'
-
 include 'mybatisplus-sample-8082'
-
+include 'bom'
 include 'design-pattern-sample'
 
 include 'spring-security-sample:spring-boot-security-8081'
@@ -39,4 +35,3 @@ include 'netty-sample'
 include 'kotlin-sample'
 include 'go-sample'
 include 'groovy-sample'
-

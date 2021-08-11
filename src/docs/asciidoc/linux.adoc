@@ -1,5 +1,5 @@
 [[linux-overview]]
-= 概述
+= Linux
 include::attributes.adoc[]
 
 此文档示例使用的 Linux 版本为 CentOS 6.8

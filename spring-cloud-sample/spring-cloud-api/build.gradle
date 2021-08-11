@@ -1,3 +1,9 @@
+plugins {
+	id "com.jcohy.module"
+}
+
+description = "Spring Cloud Api Sample"
+
 dependencies {
-    compile "com.google.code.gson:gson:${gsonVersion}"
+    compile "com.google.code.gson:gson"
 }

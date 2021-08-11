@@ -1,10 +1,16 @@
+plugins {
+	id "com.jcohy.module"
+}
+
+description = "SpringBoot Rabbit Sample"
+
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.boot:spring-boot-starter-amqp"
     compile "org.springframework.boot:spring-boot-starter-logging"
     compile "org.springframework.boot:spring-boot-starter-json"
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    compile "com.fasterxml.jackson.core:jackson-databind"
     compile "org.springframework.boot:spring-boot-starter-thymeleaf"
 }
 task sourceJar(type: Jar) {

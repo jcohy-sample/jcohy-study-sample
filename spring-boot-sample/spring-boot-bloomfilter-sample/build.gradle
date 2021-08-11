@@ -1,5 +1,11 @@
+plugins {
+	id "com.jcohy.module"
+}
+
+description = "SpringBoot BloomFilter Sample"
+
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.boot:spring-boot-starter-data-redis"
-    compile "com.google.guava:guava:${GuavaVersion}"
+    compile "com.google.guava:guava"
 }

@@ -22,9 +22,9 @@
 * <<linux-install-ldap>>
 * <<linux-install-zookeeper>>
 * <<linux-install-elasticsearch>>
-* <<linux-install-Confluence>>
+* <<linux-install-confluence>>
 * <<linux-install-jira>>
-* <<linux-install-useage>>
+* <<linux-install-auto>>
 
 [[linux-install-tbl]]
 .软硬件环境
@@ -1729,7 +1729,7 @@ sh "chmod +x gradlew";
 sh "./gradlew -Penv=${env.ENV} clean build"
 ----
 
-Jenkins 其他操作请查看 <<jenkins>>
+Jenkins 其他操作请查看 https://www.jenkins.io/doc/[官方网站]
 
 [[linux-install-gcc]]
 === 安装高版本gcc

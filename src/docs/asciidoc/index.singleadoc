@@ -1,0 +1,28 @@
+[[jcohy-study-note]]
+= Jcohy 学习笔记
+Jcohy
+include::attributes.adoc[]
+
+****
+作者网页:
+http://www.jcohy.com[*http://www.jcohy.com*]
+
+文档翻译网址:
+http://docs.jcohy.com[*http://docs.jcohy.com*]
+
+我的学习笔记,记录学习过程中的笔记以及遇到的问题,以及我的一些经验总结.如果出现链接失效,或者想知道更多的内容等情况可以提交 https://github.com/jcohy/jcohy-issues/issues[Issues] 提醒我修改相关内容.
+****
+
+include::java.adoc[leveloffset=+1]
+include::annotation.adoc[leveloffset=+1]
+include::designpattern.adoc[leveloffset=+1]
+include::algorithm.adoc[leveloffset=+1]
+include::linux.adoc[leveloffset=+1]
+include::nosql.adoc[leveloffset=+1]
+include::spring.adoc[leveloffset=+1]
+include::zookeeper.adoc[leveloffset=+1]
+include::docker.adoc[leveloffset=+1]
+include::go.adoc[leveloffset=+1]
+include::guide.adoc[leveloffset=+1]
+include::file.adoc[leveloffset=+1]
+include::other.adoc[leveloffset=+1]

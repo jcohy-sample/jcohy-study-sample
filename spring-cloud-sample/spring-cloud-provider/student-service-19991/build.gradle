@@ -1,10 +1,16 @@
+plugins {
+	id "com.jcohy.module"
+}
+
+description = "Spring Cloud Student Provider Sample"
+
 dependencies {
 
     compile project(':spring-cloud-sample:spring-cloud-api')
     compile project(':spring-cloud-sample:spring-cloud-oauth')
 
-    compile "com.codingapi.txlcn:txlcn-tc:${txLcnVersion}"
-    compile "com.codingapi.txlcn:txlcn-txmsg-netty:${txLcnVersion}"
+    compile "com.codingapi.txlcn:txlcn-tc"
+    compile "com.codingapi.txlcn:txlcn-txmsg-netty"
 
     compile "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
     compile "org.springframework.cloud:spring-cloud-starter-openfeign"
@@ -14,8 +20,8 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-data-jdbc"
     compile "org.springframework.boot:spring-boot-starter-tomcat"
     compile "org.springframework.boot:spring-boot-starter-actuator"
-    compile "com.google.code.gson:gson:${gsonVersion}"
-    compile "com.alibaba:druid-spring-boot-starter:${druidStarterVersion}"
+    compile "com.google.code.gson:gson"
+    compile "com.alibaba:druid-spring-boot-starter"
 //    compile "com.alibaba:druid:${druidVersion}"
-    compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
+    compile "mysql:mysql-connector-java"
 }

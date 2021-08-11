@@ -1,5 +1,5 @@
 [[overview]]
-= 概述
+= Golang 指南
 include::attributes.adoc[]
 
 include::go/overview.adoc[leveloffset=+1]

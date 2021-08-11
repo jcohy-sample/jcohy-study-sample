@@ -340,7 +340,7 @@ synchronized (obj) {
 
 ----
 
-参见 Effective Java 第 69 条,获取更多关于为什么应该在循环中来调用 wait 方法的内容.
+参见 《Effective Java》 第 69 条,获取更多关于为什么应该在循环中来调用 wait 方法的内容.
 
 
 [[guide-thread-15]]

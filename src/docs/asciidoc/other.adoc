@@ -1,5 +1,5 @@
 [[other-overview]]
-= 其他
+= 其他组件
 include::attributes.adoc[]
 
 include::other/quartz.adoc[leveloffset=+1]

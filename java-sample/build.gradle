@@ -1,7 +1,14 @@
-dependencies {
-    compile "org.junit.jupiter:junit-jupiter-api:${junit5Version}"
-    compile "org.quartz-scheduler:quartz:${quartzVersion}"
+plugins {
+	id "com.jcohy.module"
 }
+
+description = "Java Sample"
+
+dependencies {
+    compile "org.junit.jupiter:junit-jupiter-api"
+    compile "org.quartz-scheduler:quartz"
+}
+
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
 }

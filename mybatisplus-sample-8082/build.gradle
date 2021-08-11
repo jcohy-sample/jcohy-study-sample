@@ -1,5 +1,11 @@
+plugins {
+	id "com.jcohy.module"
+}
+
+description = "mybatisplus Sample"
+
 dependencies {
-    compile "com.baomidou:mybatis-plus-boot-starter:${mybatisPlusStarterVersion}"
+    compile "com.baomidou:mybatis-plus-boot-starter"
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     runtimeOnly "com.h2database:h2"
 }

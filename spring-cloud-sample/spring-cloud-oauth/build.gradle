@@ -1,7 +1,13 @@
+plugins {
+	id "com.jcohy.module"
+}
+
+description = "Spring Cloud Oauth Sample"
+
 dependencies {
     compile "org.springframework.cloud:spring-cloud-starter-openfeign"
     compile "org.springframework.boot:spring-boot-starter-actuator"
     compile "org.springframework.boot:spring-boot-starter-web"
-    compile "com.alibaba:fastjson:${fastjsonVersion}"
-    compile "io.jsonwebtoken:jjwt:${jjwtVersion}"
+    compile "com.alibaba:fastjson"
+    compile "io.jsonwebtoken:jjwt"
 }

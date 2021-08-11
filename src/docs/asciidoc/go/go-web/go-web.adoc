@@ -1366,7 +1366,7 @@ Session 的作用就是在服务器端保存一些用户的数据 ，然后传�
 
 * 项目的静态文件的目录结构如下
 
-imgage::{oss-images}/go-web2.png[]
+image::{oss-images}/go-web2.png[]
 
 index.html 模板文件中引入的 css 样式的地址是: `<link rel="stylesheet" href="static/css/style.css" type="text/css">`
 

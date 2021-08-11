@@ -21,7 +21,7 @@ Zookeeper 集群的角色:   Leader 和  follower  (Observer)
 [[zookeeper-install]]
 == 安装
 
-<<linux-install-zookeeper>>
+<<linux.adoc#linux-install-zookeeper>>
 
 [[zookeeper-structure]]
 == zookeeper 结构
@@ -181,7 +181,7 @@ zookeeper-api 应用
 
 `org.apache.zookeeper.Zookeeper` 是客户端入口主类,负责建立与 server 的会话
 
-[[java-12-feature-overview-tbl]]
+[[zookeeper-api-tbl]]
 .api
 |===
 | 功能 | 描述

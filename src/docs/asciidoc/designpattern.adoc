@@ -1,5 +1,5 @@
 [[design-overview]]
-= 概述
+= 设计模式
 include::attributes.adoc[]
 
 image::{oss-images}/design-overview.png[]

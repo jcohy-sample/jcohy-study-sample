@@ -1,5 +1,8 @@
-dependencies {
+plugins {
+	id "com.jcohy.module"
 }
-task sourceJar(type: Jar) {
-    from sourceSets.main.allJava
+
+description = "Design Pattern Sample"
+
+dependencies {
 }
