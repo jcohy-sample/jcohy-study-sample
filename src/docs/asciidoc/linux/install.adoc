@@ -180,17 +180,17 @@ https://tomcat.apache.org[官方网站]
 [[linux-install-jdk-usually]]
 ==== 常规安装
 
-1.用 FileZilla 或其他工具将下载好的安装包上传至 Linux 服务器.放置在 **/opt/software/** 目录下.这里使用的是 **jdk-8u221-linux-x64.tar.gz**
+. 用 FileZilla 或其他工具将下载好的安装包上传至 Linux 服务器.放置在 **/opt/software/** 目录下.这里使用的是 **jdk-8u221-linux-x64.tar.gz**
 
-2.解压 jdk 到 `/usr/local` 目录.
-
+. 解压 jdk 到 `/usr/local` 目录.
++
 [source,shell]
 ----
 tar -zxvf jdk-8u221-linux-x64.tar.gz -C /usr/local/
 ----
 
-3.设置环境变量,在 `/etc/profile` 文件最后追加相关内容
-
+. 设置环境变量,在 `/etc/profile` 文件最后追加相关内容
++
 [source,shell]
 ----
 vi /etc/profile
@@ -199,15 +199,15 @@ export JAVA_HOME=/usr/local/jdk1.8.0_221
 export PATH=$PATH:$JAVA_HOME/bin
 ----
 
-4.刷新环境变量
-
+. 刷新环境变量
++
 [source,shell]
 ----
 source /etc/profile
 ----
 
-5.测试java命令是否可用
-
+. 测试java命令是否可用
++
 [source,shell]
 ----
 java -version
@@ -219,37 +219,37 @@ java -version
 [[linux-install-tomcat-usually]]
 ==== 常规安装
 
-1.用 FileZilla 或其他工具将下载好的安装包上传至 Linux 服务器.放置在 **/opt/software/** 目录下.这里使用的是 **apache-tomcat-7.0.94.tar.gz**
+. 用 FileZilla 或其他工具将下载好的安装包上传至 Linux 服务器.放置在 **/opt/software/** 目录下.这里使用的是 **apache-tomcat-7.0.94.tar.gz**
 
-2.解压 tomcat
-
+. 解压 tomcat
++
 [source,shell]
 ----
 tar -zxvf apache-tomcat-7.0.94.tar.gz -C /usr/local/
 ----
 
-3.启动 tomcat
-
+. 启动 tomcat
++
 [source,shell]
 ----
 /usr/local/apache-tomcat-7.0.94/bin/startup.sh
 ----
 
-4.查看 tomcat 进程是否启动
-
+. 查看 tomcat 进程是否启动
++
 [source,shell]
 ----
 jps
 ----
 
-5.查看 tomcat 进程端口
-
+. 查看 tomcat 进程端口
++
 [source,shell]
 ----
 netstat -anpt | grep 2465
 ----
 
-6.通过浏览器访问 tomcat
+. 通过浏览器访问 tomcat
 
 http://host:8080
 
@@ -259,18 +259,18 @@ http://host:8080
 [[linux-install-mysql-usually]]
 ==== 常规安装
 
-1.用 FileZilla 或其他工具将下载好的安装包上传至 Linux 服务器.放置在 **/opt/software/** 目录下.这里使用的是 **mysql-8.0.19-1.el7.x86_64.rpm-bundle.tar**
+. 用 FileZilla 或其他工具将下载好的安装包上传至 Linux 服务器.放置在 **/opt/software/** 目录下.这里使用的是 **mysql-8.0.19-1.el7.x86_64.rpm-bundle.tar**
 
-2.解压 mysql
-
+. 解压 mysql
++
 [source,shell]
 ----
 mkdir -p /usr/local/mysql
 tar -xvf mysql-8.0.19-1.el7.x86_64.rpm-bundle.tar
 ----
 
-3.centos7 默认集成了 `MariaDB`,而安装 `mysql` 的话会和 `mariadb` 的文件冲突,所以需要先卸载掉 `mariadb`
-
+. centos7 默认集成了 `MariaDB`,而安装 `mysql` 的话会和 `mariadb` 的文件冲突,所以需要先卸载掉 `mariadb`
++
 [source,shell]
 ----
 yum remove mariadb
@@ -278,8 +278,8 @@ rpm -qa|grep mariadb-libs
 rpm -e mariadb-libs-5.5.60-1.el7_5.x86_64 --nodeps
 ----
 
-4.安装相关依赖
-
+. 安装相关依赖
++
 [source,shell]
 ----
 yum search libaio  # 检索相关信息
@@ -294,8 +294,8 @@ yum install -y perl
 yum install -y numactl
 ----
 
-5.mysql rpm 安装顺序
-
+. mysql rpm 安装顺序
++
 [source,shell]
 ----
 rpm -ivh mysql-community-common-8.0.19-1.el7.x86_64.rpm
@@ -304,22 +304,22 @@ rpm -ivh mysql-community-client-8.0.19-1.el7.x86_64.rpm
 rpm -ivh mysql-community-server-8.0.19-1.el7.x86_64.rpm
 ----
 
-6.设置开机启动
-
+. 设置开机启动
++
 [source,shell]
 ----
 systemctl enable mysqld
 ----
 
-7.启动mysql
-
+. 启动mysql
++
 [source,shell]
 ----
 systemctl start mysqld
 ----
 
-8.mysql 安装完成之后,在 `/var/log/mysqld.log` 文件中给 `root` 生成了一个默认密码.通过下面的方式找到 `root` 默认密码,然后登录 `mysql` 进行修改:
-
+. mysql 安装完成之后,在 `/var/log/mysqld.log` 文件中给 `root` 生成了一个默认密码.通过下面的方式找到 `root` 默认密码,然后登录 `mysql` 进行修改:
++
 [source,shell]
 ----
 grep 'temporary password' /var/log/mysqld.log
@@ -327,17 +327,17 @@ grep 'temporary password' /var/log/mysqld.log
 mysql -uroot -p
 ----
 
-9.登录上去后,使用下列语句更新密码
-
+. 登录上去后,使用下列语句更新密码
++
 [source,shell]
 ----
  ALTER USER 'root'@'localhost' IDENTIFIED BY 'jia_chao23@126.com';
 ----
 
-10.修改密码加密方式
-
+. 修改密码加密方式
++
 mysql8.0 中默认的加密方式是 `caching_sha2_password` ,修改密码加密方式,改成 `mysql_native_password`,然后修改密码
-
++
 [source,shell]
 ----
 #查看密码加密方式
@@ -352,18 +352,18 @@ ALTER USER 'root'@'localhost' IDENTIFIED BY 'jia_chao23@126.com';
 flush privileges;
 ----
 
-11.修改密码策略
-
+. 修改密码策略
++
 mysql8.0 默认安装了密码安全检查插件(`validate_password`),默认密码检查策略要求密码必须包含: 大小写字母、数字和特殊符号,并且长度不能少于8位.否则会提示 ERROR 1819 (HY000): Your password does not satisfy the current policy requirements 错误.
-
++
 [source,shell]
 ----
 #查看密码策略的相关信息
 show variables like '%password%';
 ----
-
++
 如下图所示:
-
++
 image::https://jcohy-study.oss-cn-beijing.aliyuncs.com/images/linux-install1.jpg[]
 
 * validate_password_policy: 密码策略,默认为MEDIUM策略
@@ -372,9 +372,9 @@ image::https://jcohy-study.oss-cn-beijing.aliyuncs.com/images/linux-install1.jpg
 * validate_password_mixed_case_count: 大小写字符长度,至少1个
 * validate_password_number_count : 数字至少1个
 * validate_password_special_char_count: 特殊字符至少1个
-
++
 上述参数是默认策略 **MEDIUM** 的密码检查规则
-
++
 [source,shell]
 ----
 set global validate_password_policy=0;
@@ -382,15 +382,15 @@ select @@validate_password_length;
 set global validate_password_length=1;
 ----
 
-12.添加远程登录用户
-
+. 添加远程登录用户
++
 [source,shell]
 ----
 GRANT ALL PRIVILEGES ON *.* TO 'jiac'@'%' IDENTIFIED BY 'jiac0917!' WITH GRANT OPTION;
 ----
 
-13.配置默认编码为utf8
-
+. 配置默认编码为utf8
++
 [source,shell]
 ----
 #修改 /etc/my.cnf 配置文件,在 [mysqld] 下添加编码配置,如下所示:
@@ -399,8 +399,8 @@ character_set_server=utf8
 init_connect='SET NAMES utf8'
 ----
 
-14.开启远程登录
-
+. 开启远程登录
++
 [source,shell]
 ----
 CREATE USER 'root'@'%' IDENTIFIED BY 'jiac0917!';
@@ -408,8 +408,8 @@ GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
 flush privileges;
 ----
 
-15.开启端口访问
-
+. 开启端口访问
++
 [source,shell]
 ----
 firewall-cmd --permanent --zone=public --add-port=3306/tcp
@@ -442,8 +442,8 @@ docker run --name mysql \
 [[linux-install-redis-usually]]
 ==== 常规安装
 
-1. https://software.jcohy.com/linux/redis-5.0.5.tar.gz[下载] redis 安装包
-
+. https://software.jcohy.com/linux/redis-5.0.5.tar.gz[下载] redis 安装包
++
 [source,shell]
 ----
 wget https://software.jcohy.com/linux/redis-5.0.5.tar.gz
@@ -452,28 +452,28 @@ cd redis-5.0.5
 make
 ----
 
-2.make 完后 redis-2.8.17 目录下会出现编译后的 redis 服务程序 redis-server,还有用于测试的客户端程序 redis-cli,两个程序位于安装目录 src 目录下:
-
+. make 完后 redis-2.8.17 目录下会出现编译后的 redis 服务程序 redis-server,还有用于测试的客户端程序 redis-cli,两个程序位于安装目录 src 目录下:
++
 下面启动 redis 服务.
-
++
 [source,shell]
 ----
 cd src
 ./redis-server
 ----
 
-3.注意这种方式启动 redis 使用的是默认配置.也可以通过启动参数告诉 redis 使用指定配置文件使用下面命令启动.
-
+. 注意这种方式启动 redis 使用的是默认配置.也可以通过启动参数告诉 redis 使用指定配置文件使用下面命令启动.
++
 [source,shell]
 ----
 cd src
 ./redis-server ../redis.conf
 ----
 
-4.**redis.conf** 是一个默认的配置文件.我们可以根据需要使用自己的配置文件.
-
+. **redis.conf** 是一个默认的配置文件.我们可以根据需要使用自己的配置文件.
++
 启动 redis 服务进程后,就可以使用测试客户端程序 redis-cli 和 redis 服务交互了. 比如:
-
++
 [source,shell]
 ----
 cd src
@@ -487,8 +487,8 @@ redis> get foo
 [[linux-install-redis-docker]]
 ==== docker 安装
 
-1.使用 docker 安装 http://www.runoob.com/docker/docker-install-redis.html[redis]
-
+. 使用 docker 安装 http://www.runoob.com/docker/docker-install-redis.html[redis]
++
 [source,shell]
 ----
 docker pull redis
@@ -502,14 +502,14 @@ docker run --restart=always --privileged=true -p 6379:6379 -v /docker/redis/data
 [[linux-install-nginx-usually]]
 ==== 编译安装
 
-1.安装编译工具及库文件
+. 安装编译工具及库文件
 
 [source,shell]
 ----
 yum -y install make zlib zlib-devel gcc-c++ libtool  openssl openssl-devel
 ----
 
-2.首先要安装 PCRE
+. 首先要安装 PCRE
 
 - 下载 PCRE 安装包,下载地址:  <http://downloads.sourceforge.net/project/pcre/pcre/8.35/pcre-8.35.tar.gz>
 
@@ -1612,7 +1612,7 @@ $ docker pull 192.168.11.239/aix/nginx:latest
 Error response from daemon: repository 192.168.11.239/aix/nginx not found: does not exist or no pull access
 ----
 
-这是原因可能有,一是Harbor仓库上 aix/nginx 确实不存在,二是项目未设置公开的时候,该账户未执行 docker login 192.168.11.239 登录操作,三是该账户对 192.168.11.239/aix 项目没有权限,需要在该项目下增加aix成员,并选择角色.
+这是原因可能有,一是 Harbor 仓库上 aix/nginx 确实不存在,二是项目未设置公开的时候,该账户未执行 docker login 192.168.11.239 登录操作,三是该账户对 192.168.11.239/aix 项目没有权限,需要在该项目下增加 aix 成员,并选择角色.
 
 (3).如果需要修改 Harbor 的配置文件 `harbor.cfg`,因为 Harbor 是基于 docker-compose 服务编排的,我们可以使用 docker-compose 命令重启 Harbor.不修改配置文件,重启 Harbor 命令: docker-compose `start` | `stop` | `restart`
 
