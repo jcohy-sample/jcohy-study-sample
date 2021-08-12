@@ -15,7 +15,7 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 /**
- * @author jiac <a href="http://www.jcohy.com"></a>
+ * @author jiac <a href="https://www.jcohy.com"></a>
  * @since 1.0.0 2020/04/13 2020/4/13:11:34
  * Description
  */

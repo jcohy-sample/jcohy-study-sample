@@ -18,6 +18,6 @@
 :algorithm-code: {rootProject}/algorithm-sample/src/main/java/com/jcohy/sample/algorithm
 :go-code: {rootProject}/go-sample/com/jcohy/go/sample
 
-:spring-boot-chinese-docs: http://docs.jcohy.com/docs/spring-boot/2.2.5.RELEASE/html5/zh-cn/
+:spring-boot-chinese-docs: https://docs.jcohy.com/docs/spring-boot/2.2.5.RELEASE/html5/zh-cn/
 
 :oss-images: https://study.jcohy.com/images

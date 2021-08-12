@@ -9,7 +9,7 @@ YELLOW_COLOR="\033[33m"
 RES="\033[0m"
 
 #脚本所在http服务器.
-BASH_CONFIG=http://software.jcohy.com/bash/common
+BASH_CONFIG=https://software.jcohy.com/bash/common
 
 
 usage() {

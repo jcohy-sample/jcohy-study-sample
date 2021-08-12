@@ -10,7 +10,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.support.GenericApplicationContext;
 
 /**
- * @author jiac <a href="http://www.jcohy.com"></a>
+ * @author jiac <a href="https://www.jcohy.com"></a>
  * @since 1.0.0 2020/04/22 2020/4/22:11:58
  * Description
  */

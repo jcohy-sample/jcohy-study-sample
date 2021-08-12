@@ -3,7 +3,7 @@ package com.jcohy.sample.netty.nio;
 import java.nio.file.AccessMode;
 
 /**
- * Copyright: Copyright (c) 2020 <a href="http://www.jcohy.com" target="_blank">jcohy.com</a>
+ * Copyright: Copyright (c) 2020 <a href="https://www.jcohy.com" target="_blank">jcohy.com</a>
  *
  * <p> Description:
  *

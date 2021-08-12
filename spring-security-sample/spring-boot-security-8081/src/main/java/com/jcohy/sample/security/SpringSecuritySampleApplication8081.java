@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 
 /**
- * @author jcohy <a href="http://www.jcohy.com"></a>
+ * @author jcohy <a href="https://www.jcohy.com"></a>
  * @since 1.0.0
  * Description  2020/4/2 14:03
  */

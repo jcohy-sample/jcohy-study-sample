@@ -1,7 +1,7 @@
 package com.jcohy.sample.designpattern.singleton;
 
 /**
- * @author jiac <a href="http://www.jcohy.com"></a>
+ * @author jiac <a href="https://www.jcohy.com"></a>
  * @since 1.0.0
  * Description  2020/4/7 14:52
  */

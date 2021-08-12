@@ -5,10 +5,10 @@ include::attributes.adoc[]
 
 ****
 作者网页:
-http://www.jcohy.com[*http://www.jcohy.com*]
+https://www.jcohy.com[*https://www.jcohy.com*]
 
 文档翻译网址:
-http://docs.jcohy.com[*http://docs.jcohy.com*]
+https://docs.jcohy.com[*https://docs.jcohy.com*]
 
 我的学习笔记,记录学习过程中的笔记以及遇到的问题,以及我的一些经验总结.如果出现链接失效,或者想知道更多的内容等情况可以提交 https://github.com/jcohy/jcohy-issues/issues[Issues] 提醒我修改相关内容.
 ****

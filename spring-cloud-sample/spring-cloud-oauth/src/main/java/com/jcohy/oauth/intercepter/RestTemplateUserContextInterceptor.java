@@ -9,7 +9,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import java.io.IOException;
 
 /**
- * Copyright: Copyright (c) 2019 http://www.jcohy.com
+ * Copyright: Copyright (c) 2019 https://www.jcohy.com
  *
  * @author jcohy
  * @version v1.0.0

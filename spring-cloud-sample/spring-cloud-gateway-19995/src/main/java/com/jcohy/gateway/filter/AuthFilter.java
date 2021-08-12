@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.Map;
 
 /**
- * Copyright: Copyright (c) 2019 http://www.jcohy.com
+ * Copyright: Copyright (c) 2019 https://www.jcohy.com
  *
  * @author jcohy
  * @version v1.0.0

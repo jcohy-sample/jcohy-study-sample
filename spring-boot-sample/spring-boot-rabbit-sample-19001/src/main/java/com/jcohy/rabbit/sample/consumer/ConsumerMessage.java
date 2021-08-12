@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 /**
- * @author jiac <a href="http://www.jcohy.com"></a>
+ * @author jiac <a href="https://www.jcohy.com"></a>
  * @since 1.0.0 2020/04/13 2020/4/13:10:31
  * Description
  */

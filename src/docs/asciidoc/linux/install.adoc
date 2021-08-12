@@ -2068,7 +2068,7 @@ wget https://downloads.atlassian.com/software/confluence/downloads/atlassian-con
 
 2.下载破解器
 
-http://software.jcohy.com/windows/confluence%E7%A0%B4%E8%A7%A3%E5%B7%A5%E5%85%B7.zip
+https://software.jcohy.com/windows/confluence%E7%A0%B4%E8%A7%A3%E5%B7%A5%E5%85%B7.zip
 
 3.安装 confluence
 
@@ -2515,9 +2515,9 @@ docker run -e ES_JAVA_OPTS="-Xms256m -Xmx256m" -d -p 9200:9200 -p 9300:9300 --na
 |===
 | 变量名 | 目录 | 说明
 
-| BASH_URL | http://software.jcohy.com/linux/ | 所有所需软件安装包所在的服务器(可以使用 httpd 或者 nginx 等服务器搭建)
+| BASH_URL | https://software.jcohy.com/linux/ | 所有所需软件安装包所在的服务器(可以使用 httpd 或者 nginx 等服务器搭建)
 
-| BASH_CONFIG | http://software.jcohy.com/bash/ | 安装所需脚本和配置文件目录
+| BASH_CONFIG | https://software.jcohy.com/bash/ | 安装所需脚本和配置文件目录
 
 | BASE_DIR | /opt/software | 本地存放安装包的地址
 

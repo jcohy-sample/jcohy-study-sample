@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.codec.ServerCodecConfigurer;
 
 /**
- * Copyright: Copyright (c) 2019http://www.jcohy.com
+ * Copyright: Copyright (c) 2019https://www.jcohy.com
  *
  * @author jcohy
  * @version v1.0.0
