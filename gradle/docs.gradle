@@ -25,13 +25,6 @@ task asciidoctorMultipage(type: org.asciidoctor.gradle.jvm.AsciidoctorTask) {
 	}
 }
 
-asciidoctorMultipage.doLast {
-	delete file("$buildDir/docs/asciidocMultipage/zh-cn/img/banner-logo.svg")
-	copy {
-		from file("$buildDir/docs/asciidoc/zh-cn/img/banner-logo.svg")
-		into file("$buildDir/docs/asciidocMultipage/zh-cn/img")
-	}
-}
 
 asciidoctorMultipage.dependsOn(asciidoctor)
 
@@ -52,6 +45,20 @@ task aggregatedAsciidoctor(type: Copy) {
 
 	from(rootProject.asciidoctorPdf.outputDir) {
 		into "generated/pdf"
+	}
+}
+
+
+aggregatedAsciidoctor.doLast {
+	delete file("$buildDir/generated/html5/img/banner-logo.svg")
+	delete file("$buildDir/generated/htmlsingle/img/banner-logo.svg")
+	copy {
+		from file("$buildDir/docs/asciidoc/img/banner-logo.svg")
+		into file("$buildDir/generated/htmlsingle/img")
+	}
+	copy {
+		from file("$buildDir/docs/asciidoc/img/banner-logo.svg")
+		into file("$buildDir/generated/html5/img")
 	}
 }
 
