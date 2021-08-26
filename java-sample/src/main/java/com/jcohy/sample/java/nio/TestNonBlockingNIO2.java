@@ -13,60 +13,60 @@ import java.util.Iterator;
 import java.util.Scanner;
 
 /**
- * Created by jcohy on 2018/12/4.
- * ClassName  : com.jcohy.study
- * Description  :
+ * Created by jcohy on 2018/12/4. ClassName : com.jcohy.study Description :
  */
 public class TestNonBlockingNIO2 {
 
-    @Test
-    public void send() throws IOException {
-        DatagramChannel dc = DatagramChannel.open();
-        dc.configureBlocking(false);
+	@Test
+	public void send() throws IOException {
+		DatagramChannel dc = DatagramChannel.open();
+		dc.configureBlocking(false);
 
-        ByteBuffer buf = ByteBuffer.allocate(1024);
+		ByteBuffer buf = ByteBuffer.allocate(1024);
 
-        Scanner scan = new Scanner(System.in);
+		Scanner scan = new Scanner(System.in);
 
-        while(scan.hasNext()){
-            String str = scan.next();
-            buf.put((new Date().toString() + ":\n" + str).getBytes());
-            buf.flip();
-            dc.send(buf, new InetSocketAddress("127.0.0.1", 9898));
-            buf.clear();
-        }
+		while (scan.hasNext()) {
+			String str = scan.next();
+			buf.put((new Date().toString() + ":\n" + str).getBytes());
+			buf.flip();
+			dc.send(buf, new InetSocketAddress("127.0.0.1", 9898));
+			buf.clear();
+		}
 
-        dc.close();
-    }
-    @Test
-    public void receive() throws IOException{
-        DatagramChannel dc = DatagramChannel.open();
+		dc.close();
+	}
 
-        dc.configureBlocking(false);
+	@Test
+	public void receive() throws IOException {
+		DatagramChannel dc = DatagramChannel.open();
 
-        dc.bind(new InetSocketAddress(9898));
+		dc.configureBlocking(false);
 
-        Selector selector = Selector.open();
+		dc.bind(new InetSocketAddress(9898));
 
-        dc.register(selector, SelectionKey.OP_READ);
+		Selector selector = Selector.open();
 
-        while(selector.select() > 0){
-            Iterator<SelectionKey> it = selector.selectedKeys().iterator();
+		dc.register(selector, SelectionKey.OP_READ);
 
-            while(it.hasNext()){
-                SelectionKey sk = it.next();
+		while (selector.select() > 0) {
+			Iterator<SelectionKey> it = selector.selectedKeys().iterator();
 
-                if(sk.isReadable()){
-                    ByteBuffer buf = ByteBuffer.allocate(1024);
+			while (it.hasNext()) {
+				SelectionKey sk = it.next();
 
-                    dc.receive(buf);
-                    buf.flip();
-                    System.out.println(new String(buf.array(), 0, buf.limit()));
-                    buf.clear();
-                }
-            }
+				if (sk.isReadable()) {
+					ByteBuffer buf = ByteBuffer.allocate(1024);
 
-            it.remove();
-        }
-    }
+					dc.receive(buf);
+					buf.flip();
+					System.out.println(new String(buf.array(), 0, buf.limit()));
+					buf.clear();
+				}
+			}
+
+			it.remove();
+		}
+	}
+
 }

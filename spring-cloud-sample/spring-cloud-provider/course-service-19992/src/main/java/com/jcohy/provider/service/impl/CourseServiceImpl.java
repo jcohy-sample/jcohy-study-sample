@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CourseServiceImpl implements CourseService {
+
 	@Autowired
 	private CourseRepository courseRepository;
 
@@ -43,4 +44,5 @@ public class CourseServiceImpl implements CourseService {
 	public CourseDto getByByName(String name) {
 		return Course.ofDto(courseRepository.getByCname(name));
 	}
+
 }

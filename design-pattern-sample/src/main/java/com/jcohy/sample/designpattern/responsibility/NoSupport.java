@@ -6,13 +6,15 @@ package com.jcohy.sample.designpattern.responsibility;
  */
 public class NoSupport extends Support {
 
-    public NoSupport(String name) {
-        super(name);
-    }
-    //解决的方法，自己不做处理
-    @Override
-    protected boolean resolve(Trouble trouble) {
-        return false;
-    }
+	public NoSupport(String name) {
+		super(name);
+	}
+
+	// 解决的方法，自己不做处理
+	@Override
+	protected boolean resolve(Trouble trouble) {
+		return false;
+	}
+
 }
 // end::code[]

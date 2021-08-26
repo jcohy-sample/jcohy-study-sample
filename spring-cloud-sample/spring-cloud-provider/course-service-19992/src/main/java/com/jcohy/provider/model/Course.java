@@ -1,6 +1,5 @@
 package com.jcohy.provider.model;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jcohy.sample.cloud.dto.CourseDto;
 
@@ -9,52 +8,54 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "course")
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
 public class Course implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cid;
 
-    @Column(name = "cname")
-    private String cname;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long cid;
 
-    @Column(name = "tid")
-    private Long tid;
+	@Column(name = "cname")
+	private String cname;
 
-    public Course(String cname, Long tid) {
-        this.cname = cname;
-        this.tid = tid;
-    }
+	@Column(name = "tid")
+	private Long tid;
 
-    public Course() {
-    }
+	public Course(String cname, Long tid) {
+		this.cname = cname;
+		this.tid = tid;
+	}
 
-    public Long getCid() {
-        return cid;
-    }
+	public Course() {
+	}
 
-    public void setCid(Long cid) {
-        this.cid = cid;
-    }
+	public Long getCid() {
+		return cid;
+	}
 
-    public String getCname() {
-        return cname;
-    }
+	public void setCid(Long cid) {
+		this.cid = cid;
+	}
 
-    public void setCname(String cname) {
-        this.cname = cname;
-    }
+	public String getCname() {
+		return cname;
+	}
 
-    public Long getTid() {
-        return tid;
-    }
+	public void setCname(String cname) {
+		this.cname = cname;
+	}
 
-    public void setTid(Long tid) {
-        this.tid = tid;
-    }
+	public Long getTid() {
+		return tid;
+	}
 
-    public static CourseDto ofDto(Course course) {
-        CourseDto courseDto = new CourseDto(course.getCid(),course.getCname(),course.getTid());
-        return courseDto;
-    }
+	public void setTid(Long tid) {
+		this.tid = tid;
+	}
+
+	public static CourseDto ofDto(Course course) {
+		CourseDto courseDto = new CourseDto(course.getCid(), course.getCname(), course.getTid());
+		return courseDto;
+	}
+
 }

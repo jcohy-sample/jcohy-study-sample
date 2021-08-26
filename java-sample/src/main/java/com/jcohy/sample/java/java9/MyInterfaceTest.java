@@ -1,6 +1,7 @@
-package com.jcohy.sample.java.java9;//package com.jcohy.study.java9;
+package com.jcohy.sample.java.java9;// package com.jcohy.study.java9;
+
 //
-///**
+/// **
 // * Copyright: Copyright (c) 2019 www.xuanwuai.cn
 // *
 // * @author jcohy
@@ -9,16 +10,16 @@ package com.jcohy.sample.java.java9;//package com.jcohy.study.java9;
 // * @date 2019/10/31 14:12
 // * <p>
 // * Modification History:
-// * Date         Author          Version            Description
+// * Date Author Version Description
 // * ----------------------------------------------------------------------------------*
-// * 2019/10/31      jcohy           v1.0.0               修改原因
+// * 2019/10/31 jcohy v1.0.0 修改原因
 // */
 //
 //
-//public class MyInterfaceTest {
-//    public static void main(String[] args) {
-//        MyInterfaceImpl impl = new MyInterfaceImpl();
-//        impl.methodDefault1();
-//        // impl.init();//不能调用
-//    }
-//}
+// public class MyInterfaceTest {
+// public static void main(String[] args) {
+// MyInterfaceImpl impl = new MyInterfaceImpl();
+// impl.methodDefault1();
+// // impl.init();//不能调用
+// }
+// }

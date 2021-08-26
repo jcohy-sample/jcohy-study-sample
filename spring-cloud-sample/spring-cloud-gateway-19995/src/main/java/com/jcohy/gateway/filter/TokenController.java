@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TokenController {
-	
+
 	@GetMapping("/getToken/{name}")
-    public String get(@PathVariable("name") String name)  {
-        return JwtUtil.generateToken(name);
-    }
-	
+	public String get(@PathVariable("name") String name) {
+		return JwtUtil.generateToken(name);
+	}
+
 }

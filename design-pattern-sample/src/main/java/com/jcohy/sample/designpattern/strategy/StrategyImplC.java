@@ -1,4 +1,5 @@
 package com.jcohy.sample.designpattern.strategy;
+
 // tag::code[]
 public class StrategyImplC extends Strategy {
 

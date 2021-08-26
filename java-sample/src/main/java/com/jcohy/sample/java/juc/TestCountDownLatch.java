@@ -19,7 +19,8 @@ public class TestCountDownLatch {
 
 		try {
 			latch.await();
-		} catch (InterruptedException e) {
+		}
+		catch (InterruptedException e) {
 		}
 
 		long end = System.currentTimeMillis();
@@ -46,7 +47,8 @@ class LatchDemo implements Runnable {
 					System.out.println(i);
 				}
 			}
-		} finally {
+		}
+		finally {
 			latch.countDown();
 		}
 

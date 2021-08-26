@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 //名字默认是类名首字母小写
 @Repository
 public class BookDao {
-	
+
 	private String lable = "1";
 
 	public String getLable() {
@@ -20,9 +20,5 @@ public class BookDao {
 	public String toString() {
 		return "BookDao [lable=" + lable + "]";
 	}
-	
-	
-	
-	
 
 }

@@ -1,6 +1,5 @@
 package com.jcohy.provider.service;
 
-
 import com.jcohy.provider.entity.Order;
 import com.jcohy.provider.feign.AccountFeignClient;
 import com.jcohy.provider.repository.OrderDAO;
@@ -19,27 +18,27 @@ import java.math.BigDecimal;
 @Service
 public class OrderService {
 
-    @Autowired
-    private AccountFeignClient accountFeignClient;
+	@Autowired
+	private AccountFeignClient accountFeignClient;
 
-    @Autowired
-    private OrderDAO orderDAO;
+	@Autowired
+	private OrderDAO orderDAO;
 
-    @Transactional
-    public void create(String userId, String commodityCode, Integer count) {
+	@Transactional
+	public void create(String userId, String commodityCode, Integer count) {
 
-        BigDecimal orderMoney = new BigDecimal(count).multiply(new BigDecimal(5));
+		BigDecimal orderMoney = new BigDecimal(count).multiply(new BigDecimal(5));
 
-        Order order = new Order();
-        order.setUserId(userId);
-        order.setCommodityCode(commodityCode);
-        order.setCount(count);
-        order.setMoney(orderMoney);
+		Order order = new Order();
+		order.setUserId(userId);
+		order.setCommodityCode(commodityCode);
+		order.setCount(count);
+		order.setMoney(orderMoney);
 
-        orderDAO.save(order);
+		orderDAO.save(order);
 
-        accountFeignClient.debit(userId, orderMoney);
+		accountFeignClient.debit(userId, orderMoney);
 
-    }
+	}
 
 }

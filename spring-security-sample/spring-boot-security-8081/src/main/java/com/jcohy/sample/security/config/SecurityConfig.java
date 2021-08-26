@@ -11,13 +11,12 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 /**
  * @author jcohy <a href="https://www.jcohy.com"></a>
- * @since 1.0.0
- * Description  2020/4/2 14:19
+ * @since 1.0.0 Description 2020/4/2 14:19
  */
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    // @formatter:off
+	// @formatter:off
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -32,13 +31,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
     // @formatter:on
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("password")
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(userDetails);
-    }
+	@Bean
+	public UserDetailsService userDetailsService() {
+		UserDetails userDetails = User.withDefaultPasswordEncoder().username("user").password("password").roles("USER")
+				.build();
+		return new InMemoryUserDetailsManager(userDetails);
+	}
+
 }

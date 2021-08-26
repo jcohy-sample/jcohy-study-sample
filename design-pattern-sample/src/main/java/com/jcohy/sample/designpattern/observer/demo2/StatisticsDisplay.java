@@ -1,27 +1,29 @@
 package com.jcohy.sample.designpattern.observer.demo2;
 
 /**
- * Created by jcohy on 2019/3/15.
- * ClassName  : com.jcohy.study.observer.demo2
- * Description  :
+ * Created by jcohy on 2019/3/15. ClassName : com.jcohy.study.observer.demo2 Description :
  */
-public class StatisticsDisplay implements Observer,DisplayElement {
+public class StatisticsDisplay implements Observer, DisplayElement {
 
-    Subject weatherData;
-    private float temperature;
-    private float humidity;
-    public StatisticsDisplay(Subject weatherData) {
-        this.weatherData = weatherData;
-        weatherData.register(this);
-    }
+	Subject weatherData;
 
-    @Override
-    public void display() {
+	private float temperature;
 
-    }
+	private float humidity;
 
-    @Override
-    public void update(float temperature, float humidity, float pressure) {
+	public StatisticsDisplay(Subject weatherData) {
+		this.weatherData = weatherData;
+		weatherData.register(this);
+	}
 
-    }
+	@Override
+	public void display() {
+
+	}
+
+	@Override
+	public void update(float temperature, float humidity, float pressure) {
+
+	}
+
 }

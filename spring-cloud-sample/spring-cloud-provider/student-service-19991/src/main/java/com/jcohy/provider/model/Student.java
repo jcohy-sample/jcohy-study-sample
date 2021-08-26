@@ -1,7 +1,5 @@
 package com.jcohy.provider.model;
 
-
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jcohy.sample.cloud.dto.StudentDto;
 
@@ -11,18 +9,20 @@ import java.io.Serializable;
 @Entity
 @Table(name = "student")
 @JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
-public class Student implements Serializable{
+public class Student implements Serializable {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long 	sid;
+	private Long sid;
 
 	@Column(name = "sname")
-	private String 	sname;
-	@Column(name = "sage")
-	private String 	sage;
-	@Column(name = "ssex")
-	private String 	ssex;
+	private String sname;
 
+	@Column(name = "sage")
+	private String sage;
+
+	@Column(name = "ssex")
+	private String ssex;
 
 	public Student() {
 	}
@@ -65,11 +65,10 @@ public class Student implements Serializable{
 		this.ssex = ssex;
 	}
 
-	public static StudentDto ofDto(Student student){
-		StudentDto studentDto = new StudentDto(student.getSid(),
-				student.getSname(),
-				student.getSage(),
+	public static StudentDto ofDto(Student student) {
+		StudentDto studentDto = new StudentDto(student.getSid(), student.getSname(), student.getSage(),
 				student.getSsex());
 		return studentDto;
 	}
+
 }

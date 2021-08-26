@@ -13,32 +13,35 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicInsert
 public class Storage {
 
-    @Id
-    private Long id;
-    private String commodityCode;
-    private Integer count;
+	@Id
+	private Long id;
 
-    public Long getId() {
-        return id;
-    }
+	private String commodityCode;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	private Integer count;
 
-    public String getCommodityCode() {
-        return commodityCode;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setCommodityCode(String commodityCode) {
-        this.commodityCode = commodityCode;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Integer getCount() {
-        return count;
-    }
+	public String getCommodityCode() {
+		return commodityCode;
+	}
 
-    public void setCount(Integer count) {
-        this.count = count;
-    }
+	public void setCommodityCode(String commodityCode) {
+		this.commodityCode = commodityCode;
+	}
+
+	public Integer getCount() {
+		return count;
+	}
+
+	public void setCount(Integer count) {
+		this.count = count;
+	}
+
 }

@@ -12,26 +12,30 @@ import java.util.Stack;
 // tag::code[]
 /**
  * 结合多个命令的命令的类
+ *
  * @author jcohy
  */
-public class MacroCommand implements Command{
+public class MacroCommand implements Command {
+
 	private Stack<Command> commands = new Stack<Command>();
 
 	@Override
 	public void execute() {
 		Iterator<Command> it = commands.iterator();
-		while(it.hasNext()) {
-			((Command)it.next()).execute();
+		while (it.hasNext()) {
+			((Command) it.next()).execute();
 		}
 	}
+
 	public void append(Command cmd) {
-		if(cmd!=this) {
+		if (cmd != this) {
 			commands.push(cmd);
 		}
 	}
-	//删除最后一个命令
+
+	// 删除最后一个命令
 	public void undo() {
-		if(!commands.empty()) {
+		if (!commands.empty()) {
 			commands.pop();
 		}
 	}
@@ -39,5 +43,6 @@ public class MacroCommand implements Command{
 	public void clear() {
 		commands.clear();
 	}
+
 }
 // end::code[]

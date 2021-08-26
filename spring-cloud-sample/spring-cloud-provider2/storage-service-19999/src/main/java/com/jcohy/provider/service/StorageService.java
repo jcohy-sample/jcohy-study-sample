@@ -15,14 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class StorageService {
 
-    @Autowired
-    private StorageDAO storageDAO;
+	@Autowired
+	private StorageDAO storageDAO;
 
-    @Transactional
-    public void deduct(String commodityCode, int count) {
-        Storage storage = storageDAO.findByCommodityCode(commodityCode);
-        storage.setCount(storage.getCount() - count);
+	@Transactional
+	public void deduct(String commodityCode, int count) {
+		Storage storage = storageDAO.findByCommodityCode(commodityCode);
+		storage.setCount(storage.getCount() - count);
 
-        storageDAO.save(storage);
-    }
+		storageDAO.save(storage);
+	}
+
 }

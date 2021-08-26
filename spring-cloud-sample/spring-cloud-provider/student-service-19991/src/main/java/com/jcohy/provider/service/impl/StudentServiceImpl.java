@@ -21,7 +21,6 @@ import javax.transaction.Transactional;
 @Service
 public class StudentServiceImpl implements StudentService {
 
-
 	@Autowired
 	private StudentRepository studentRepository;
 
@@ -58,17 +57,17 @@ public class StudentServiceImpl implements StudentService {
 		Student student = get(id);
 		studentSocre.setSname(student.getSname());
 
-		List<Map<String,Object>> mapList = new ArrayList<>();
-		for (Sc sc:scs) {
-			Map<String,Object> map = new HashMap<>();
+		List<Map<String, Object>> mapList = new ArrayList<>();
+		for (Sc sc : scs) {
+			Map<String, Object> map = new HashMap<>();
 			Long cid = sc.getCid();
 			Integer score = sc.getScore();
 			CourseDto courseDto = coureFignApi.get(cid);
 			Long tid = courseDto.getTid();
 			TeacherDto teacherDto = teacherFignApi.get(tid);
-			map.put("cname",courseDto.getCname());
-			map.put("tname",teacherDto.getTname());
-			map.put("score",score);
+			map.put("cname", courseDto.getCname());
+			map.put("tname", teacherDto.getTname());
+			map.put("score", score);
 			mapList.add(map);
 		}
 		studentSocre.setMapList(mapList);
@@ -84,25 +83,23 @@ public class StudentServiceImpl implements StudentService {
 		List<Map<String, Object>> mapList = studentSocre.getMapList();
 		Student student = studentRepository.save(new Student(sname, "55", "男"));
 
-//		Thread.sleep(1000);
-		for(Map<String,Object> map:mapList){
+		// Thread.sleep(1000);
+		for (Map<String, Object> map : mapList) {
 			String cname = (String) map.get("cname");
 			String tname = (String) map.get("tname");
 			Integer score = (Integer) map.get("score");
-//			int s = 4/0;
+			// int s = 4/0;
 			TeacherDto teacherDto = new TeacherDto();
 			teacherDto.setTname(tname);
 			TeacherDto tDto = teacherFignApi.add(teacherDto);
 
-
 			CourseDto courseDto = new CourseDto();
 			courseDto.setCname(cname);
-
 
 			courseDto.setTid(tDto.getTid());
 			CourseDto cDto = coureFignApi.add(courseDto);
 
-			Sc sc = new Sc(student.getSid(),cDto.getCid(),score);
+			Sc sc = new Sc(student.getSid(), cDto.getCid(), score);
 			scRepository.save(sc);
 
 			// 置异常标志，DTX 回滚
@@ -112,4 +109,5 @@ public class StudentServiceImpl implements StudentService {
 		}
 		return "Successful";
 	}
+
 }

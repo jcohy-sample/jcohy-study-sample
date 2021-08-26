@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class OrderController {
 
-    @Autowired
-    private OrderService orderService;
+	@Autowired
+	private OrderService orderService;
 
-    @GetMapping("/create")
-    public Boolean create(String userId, String commodityCode, Integer count) {
+	@GetMapping("/create")
+	public Boolean create(String userId, String commodityCode, Integer count) {
 
-        orderService.create(userId, commodityCode, count);
-        return true;
-    }
+		orderService.create(userId, commodityCode, count);
+		return true;
+	}
 
 }

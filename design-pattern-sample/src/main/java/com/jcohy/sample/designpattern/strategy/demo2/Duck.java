@@ -1,33 +1,37 @@
 package com.jcohy.sample.designpattern.strategy.demo2;
 
 /**
- * Created by jcohy on 2019/3/15.
- * ClassName  : com.jcohy.study.strategy.demo2
- * Description  :
+ * Created by jcohy on 2019/3/15. ClassName : com.jcohy.study.strategy.demo2 Description :
  */
 public abstract class Duck {
-    FlyBehavior flyBehavior;
-    QuackBehavior quackBehavior;
 
-    public Duck(){}
+	FlyBehavior flyBehavior;
 
-    public abstract void display();
+	QuackBehavior quackBehavior;
 
-    public void performFly() {
-        flyBehavior.fly();
-    }
-    public void performQuack() {
-        quackBehavior.quack();
-    }
-    public void swim() {
-        System.out.println("All ducks float, even decoys!");
-    }
+	public Duck() {
+	}
 
-    public void setFlyBehavior(FlyBehavior flyBehavior) {
-        this.flyBehavior = flyBehavior;
-    }
+	public abstract void display();
 
-    public void setQuackBehavior(QuackBehavior quackBehavior) {
-        this.quackBehavior = quackBehavior;
-    }
+	public void performFly() {
+		flyBehavior.fly();
+	}
+
+	public void performQuack() {
+		quackBehavior.quack();
+	}
+
+	public void swim() {
+		System.out.println("All ducks float, even decoys!");
+	}
+
+	public void setFlyBehavior(FlyBehavior flyBehavior) {
+		this.flyBehavior = flyBehavior;
+	}
+
+	public void setQuackBehavior(QuackBehavior quackBehavior) {
+		this.quackBehavior = quackBehavior;
+	}
+
 }

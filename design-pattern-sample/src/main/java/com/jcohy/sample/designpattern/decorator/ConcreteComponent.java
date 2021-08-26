@@ -8,12 +8,10 @@ package com.jcohy.sample.designpattern.decorator;
  * Description:
  **/
 /**
- * @author jcohy
- *定义一个对象，可以给这个对象添加职责
+ * @author jcohy 定义一个对象，可以给这个对象添加职责
  */
-public class ConcreteComponent implements Person{
+public class ConcreteComponent implements Person {
 
-	
 	public void eat() {
 		System.out.println("小伙子在吃");
 	}

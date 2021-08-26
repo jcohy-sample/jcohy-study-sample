@@ -8,14 +8,15 @@ import java.util.UUID;
 
 @Repository
 public class UserDao {
-	
+
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-	public void insert(){
+
+	public void insert() {
 		String sql = "INSERT INTO `tbl_user`(username,age) VALUES(?,?)";
 		String username = UUID.randomUUID().toString().substring(0, 5);
-		jdbcTemplate.update(sql, username,19);
-		
+		jdbcTemplate.update(sql, username, 19);
+
 	}
 
 }

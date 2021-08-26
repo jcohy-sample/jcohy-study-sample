@@ -1,10 +1,10 @@
 package com.jcohy.sample.aop;
 
 public class MathCalculator {
-	
-	public int div(int i,int j){
+
+	public int div(int i, int j) {
 		System.out.println("MathCalculator...div...");
-		return i/j;	
+		return i / j;
 	}
 
 }

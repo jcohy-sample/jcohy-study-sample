@@ -15,22 +15,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class BusinessService {
 
-    @Autowired
-    private StorageFeignClient storageFeignClient;
-    @Autowired
-    private OrderFeignClient orderFeignClient;
+	@Autowired
+	private StorageFeignClient storageFeignClient;
 
-    /**
-     * 减库存，下订单
-     *
-     * @param userId
-     * @param commodityCode
-     * @param orderCount
-     */
-    @GlobalTransactional
-    public void purchase(String userId, String commodityCode, int orderCount) {
-        storageFeignClient.deduct(commodityCode, orderCount);
+	@Autowired
+	private OrderFeignClient orderFeignClient;
 
-        orderFeignClient.create(userId, commodityCode, orderCount);
-    }
+	/**
+	 * 减库存，下订单
+	 * @param userId
+	 * @param commodityCode
+	 * @param orderCount
+	 */
+	@GlobalTransactional
+	public void purchase(String userId, String commodityCode, int orderCount) {
+		storageFeignClient.deduct(commodityCode, orderCount);
+
+		orderFeignClient.create(userId, commodityCode, orderCount);
+	}
+
 }

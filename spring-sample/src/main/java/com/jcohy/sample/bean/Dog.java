@@ -10,23 +10,23 @@ import javax.annotation.PreDestroy;
 
 @Component
 public class Dog implements ApplicationContextAware {
-	
-	//@Autowired
+
+	// @Autowired
 	private ApplicationContext applicationContext;
-	
-	public Dog(){
+
+	public Dog() {
 		System.out.println("dog constructor...");
 	}
-	
-	//对象创建并赋值之后调用
+
+	// 对象创建并赋值之后调用
 	@PostConstruct
-	public void init(){
+	public void init() {
 		System.out.println("Dog....@PostConstruct...");
 	}
-	
-	//容器移除对象之前
+
+	// 容器移除对象之前
 	@PreDestroy
-	public void detory(){
+	public void detory() {
 		System.out.println("Dog....@PreDestroy...");
 	}
 
@@ -35,4 +35,5 @@ public class Dog implements ApplicationContextAware {
 		// TODO Auto-generated method stub
 		this.applicationContext = applicationContext;
 	}
+
 }

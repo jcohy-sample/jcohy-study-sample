@@ -1,9 +1,12 @@
 package com.jcohy.sample.java.java8.stream;
+
 //交易类
 public class Transaction {
 
 	private Trader trader;
+
 	private int year;
+
 	private int value;
 
 	public Transaction() {
@@ -41,8 +44,7 @@ public class Transaction {
 
 	@Override
 	public String toString() {
-		return "Transaction [trader=" + trader + ", year=" + year + ", value="
-				+ value + "]";
+		return "Transaction [trader=" + trader + ", year=" + year + ", value=" + value + "]";
 	}
 
 }

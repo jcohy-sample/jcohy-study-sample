@@ -9,7 +9,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableDiscoveryClient
 @EnableFeignClients
 public class StorageProvider19999 {
-    public static void main(String[] args) {
-        SpringApplication.run(StorageProvider19999.class, args);
-    }
+
+	public static void main(String[] args) {
+		SpringApplication.run(StorageProvider19999.class, args);
+	}
+
 }

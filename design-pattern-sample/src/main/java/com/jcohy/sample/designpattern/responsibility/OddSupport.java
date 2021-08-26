@@ -6,16 +6,17 @@ package com.jcohy.sample.designpattern.responsibility;
  */
 public class OddSupport extends Support {
 
-    public OddSupport(String name) {
-        super(name);
-    }
+	public OddSupport(String name) {
+		super(name);
+	}
 
-    @Override
-    protected boolean resolve(Trouble trouble) {
-        if(trouble.getNumber()%2 ==1) {
-            return true;
-        }
-        return false;
-    }
+	@Override
+	protected boolean resolve(Trouble trouble) {
+		if (trouble.getNumber() % 2 == 1) {
+			return true;
+		}
+		return false;
+	}
+
 }
 // end::code[]

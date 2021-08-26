@@ -10,39 +10,39 @@ import java.io.Serializable;
  * @Description: TODO 请添加该类的功能描述
  * @date 2019/7/9 17:04
  * <p>
- * Modification History:
- * Date         Author          Version            Description
+ * Modification History: Date Author Version Description
  * ----------------------------------------------------------------------------------*
- * 2019/7/9      jcohy           v1.0.0               修改原因
+ * 2019/7/9 jcohy v1.0.0 修改原因
  */
 
 public class TeacherDto implements Serializable {
 
-    private Long tid;
+	private Long tid;
 
-    private String 	tname;
+	private String tname;
 
-    public TeacherDto() {
-    }
+	public TeacherDto() {
+	}
 
-    public TeacherDto(Long tid, String tname) {
-        this.tid = tid;
-        this.tname = tname;
-    }
+	public TeacherDto(Long tid, String tname) {
+		this.tid = tid;
+		this.tname = tname;
+	}
 
-    public Long getTid() {
-        return tid;
-    }
+	public Long getTid() {
+		return tid;
+	}
 
-    public void setTid(Long tid) {
-        this.tid = tid;
-    }
+	public void setTid(Long tid) {
+		this.tid = tid;
+	}
 
-    public String getTname() {
-        return tname;
-    }
+	public String getTname() {
+		return tname;
+	}
 
-    public void setTname(String tname) {
-        this.tname = tname;
-    }
+	public void setTname(String tname) {
+		this.tname = tname;
+	}
+
 }

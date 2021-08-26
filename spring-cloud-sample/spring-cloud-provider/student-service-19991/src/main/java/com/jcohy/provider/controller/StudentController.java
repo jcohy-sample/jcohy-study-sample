@@ -10,7 +10,6 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.*;
 
-
 /**
  * @author pc
  */
@@ -24,20 +23,17 @@ public class StudentController {
 	private DiscoveryClient client;
 
 	@RequestMapping(value = "/student/add", method = RequestMethod.POST)
-	public Student add(@RequestBody Student student)
-	{
+	public Student add(@RequestBody Student student) {
 		return service.add(student);
 	}
 
 	@RequestMapping(value = "/student/get/{id}", method = RequestMethod.GET)
-	public Student get(@PathVariable("id") Long id)
-	{
+	public Student get(@PathVariable("id") Long id) {
 		return service.get(id);
 	}
 
 	@RequestMapping(value = "/student/list", method = RequestMethod.GET)
-	public List<Student> list()
-	{
+	public List<Student> list() {
 		return service.list();
 	}
 
@@ -46,8 +42,9 @@ public class StudentController {
 	 * @return
 	 */
 	@RequestMapping(value = "/student/score/add", method = RequestMethod.POST)
-	public String addStudentScore(@RequestBody() StudentSocre studentSocre, @RequestParam(value = "ex", required = false) String exFlag) {
-		return service.addStudentScore(studentSocre,exFlag);
+	public String addStudentScore(@RequestBody() StudentSocre studentSocre,
+			@RequestParam(value = "ex", required = false) String exFlag) {
+		return service.addStudentScore(studentSocre, exFlag);
 	}
 
 	/**
@@ -59,10 +56,8 @@ public class StudentController {
 		return service.getStudentSocre(id);
 	}
 
-
 	@RequestMapping(value = "/student/discovery", method = RequestMethod.GET)
-	public Object discovery()
-	{
+	public Object discovery() {
 		List<String> list = client.getServices();
 		System.out.println("**********" + list);
 

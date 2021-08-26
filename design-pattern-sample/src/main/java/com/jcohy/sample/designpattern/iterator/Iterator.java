@@ -9,10 +9,14 @@ package com.jcohy.sample.designpattern.iterator;
 // tag::code[]
 /**
  * 执行递增，遍历的接口
+ *
  * @author jcohy
  */
 public interface Iterator {
+
 	public abstract boolean hashNext();
+
 	public abstract Object next();
+
 }
 // end::code[]

@@ -21,34 +21,37 @@ import java.util.Map;
  * @Description: TODO 请添加该类的功能描述
  * @date 2019/7/12 9:42
  * <p>
- * Modification History:
- * Date         Author          Version            Description
+ * Modification History: Date Author Version Description
  * ----------------------------------------------------------------------------------*
- * 2019/7/12      jcohy           v1.0.0               修改原因
+ * 2019/7/12 jcohy v1.0.0 修改原因
  */
 
 @Component
 public class AuthFilter implements GlobalFilter {
-    @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        Route gatewayUrl = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
-        //lb://PROVIDER-STUDENT
-        URI uri = gatewayUrl.getUri();
 
-        ServerHttpRequest request = exchange.getRequest();
-        HttpHeaders header = request.getHeaders();
-        String token = header.getFirst(JwtUtil.HEADER_AUTH);
-        Map<String,String> userMap = JwtUtil.validateToken(token);
-        ServerHttpRequest.Builder mutate = request.mutate();
-        if(userMap.get("user").equals("admin") || userMap.get("user").equals("spring") || userMap.get("user").equals("cloud")) {
-            mutate.header("x-user-id", userMap.get("id"));
-            mutate.header("x-user-name", userMap.get("user"));
-            mutate.header("x-user-serviceName", uri.getHost());
-        }else {
-            throw new PermissionException("user not exist, please check");
-        }
-        ServerHttpRequest buildReuqest =  mutate.build();
-        return chain.filter(exchange.mutate().request(buildReuqest).build());
+	@Override
+	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+		Route gatewayUrl = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
+		// lb://PROVIDER-STUDENT
+		URI uri = gatewayUrl.getUri();
 
-    }
+		ServerHttpRequest request = exchange.getRequest();
+		HttpHeaders header = request.getHeaders();
+		String token = header.getFirst(JwtUtil.HEADER_AUTH);
+		Map<String, String> userMap = JwtUtil.validateToken(token);
+		ServerHttpRequest.Builder mutate = request.mutate();
+		if (userMap.get("user").equals("admin") || userMap.get("user").equals("spring")
+				|| userMap.get("user").equals("cloud")) {
+			mutate.header("x-user-id", userMap.get("id"));
+			mutate.header("x-user-name", userMap.get("user"));
+			mutate.header("x-user-serviceName", uri.getHost());
+		}
+		else {
+			throw new PermissionException("user not exist, please check");
+		}
+		ServerHttpRequest buildReuqest = mutate.build();
+		return chain.filter(exchange.mutate().request(buildReuqest).build());
+
+	}
+
 }

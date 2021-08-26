@@ -9,7 +9,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableDiscoveryClient
 @EnableFeignClients
 public class OrderProvider19998 {
-    public static void main(String[] args) {
-        SpringApplication.run(OrderProvider19998.class, args);
-    }
+
+	public static void main(String[] args) {
+		SpringApplication.run(OrderProvider19998.class, args);
+	}
+
 }

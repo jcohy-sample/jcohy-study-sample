@@ -8,14 +8,13 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.*;
 
 /**
- * Created by jcohy on 2018/9/5.
- * ClassName  : com.jcohy.study.java8.anno
- * Description  :
+ * Created by jcohy on 2018/9/5. ClassName : com.jcohy.study.java8.anno Description :
  */
 @Repeatable(MyAnnotations.class)
-@Target({TYPE, FIELD,METHOD,PARAMETER,CONSTRUCTOR,LOCAL_VARIABLE})
+@Target({ TYPE, FIELD, METHOD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MyAnnotation {
 
-    String value();
+	String value();
+
 }

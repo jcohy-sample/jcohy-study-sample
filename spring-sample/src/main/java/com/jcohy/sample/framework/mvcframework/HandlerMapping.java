@@ -11,69 +11,72 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Created by jiac on 2019/3/21.
- * ClassName  : com.jcohy.study.mvc.mvcframework
- * Description  :
+ * Created by jiac on 2019/3/21. ClassName : com.jcohy.study.mvc.mvcframework Description
+ * :
  */
 public class HandlerMapping {
 
-    //保存方法对应的实例
-    private Object controller;
-    //保存映射的方法
-    private Method method;
-    //Request路径匹配规则
-    private Pattern pattern;
-    //参数顺序
-    private Map<String,Integer> paramIndexmapping;
+	// 保存方法对应的实例
+	private Object controller;
 
-    public HandlerMapping(Object controller, Method method, Pattern pattern) {
-        this.controller = controller;
-        this.method = method;
-        this.pattern = pattern;
+	// 保存映射的方法
+	private Method method;
 
-        paramIndexmapping = new HashMap<>();
+	// Request路径匹配规则
+	private Pattern pattern;
 
-        putParamIndexMapping(method);
-    }
+	// 参数顺序
+	private Map<String, Integer> paramIndexmapping;
 
-    public void putParamIndexMapping(Method method) {
+	public HandlerMapping(Object controller, Method method, Pattern pattern) {
+		this.controller = controller;
+		this.method = method;
+		this.pattern = pattern;
 
-        //提取方法中加了注解的参数
-        Annotation[][] annotations = method.getParameterAnnotations();
-        for(int i =0 ;i< annotations.length; i++){
-            for(Annotation annotation:annotations[i]){
-                if(annotation instanceof JcohyRequestParam){
-                    String paramName = ((JcohyRequestParam) annotation).value();
-                    if(!"".equals(paramName.trim())){
-                        paramIndexmapping.put(paramName,i);
-                    }
+		paramIndexmapping = new HashMap<>();
 
-                }
-            }
-        }
-        //提取request和response参数
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        for(int i=0;i<parameterTypes.length;i++){
-            Class<?> clazz = parameterTypes[i];
-            if(clazz == HttpServletRequest.class || clazz == HttpServletResponse.class){
-                paramIndexmapping.put(clazz.getName(),i);
-            }
-        }
-    }
+		putParamIndexMapping(method);
+	}
 
-    public Object getController() {
-        return controller;
-    }
+	public void putParamIndexMapping(Method method) {
 
-    public Method getMethod() {
-        return method;
-    }
+		// 提取方法中加了注解的参数
+		Annotation[][] annotations = method.getParameterAnnotations();
+		for (int i = 0; i < annotations.length; i++) {
+			for (Annotation annotation : annotations[i]) {
+				if (annotation instanceof JcohyRequestParam) {
+					String paramName = ((JcohyRequestParam) annotation).value();
+					if (!"".equals(paramName.trim())) {
+						paramIndexmapping.put(paramName, i);
+					}
 
-    public Pattern getPattern() {
-        return pattern;
-    }
+				}
+			}
+		}
+		// 提取request和response参数
+		Class<?>[] parameterTypes = method.getParameterTypes();
+		for (int i = 0; i < parameterTypes.length; i++) {
+			Class<?> clazz = parameterTypes[i];
+			if (clazz == HttpServletRequest.class || clazz == HttpServletResponse.class) {
+				paramIndexmapping.put(clazz.getName(), i);
+			}
+		}
+	}
 
-    public Map<String, Integer> getParamIndexmapping() {
-        return paramIndexmapping;
-    }
+	public Object getController() {
+		return controller;
+	}
+
+	public Method getMethod() {
+		return method;
+	}
+
+	public Pattern getPattern() {
+		return pattern;
+	}
+
+	public Map<String, Integer> getParamIndexmapping() {
+		return paramIndexmapping;
+	}
+
 }

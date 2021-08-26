@@ -3,22 +3,21 @@ package com.jcohy.sample.designpattern.composite;
 import java.util.Iterator;
 import java.util.Vector;
 
-
 /**
- * Copyright  : 2017- www.jcohy.com
- * Created by jcohy on 23:48 2018/8/7
- * Email: jia_chao23@126.com
- * Description:
+ * Copyright : 2017- www.jcohy.com Created by jcohy on 23:48 2018/8/7 Email:
+ * jia_chao23@126.com Description:
  **/
 // tag::code[]
 public class Directory extends Entry {
-	
+
 	private String name;
+
 	private Vector<Entry> directory = new Vector<Entry>();
-	
+
 	public Directory(String name) {
 		this.name = name;
 	}
+
 	@Override
 	public String getName() {
 		return name;
@@ -28,25 +27,27 @@ public class Directory extends Entry {
 	public int getSize() {
 		int size = 0;
 		Iterator<Entry> it = directory.iterator();
-		while(it.hasNext()) {
-			Entry entry  = (Entry)it.next();
-			size+=entry.getSize();
+		while (it.hasNext()) {
+			Entry entry = (Entry) it.next();
+			size += entry.getSize();
 		}
 		return size;
 	}
 
 	@Override
 	protected void printList(String prefix) {
-		System.out.println(prefix+"/"+this);
+		System.out.println(prefix + "/" + this);
 		Iterator<Entry> it = directory.iterator();
-		while(it.hasNext()) {
-			Entry entry  = (Entry)it.next();
-			entry.printList(prefix+"/"+name);
+		while (it.hasNext()) {
+			Entry entry = (Entry) it.next();
+			entry.printList(prefix + "/" + name);
 		}
 	}
+
 	public Entry add(Entry entry) {
 		directory.add(entry);
 		return this;
 	}
+
 }
 // end::code[]

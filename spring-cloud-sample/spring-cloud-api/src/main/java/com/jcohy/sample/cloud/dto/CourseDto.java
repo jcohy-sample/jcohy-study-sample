@@ -10,49 +10,50 @@ import java.io.Serializable;
  * @Description: TODO 请添加该类的功能描述
  * @date 2019/7/9 17:04
  * <p>
- * Modification History:
- * Date         Author          Version            Description
+ * Modification History: Date Author Version Description
  * ----------------------------------------------------------------------------------*
- * 2019/7/9      jcohy           v1.0.0               修改原因
+ * 2019/7/9 jcohy v1.0.0 修改原因
  */
 
-public class CourseDto  implements Serializable {
-    private Long cid;
+public class CourseDto implements Serializable {
 
-    private String 	cname;
+	private Long cid;
 
-    private Long tid;
+	private String cname;
 
-    public CourseDto() {
-    }
+	private Long tid;
 
-    public CourseDto(Long cid, String cname, Long tid) {
-        this.cid = cid;
-        this.cname = cname;
-        this.tid = tid;
-    }
+	public CourseDto() {
+	}
 
-    public Long getCid() {
-        return cid;
-    }
+	public CourseDto(Long cid, String cname, Long tid) {
+		this.cid = cid;
+		this.cname = cname;
+		this.tid = tid;
+	}
 
-    public void setCid(Long cid) {
-        this.cid = cid;
-    }
+	public Long getCid() {
+		return cid;
+	}
 
-    public String getCname() {
-        return cname;
-    }
+	public void setCid(Long cid) {
+		this.cid = cid;
+	}
 
-    public void setCname(String cname) {
-        this.cname = cname;
-    }
+	public String getCname() {
+		return cname;
+	}
 
-    public Long getTid() {
-        return tid;
-    }
+	public void setCname(String cname) {
+		this.cname = cname;
+	}
 
-    public void setTid(Long tid) {
-        this.tid = tid;
-    }
+	public Long getTid() {
+		return tid;
+	}
+
+	public void setTid(Long tid) {
+		this.tid = tid;
+	}
+
 }

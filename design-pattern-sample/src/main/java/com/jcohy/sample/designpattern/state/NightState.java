@@ -3,15 +3,15 @@ package com.jcohy.sample.designpattern.state;
 // tag::code[]
 public class NightState implements State {
 
-
 	private static NightState singleton = new NightState();
 
 	public static State getInstance() {
 		return singleton;
 	}
+
 	@Override
 	public void doClock(Context context, int hour) {
-		if(9<=hour&&hour<17) {
+		if (9 <= hour && hour < 17) {
 			context.changeState(DayState.getInstance());
 		}
 	}
@@ -31,10 +31,11 @@ public class NightState implements State {
 	public void doPhone(Context context) {
 		context.recordLog("晚间的通话录音");
 	}
+
 	@Override
 	public String toString() {
 		return "[晚间]";
 	}
-	
+
 }
 // end::code[]

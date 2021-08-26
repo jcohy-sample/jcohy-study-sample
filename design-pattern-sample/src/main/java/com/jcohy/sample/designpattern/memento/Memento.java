@@ -4,10 +4,13 @@ import java.util.Vector;
 
 /**
  * 表示主人翁状态的类
+ *
  * @author jcohy
  */
 public class Memento {
+
 	int money;
+
 	Vector<String> fruits;
 
 	public Memento(int money) {

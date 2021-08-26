@@ -12,5 +12,6 @@ public class Red implements Color {
 		System.out.println("Inside Red::fill() method.");
 
 	}
+
 }
 // end::code[]

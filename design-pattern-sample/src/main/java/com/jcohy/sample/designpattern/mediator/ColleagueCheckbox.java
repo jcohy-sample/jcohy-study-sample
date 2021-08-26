@@ -4,21 +4,19 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-
 /**
- * Copyright  : 2017- www.jcohy.com
- * Created by jcohy on 23:48 2018/8/7
- * Email: jia_chao23@126.com
- * Description:
+ * Copyright : 2017- www.jcohy.com Created by jcohy on 23:48 2018/8/7 Email:
+ * jia_chao23@126.com Description:
  **/
 // tag::code[]
-public class ColleagueCheckbox extends Checkbox implements ItemListener,Colleague {
-	
+public class ColleagueCheckbox extends Checkbox implements ItemListener, Colleague {
+
 	private Mediator mediator;
-	
-	public ColleagueCheckbox(String caption,CheckboxGroup group,boolean state) {
-		super(caption,group,state);
+
+	public ColleagueCheckbox(String caption, CheckboxGroup group, boolean state) {
+		super(caption, group, state);
 	}
+
 	@Override
 	public void setMediator(Mediator mediator) {
 		this.mediator = mediator;

@@ -9,9 +9,11 @@ package com.jcohy.sample.designpattern.iterator;
 // tag::code[]
 /**
  * 把书籍放到书架上，并依次输出书名
+ *
  * @author jcohy
  */
 public class Client {
+
 	public static void main(String[] args) {
 		BookShelf bookShelf = new BookShelf(4);
 		bookShelf.appendBook(new Book("Effective Java"));
@@ -19,10 +21,11 @@ public class Client {
 		bookShelf.appendBook(new Book("Effective C++"));
 		bookShelf.appendBook(new Book("Effective PHP"));
 		Iterator it = bookShelf.iterator();
-		while(it.hashNext()) {
+		while (it.hashNext()) {
 			System.out.println(it.next());
-			
+
 		}
 	}
+
 }
 // end::code[]

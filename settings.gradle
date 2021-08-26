@@ -10,6 +10,7 @@ include 'algorithm-sample'
 include 'java-sample'
 include 'mybatisplus-sample-8082'
 include 'bom'
+include 'reactive'
 include 'design-pattern-sample'
 
 include 'spring-security-sample:spring-boot-security-8081'

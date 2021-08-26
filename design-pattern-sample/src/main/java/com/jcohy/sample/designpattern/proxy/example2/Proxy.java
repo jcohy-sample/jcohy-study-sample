@@ -2,30 +2,31 @@ package com.jcohy.sample.designpattern.proxy.example2;
 
 /**
  * @author jiac <a href="https://www.jcohy.com"></a>
- * @since 1.0.0
- * Description  2020/4/7 14:35
+ * @since 1.0.0 Description 2020/4/7 14:35
  */
 // tag::code[]
 public class Proxy implements Subject {
-    private RealSubject realSubject;
 
-    public Proxy() {
-        realSubject = new RealSubject();
-    }
+	private RealSubject realSubject;
 
-    public void after() {
-        System.out.println("Good Night!");
-    }
+	public Proxy() {
+		realSubject = new RealSubject();
+	}
 
-    @Override
-    public void method() {
-        before();
-        realSubject.method();
-        after();
-    }
+	public void after() {
+		System.out.println("Good Night!");
+	}
 
-    public void before() {
-        System.out.println("Hello Moring");
-    }
+	@Override
+	public void method() {
+		before();
+		realSubject.method();
+		after();
+	}
+
+	public void before() {
+		System.out.println("Hello Moring");
+	}
+
 }
 // end::code[]

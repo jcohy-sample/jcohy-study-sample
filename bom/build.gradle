@@ -33,6 +33,9 @@ ext {
 	set('mailVersion','1.6.2')
 	set('UserAgentUtilsVersion','1.20')
 	set('txLcnVersion','5.0.2.RELEASE')
+	set('injectVersion','1')
+	set('servletVersion','4.0.0')
+
 	//================= swagger ===================
 	set('swaggerModelsVersion', "1.6.2")
 	set('swaggerVersion', "2.10.5")
@@ -103,6 +106,8 @@ dependencies {
 		api "com.tencentcloudapi:tencentcloud-sdk-java:${tencentSmsVersion}"
 		api "com.github.xiaoymin:knife4j-spring-boot-starter:${knife4jVersion}"
 		api "org.lionsoul:ip2region:${ip2regionVersion}"
+		api "javax.inject:javax.inject:${injectVersion}"
+		api "javax.servlet:javax.servlet-api:${servletVersion}"
 		api "com.alibaba:fastjson:${fastjsonVersion}"
 		api "io.jsonwebtoken:jjwt:${jjwtVersion}"
 		api "com.github.whvcse:easy-captcha:${easyCaptchaVersion}"

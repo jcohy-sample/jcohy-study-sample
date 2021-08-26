@@ -4,22 +4,19 @@ import java.awt.*;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 
-
 /**
- * Copyright  : 2017- www.jcohy.com
- * Created by jcohy on 23:48 2018/8/7
- * Email: jia_chao23@126.com
- * Description:
+ * Copyright : 2017- www.jcohy.com Created by jcohy on 23:48 2018/8/7 Email:
+ * jia_chao23@126.com Description:
  **/
 // tag::code[]
-public class ColleagueTextFiled extends TextField implements TextListener,Colleague {
-	
+public class ColleagueTextFiled extends TextField implements TextListener, Colleague {
+
 	private Mediator mediator;
-	
-	public ColleagueTextFiled(String text,int columns) {
-		super(text,columns);
+
+	public ColleagueTextFiled(String text, int columns) {
+		super(text, columns);
 	}
-	
+
 	@Override
 	public void setMediator(Mediator mediator) {
 		this.mediator = mediator;
@@ -28,12 +25,12 @@ public class ColleagueTextFiled extends TextField implements TextListener,Collea
 	@Override
 	public void setColleagueEnabled(boolean enabled) {
 		setEnabled(enabled);
-		setBackground(enabled?Color.white:Color.LIGHT_GRAY);
+		setBackground(enabled ? Color.white : Color.LIGHT_GRAY);
 	}
 
 	@Override
 	public void textValueChanged(TextEvent arg0) {
-		//若字符串有变化，就通知Mediator
+		// 若字符串有变化，就通知Mediator
 		mediator.colleagueChanged(this);
 	}
 

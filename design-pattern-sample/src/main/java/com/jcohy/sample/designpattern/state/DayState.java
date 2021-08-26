@@ -3,6 +3,7 @@ package com.jcohy.sample.designpattern.state;
 // tag::code[]
 /**
  * 白天状态的类
+ *
  * @author jcohy
  *
  */
@@ -16,16 +17,17 @@ public class DayState implements State {
 	public static State getInstance() {
 		return singleton;
 	}
+
 	@Override
 	public void doClock(Context context, int hour) {
-		if(hour<9||17<=hour) {
+		if (hour < 9 || 17 <= hour) {
 			context.changeState(NightState.getInstance());
 		}
 	}
 
 	@Override
 	public void doUse(Context context) {
-		//使用金库
+		// 使用金库
 		context.recordLog("使用金库(白天)");
 	}
 

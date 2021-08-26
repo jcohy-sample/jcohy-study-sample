@@ -6,13 +6,13 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 
 /**
  * @author jcohy <a href="https://www.jcohy.com"></a>
- * @since 1.0.0
- * Description  2020/4/2 14:03
+ * @since 1.0.0 Description 2020/4/2 14:03
  */
 @SpringBootApplication
 public class SpringSecuritySampleApplication8081 {
 
-    public static void main(String[] args) {
-        SpringApplication.run(SpringSecuritySampleApplication8081.class,args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(SpringSecuritySampleApplication8081.class, args);
+	}
+
 }

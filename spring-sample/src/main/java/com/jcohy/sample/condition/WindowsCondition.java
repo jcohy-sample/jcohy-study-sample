@@ -12,7 +12,7 @@ public class WindowsCondition implements Condition {
 	public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 		Environment environment = context.getEnvironment();
 		String property = environment.getProperty("os.name");
-		if(property.contains("Windows")){
+		if (property.contains("Windows")) {
 			return true;
 		}
 		return false;

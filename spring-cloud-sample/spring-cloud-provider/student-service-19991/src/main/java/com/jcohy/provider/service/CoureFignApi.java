@@ -17,24 +17,24 @@ import java.util.List;
  * @Description: TODO 请添加该类的功能描述
  * @date 2019/7/9 16:58
  * <p>
- * Modification History:
- * Date         Author          Version            Description
+ * Modification History: Date Author Version Description
  * ----------------------------------------------------------------------------------*
- * 2019/7/9      jcohy           v1.0.0               修改原因
+ * 2019/7/9 jcohy v1.0.0 修改原因
  */
 
 @FeignClient(value = "PROVIDER-COURSE")
 public interface CoureFignApi {
 
-    @RequestMapping(value = "/course/get/{id}", method = RequestMethod.GET)
-    public CourseDto get(@PathVariable("id") long id);
+	@RequestMapping(value = "/course/get/{id}", method = RequestMethod.GET)
+	public CourseDto get(@PathVariable("id") long id);
 
-    @RequestMapping(value = "/course/list", method = RequestMethod.GET)
-    public List<CourseDto> list();
+	@RequestMapping(value = "/course/list", method = RequestMethod.GET)
+	public List<CourseDto> list();
 
-    @RequestMapping(value = "/course/add", method = RequestMethod.POST)
-    public CourseDto add(@RequestBody CourseDto courseDto);
+	@RequestMapping(value = "/course/add", method = RequestMethod.POST)
+	public CourseDto add(@RequestBody CourseDto courseDto);
 
-    @RequestMapping(value = "/course/{name}", method = RequestMethod.GET)
-    public CourseDto getCourse(@PathVariable("name") String name);
+	@RequestMapping(value = "/course/{name}", method = RequestMethod.GET)
+	public CourseDto getCourse(@PathVariable("name") String name);
+
 }

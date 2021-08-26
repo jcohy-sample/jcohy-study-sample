@@ -5,8 +5,8 @@ import com.jcohy.provider.model.Student;
 
 import java.util.List;
 
-
 public interface StudentService {
+
 	public Student add(Student student);
 
 	public Student get(Long id);
@@ -16,4 +16,5 @@ public interface StudentService {
 	public StudentSocre getStudentSocre(Long id);
 
 	public String addStudentScore(StudentSocre studentSocre, String exFlag);
+
 }

@@ -6,6 +6,8 @@ package com.jcohy.sample.designpattern.factory.AbstractFactory;
  */
 // tag::code[]
 public interface Color {
+
 	public void fill();
+
 }
 // end::code[]

@@ -15,32 +15,31 @@ import java.util.Map;
  * @Description: TODO 请添加该类的功能描述
  * @date 2019/7/9 16:14
  * <p>
- * Modification History:
- * Date         Author          Version            Description
+ * Modification History: Date Author Version Description
  * ----------------------------------------------------------------------------------*
- * 2019/7/9      jcohy           v1.0.0               修改原因
+ * 2019/7/9 jcohy v1.0.0 修改原因
  */
-
 
 public class StudentSocre implements Serializable {
 
-    private String sname;
+	private String sname;
 
-    private List<Map<String,Object>> mapList;
+	private List<Map<String, Object>> mapList;
 
-    public String getSname() {
-        return sname;
-    }
+	public String getSname() {
+		return sname;
+	}
 
-    public void setSname(String sname) {
-        this.sname = sname;
-    }
+	public void setSname(String sname) {
+		this.sname = sname;
+	}
 
-    public List<Map<String, Object>> getMapList() {
-        return mapList;
-    }
+	public List<Map<String, Object>> getMapList() {
+		return mapList;
+	}
 
-    public void setMapList(List<Map<String, Object>> mapList) {
-        this.mapList = mapList;
-    }
+	public void setMapList(List<Map<String, Object>> mapList) {
+		this.mapList = mapList;
+	}
+
 }

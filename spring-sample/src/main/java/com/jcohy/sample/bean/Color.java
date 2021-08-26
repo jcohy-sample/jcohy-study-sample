@@ -1,7 +1,7 @@
 package com.jcohy.sample.bean;
 
 public class Color {
-	
+
 	private Car car;
 
 	public Car getCar() {
@@ -16,7 +16,5 @@ public class Color {
 	public String toString() {
 		return "Color [car=" + car + "]";
 	}
-	
-	
 
 }

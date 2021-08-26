@@ -1,11 +1,11 @@
 package com.jcohy.sample.designpattern.prototype;
+
 // tag::code[]
 /**
- * 
- * @author admin
- *声明一个克隆自身的接口
+ * @author admin 声明一个克隆自身的接口
  */
-public class Prototype implements Cloneable{
+public class Prototype implements Cloneable {
+
 	private String name;
 
 	public String getName() {
@@ -15,14 +15,17 @@ public class Prototype implements Cloneable{
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Object clone(){
+
+	public Object clone() {
 		try {
 			return super.clone();
-		} catch (CloneNotSupportedException e) {
+		}
+		catch (CloneNotSupportedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
 	}
+
 }
 // end::code[]

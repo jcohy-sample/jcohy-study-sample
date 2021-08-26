@@ -8,36 +8,36 @@ package com.jcohy.sample.java.java9;
  * @Description: TODO 请添加该类的功能描述
  * @date 2019/10/31 11:06
  * <p>
- * Modification History:
- * Date         Author          Version            Description
+ * Modification History: Date Author Version Description
  * ----------------------------------------------------------------------------------*
- * 2019/10/31      jcohy           v1.0.0               修改原因
+ * 2019/10/31 jcohy v1.0.0 修改原因
  */
-
 
 public class persion {
 
-    private String name;
-    private String age;
+	private String name;
 
-    public persion(String name, String age) {
-        this.name = name;
-        this.age = age;
-    }
+	private String age;
 
-    public String getName() {
-        return name;
-    }
+	public persion(String name, String age) {
+		this.name = name;
+		this.age = age;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getAge() {
-        return age;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setAge(String age) {
-        this.age = age;
-    }
+	public String getAge() {
+		return age;
+	}
+
+	public void setAge(String age) {
+		this.age = age;
+	}
+
 }

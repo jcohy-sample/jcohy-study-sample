@@ -1,18 +1,16 @@
 package com.jcohy.sample.designpattern.composite;
 
-
 /**
- * Copyright  : 2017- www.jcohy.com
- * Created by jcohy on 23:48 2018/8/7
- * Email: jia_chao23@126.com
- * Description:
+ * Copyright : 2017- www.jcohy.com Created by jcohy on 23:48 2018/8/7 Email:
+ * jia_chao23@126.com Description:
  **/
 // tag::code[]
 public class File extends Entry {
+
 	private String name;
+
 	private int size;
-	
-	
+
 	public File(String name, int size) {
 		this.name = name;
 		this.size = size;
@@ -30,7 +28,8 @@ public class File extends Entry {
 
 	@Override
 	protected void printList(String prefix) {
-		System.out.println(prefix+"/"+this);
+		System.out.println(prefix + "/" + this);
 	}
+
 }
 // end::code[]

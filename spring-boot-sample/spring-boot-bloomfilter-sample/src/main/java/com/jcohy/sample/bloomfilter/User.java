@@ -1,19 +1,18 @@
 package com.jcohy.sample.bloomfilter;
 
 /**
- * Created by jiac on 2019/3/12.
- * ClassName  : com.jcohy.study.test
- * Description  :
+ * Created by jiac on 2019/3/12. ClassName : com.jcohy.study.test Description :
  */
 public class User {
 
-    String name;
+	String name;
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
+
 }

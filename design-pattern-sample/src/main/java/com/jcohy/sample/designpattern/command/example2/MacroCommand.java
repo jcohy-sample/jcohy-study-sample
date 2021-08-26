@@ -1,29 +1,29 @@
 package com.jcohy.sample.designpattern.command.example2;
 
 /**
- * Created by jcohy on 2019/3/20.
- * ClassName  : com.jcohy.study.command.example2
- * Description  :
+ * Created by jcohy on 2019/3/20. ClassName : com.jcohy.study.command.example2 Description
+ * :
  */
 public class MacroCommand implements Command {
 
-    Command[] commands;
+	Command[] commands;
 
-    public MacroCommand(Command[] commands) {
-        this.commands = commands;
-    }
+	public MacroCommand(Command[] commands) {
+		this.commands = commands;
+	}
 
-    @Override
-    public void excute() {
-        for(int i =0 ;i<commands.length;i++){
-            commands[i].excute();
-        }
-    }
+	@Override
+	public void excute() {
+		for (int i = 0; i < commands.length; i++) {
+			commands[i].excute();
+		}
+	}
 
-    @Override
-    public void undo() {
-        for(int i =0 ;i<commands.length;i++){
-            commands[i].undo();
-        }
-    }
+	@Override
+	public void undo() {
+		for (int i = 0; i < commands.length; i++) {
+			commands[i].undo();
+		}
+	}
+
 }

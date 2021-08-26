@@ -5,8 +5,9 @@ package com.jcohy.sample.java.java9;
  */
 public class Application {
 
-   public static void testMultiJar(){
-      Generator gen = new Generator();
-      System.out.println("Generated strings: " + gen.createStrings());
-   }
+	public static void testMultiJar() {
+		Generator gen = new Generator();
+		System.out.println("Generated strings: " + gen.createStrings());
+	}
+
 }

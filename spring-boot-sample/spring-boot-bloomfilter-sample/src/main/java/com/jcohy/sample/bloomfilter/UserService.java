@@ -3,11 +3,12 @@ package com.jcohy.sample.bloomfilter;
 import java.util.List;
 
 /**
- * Created by jiac on 2019/3/12.
- * ClassName  : com.jcohy.study.test
- * Description  :
+ * Created by jiac on 2019/3/12. ClassName : com.jcohy.study.test Description :
  */
 public interface UserService {
-    List<User> findAllUser();
-    User getUserByName(String name);
+
+	List<User> findAllUser();
+
+	User getUserByName(String name);
+
 }

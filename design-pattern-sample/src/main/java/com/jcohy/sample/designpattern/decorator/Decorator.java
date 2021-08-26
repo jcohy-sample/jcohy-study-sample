@@ -8,17 +8,19 @@ package com.jcohy.sample.designpattern.decorator;
  **/
 /**
  * 维持一个指向Component对象的指针，并定义一个与Component接口一致的接口
+ *
  * @author admin
  *
  */
-public abstract class Decorator implements Person{
+public abstract class Decorator implements Person {
+
 	protected Person person;
-	
-	public void setPerson(Person person){
-		this.person=person;
-		
+
+	public void setPerson(Person person) {
+		this.person = person;
+
 	}
-	
+
 	public void eat() {
 		person.eat();
 	}

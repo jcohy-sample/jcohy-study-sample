@@ -1,7 +1,5 @@
 package com.jcohy.sample.designpattern.factory.AbstractFactory;
 
-
-
 /**
  * @author jcohy
  *

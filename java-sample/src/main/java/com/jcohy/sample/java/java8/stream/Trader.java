@@ -1,8 +1,10 @@
 package com.jcohy.sample.java.java8.stream;
+
 //交易员类
 public class Trader {
 
 	private String name;
+
 	private String city;
 
 	public Trader() {

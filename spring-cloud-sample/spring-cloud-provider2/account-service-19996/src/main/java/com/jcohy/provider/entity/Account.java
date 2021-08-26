@@ -14,32 +14,35 @@ import java.math.BigDecimal;
 @DynamicInsert
 public class Account {
 
-    @Id
-    private Long id;
-    private String userId;
-    private BigDecimal money;
+	@Id
+	private Long id;
 
-    public Long getId() {
-        return id;
-    }
+	private String userId;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	private BigDecimal money;
 
-    public String getUserId() {
-        return userId;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public BigDecimal getMoney() {
-        return money;
-    }
+	public String getUserId() {
+		return userId;
+	}
 
-    public void setMoney(BigDecimal money) {
-        this.money = money;
-    }
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public BigDecimal getMoney() {
+		return money;
+	}
+
+	public void setMoney(BigDecimal money) {
+		this.money = money;
+	}
+
 }

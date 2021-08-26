@@ -3,7 +3,6 @@ package com.jcohy.sample.designpattern.command;
 import javax.swing.*;
 import java.awt.event.*;
 
-
 /**
  * Copyright  : 2017- www.jcohy.com
  * Created by jcohy on 23:48 2018/8/7
@@ -13,16 +12,16 @@ import java.awt.event.*;
 // tag::code[]
 /**
  * 简单的绘图软件，移动鼠标时自动绘制一个红点，按下clear 清除所有
+ *
  * @author jcohy
  */
-public class Client extends JFrame implements ActionListener,MouseMotionListener,WindowListener{
+public class Client extends JFrame implements ActionListener, MouseMotionListener, WindowListener {
 
+	private MacroCommand history = new MacroCommand();// 绘制记录
 
-	private MacroCommand history = new MacroCommand();//绘制记录
+	private DrawCanvas drawCanvas = new DrawCanvas(400, 400, history);// 绘制区域
 
-	private DrawCanvas drawCanvas = new DrawCanvas(400, 400, history);//绘制区域
-
-	private JButton cleanButton = new JButton("clear");//删除键
+	private JButton cleanButton = new JButton("clear");// 删除键
 
 	public Client(String title) {
 		super(title);
@@ -86,7 +85,7 @@ public class Client extends JFrame implements ActionListener,MouseMotionListener
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		Command cmd = new DrawCommand(drawCanvas,e.getPoint());
+		Command cmd = new DrawCommand(drawCanvas, e.getPoint());
 
 		history.append(cmd);
 
@@ -101,13 +100,15 @@ public class Client extends JFrame implements ActionListener,MouseMotionListener
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == cleanButton) {
+		if (e.getSource() == cleanButton) {
 			history.clear();
 			drawCanvas.repaint();
 		}
 	}
+
 	public static void main(String[] args) {
 		new Client("Command Pattern Sample");
 	}
+
 }
 // end::code[]

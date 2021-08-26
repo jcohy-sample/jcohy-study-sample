@@ -1,14 +1,12 @@
 package com.jcohy.sample.designpattern.decorator.example2;
 
-
 /**
- * Copyright  : 2017- www.jcohy.com
- * Created by jcohy on 23:48 2018/8/7
- * Email: jia_chao23@126.com
- * Description:
+ * Copyright : 2017- www.jcohy.com Created by jcohy on 23:48 2018/8/7 Email:
+ * jia_chao23@126.com Description:
  **/
 // tag::code[]
 public class Test {
+
 	public static void main(String[] args) {
 		Display d1 = new StringDisplay("Hello World");
 		Display d2 = new SideBorder(d1, '#');
@@ -20,18 +18,11 @@ public class Test {
 		System.out.println("d3:");
 		d3.show();
 		Display d4 = new SideBorder(
-				new FullBorder(
-						new FullBorder(
-								new SideBorder(
-										new FullBorder(
-												new StringDisplay("您好！")),
-										'#')
-								)
-						),
-				'/');
+				new FullBorder(new FullBorder(new SideBorder(new FullBorder(new StringDisplay("您好！")), '#'))), '/');
 		System.out.println("d4:");
 		d4.show();
-		
+
 	}
+
 }
 // end::code[]

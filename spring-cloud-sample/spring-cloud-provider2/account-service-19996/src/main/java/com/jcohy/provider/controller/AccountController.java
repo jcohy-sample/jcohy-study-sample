@@ -21,24 +21,25 @@ import java.math.BigDecimal;
 @RefreshScope
 public class AccountController {
 
-    @Autowired
-    private AccountService accountService;
+	@Autowired
+	private AccountService accountService;
 
-    @Value("${user.name}")
-    private String name;
+	@Value("${user.name}")
+	private String name;
 
-    @Value("${message.prefix}")
-    private String prefix;
+	@Value("${message.prefix}")
+	private String prefix;
 
-    @RequestMapping("/debit")
-    public Boolean debit(String userId, BigDecimal money) {
-        accountService.debit(userId, money);
-//        System.out.println("get user from nacos config :"+name);
-        return true;
-    }
+	@RequestMapping("/debit")
+	public Boolean debit(String userId, BigDecimal money) {
+		accountService.debit(userId, money);
+		// System.out.println("get user from nacos config :"+name);
+		return true;
+	}
 
-    @GetMapping("/{username}")
-    public String hello(@PathVariable(value = "username") String username) {
-        return prefix+username+"!"+name;
-    }
+	@GetMapping("/{username}")
+	public String hello(@PathVariable(value = "username") String username) {
+		return prefix + username + "!" + name;
+	}
+
 }

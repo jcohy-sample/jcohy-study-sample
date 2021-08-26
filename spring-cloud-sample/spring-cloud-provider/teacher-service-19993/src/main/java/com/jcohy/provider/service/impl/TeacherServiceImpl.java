@@ -21,7 +21,6 @@ public class TeacherServiceImpl implements TeacherService {
 	@Autowired
 	private TeacherRepository teacherRepository;
 
-
 	@Override
 	@LcnTransaction(propagation = DTXPropagation.SUPPORTS)
 	@Transactional
@@ -45,4 +44,5 @@ public class TeacherServiceImpl implements TeacherService {
 	public TeacherDto getByName(String name) {
 		return Teacher.ofDto(teacherRepository.getByTname(name));
 	}
+
 }

@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 @FeignClient(name = "account-service", url = "127.0.0.1:8083")
 public interface AccountFeignClient {
 
-    @GetMapping("/debit")
-    Boolean debit(@RequestParam("userId") String userId, @RequestParam("money") BigDecimal money);
+	@GetMapping("/debit")
+	Boolean debit(@RequestParam("userId") String userId, @RequestParam("money") BigDecimal money);
+
 }

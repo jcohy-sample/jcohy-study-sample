@@ -14,24 +14,22 @@ import org.springframework.http.codec.ServerCodecConfigurer;
  * @Description: TODO 请添加该类的功能描述
  * @date 2019/7/10 15:33
  * <p>
- * Modification History:
- * Date         Author          Version            Description
+ * Modification History: Date Author Version Description
  * ----------------------------------------------------------------------------------*
- * 2019/7/10      jcohy           v1.0.0               修改原因
+ * 2019/7/10 jcohy v1.0.0 修改原因
  */
-
 
 @SpringBootApplication
 @EnableDiscoveryClient
 public class GatewayApplication19995 {
 
-    public static void main(String[] args) {
-        SpringApplication.run(GatewayApplication19995.class,args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(GatewayApplication19995.class, args);
+	}
 
+	@Bean
+	public ServerCodecConfigurer serverCodecConfigurer() {
+		return ServerCodecConfigurer.create();
+	}
 
-    @Bean
-    public ServerCodecConfigurer serverCodecConfigurer() {
-        return ServerCodecConfigurer.create();
-    }
 }

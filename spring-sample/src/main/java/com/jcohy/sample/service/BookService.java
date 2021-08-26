@@ -1,22 +1,20 @@
 package com.jcohy.sample.service;
 
-
 import com.jcohy.sample.dao.BookDao;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 
-
 @Service
 public class BookService {
-	
-	//@Qualifier("bookDao")
-	//@Autowired(required=false)
-	//@Resource(name="bookDao2")
+
+	// @Qualifier("bookDao")
+	// @Autowired(required=false)
+	// @Resource(name="bookDao2")
 	@Inject
 	private BookDao bookDao;
-	
-	public void print(){
+
+	public void print() {
 		System.out.println(bookDao);
 	}
 
@@ -24,9 +22,5 @@ public class BookService {
 	public String toString() {
 		return "BookService [bookDao=" + bookDao + "]";
 	}
-	
-	
-	
-	
 
 }

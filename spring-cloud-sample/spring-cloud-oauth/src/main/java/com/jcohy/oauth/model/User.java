@@ -1,9 +1,7 @@
 package com.jcohy.oauth.model;
 
-
 import java.io.Serializable;
 import java.util.List;
-
 
 /**
  */
@@ -14,11 +12,10 @@ public class User implements Serializable {
 	public final static String CONTEXT_KEY_USERID = "x-user-id";
 
 	private String userId;
-	
-	private String userName;
-	
-	private List<String> allowPermissionService;
 
+	private String userName;
+
+	private List<String> allowPermissionService;
 
 	public List<String> getAllowPermissionService() {
 		return allowPermissionService;
@@ -43,7 +40,7 @@ public class User implements Serializable {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-	
+
 	public User() {
 	}
 

@@ -5,5 +5,7 @@ package com.jcohy.sample.designpattern.factory.SimpleFactory;
  *
  */
 public interface Shape {
+
 	public void draw();
+
 }

@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "storage-service", url = "127.0.0.1:8081")
 public interface StorageFeignClient {
 
-    @GetMapping("/deduct")
-    void deduct(@RequestParam("commodityCode") String commodityCode,
-                @RequestParam("count") Integer count);
+	@GetMapping("/deduct")
+	void deduct(@RequestParam("commodityCode") String commodityCode, @RequestParam("count") Integer count);
 
 }

@@ -1,26 +1,27 @@
 package com.jcohy.sample.designpattern.command.example2;
 
 /**
- * Created by jcohy on 2019/3/20.
- * ClassName  : com.jcohy.study.command.example2
- * Description  :
+ * Created by jcohy on 2019/3/20. ClassName : com.jcohy.study.command.example2 Description
+ * :
  */
-public class StereOnWithCDCommand implements Command{
-    Stere stere;
+public class StereOnWithCDCommand implements Command {
 
-    public StereOnWithCDCommand(Stere stere) {
-        this.stere = stere;
-    }
+	Stere stere;
 
-    @Override
-    public void excute() {
-        stere.on();
-        stere.setCD();
-        stere.setVolume(11);
-    }
+	public StereOnWithCDCommand(Stere stere) {
+		this.stere = stere;
+	}
 
-    @Override
-    public void undo() {
-        stere.off();
-    }
+	@Override
+	public void excute() {
+		stere.on();
+		stere.setCD();
+		stere.setVolume(11);
+	}
+
+	@Override
+	public void undo() {
+		stere.off();
+	}
+
 }

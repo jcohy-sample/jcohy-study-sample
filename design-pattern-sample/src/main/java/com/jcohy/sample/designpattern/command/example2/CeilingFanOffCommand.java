@@ -1,35 +1,39 @@
 package com.jcohy.sample.designpattern.command.example2;
 
 /**
- * Created by jcohy on 2019/3/20.
- * ClassName  : com.jcohy.study.command.example2
- * Description  :
+ * Created by jcohy on 2019/3/20. ClassName : com.jcohy.study.command.example2 Description
+ * :
  */
 public class CeilingFanOffCommand implements Command {
 
-    CeilingFan ceilingFan;
-    int preSpeed;
+	CeilingFan ceilingFan;
 
-    public CeilingFanOffCommand(CeilingFan ceilingFan) {
-        this.ceilingFan = ceilingFan;
-    }
+	int preSpeed;
 
-    @Override
-    public void excute() {
-        preSpeed = ceilingFan.getSpeed();
-        ceilingFan.off();
-    }
+	public CeilingFanOffCommand(CeilingFan ceilingFan) {
+		this.ceilingFan = ceilingFan;
+	}
 
-    @Override
-    public void undo() {
-        if( preSpeed == CeilingFan.HIGH){
-            ceilingFan.higt();
-        }else if (preSpeed == CeilingFan.MIDLE){
-            ceilingFan.midle();
-        }else if(preSpeed == CeilingFan.LOW){
-            ceilingFan.low();
-        }else{
-            ceilingFan.off();
-        }
-    }
+	@Override
+	public void excute() {
+		preSpeed = ceilingFan.getSpeed();
+		ceilingFan.off();
+	}
+
+	@Override
+	public void undo() {
+		if (preSpeed == CeilingFan.HIGH) {
+			ceilingFan.higt();
+		}
+		else if (preSpeed == CeilingFan.MIDLE) {
+			ceilingFan.midle();
+		}
+		else if (preSpeed == CeilingFan.LOW) {
+			ceilingFan.low();
+		}
+		else {
+			ceilingFan.off();
+		}
+	}
+
 }
