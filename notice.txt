@@ -1,0 +1,1 @@
+java JEPS: https://inside.java/2021/09/14/the-arrival-of-java17/

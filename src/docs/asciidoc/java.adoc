@@ -23,17 +23,17 @@ include::attributes.adoc[]
 
 == 近期版本发布及维护时间
 
-=== OpenJDK 发版路线图:
+=== JDK 发版路线图:
 
-image::{oss-images}/java-1.jpeg[]
+image::{oss-images}/JdkSupport.png[]
 
-=== Oracle JDK支持路线图:
+=== Java SE 支持路线图:
 
-image::{oss-images}/java-2.jpeg[]
+image::{oss-images}/javaSESupport.png[]
 
 === 历年版本对应的 JEPS
 
-image::{oss-images}/java-3.jpeg[]
+image::{oss-images}/JepPerRelease.png[]
 
 === 名词解释
 
