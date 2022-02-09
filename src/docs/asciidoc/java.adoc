@@ -20,6 +20,9 @@ include::attributes.adoc[]
 * JDK 12:switch表达式、Shenandoah GC、增强G1
 * JDK 13:switch表达式引入yield、文本块
 * JDK 14:instanceof 模式匹配、Records、弃用 Parallel Scavenge+Serial GC组合、删除CMS GC
+* JDK 15:数字签名算法、密封类、隐藏类、模式匹配、ZGC、外部存储器访问 API、Record
+* JDK 16:适用于 instanceof 的模式匹配、Record、Unix-Domain 套接字通道、打包工具、默认强封装 JDK 内部元素、向量 API（孵化器）
+* JDK 17:switch 的模式匹配、密封类、大图标访问新 API、外部函数和内存 API、统一日志支持异步日志刷新
 
 == 近期版本发布及维护时间
 
@@ -56,6 +59,8 @@ include::java/java13.adoc[leveloffset=+1]
 include::java/java14.adoc[leveloffset=+1]
 
 include::java/java15.adoc[leveloffset=+1]
+
+include::java/java16.adoc[leveloffset=+1]
 
 include::java/ArrayList.adoc[leveloffset=+1]
 
