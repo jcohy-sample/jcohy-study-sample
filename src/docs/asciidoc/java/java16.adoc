@@ -1,0 +1,849 @@
+[[java-16-feature]]
+= Java 16 新特性
+
+[[java-16-feature-overview]]
+== Java 16 新特性一览
+
+2021 年 3 月 16 日,JDK/Java 16 正式 GA(General Available) 正式发布.
+
+根据发布的规划，这次发布的 JDK 16 将是一个短期的过度版，只会被 Oracle 支持(维护) 6 个月，直到明年 3 月的 JDK 17 发布此版本将停止维护。
+而 Oracle 下一个长期支持版(LTS 版)会在今年的 9 月份后发布(Java 17)，LTS 版每 3 年发布一个，上一次长期支持版是 18 年 9 月发布的 JDK 11。
+而下一个长期支持 (LTS) 版本将是 JDK 17，该版本预计于 2021 年 9 月发布。
+
+Java 16 为用户提供了 17 项主要的 JEP (Java/JDK Enhancement Proposals,JDK 增强提案)，包括三个孵化器模块，一个预览功能
+
+资料来源:  http://openjdk.java.net/projects/jdk/15/
+
+[[java-16-feature-overview-tbl]]
+.Java 16 新特性一览
+|===
+| 新特性 | 翻译
+
+| 338: https://openjdk.java.net/jeps/338[Vector API (Incubator)] | 向量 API (孵化器)
+
+| 347: https://openjdk.java.net/jeps/347[Enable C++14 Language Features] | 启用 C++14 语言特性（在 JDK 源代码中）
+
+| 357: https://openjdk.java.net/jeps/357[Migrate from Mercurial to Git] | 从 Mercurial 迁移到 Git
+
+| 369: https://openjdk.java.net/jeps/369[Migrate to GitHub] | 迁移到 GitHub
+
+| 376: https://openjdk.java.net/jeps/376[ZGC: Concurrent Thread-Stack Processing] | ZGC 并发线程处理
+
+| 380: http://openjdk.java.net/jeps/380[Unix-Domain Socket Channels] | Unix-Domain 套接字通道
+
+| 386: http://openjdk.java.net/jeps/386[Alpine Linux Port] | Alpine Linux 移植
+
+| 387: http://openjdk.java.net/jeps/387[Elastic Metaspace] | 弹性元空间
+
+| 388: http://openjdk.java.net/jeps/388[Windows/AArch64 Port] | Windows/AArch64 移植
+
+| 389: http://openjdk.java.net/jeps/389[Foreign Linker API (Incubator)] | 外部链接器 API（孵化器）
+
+| 390: http://openjdk.java.net/jeps/390[Warnings for Value-Based Classes] | 对基于值的类发出警告
+
+| 392: http://openjdk.java.net/jeps/392[Packaging Tool] | 打包工具
+
+| 393: http://openjdk.java.net/jeps/393[Foreign-Memory Access API (Third Incubator)] | 外部存储器访问 API（第 3 个孵化器）
+
+| 394: http://openjdk.java.net/jeps/394[Pattern Matching for instanceof] | 适用于 instanceof 的模式匹配
+
+| 395: http://openjdk.java.net/jeps/395[Records] | Records（记录）
+
+| 396: http://openjdk.java.net/jeps/396[Strongly Encapsulate JDK Internals by Default] | 默认强封装 JDK 内部元素
+
+| 397: http://openjdk.java.net/jeps/397[Sealed Classes (Second Preview)] | 密封类（第二预览）
+|===
+
+[[java-16-feature-environment]]
+== 环境安装
+
+* JDK下载地址:
++
+OpenJDK版本: https://jdk.java.net/16/
++
+Oracle版本: https://www.oracle.com/java/technologies/javase/jdk16-archive-downloads.html
+
+* 修改环境变量.
+
+[[java-16-feature-vector]]
+== 向量 API (孵化器)
+
+[[java-16-feature-vector-summary]]
+=== 简介
+
+该孵化器 API 提供了一个 jdk.incubator.vector 的初始迭代以表达一些向量计算，这些计算在运行时可靠地编译为支持的 CPU 架构上的最佳向量硬件指令，从而获得优于同等标量计算的性能。
+
+[[java-16-feature-vector-goal]]
+=== 目标
+
+清晰简洁的 API :: API 可以清楚，简洁的表达各种向量计算，这些计算通常由一系列的向量操作组成，这些操作有可能包含循坏，也有可能包含控制流。API 可以表达对向量大小（或每个向量的维数的数量）的通用计算，可以使此类计算能够跨平台的支持不同大小向量的计算（如下个目标所述）。
+平台无关:: API 应该和平台架构无关，并且支持在支持向量硬件指令的多核 CPU 架构上运行时实现。As is usual in Java APIs, where platform optimization and portability conflict, the bias will be to making the Vector API portable, even if some platform-specific idioms cannot be directly expressed in portable code. The next goal of x64 and AArch64 performance is representative of appropriate performance goals on all platforms where Java is supported. The ARM Scalable Vector Extension (SVE) is of special interest in this regard to ensure the API can support this architecture, even though as of writing there are no known production hardware implementations.
+Reliable runtime compilation and performance on x64 and AArch64 architectures:: The Java runtime, specifically the HotSpot C2 compiler, shall compile, on capable x64 architectures, a sequence of vector operations to a corresponding sequence of vector hardware instructions, such as those supported by Streaming SIMD Extensions (SSE) and Advanced Vector Extensions (AVX) extensions, thereby generating efficient and performant code. The programmer shall have confidence that the vector operations they express will reliably map closely to associated hardware vector instructions. The same shall also apply to capable ARM AArch64 architectures compiling to a sequence of vector hardware instructions supported by Neon.
+Graceful degradation:: If a vector computation cannot be fully expressed at runtime as a sequence of hardware vector instructions, either because an architecture does not support some of the required instructions or because another CPU architecture is not supported, then the Vector API implementation shall degrade gracefully and still function. This may include issuing warnings to the developer if a vector computation cannot be sufficiently compiled to vector hardware instructions. On platforms without vectors, graceful degradation shall yield code competitive with manually-unrolled loops, where the unroll factor is the number of lanes in the selected vector.
+
+[[java-16-feature-vector-non-goal]]
+=== 非目标
+
+* 增强 HotSpot 中的自动向量化支持并不是目标
+* HotSpot 的目标不是在 x64 和 AArch64 之外的 CPU 架构上支持向量硬件指令。这种支持留给以后的 jep。然而，重要的是要声明，正如目标所表达的那样，API 不能排除这样的实现。此外，所执行的工作可能会自然地利用和扩展 HotSpot 中的现有抽象，以获得自动向量化的向量支持，从而使这样的任务变得更容易。
+* 在当前或未来的迭代中支持 C1 编译器并不是目标。我们希望在将来的工作中支持 Graal 编译器。
+* 它的目标不是支持 Java strictfp 关键字定义的严格浮点计算。对浮点标量进行浮点运算的结果可能与对浮点标量的向量进行等价的浮点运算的结果不同。然而，这一目标并不排除表达或控制浮点向量计算所需的精度或再现性的可能。
+
+[[java-16-feature-vector-motivation]]
+=== 动机
+
+Vector computations consist of a sequence of operations on vectors. A vector comprises a (usually) fixed sequence of scalar values, where the scalar values correspond to the number of hardware-defined vector lanes. A binary operation applied to two vectors with the same number of lanes would, for each lane, apply the equivalent scalar operation on the corresponding two scalar values from each vector. This is commonly referred to as Single Instruction Multiple Data (SIMD).
+
+Vector operations express a degree of parallelism that enables more work to be performed in a single CPU cycle and thus can result in significant performance gains. For example, given two vectors each covering a sequence of eight integers (eight lanes), then the two vectors can be added together using a single hardware instruction. The vector addition hardware instruction operates on sixteen integers, performing eight integer additions, in the time it would ordinarily take to operate on two integers, performing one integer addition.
+
+HotSpot supports auto-vectorization where scalar operations are transformed into superword operations, which are then mapped to vector hardware instructions. The set of transformable scalar operations are limited and fragile to changes in the code shape. Furthermore, only a subset of available vector hardware instructions might be utilized limiting the performance of generated code.
+
+A developer wishing to write scalar operations that are reliably transformed into superword operations needs to understand HotSpot's auto-vectorization support and its limitations to achieve reliable and sustainable performance.
+
+In some cases it may not be possible for the developer to write scalar operations that are transformable. For example, HotSpot does not transform the simple scalar operations for calculating the hash code of an array (see the Arrays::hashCode method implementations in the JDK source code), nor can it auto-vectorize code to lexicographically compare two arrays (which is why an intrinsic was added to perform lexicographical comparison, see 8033148).
+
+The Vector API aims to address these issues by providing a mechanism to write complex vector algorithms in Java, using pre-existing support in HotSpot for vectorization, but with a user model which makes vectorization far more predictable and robust. Hand-coded vector loops can express high-performance algorithms (such as vectorized hashCode or specialized array comparison) which an auto-vectorizer may never optimize. There are numerous domains where this explicitly vectorizing API may be applicable such as machine learning, linear algebra, cryptography, finance, and usages within the JDK itself.
+
+[[java-16-feature-vector-description]]
+=== 描述
+
+A vector will be represented by the abstract class Vector<E>. The type variable E corresponds to the boxed type of scalar primitive integral or floating point element types covered by the vector. A vector also has a shape which defines the size, in bits, of the vector. The shape of the vector will govern how an instance of Vector<E> is mapped to a vector hardware register when vector computations are compiled by the HotSpot C2 compiler (see later for a mapping from instances to x64 vector registers). The length of a vector (number of lanes or elements) will be the vector size divided by the element size.
+
+The set of element types (E) supported will be Byte, Short, Integer, Long, Float and Double corresponding to the scalar primitive types byte, short, int, long, float and double, respectively.
+
+The set of shapes supported will correspond to vector sizes of 64, 128, 256, and 512 bits. A shape corresponding to a size of 512 bits can pack bytes into 64 lanes or pack ints into 16 lanes, and a vector of such a shape can operate on 64 bytes at a time, or 16 ints at a time.
+
+NOTE:: We believe that these simple shapes are generic enough to be useful on all platforms supporting the Vector API. However, as we experiment during the incubation of this JEP with future platforms, we may further modify the design of the shape parameter. Such work is not in the early scope of this JEP, but these possibilities partly inform the present role of shapes in the Vector API. See the Future Work section, below.
+
+The combination of element type and shape determines the vector's species, represented by VectorSpecies<E>
+
+An instance of Vector<E> is immutable and is a value-based type that retains, by default, object identity invariants (see later for relaxation of these invariants).
+
+Operations on vectors can be classified as lane-wise and cross-lane. Lane-wise operations can be further classified as unary, binary, ternary, and comparison. Cross-lane operations can be classified as permutation, conversion, and reduction. To reduce the surface of the API, we will define collective methods for each class of operation which then take an operator as input. The supported operators are instances of Operator class and are defined as static final fields in the VectorOperators class. Some common operations (e.g., add, mul), called full-service operations, will have dedicated methods which can be used in place of the generic methods.
+
+Certain operations on vectors, such lane-wise cast and reinterpret, can be said to be inherently shape-changing. Having shape-changing operations in a vector computation could have unintended effects on portability and performance. For this reason, wherever applicable, the API will define an additional shape-invariant flavor of such an operation. Users are encouraged to write shape-invariant code using the shape-invariant flavor of operations. Additionally, shape-changing operations will be clearly called out in the Javadoc.
+
+Vector<E> declares a set of methods for common vector operations supported by all element types. To support operations specific to an element type there are six abstract sub-classes of Vector<E>, one for each supported element type: ByteVector, ShortVector, IntVector, LongVector, FloatVector, and DoubleVector. These sub-classes define additional operations which are bound to the element type since the method signature refers to the element type (or the equivalent array type), such as reduction operations (e.g., sum all elements to a scalar value) or storing the vector elements to an array. They also define additional full-service operations that are specific to the integral sub-types such as bitwise operations (e.g., logical or), and operations specific to the floating point types, such as mathematical operations (e.g., transcendental functions such as pow()).
+
+These classes are further extended by concrete sub-classes defined for different shapes (size) of Vectors.
+
+The concrete sub-classes are non-public since there is no need to provide operations specific to the type and shape. This reduces the API surface to a sum of concerns rather than a product. As a result, instances of concrete Vector classes cannot be constructed directly. Instead, instances are obtained via factories methods defined in the base Vector<E> class and its type-specific sub-classes. These methods take as input the species of the desired vector instance. The factory methods provide different ways to obtain vector instances, such as the vector instance whose elements are initiated to default values (the zero vector), or a vector from an array, in addition to providing the canonical support for converting between vectors of different types or shapes (e.g., casting).
+
+To support control flow, relevant vector operations will optionally accept masks represented by the public abstract class VectorMask<E>. Each element in a mask, a boolean value or bit, corresponds to a vector lane. When a mask is an input to an operation it governs whether the operation is applied to each lane; the operation is applied if the mask bit for the lane is set (is true). Alternative behavior occurs if the mask bit is not set (is false). Similar to vectors, instances of VectorMask<E> are instances of (private) concrete sub-class defined for each element type and length combination. The instance of VectorMask<E> used in an operation should have the same type and length as the instance(s) of Vector<E> involved in the operation. Comparison operations produce masks, which can then be input to other operations to selectively disable the operation on certain lanes and thereby emulate flow control. Another way for creating masks is using static factory methods in VectorMask<E>.
+
+We anticipate that masks will likely play an important role in the development of vector computations that are generic to shape. (This expectation is based on the central importance of predicate registers, the equivalent of masks, in the ARM Scalable Vector Extensions as well as in Intel's AVX-512.)
+
+[[java-16-feature-vector-example]]
+=== example
+
+下面是对数组元素的常规简单计算:
+
+[source,java]
+----
+void scalarComputation(float[] a, float[] b, float[] c) {
+   for (int i = 0; i < a.length; i++) {
+        c[i] = (a[i] * a[i] + b[i] * b[i]) * -1.0f;
+   }
+}
+----
+
+我们假设数组参数的大小相同
+
+使用 Vector API 实现等效向量计算的方法如下：
+
+[source,java]
+----
+static final VectorSpecies<Float> SPECIES = FloatVector.SPECIES_256;
+
+void vectorComputation(float[] a, float[] b, float[] c) {
+
+    for (int i = 0; i < a.length; i += SPECIES.length()) {
+        var m = SPECIES.indexInRange(i, a.length);
+		// FloatVector va, vb, vc;
+        var va = FloatVector.fromArray(SPECIES, a, i, m);
+        var vb = FloatVector.fromArray(SPECIES, b, i, m);
+        var vc = va.mul(va).
+                    add(vb.mul(vb)).
+                    neg();
+        vc.intoArray(c, i, m);
+    }
+}
+----
+
+在这个例子中，从 FloatVector 获得了一个 256 位的浮点向量 SPECIES。SPECIES 存储在一个静态 final 字段中，因此运行时编译器将该字段的值视为常量，从而能够更好地优化向量计算。
+
+向量计算的特点是主循环内以向量长度(即 SPECIES 长度)的步长遍历数组。静态方法 `fromArray()` 从数组 a 和 b 的对应索引处加载给定 SPECIES 的浮点向量。然后执行操作，最后将结果存储到数组 c 中。
+
+我们使用由 `indexInRange()` 生成的 mask 来防止读取/写入超过数组长度。第一层( a.length / SPECIES.length() )迭代将设置一个所有通道的 mask。只有最后一次迭代，如果 a.length 不是 SPECIES.length() 的倍数，才会有一个设置了 a.length % SPECIES.length() 的 mask。
+
+由于 mask 在所有迭代中都使用，因此上述实现对于大数组长度可能无法实现最佳性能。同样的计算可以在没有 mask 的情况下实现如下:
+
+[source,java]
+----
+// Example 2
+
+static final VectorSpecies<Float> SPECIES = FloatVector.SPECIES_256;
+
+void vectorComputation(float[] a, float[] b, float[] c) {
+    int i = 0;
+    int upperBound = SPECIES.loopBound(a.length);
+    for (; i < upperBound; i += SPECIES.length()) {
+        // FloatVector va, vb, vc;
+        var va = FloatVector.fromArray(SPECIES, a, i);
+        var vb = FloatVector.fromArray(SPECIES, b, i);
+        var vc = va.mul(va).
+                    add(vb.mul(vb)).
+                    neg();
+        vc.intoArray(c, i);
+    }
+
+    for (; i < a.length; i++) {
+        c[i] = (a[i] * a[i] + b[i] * b[i]) * -1.0f;
+    }
+}
+----
+
+对于长度小于 species  长度的尾部元素，在进行向量计算后，再进行常规计算。处理尾部元素的另一种方法是使用单一的 masked 向量计算。
+
+当操作大型数组时，上述实现可以获得最佳性能。
+
+对于第二个例子，HotSpot 编译器应该在支持 AVX 的 Intel x64 处理器上生成类似如下的机器码:
+
+[source,txt]
+----
+0.43%  / │  0x0000000113d43890: vmovdqu 0x10(%r8,%rbx,4),%ymm0
+  7.38%  │ │  0x0000000113d43897: vmovdqu 0x10(%r10,%rbx,4),%ymm1
+  8.70%  │ │  0x0000000113d4389e: vmulps %ymm0,%ymm0,%ymm0
+  5.60%  │ │  0x0000000113d438a2: vmulps %ymm1,%ymm1,%ymm1
+ 13.16%  │ │  0x0000000113d438a6: vaddps %ymm0,%ymm1,%ymm0
+ 21.86%  │ │  0x0000000113d438aa: vxorps -0x7ad76b2(%rip),%ymm0,%ymm0
+  7.66%  │ │  0x0000000113d438b2: vmovdqu %ymm0,0x10(%r9,%rbx,4)
+ 26.20%  │ │  0x0000000113d438b9: add    $0x8,%ebx
+  6.44%  │ │  0x0000000113d438bc: cmp    %r11d,%ebx
+         \ │  0x0000000113d438bf: jl     0x0000000113d43890
+----
+
+This is actual output from a JMH micro-benchmark for the example code under test using a prototype of the Vector API and implementation (the vectorIntrinsics branch of Project Panama's development repository). This shows the hot areas of C2-generated machine code. There is a clear translation to vector registers and vector hardware instructions. (Loop unrolling was disabled to make the translation clearer, otherwise HotSpot should be able to unroll using existing C2 loop optimization techniques.) All Java object allocations are elided.
+
+It is an important goal to support more complex non-trivial vector computations that translate clearly into generated machine code.
+
+There are, however, a few issues with this particular vector computation:
+
+. The loop is hardcoded to a concrete vector shape, so the computation cannot adapt dynamically to a maximal shape supported by the architecture, which may be smaller or larger than 256 bits. Therefore the code is less portable and may be less performant.
+. Calculation of the loop upper bounds, although simple here, can be a common source of programming error.
+. A scalar loop is required at the end, duplicating code.
+
+We will address the first two issues in this JEP. A preferred species can be obtained whose shape is optimal for the current architecture, the vector computation can then be written with a generic shape, and a method on the species can round down the array length, for example:
+
+[source,java]
+----
+static final VectorSpecies<Float> SPECIES = FloatVector.SPECIES_PREFERRED;
+
+void vectorComputation(float[] a, float[] b, float[] c,
+        VectorSpecies<Float> species) {
+    int i = 0;
+    int upperBound = species.loopBound(a.length);
+    for (; i < upperBound; i += species.length()) {
+        //FloatVector va, vb, vc;
+        var va = FloatVector.fromArray(species, a, i);
+        var vb = FloatVector.fromArray(species, b, i);
+        var vc = va.mul(va).
+                    add(vb.mul(vb)).
+                    neg();
+        vc.intoArray(c, i);
+    }
+
+    for (; i < a.length; i++) {
+        c[i] = (a[i] * a[i] + b[i] * b[i]) * -1.0f;
+    }
+}
+
+vectorComputation(a, b, c, SPECIES);
+----
+
+The third issue will not be fully addressed by this JEP and will be the subject of future work. As shown in the first example, you can use masks to implement vector computation without tail processing. We anticipate that such masked loops will work well for a range of architectures, including x64 and ARM, but will require additional runtime compiler support to generate maximally efficient code. Such work on masked loops, though important, is beyond the scope of this JEP.
+
+[[java-16-feature-vector-hotspot]]
+=== HotSpot C2 编译器细节
+
+The Vector API has two implementations in order to achieve this JEP's goals. The first implements operations in Java, thus it is functional but not optimal. The second makes intrinsic, for the HotSpot C2 compiler, those operations with special treatment for Vector API types. This allows for proper translation to hardware registers and instructions for the case where architecture support and implementation for translation exists.
+
+To avoid an explosion of intrinsics added to C2, a set of intrinsics will be defined that correspond to operation kinds such as binary, unary, comparison, and so on, where constant arguments are passed describing operation specifics. Approximately twenty new intrinsics will be needed to support the intrinsification of all parts of the API.
+
+Vector instances are value-based, i.e., morally values where identity-sensitive operations should be avoided. Further, although vector instances are abstractly composed of elements in lanes, those elements are not scalarized by C2. The vector value is treated as a whole unit, like int or long, that maps to a hardware vector register of the appropriate size. Inline types will require some related enhancements to ensure that a vector value is treat as a whole unit.
+
+Until inline types are available, Vector instances will be treated specially by C2 to overcome limitations in escape analysis and avoid boxing. As such, identity sensitive operations on vectors should be avoided.
+
+[[java-16-feature-vector-future]]
+=== 未来工作
+
+The Vector API will benefit significantly from value types once ready (see Project Valhalla). Instances of a Vector<E> can be values, whose concrete classes are inline types. This will make it easier to optimize and express vector computations. Sub-types of Vector<E> for specific types, such as IntVector, may not be required with generic specialization over inline types and type-specific method declaration.
+
+Therefore, a future version of the Vector API will make use of inline types and enhanced generics, as noted above. As a result, we will incubate the API over multiple releases of the JDK and will adapt as inlines types become available.
+
+We will enhance the API to load and store vectors using features of JEP 370 Foreign-Memory Access API, when that API transitions from an incubating API. Further, memory layouts to describe vector species may prove useful, for example to stride over a memory segment comprised of elements.
+
+We anticipate enhancing the implementation in the following ways:
+
+* Include support for vectorized transcendental operations (such as logarithm, and the trigonometric functions),
+* Improve the optimization of loops containing vectorized code,
+* Optimize masked vector operations on supporting platforms, and
+* Make adjustments for large vector sizes (e.g., as supported by ARM SVE).
+
+Performance work will be ongoing as we make incremental improvements to the implementation.
+
+[[java-16-feature-vector-alternatives]]
+=== 备选方案
+
+HotSpot's auto-vectorization is an alternative approach, but it would require significant work. It would, moreover, likely still be fragile and limited compared to using the Vector API, since auto-vectorization with complex control flow is very hard to perform.
+
+In general, and even after decades of research (especially for FORTRAN and C array loops), it seems that auto-vectorization of scalar code is not a reliable tactic for optimizing ad-hoc user-written loops unless the user pays unusually careful attention to unwritten contracts about exactly which loops a compiler is prepared to auto-vectorize. It's too easy to write a loop that fails to auto-vectorize, for a reason that the optimizer but no human reader can detect. Years of work on auto-vectorization, even in HotSpot, have left us with lots of optimization machinery that works only on special occasions. We want to enjoy the use of this machinery more often!
+
+[[java-16-feature-vector-testing]]
+=== 测试
+
+We will develop combinatorial unit tests to ensure coverage for all operations, for all supported types and shapes, over various data sets.
+
+We will also develop performance tests to ensure that performance goals are met and vector computations map efficiently to vector hardware instructions. This will likely consist of JMH micro-benchmarks, but more realistic examples of useful algorithms will also be required. Such tests may initially reside in a project specific repository. Curation is likely required before integration into the main repository given the proportion of tests and how they are generated.
+
+As a backup to performance tests, we may create white-box tests to force the JIT to report to us that vector API source code did, in fact, trigger vectorization.
+
+[[java-16-feature-vector-risks]]
+=== 风险和假设
+
+There is a risk that the API will be biased to the SIMD functionality supported on x64 architectures but this is mitigated with support for AArch64. This applies mainly to the explicitly fixed set of supported shapes, which bias against coding algorithms in a shape-generic fashion. We consider the majority of other operations of the Vector API to bias toward portable algorithms. To mitigate that risk we will take other architectures into account, specifically the ARM Scalar Vector Extension architecture whose programming model adjusts dynamically to the singular fixed shape supported by the hardware. We welcome and encourage OpenJDK contributors working on the ARM-specific areas of HotSpot to participate in this effort.
+
+The Vector API uses box types (such as Integer) as proxies for primitive types (such as int). This decision is forced by the current limitations of Java generics, which are hostile to primitive types. When Project Vahalla eventually introduces more capable generics the current decision will seem awkward, and may need changing. We assume that such changes will be possible without excessive backward incompatibility.
+
+[[java-16-feature-c]]
+== 启用 C++14 语言特性（在 JDK 源代码中）
+
+它允许在 JDK C{plus}{plus} 源代码中使用 C{plus}{plus}14 语言特性，并提供在 HotSpot 代码中可以使用哪些特性的具体指导。在 JDK 15 中，JDK 中 C{plus}{plus} 代码使用的语言特性仅限于 C{plus}{plus}98/03 语言标准。它要求更新各种平台编译器的最低可接受版本
+
+[[java-16-feature-git]]
+== 从 Mercurial 迁移到 Git
+
+将 OpenJDK 社区的源代码存储库从 Mercurial (hg) 迁移到 Git。
+
+* 将所有单存储库 OpenJDK 项目从 Mercurial 迁移到 Git
+* 保留所有版本控制历史记录，包括标签
+* 根据 Git 最佳实践重新格式化提交消息
+* 将 https://openjdk.java.net/projects/code-tools/jcheck/[jcheck] 、 https://openjdk.java.net/projects/code-tools/webrev/[webrev] 和 https://openjdk.java.net/projects/code-tools/defpath/[defpath] 工具移植到 Git
+* 创建一个工具来在 Mercurial 和 Git 哈希之间进行转换
+
+[[java-16-feature-github]]
+== 迁移到 GitHub
+
+在 GitHub 上托管 OpenJDK 社区的 Git 存储库。与 JEP 357（从 Mercurial 迁移到 Git）一致，这会将所有单存储库 OpenJDK 项目迁移到 GitHub，包括 JDK 功能版本和版本 11 及更高版本的 JDK 更新版本。
+
+* 在 https://github.com/openjdk/[https://github.com/openjdk/] 托管所有 OpenJDK Git 存储库。
+* 在每次推送之前运行预提交检查（ https://openjdk.java.net/projects/code-tools/jcheck/[jcheck] ）。
+* 集成现有的 OpenJDK 服务。
+* 启用与 GitHub 交互的多种方式。
+* 确保支持在结构上类似于现有电子邮件和基于 webrev 的工作流的工作流。
+* 保存和归档所有元数据。
+* 确保 OpenJDK 社区始终可以迁移到不同的源代码托管服务提供商。
+* 不要求开发人员安装 OpenJDK 特定工具才能做出贡献。
+* 不要更改 OpenJDK https://openjdk.java.net/bylaws[章程]。
+* 不要更改 OpenJDK https://openjdk.java.net/census[Census]。
+
+[[java-16-feature-zgc]]
+== ZGC 并发线程处理
+
+将 ZGC 线程栈处理从安全点转移到一个并发阶段，甚至在大堆上也允许在毫秒内暂停 GC 安全点。消除 ZGC 垃圾收集器中最后一个延迟源可以极大地提高应用程序的性能和效率。
+
+[[java-16-feature-unix-domain]]
+== Unix-Domain 套接字通道
+
+Unix-domain 套接字一直是大多数 Unix 平台的一个特性，现在在 Windows 10 和 Windows Server 2019 也提供了支持。此特性为 java.nio.channels 包的套接字通道和服务器套接字通道 API 添加了 Unix-domain（AF_UNIX）套接字支持。它扩展了继承的通道机制以支持 Unix-domain 套接字通道和服务器套接字通道。Unix-domain 套接字用于同一主机上的进程间通信（IPC）。它们在很大程度上类似于 TCP/IP，区别在于套接字是通过文件系统路径名而不是 Internet 协议（IP）地址和端口号寻址的。对于本地进程间通信，Unix-domain 套接字比 TCP/IP 环回连接更安全、更有效。
+
+[[java-16-feature-alpine]]
+== Alpine Linux 移植
+
+将 JDK 移植到 Alpine Linux，以及其他在 x64 和 AArch64 架构上使用使用 musl 作为主要 C 库的发行版上.
+
+[[java-16-feature-metaspace]]
+== 弹性元空间
+
+此特性可将未使用的 HotSpot 类元数据（即元空间，metaspace）内存更快速地返回到操作系统，从而减少元空间的占用空间。具有大量类加载和卸载活动的应用程序可能会占用大量未使用的空间。新方案将元空间内存按较小的块分配，它将未使用的元空间内存返回给操作系统来提高弹性，从而提高应用程序性能并降低内存占用。
+
+[[java-16-feature-windows]]
+== Windows/AArch64 移植
+
+将 JDK 移植到 Windows AArch64（ARM64）。
+
+[[java-16-feature-foreign]]
+== 外部链接器 API（孵化器）
+
+该孵化器 API 提供了静态类型、纯 Java 访问原生代码的特性，该 API 将大大简化绑定原生库的原本复杂且容易出错的过程。Java 1.1 就已通过 Java 原生接口（JNI）支持了原生方法调用，但并不好用。Java 开发人员应该能够为特定任务绑定特定的原生库。它还提供了外来函数支持，而无需任何中间的 JNI 粘合代码。
+
+外部内存访问 API 为这个 JEP 提供了基础，它首先由 JEP 370 提出，并在 2019 年末作为一个酝酿中的 API 针对 Java 14，随后由 JEP 383 和 JEP 393 更新，分别针对Java 15 和 16。外部内存访问 API 和外部链接器 API 共同构成了 https://openjdk.java.net/projects/panama/[Panama] 项目的关键。
+
+* 易用性：用优越的纯 java 开发模型替换 JNI。
+* C 支持：这项工作的最初目标是在 x64 和 AArch64 平台上提供高质量的、完全优化的与 C 库的互操作性。
+* 通用性:Foreign Linker API 的实现应该足够灵活，随着时间的推移，能够支持其他平台(如 32 位 x86)和用 C 以外的语言编写的外部函数(如 c++、Fortran)。
+* 性能:Foreign Linker API 应该提供与 JNI 相当或更好的性能。
+
+[[java-16-feature-value]]
+== 对基于值的类发出警告
+
+此特性将原始包装器类（java.lang.Integer、java.lang.Double 等）指定为基于值的（类似于 java.util.Optional 和 java.time.LocalDateTime），并在其构造器中添加 forRemoval（自 JDK 9 开始被弃用），这样会提示新的警告。在 Java 平台中尝试在任何基于值的类的实例上进行不正确的同步时，它会发出警告。
+
+[[java-16-feature-packaging]]
+== 打包工具
+
+此特性最初是作为 Java 14 中的一个孵化器模块引入的，该工具允许打包自包含的 Java 应用程序。它支持原生打包格式，为最终用户提供自然的安装体验，这些格式包括 Windows 上的 msi 和 exe、macOS 上的 pkg 和 dmg，还有 Linux 上的 deb 和 rpm。它还允许在打包时指定启动时参数，并且可以从命令行直接调用，也可以通过 ToolProvider API 以编程方式调用。注意 jpackage 模块名称从 jdk.incubator.jpackage 更改为 jdk.jpackage。这将改善最终用户在安装应用程序时的体验，并简化了“应用商店”模型的部署。
+
+[[java-16-feature-memory]]
+== 外部存储器访问 API（第 3 个孵化器）
+
+在 Java 14 和 Java 15 中作为孵化器 API 引入的这个 API 使 Java 程序能够安全有效地对各种外部存储器（例如本机存储器、持久性存储器、托管堆存储器等）进行操作。它提供了外部链接器 API 的基础。
+
+[[java-16-feature-records]]
+== Records（记录）
+
+记录（Records）在 Java 14 和 Java 15 中作为预览特性引入。它提供了一种紧凑的语法来声明类，这些类是浅层不可变数据的透明持有者。这将大大简化这些类，并提高代码的可读性和可维护性。
+
+[[java-16-feature-instanceof]]
+== 适用于 instanceof 的模式匹配
+
+模式匹配（Pattern Matching）最早在 Java 14 中作为预览特性引入，在 Java 15 中还是预览特性。模式匹配通过对 instacneof 运算符进行模式匹配来增强 Java 编程语言。
+
+模式匹配使程序中的通用逻辑（即从对象中有条件地提取组件）得以更简洁、更安全地表示。
+
+[[java-16-feature-encapsulate]]
+== 默认强封装 JDK 内部元素
+
+此特性会默认强封装 JDK 的所有内部元素，但关键内部 API（例如 sun.misc.Unsafe）除外。默认情况下，使用早期版本成功编译的访问 JDK 内部 API 的代码可能不再起作用。鼓励开发人员从使用内部元素迁移到使用标准 API 的方法上，以便他们及其用户都可以无缝升级到将来的 Java 版本。强封装由 JDK 9 的启动器选项–illegal-access 控制，到 JDK 15 默认改为 warning，从 JDK 16 开始默认为 deny。（目前）仍然可以使用单个命令行选项放宽对所有软件包的封装，将来只有使用–add-opens 打开特定的软件包才行。
+
+[[java-16-feature-sealed]]
+== 密封类 (预览)
+
+[[java-16-feature-sealed-summary]]
+=== 简介
+
+通过密封的类和接口来增强 Java 编程语言，这是新的预览特性。https://cr.openjdk.java.net/~briangoetz/amber/datum.html[密封类和接口] 可以阻止其他类或接口扩展或实现它们。
+
+[[java-16-feature-sealed-history]]
+=== 历史
+
+密封类由 https://openjdk.java.net/jeps/360[JEP 360] 提出，并在 <<java-15-feature-sealed,JDK 15>> 中作为一个预览特性发布。
+
+JEP 建议在 JDK 16 中重新预览该特性，并对其进行如下改进:
+
+* 指定上下文关键字的概念，取代 JLS 中先前的受限标识符和受限关键字的概念。引入  sealed, non-sealed, 和 permits  作为上下文关键字。
+* 与匿名类和 lambda 表达式一样，在确定隐式声明允许的密封类或密封接口的子类时，局部类可能不是密封类的子类。
+* 增强缩小引用转换，以便针对密封类层次结构对转换执行更严格的检查。
+
+[[java-16-feature-sealed-goals]]
+=== 目标
+
+* 允许类或接口的作者可以控制实现该代码的代码。
+* 提供比访问修饰符更具声明性的方式来限制超类的使用。
+* 通过支持对模式的详尽分析而支持模式匹配的未来发展。
+
+[[java-16-feature-sealed-non-goals]]
+=== 非目标实现
+
+* 不提供新形式的访问控制。
+* 不以任何方式改变 final 。
+
+[[java-16-feature-sealed-motivation]]
+=== 动机
+
+在现代应用对真实世界进行数据建模时，具有类和接口继承关系的面向对象数据模型已被证明是非常有效的，而这也是 java 语言的一种重要表现形式。
+
+然而，在某些情况下，这种表达可以被驯服的。例如，Java 支持使用枚举类来创建具有固定数量的实例的情况。如下代码，枚举类给出了一组固定的行星，他们是类的唯一值。因此，你可以随意的切换他们，而不需要编写子句。
+
+[source,java]
+----
+enum Planet { MERCURY, VENUS, EARTH }
+
+Planet p = ...
+switch (p) {
+  case MERCURY: ...
+  case VENUS: ...
+  case EARTH: ...
+}
+----
+
+使用枚举对于具有固定数量的值时很有用，但有时我们想要创建一组具有固定类型的值。这时，我们可以通过类层次结构来实现这一点。这并不是将其作为代码继承和重用的机制，而是将其作为一种列出各种值的一种方法。如上示例，我们可以将 天文领域的各种值建模如下：
+
+[source,java]
+----
+interface Celestial { ... }
+final class Planet implements Celestial { ... }
+final class Star   implements Celestial { ... }
+final class Comet  implements Celestial { ... }
+----
+
+例如，在图形库中，`Shape` 类的作者可能希望只有特定的类才能扩展 `Shape`，因为该库的许多工作都涉及到如何以适当的方式处理各种形状。 作者只对 `Shape` 的已知子类感兴趣，而对 `Shape` 的未知子类的代码不感兴趣。
+在这种情况下，目标并不是允许任意的类扩展 `Shape`，从而继承其代码以供重用。 不幸的是，Java 之前始终以代码重用始终作为目标: 如果 `Shape` 可以完全扩展，则可以扩展任何数量的类。
+现在放宽此目标，使作者可以声明一个类别层次结构，该层次结构对于任意类都不是可扩展的。 在这样一个密闭的类层次结构中，代码重用仍然是可能的，但不能超出范围。
+
+Java 开发人员熟悉限制子类集合的思想，因为它经常出现在 API 设计中。该语言在这方面提供了有限的工具:要么使一个类为 `final`，这样它就没有子类;要么使一个类或它的构造函数为 `package-private`，这样它就只能在同一个包中有子类。 https://hg.openjdk.java.net/jdk/jdk/file/tip/src/java.base/share/classes/java/lang/[JDK 中] 出现了一个 `package-private` 超类的示例
+
+[source,java]
+----
+package java.lang;
+
+abstract class AbstractStringBuilder {...}
+public final class StringBuffer  extends AbstractStringBuilder {...}
+public final class StringBuilder extends AbstractStringBuilder {...}
+----
+
+如果这个类的目标是代码重用时，例如 `AbstractStringBuilder` 的子类要添加共享代码时， `package-private` 方法很有用。然而，当目标是建模时，这种方法是无用的，因为用户代码无法访问关键抽象——超类——来切换它(因为有可能不属于同一个包)。
+允许用户访问超类而不允许他们扩展它是不可能的。(即使在声明了 `Shape` 及其子类的图形库中，如果只有一个包可以访问 `Shape`，那就太不幸了。)
+
+总之，超类应该是可以被广泛访问的(因为它代表了用户的一个重要抽象)，但不能被广泛扩展(因为它的子类应该被限制为作者所知道的)。这样的超类应该能够表示它是与一组给定的子类共同开发的，既可以为读者记录意图，也可以允许 Java 编译器执行。
+同时，超类不应该过分地约束它的子类，例如，强迫它们为 `final` 或者阻止它们定义自己的状态。
+
+[[java-16-feature-sealed-description]]
+=== 描述
+
+一个密封的类或接口只能由那些允许的类和接口来扩展或实现。通过将 `sealed` 修饰符应用到类的声明，这样的类叫密封类。
+然后，在任何 `extends` 和 `implements` 子句之后，声明 `permits` 子句指定允许扩展密封类的类。例如，下面的 `Shape`  指定了三个允许的子类
+
+[source,java]
+----
+package com.example.geometry;
+
+public abstract sealed class Shape
+    permits Circle, Rectangle, Square {...}
+----
+
+上面 `permits` 指定的类必须位于超类附近:要么在同一个模块中(如果超类在一个命名的模块中)，要么在同一个包中(如果超类在一个未命名的模块中)。
+例如，在下面的 `Shape` 中，它允许的子类都位于同一个命名模块的不同包中
+
+[source,java]
+----
+package com.example.geometry;
+
+public abstract sealed class Shape
+    permits com.example.polar.Circle,
+            com.example.quad.Rectangle,
+            com.example.quad.simple.Square {...}
+----
+
+当允许的子类在大小和数量上都比较小时，在与 `sealed` 类中声明它们可能比较方便。当在这种情况下声明它们时，密封类可能会省略 `permits`  子句，Java 编译器将从源文件(可能是辅助类或嵌套类)的声明中推断允许的子类。
+例如，如果 `Shape` 找到以下代码。然后密封类 `Shape` 被推断为有三个允许的子类
+
+[source,java]
+----
+package com.example.geometry;
+
+abstract sealed class Shape {...}
+... class Circle    extends Shape {...}
+... class Rectangle extends Shape {...}
+... class Square    extends Shape {...}
+----
+
+密封类的目的是让客户端代码清楚地、确切地了解所有允许的子类。判断子类的传统方法是使用 `instanceof` 测试的 `if-else` 链，但是对编译器来说，分析这样的链是困难的，因此它不能确定测试是否涵盖了所有允许的子类。
+例如，下面的方法会导致编译时错误，因为编译器不相信开发人员的判断，即 `Shape` 的每个子类都经过测试，并导致返回语句
+
+[source,java]
+----
+int getCenter(Shape shape) {
+    if (shape instanceof Circle) {
+        return ... ((Circle)shape).center() ...
+    } else if (shape instanceof Rectangle) {
+        return ... ((Rectangle)shape).length() ...
+    } else if (shape instanceof Square) {
+        return ... ((Square)shape).side() ...
+    }
+}
+----
+
+你可以添加一个 catch-all else 分支 ,但这并不意味着测试已经是详尽。此外，如果开发人员的判断被证明是错误的，编译器也无法挽救他们。假设上面的代码 instanceof Rectangle 测试被省略了;不会出现编译时错误。(对于三个允许的子类，可能很容易发现遗漏，但是对于 10 个或 20 个不可能。即使只有三个，代码编写起来也令人沮丧，读起来也很乏味。)
+
+在未来版本中的 https://cr.openjdk.java.net/~briangoetz/amber/pattern-match.html[模式匹配] 将实现清晰明确地推断允许的子类的能力。 客户端代码无需使用 `if-else` 检查密封类的实例，而是可以使用 `switch` 类型测试切换实例(https://openjdk.java.net/jeps/375[JEP 375])。
+这使编译器可以检查测试是否详尽。 例如，给定以下代码，编译器将推断 `Shape` 的每个允许的子类都被覆盖，因此不需要任何默认子句(或其他模式)。 此外，如果缺少以下三种情况之一，则编译器将给出错误:
+
+[source,java]
+----
+int getCenter(Shape shape) {
+    return switch (shape) {
+        case Circle c    -> ... c.center() ...
+        case Rectangle r -> ... r.length() ...
+        case Square s    -> ... s.side() ...
+    };
+}
+----
+
+密封类对其允许的子类(由其 `permits` 子句指定的类)施加三个约束:
+
+. 密封类及其允许的子类必须属于同一个模块，如果在未命名的模块中声明，则属于同一个包。
+. 每个允许的子类都必须直接扩展密封类。
+. 每个被允许的子类必须选择以下三个修饰符之一来描述它如何继超类之后的行为
+
+* 可以将允许的子类声明为 `final`，以防止其在类层次结构中的进一步扩展。
+* 可以将允许的子类声明为 `sealed` ，以允许其层次结构的一部分扩展到其密封的超类所设想的范围之外，但以受限的方式。
+* 可以将允许的子类声明为 `non-sealed` ，以便其层次结构的一部分恢复为可供未知子类扩展的状态。 (密封类不能阻止其允许的子类这样做。)
+
+作为三个约束的示例，圆形是 `final`，而矩形是 `sealed`，而方形是 `non-sealed`:
+
+[source,java]
+----
+package com.example.geometry;
+
+public abstract sealed class Shape
+    permits Circle, Rectangle, Square {...}
+
+public final class Circle extends Shape {...}
+
+public sealed class Rectangle extends Shape
+    permits TransparentRectangle, FilledRectangle {...}
+public final class TransparentRectangle extends Rectangle {...}
+public final class FilledRectangle extends Rectangle {...}
+
+public non-sealed class Square extends Shape {...}
+----
+
+每个允许的子类必须使用一个且只有一个修饰符 `final`、`sealed` 和 `non-sealed`。一个类不可能同时是 `sealed`(意味着有限制性的子类)和 `final`(意味着没有子类)，或者同时是  `non-sealed` (意味着没有限制性的子类)和 `final` (意味着没有子类)，或者同时是 `sealed`(意味着有限制性的子类)和 `non-sealed`(意味着没有限制性的子类)。
+
+(可以将 `final` 修饰符视为一种 `sealed` 的增强形式，其中完全禁止扩展/实现。也就是说，`final` 在概念上等同于 `sealed` +一个未指定任何内容的 `permits` 子句；请注意，此类 `permits` 子句不能用 Java 编写 )
+
+抽象类。一个 `sealed` 或 `non-sealed` 可以是抽象的，并且具有抽象成员。一个 `sealed` 类可以允许抽象的子类(如果它们是 `sealed` 的或 `non-sealed`的，而不是 `final` 的)。
+
+[[java-16-feature-sealed-description-accessibility]]
+==== 类的可访问性
+
+因为 `extends` 和 `permits`  子句使用类名，所以允许的子类和它的密封超类必须可以相互访问。但是，允许的子类之间不需要具有与其他类或密封类相同的可访问性。
+特别是，一个子类可能比密封类更难访问;这意味着，在将来的版本中，当模式匹配支持 `switches` 时，一些用户将无法完全切换子类，除非使用了默认子句(或其他 total 模式)。Java 编译器检测机制并不如用户想象的那么详尽，建议使用 `default`  子句并自定义错误消息。
+
+[[java-16-feature-sealed-description-interface]]
+==== 密封接口
+
+与类的情况类似，通过对接口应用 `sealed` 修饰符来密封接口。在任何用于指定超接口的 `extends` 子句之后，使用 `permits`  子句指定实现类和子接口。例如
+
+[source,java]
+----
+package com.example.expression;
+
+public sealed interface Expr
+    permits ConstantExpr, PlusExpr, TimesExpr, NegExpr {...}
+
+public final class ConstantExpr implements Expr {...}
+public final class PlusExpr     implements Expr {...}
+public final class TimesExpr    implements Expr {...}
+public final class NegExpr      implements Expr {...}
+----
+
+[[java-16-feature-sealed-description-records]]
+==== 密封类和 Records
+
+密封类与 <<java-16-feature-record,Records>> (http://openjdk.java.net/jeps/384[JEP 384])一起工作得很好，后者是 Java 15 的另一个预览特性。Records 默认是 `final` 的，因此带有 Records 的密封类层次结构比上面的示例稍微简洁一些
+
+[source,java]
+----
+package com.example.expression;
+
+public sealed interface Expr
+    permits ConstantExpr, PlusExpr, TimesExpr, NegExpr {...}
+
+public record ConstantExpr(int i)       implements Expr {...}
+public record PlusExpr(Expr a, Expr b)  implements Expr {...}
+public record TimesExpr(Expr a, Expr b) implements Expr {...}
+public record NegExpr(Expr e)           implements Expr {...}
+----
+
+密封类和 Records 的组合有时称为 https://en.wikipedia.org/wiki/Algebraic_data_type[algebraic data types]: Records 允许我们表达产品类型，密封类允许我们表达类型数量。
+
+[[java-16-feature-sealed-description-conversions]]
+==== 密封类转换
+
+强制转换表达式将值转换为类型。类型 instanceof 表达式根据类型测试值。Java 对这类表达式中允许的类型非常宽容。例如:
+
+[source,java]
+----
+interface I {}
+   class C {} // does not implement I
+
+   void test (C c) {
+       if (c instanceof I)
+           System.out.println("It's an I");
+   }
+----
+
+这个程序是合法的，尽管目前 C 对象没有实现接口 I。当然，随着程序的发展，它可能是:
+
+[source,java]
+----
+interface I {}
+   final class C {}
+
+   void test (C c) {
+       if (c instanceof I)
+           System.out.println("It's an I");
+   }
+----
+
+方法测试编译失败，因为编译器知道不可能有 C 的子类，所以由于 C 没有实现 I，那么 C 值永远不可能实现 I。这是一个编译时错误。
+
+如果 C 不是 final 的，而是 sealed 的呢? 它的直接子类是显式枚举的，并且——根据被密封的定义——在同一个模块中，所以我们希望编译器查看它是否能发现类似的编译时错误。考虑以下代码:
+
+[source,java]
+----
+interface I {}
+   sealed class C permits D {}
+   final class D extends C {}
+
+   void test (C c) {
+       if (c instanceof I)
+           System.out.println("It's an I");
+   }
+----
+
+类 C 没有实现 I，也不是 final，因此根据现有的规则，我们可以得出这样的结论:转换是可能的。然而，C 是密封的，并且 C 有一个直接子类 D。根据密封类型的定义，D 必须是 final、sealed, 或 non-sealed 的。在这个例子中，C 的所有直接子类都是 final 类，不实现 I。因此这个程序应该被拒绝，因为不可能有实现 I 的 C 的子类型。
+
+相反，考虑一个类似的程序，其中一个密封类的直接子类是非密封的:
+
+[source,java]
+----
+interface I {}
+   sealed class C permits D, E {}
+   non-sealed class D extends C {}
+   final class E extends C {}
+
+   void test (C c) {
+       if (c instanceof I)
+           System.out.println("It's an I");
+   }
+----
+
+这是类型正确的，因为非密封类型 D 的子类型可以实现 I。
+
+这个 JEP 将扩展缩小引用转换的定义，以密封的层次结构，从而在编译时确定哪些转换是不可能的。
+
+[[java-16-feature-sealed-description-jdk]]
+==== 在 JDK 中 密封类
+
+关于如何在 JDK 中使用密封类的一个例子是在 `java.lang.constant` 包中，该包为 https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/constant/package-summary.html[JVM 实体的模型描述符]:
+
+[source,java]
+----
+package java.lang.constant;
+
+public sealed interface ConstantDesc
+    permits String, Integer, Float, Long, Double,
+            ClassDesc, MethodTypeDesc, DynamicConstantDesc {...}
+
+// ClassDesc is designed for subclassing by JDK classes only
+public sealed interface ClassDesc extends ConstantDesc
+    permits PrimitiveClassDescImpl, ReferenceClassDescImpl {...}
+final class PrimitiveClassDescImpl implements ClassDesc {...}
+final class ReferenceClassDescImpl implements ClassDesc {...}
+
+// MethodTypeDesc is designed for subclassing by JDK classes only
+public sealed interface MethodTypeDesc extends ConstantDesc
+    permits MethodTypeDescImpl {...}
+final class MethodTypeDescImpl implements MethodTypeDesc {...}
+
+// DynamicConstantDesc is designed for subclassing by user code
+public non-sealed abstract class DynamicConstantDesc implements ConstantDesc {...}
+----
+
+[[java-16-feature-sealed-description-pattern-matching]]
+==== 密封类模式匹配
+
+密封类的一个重要好处将在未来的版本中与模式匹配一起实现。用户代码将能够使用类型测试模式增强的开关，而不是使用 if-else 检查密封类的实例。这将允许 Java 编译器检查模式是否详尽。
+
+例如，考虑前面的这段代码:
+
+[source,java]
+----
+Shape rotate(Shape shape, double angle) {
+    if (shape instanceof Circle) return shape;
+    else if (shape instanceof Rectangle) return shape.rotate(angle);
+    else if (shape instanceof Square) return shape.rotate(angle);
+    // no else needed!
+}
+----
+
+Java 编译器不能确保 instanceof 测试覆盖 Shape 的所有子类。例如，如果省略了 instanceof Rectangle 测试，则不会发出编译时错误消息。
+
+相反，在下面使用模式匹配开关表达式的代码中，编译器可以确认覆盖了 Shape 的每个允许的子类，因此不需要默认子句(或其他总模式)。此外，如果缺少这三种情况中的任何一种，编译器将发出错误消息:
+
+[source,java]
+----
+Shape rotate(Shape shape, double angle) {
+    return switch (shape) {   // pattern matching switch
+        case Circle c    -> c;
+        case Rectangle r -> r.rotate(angle);
+        case Square s    -> s.rotate(angle);
+        // no default needed!
+    }
+}
+----
+
+[[java-15-feature-sealed-description-grammar]]
+==== Java 语法
+
+NormalClassDeclaration::
+{ClassModifier} class TypeIdentifier [TypeParameters]
++
+[Superclass] [Superinterfaces] [PermittedSubclasses] ClassBody
+
+ClassModifier::
++
+(one of)
++
+Annotation public protected private
++
+abstract static sealed final non-sealed strictfp
+
+PermittedSubclasses::
+permits ClassTypeList
+
+ClassTypeList::
+ClassType {, ClassType}
+
+[[java-16-feature-sealed-description-jvm]]
+==== JVM 对密封类的支持
+
+Java 虚拟机在运行时识别密封类和接口，并防止未经授权的子类和子接口进行扩展。
+
+尽管 `sealed` 是类修饰符，但 `ClassFile` 结构中没有 `ACC_SEALED` 标志。 相反，密封类的类文件具有 `PermittedSubclasses` 属性，该属性隐式指示 `sealed` 修饰符，并显式指定允许的子类:
+
+[source,java]
+----
+PermittedSubclasses_attribute {
+    u2 attribute_name_index;
+    u4 attribute_length;
+    u2 number_of_classes;
+    u2 classes[number_of_classes];
+}
+----
+
+允许的子类列表是强制性的，即使编译器推断了允许的子类，这些推断的子类也明确包含在 `PermittedSubclasses` 属性中。
+
+允许的子类的类文件不包含任何新属性。
+
+当 JVM 尝试定义其超类或超接口具有 `PermittedSubclasses` 属性的类时，所定义的类必须由该属性命名。 否则，将引发 `IncompatibleClassChangeError`。
+
+[[java-16-feature-sealed-description-reflection]]
+==== Reflection API
+
+以下 `public` 方法将添加到 `java.lang.Class`:
+
+* java.lang.constant.ClassDesc[] getPermittedSubclasses()
+* boolean isSealed()
+
+方法 `getPermittedSubclasses()` 返回一个数组，其中包含 `java.lang.constant.ClassDesc` 对象，如果该对象是密封类，则表示该类的所有允许的子类；如果不是密封类，则返回一个空数组。
+
+如果给定的类或接口是密封类，则 `isSealed()` 方法将返回 `true`。 (与 isEnum 比较。)
+
+[[java-16-feature-sealed-alternatives]]
+=== 备选方案
+
+某些语言直接支持 https://en.wikipedia.org/wiki/Algebraic_data_type[algebraic data types (ADTs)]，例如 Haskell 的数据功能。 可以通过 enum 功能的一种变体，让 Java 开发人员以更熟悉的方式直接地表示 ADT，
+在该声明中，可以在一个声明中定义总和。 但是，这将不支持所有期望的用例，例如那些总和超出一个以上编译单元中的类，或者总和超出非乘积类的那些用例。
+
+`permits`  子句允许一个密封类(例如前面显示的 `Shape` 类)可以通过任何模块中的代码进行访问以进行调用，但是只能通过与该密封类(或相同包)相同的模块中的代码来进行实现。
+(如果在未命名的模块中)。 这使得类型系统比访问控制系统更具表现力。 仅使用访问控制，如果 `Shape` 可以通过任何模块中的代码进行访问以进行调用(因为已导出其包)，
+那么 Shape 也是可以在任何模块中进行实现的访问。 并且，如果 `Shape` 在任何其他模块中均不可访问以实现，则 `Shape` 在任何其他模块中也均不可访问。
+
+[[java-16java-16-feature-sealed-dependencies]]
+=== 依赖
+
+密封类并不依赖于 records (http://openjdk.java.net/jeps/384[JEP 384]) 或 模式匹配(https://openjdk.java.net/jeps/375[JEP 375])，相反，它们两者都可以与密封类结合的很好。
