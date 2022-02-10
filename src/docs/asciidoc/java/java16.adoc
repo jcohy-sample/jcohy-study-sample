@@ -12,7 +12,7 @@
 
 Java 16 为用户提供了 17 项主要的 JEP (Java/JDK Enhancement Proposals,JDK 增强提案)，包括三个孵化器模块，一个预览功能
 
-资料来源:  http://openjdk.java.net/projects/jdk/15/
+资料来源:  http://openjdk.java.net/projects/jdk/16/
 
 [[java-16-feature-overview-tbl]]
 .Java 16 新特性一览
@@ -414,7 +414,7 @@ Unix-domain 套接字一直是大多数 Unix 平台的一个特性，现在在 W
 [[java-16-feature-encapsulate]]
 == 默认强封装 JDK 内部元素
 
-此特性会默认强封装 JDK 的所有内部元素，但关键内部 API（例如 sun.misc.Unsafe）除外。默认情况下，使用早期版本成功编译的访问 JDK 内部 API 的代码可能不再起作用。鼓励开发人员从使用内部元素迁移到使用标准 API 的方法上，以便他们及其用户都可以无缝升级到将来的 Java 版本。强封装由 JDK 9 的启动器选项–illegal-access 控制，到 JDK 15 默认改为 warning，从 JDK 16 开始默认为 deny。（目前）仍然可以使用单个命令行选项放宽对所有软件包的封装，将来只有使用–add-opens 打开特定的软件包才行。
+此特性会默认强封装 JDK 的所有内部元素，但关键内部 API（例如 sun.misc.Unsafe）除外。默认情况下，使用早期版本成功编译的访问 JDK 内部 API 的代码可能不再起作用。鼓励开发人员从使用内部元素迁移到使用标准 API 的方法上，以便他们及其用户都可以无缝升级到将来的 Java 版本。强封装由 JDK 9 的启动器选项 –illegal-access 控制，到 JDK 15 默认改为 warning，从 JDK 16 开始默认为 deny。（目前）仍然可以使用单个命令行选项放宽对所有软件包的封装，将来只有使用 –add-opens 打开特定的软件包才行。
 
 [[java-16-feature-sealed]]
 == 密封类 (预览)
@@ -477,7 +477,9 @@ final class Star   implements Celestial { ... }
 final class Comet  implements Celestial { ... }
 ----
 
-例如，在图形库中，`Shape` 类的作者可能希望只有特定的类才能扩展 `Shape`，因为该库的许多工作都涉及到如何以适当的方式处理各种形状。 作者只对 `Shape` 的已知子类感兴趣，而对 `Shape` 的未知子类的代码不感兴趣。
+然而，这个层次结构并没有反映出重要的领域知识，即在我们的模型中只有三种天体。在这些情况下，限制子类或子接口的集合可以简化建模。
+
+考虑另外一个例子，例如，在图形库中，`Shape` 类的作者可能希望只有特定的类才能扩展 `Shape`，因为该库的许多工作都涉及到如何以适当的方式处理各种形状。 作者只对 `Shape` 的已知子类感兴趣，而对 `Shape` 的未知子类的代码不感兴趣。
 在这种情况下，目标并不是允许任意的类扩展 `Shape`，从而继承其代码以供重用。 不幸的是，Java 之前始终以代码重用始终作为目标: 如果 `Shape` 可以完全扩展，则可以扩展任何数量的类。
 现在放宽此目标，使作者可以声明一个类别层次结构，该层次结构对于任意类都不是可扩展的。 在这样一个密闭的类层次结构中，代码重用仍然是可能的，但不能超出范围。
 
@@ -538,35 +540,15 @@ abstract sealed class Shape {...}
 ... class Square    extends Shape {...}
 ----
 
-密封类的目的是让客户端代码清楚地、确切地了解所有允许的子类。判断子类的传统方法是使用 `instanceof` 测试的 `if-else` 链，但是对编译器来说，分析这样的链是困难的，因此它不能确定测试是否涵盖了所有允许的子类。
-例如，下面的方法会导致编译时错误，因为编译器不相信开发人员的判断，即 `Shape` 的每个子类都经过测试，并导致返回语句
+密封类限制其子类。用户可以使用 if-else instanceOf 测试检查密封类的实例，每个子类进行一次测试，不需要 catch-all else 子句。例如，下面的代码查找Shape的三个允许的子类:
 
 [source,java]
 ----
-int getCenter(Shape shape) {
-    if (shape instanceof Circle) {
-        return ... ((Circle)shape).center() ...
-    } else if (shape instanceof Rectangle) {
-        return ... ((Rectangle)shape).length() ...
-    } else if (shape instanceof Square) {
-        return ... ((Square)shape).side() ...
-    }
-}
-----
-
-你可以添加一个 catch-all else 分支 ,但这并不意味着测试已经是详尽。此外，如果开发人员的判断被证明是错误的，编译器也无法挽救他们。假设上面的代码 instanceof Rectangle 测试被省略了;不会出现编译时错误。(对于三个允许的子类，可能很容易发现遗漏，但是对于 10 个或 20 个不可能。即使只有三个，代码编写起来也令人沮丧，读起来也很乏味。)
-
-在未来版本中的 https://cr.openjdk.java.net/~briangoetz/amber/pattern-match.html[模式匹配] 将实现清晰明确地推断允许的子类的能力。 客户端代码无需使用 `if-else` 检查密封类的实例，而是可以使用 `switch` 类型测试切换实例(https://openjdk.java.net/jeps/375[JEP 375])。
-这使编译器可以检查测试是否详尽。 例如，给定以下代码，编译器将推断 `Shape` 的每个允许的子类都被覆盖，因此不需要任何默认子句(或其他模式)。 此外，如果缺少以下三种情况之一，则编译器将给出错误:
-
-[source,java]
-----
-int getCenter(Shape shape) {
-    return switch (shape) {
-        case Circle c    -> ... c.center() ...
-        case Rectangle r -> ... r.length() ...
-        case Square s    -> ... s.side() ...
-    };
+Shape rotate(Shape shape, double angle) {
+    if (shape instanceof Circle) return shape;
+    else if (shape instanceof Rectangle) return shape.rotate(angle);
+    else if (shape instanceof Square) return shape.rotate(angle);
+    // no else needed!
 }
 ----
 
@@ -614,25 +596,37 @@ public non-sealed class Square extends Shape {...}
 [[java-16-feature-sealed-description-interface]]
 ==== 密封接口
 
-与类的情况类似，通过对接口应用 `sealed` 修饰符来密封接口。在任何用于指定超接口的 `extends` 子句之后，使用 `permits`  子句指定实现类和子接口。例如
+与类的情况类似，通过对接口应用 `sealed` 修饰符来密封接口。在任何用于指定超接口的 `extends` 子句之后，使用 `permits`  子句指定实现类和子接口。例如，上面的行星例子可以重写如下:
+
+[source,java]
+----
+sealed interface Celestial
+    permits Planet, Star, Comet { ... }
+
+final class Planet implements Celestial { ... }
+final class Star   implements Celestial { ... }
+final class Comet  implements Celestial { ... }
+----
+
+下面是类层次结构的另一个经典例子，其中有一组已知的子类:数学表达式建模。
 
 [source,java]
 ----
 package com.example.expression;
 
 public sealed interface Expr
-    permits ConstantExpr, PlusExpr, TimesExpr, NegExpr {...}
+    permits ConstantExpr, PlusExpr, TimesExpr, NegExpr { ... }
 
-public final class ConstantExpr implements Expr {...}
-public final class PlusExpr     implements Expr {...}
-public final class TimesExpr    implements Expr {...}
-public final class NegExpr      implements Expr {...}
+public final class ConstantExpr implements Expr { ... }
+public final class PlusExpr     implements Expr { ... }
+public final class TimesExpr    implements Expr { ... }
+public final class NegExpr      implements Expr { ... }
 ----
 
 [[java-16-feature-sealed-description-records]]
 ==== 密封类和 Records
 
-密封类与 <<java-16-feature-record,Records>> (http://openjdk.java.net/jeps/384[JEP 384])一起工作得很好，后者是 Java 15 的另一个预览特性。Records 默认是 `final` 的，因此带有 Records 的密封类层次结构比上面的示例稍微简洁一些
+密封类与  https://docs.oracle.com/javase/specs/jls/se16/html/jls-8.html#jls-8.10[Records 类] (http://openjdk.java.net/jeps/384[JEP 384])一起工作得很好，后者是 Java 15 的另一个预览特性。Records 默认是 `final` 的，因此带有 Records 的密封类层次结构比上面的示例稍微简洁一些
 
 [source,java]
 ----
@@ -669,13 +663,26 @@ interface I {}
 
 [source,java]
 ----
-interface I {}
-   final class C {}
+...
+class B extends C implements I {}
 
-   void test (C c) {
-       if (c instanceof I)
-           System.out.println("It's an I");
-   }
+test(new B());
+// Prints "It's an I"
+----
+
+类型转换规则捕获了开放可扩展性的概念。Java 类型系统不假设一个封闭的世界。类和接口可以在将来扩展，并将转换转换编译为运行时测试，因此我们可以安全灵活地进行转换。
+
+然而，在范围的另一端，转换规则确实解决了类绝对不能扩展的情况，即当它是最终类时。
+
+[source,java]
+----
+interface I {}
+final class C {}
+
+void test (C c) {
+    if (c instanceof I)     // Compile-time error!
+        System.out.println("It's an I");
+}
 ----
 
 方法测试编译失败，因为编译器知道不可能有 C 的子类，所以由于 C 没有实现 I，那么 C 值永远不可能实现 I。这是一个编译时错误。
@@ -726,21 +733,21 @@ package java.lang.constant;
 
 public sealed interface ConstantDesc
     permits String, Integer, Float, Long, Double,
-            ClassDesc, MethodTypeDesc, DynamicConstantDesc {...}
+            ClassDesc, MethodTypeDesc, DynamicConstantDesc { ... }
 
 // ClassDesc is designed for subclassing by JDK classes only
 public sealed interface ClassDesc extends ConstantDesc
-    permits PrimitiveClassDescImpl, ReferenceClassDescImpl {...}
-final class PrimitiveClassDescImpl implements ClassDesc {...}
-final class ReferenceClassDescImpl implements ClassDesc {...}
+    permits PrimitiveClassDescImpl, ReferenceClassDescImpl { ... }
+final class PrimitiveClassDescImpl implements ClassDesc { ... }
+final class ReferenceClassDescImpl implements ClassDesc { ... }
 
 // MethodTypeDesc is designed for subclassing by JDK classes only
 public sealed interface MethodTypeDesc extends ConstantDesc
-    permits MethodTypeDescImpl {...}
-final class MethodTypeDescImpl implements MethodTypeDesc {...}
+    permits MethodTypeDescImpl { ... }
+final class MethodTypeDescImpl implements MethodTypeDesc { ... }
 
 // DynamicConstantDesc is designed for subclassing by user code
-public non-sealed abstract class DynamicConstantDesc implements ConstantDesc {...}
+public non-sealed abstract class DynamicConstantDesc implements ConstantDesc { ... }
 ----
 
 [[java-16-feature-sealed-description-pattern-matching]]
@@ -776,27 +783,30 @@ Shape rotate(Shape shape, double angle) {
 }
 ----
 
-[[java-15-feature-sealed-description-grammar]]
+[[java-16-feature-sealed-description-grammar]]
 ==== Java 语法
 
-NormalClassDeclaration::
-{ClassModifier} class TypeIdentifier [TypeParameters]
-+
-[Superclass] [Superinterfaces] [PermittedSubclasses] ClassBody
+类声明的语法修改如下
 
-ClassModifier::
-+
-(one of)
-+
-Annotation public protected private
-+
-abstract static sealed final non-sealed strictfp
+[source,txt]
+----
+The grammar for class declarations is amended to the following:
 
-PermittedSubclasses::
-permits ClassTypeList
+NormalClassDeclaration:
+  {ClassModifier} class TypeIdentifier [TypeParameters]
+    [Superclass] [Superinterfaces] [PermittedSubclasses] ClassBody
 
-ClassTypeList::
-ClassType {, ClassType}
+ClassModifier:
+  (one of)
+  Annotation public protected private
+  abstract static sealed final non-sealed strictfp
+
+PermittedSubclasses:
+  permits ClassTypeList
+
+ClassTypeList:
+  ClassType {, ClassType}
+----
 
 [[java-16-feature-sealed-description-jvm]]
 ==== JVM 对密封类的支持
@@ -826,10 +836,10 @@ PermittedSubclasses_attribute {
 
 以下 `public` 方法将添加到 `java.lang.Class`:
 
-* java.lang.constant.ClassDesc[] getPermittedSubclasses()
+* java.lang.Class[] getPermittedSubclasses()
 * boolean isSealed()
 
-方法 `getPermittedSubclasses()` 返回一个数组，其中包含 `java.lang.constant.ClassDesc` 对象，如果该对象是密封类，则表示该类的所有允许的子类；如果不是密封类，则返回一个空数组。
+方法 `getPermittedSubclasses()` 返回一个数组，其中包含 `java.lang.constant.Class` 对象，如果该对象是密封类，则表示该类的所有允许的子类；如果不是密封类，则返回一个空数组。
 
 如果给定的类或接口是密封类，则 `isSealed()` 方法将返回 `true`。 (与 isEnum 比较。)
 
