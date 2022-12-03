@@ -1,8 +1,8 @@
 [[java-linkedhashmap]]
-=  LinkedHashMap
+= LinkedHashMap
 
 [[java-linkedhashmap-overview]]
-==  概述
+== 概述
 
 `LinkedHashMap` 是 `Map` 接口的哈希表和链接列表实现,具有可预知的迭代顺序.此实现提供所有可选的映射操作,并允许使用 `null` 值和 `null` 键.此类不保证映射的顺序,特别是它不保证该顺序恒久不变.
 
@@ -14,30 +14,30 @@
 ====
 
 [[java-linkedhashmap-impl]]
-==  LinkedHashMap的实现
+== LinkedHashMap 的实现
 
 对于 `LinkedHashMap` 而言,它继承与 `HashMap` 底层使用哈希表与双向链表来保存所有元素.其基本操作与父类 `HashMap` 相似,它通过重写父类相关的方法,来实现自己的链接列表特性.下面我们来分析 `LinkedHashMap` 的源代码:
 
 [[java-linkedhashmap-entry]]
-===  Entry元素
+=== Entry 元素
 
 `LinkedHashMap` 采用的 `hash` 算法和 `HashMap` 相同,但是它重新定义了数组中保存的元素 `Entry`,该 `Entry` 除了保存当前对象的引用外,还保存了其上一个元素 `before` 和下一个元素 `after` 的引用,从而在哈希表的基础上又构成了双向链接列表.看源代码:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java
 ----
-                        /**
-                          * 双向链表的表头元素.
-                          */
-                        private transient Entry<K,V> header;
-                        /**
-                          * LinkedHashMap 的 Entry 元素.
-                          * 继承 HashMap 的 Entry 元素,又保存了其上一个元素 before 和下一个元素 after 的引用.
-                          */
-                        private static class Entry<K,V> extends HashMap.Entry<K,V> {
-                            Entry<K,V> before, after;
-                            ……
-                        }
+/**
+  * 双向链表的表头元素.
+  */
+private transient Entry<K,V> header;
+/**
+  * LinkedHashMap 的 Entry 元素.
+  * 继承 HashMap 的 Entry 元素,又保存了其上一个元素 before 和下一个元素 after 的引用.
+  */
+private static class Entry<K,V> extends HashMap.Entry<K,V> {
+    Entry<K,V> before, after;
+    ……
+}
 ----
 
 

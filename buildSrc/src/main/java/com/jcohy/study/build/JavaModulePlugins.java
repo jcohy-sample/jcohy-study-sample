@@ -33,10 +33,10 @@ public class JavaModulePlugins implements Plugin<Project> {
     }
 
     private void configureDependencyManagement(Project project) {
-        Dependency flightFrameworkParent = project.getDependencies().enforcedPlatform(project.getDependencies()
+        Dependency bom = project.getDependencies().enforcedPlatform(project.getDependencies()
                 .project(Collections.singletonMap("path", ":bom")));
         project.getConfigurations().getByName("dependencyManagement", (dependencyManagement) -> {
-            dependencyManagement.getDependencies().add(flightFrameworkParent);
+            dependencyManagement.getDependencies().add(bom);
         });
     }
 }

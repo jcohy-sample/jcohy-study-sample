@@ -404,6 +404,500 @@ Unix-domain 套接字一直是大多数 Unix 平台的一个特性，现在在 W
 
 记录（Records）在 Java 14 和 Java 15 中作为预览特性引入。它提供了一种紧凑的语法来声明类，这些类是浅层不可变数据的透明持有者。这将大大简化这些类，并提高代码的可读性和可维护性。
 
+使用 Records 增强 Java 编程语言，Records 是充当不可变数据的透明载体的类。 Records 可以被认为是名义上的元组。
+
+[[java-16-feature-record-summary]]
+=== 简介
+
+Records 是在 2019 年年中由 https://openjdk.java.net/jeps/359[JEP 359] 提出的，并在 2020 年初在 JDK 14 中作为一个预览特性。这个 JEP 提议重新预览 JDK 15 中的特性，以结合基于反馈的改进，并支持 Java 语言中本地类和接口的其他形式。
+
+[[java-16-feature-record-history]]
+=== 历史
+
+Records  由 https://openjdk.java.net/jeps/359[JEP 359] 提出，并作为 https://openjdk.java.net/jeps/12[预览功能] 在 https://openjdk.org/projects/jdk/14/[JDK 14] 中交付。
+
+作为对反馈的回应，该设计由 https://openjdk.java.net/jeps/384[JEP 384] 进行了改进，并在 https://openjdk.org/projects/jdk/14/[JDK 15] 中作为预览功能第二次交付。 第二次预览的改进如下：
+
+* 在第一次预览中，规范的构造函数需要时 public。 在第二次预览中，如果声明隐式规范构造函数，则其访问修饰符与 record 类相同； 如果显式声明规范构造函数，则其访问修饰符必须至少提供与 record 类一样多的访问权限。
+* 扩展 `@Override` 注解的含义，注解的方法是 record 组件的显式声明访问器方法。
+* 为了强制使用紧凑的构造函数，构造函数主体中的任何实例字段成为编译时错误。
+* 引入了声明本地记录类、本地枚举类和本地接口的能力。
+
+这个 JEP 建议最终确定 JDK 16 中的功能，并进行以下改进：
+
+* 放宽内部类不能声明显式或隐式静态成员的限制。 这将成为合法的，特别是，将允许内部类声明一个记录类成员。
+
+可以根据进一步的反馈合并其他改进。
+
+[[java-16-feature-record-goal]]
+=== 目标
+
+* 设计一个表达简单值集合的面向对象的构造。
+* 帮助程序员专注于对不可变数据进行建模，而不是对可扩展行为进行建模。
+* 自动实现数据驱动的方法，例如 `equals` 和 `accessors`。
+* 保留 Java 的规则，例如 nominal 类型和迁移兼容性。
+
+[[java-16-feature-record-non-goals]]
+=== 非目标实现
+
+* 这不是挑起 "war on boilerplate"； 特别是，使用 JavaBean 命名约定来解决可变类的问题并不是目标。
+* 不会添加诸如属性或注解驱动的代码生成之类的功能特性，通常建议这些功能来简化 "普通 Java 对象" 类的声明。
+
+[[java-16-feature-record-motivation]]
+=== 动机和目标
+
+很多程序员一样抱怨 “Java 太啰嗦” 或有太多的 “繁文缛节 ”,开发人员想要创建纯数据载体类(plain data carriers)通常都必须编写大量低价值、
+重复的、容易出错的代码.如:构造函数、 `getter/setter`、 `equals()`、 `hashCode()` 以及 `toString()` 等 . 例如，带有 x 和 y 坐标的类会如下声明
+
+[source,java]
+----
+class Point {
+    private final int x;
+    private final int y;
+
+    Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    int x() { return x; }
+    int y() { return y; }
+
+    public boolean equals(Object o) {
+        if (!(o instanceof Point)) return false;
+        Point other = (Point) o;
+        return other.x == x && other.y = y;
+    }
+
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
+
+    public String toString() {
+        return String.format("Point[x=%d, y=%d]", x, y);
+    }
+}
+----
+
+有时，开发人员倾向于通过省略诸如 `equals` 之类的方法来偷工减料，从而会导致了令人吃惊的表现( surprising behavior )和糟糕的可调试性 (poor debuggability)。
+
+IDE 有助于在数据载体类中编写大多数代码，但是并没有做任何事情来帮助读者从数十行代码中提取 "我是 x，y 和 z 的数据载体" 的设计意图。 编写对少量值建模的 Java 代码应该更容易编写，阅读和验证正确。
+
+从表面上看，records 主要作用是减少代码量，但是我们选择了一个更语义的目标: 为数据建模。 (如果语义正确，则样例将自行处理。) 声明数据载体类应简单明了，这些载体类默认情况下使其数据不可变，并且提供了生成和使用数据的方法。
+
+[[java-16-feature-record-description]]
+=== 描述
+
+Records 是 Java 语言中一种新型的类型声明。  Records 类可以使用更少的代码对普通数据聚合进行建模。
+
+Records 类的声明主要由其状态组成，并提交与该状态匹配的 API。 这意味着 Records 类放弃了类通常享有的自由: 将 API 与表示分离的能力。 但作为回报，Records 获得了很大程度的简洁性。
+
+更准确地说，record 的声明由 name，optional type parameters，header 和 body。 header 列出了 record 的组成部分，它们是构成其状态的变量。 (组件列表有时称为状态描述。)例如:
+
+[source,java]
+----
+record Point(int x, int y) { }
+----
+
+因为 record 在语义上声称是其数据的透明载体，所以 record 会自动获取标准成员:
+
+* 对于 header 中的每个组件，都有两个成员: 一个与该组件具有相同名称和返回类型的公共访问器方法，以及一个与该组件具有相同类型的私有 final 字段；
+* 一个规范化的构造函数，其签名与 header 相同，并将每个私有字段分配给实例化 record 的新表达式中的相应参数；
+* `equals` 和 `hashCode` 方法，如果两个 record 属于同一类型并且包含相同的组件值，则表示它们是相等的;和
+* `toString` 的实现，其中包括所有 record 组件的字符串表示形式及其名称。
+
+换句话说，record 类的 header 描述了它的状态，即它的组件的类型和名称，而 API 是从该状态描述中自动生成的。 API 包括用于构造、成员访问、相等和显示的方法。 （我们希望未来的版本支持解构模式以实现强大的模式匹配。）
+
+[[java-16-feature-record-constructors]]
+==== records 的构造器
+
+record 类中的构造函数规则与普通类中的不同。没有任何构造函数声明的普通类会自动获得默认构造函数。相反，没有任何构造函数声明的 record 类会自动获得一个规范的构造函数，该构造函数将包括所有私有字段的相应参数。
+例如，之前声明的 record 类 — `record Point(int x, int y) { }` — 被编译为：
+
+[source,java]
+----
+record Point(int x, int y) {
+    // 显式声明字段
+    private final int x;
+    private final int y;
+
+    // Other implicit declarations elided ...
+
+    // 隐式声明的规范构造函数
+    Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+----
+
+您也可以显式的根据匹配的参数列表来声明规范构造函数，页可以采用省略参数列表（紧凑型）来声明（如上所述）。在这样一个紧凑的规范构造函数中，参数是隐式声明的，
+Records 组件对应的私有字段不能在主体中赋值，而是在构造函数末尾自动赋值给相应的参数形式（`this.x = x;`）。 紧凑的形式可帮助开发人员专注于验证和规范化参数，而无需将参数分配给字段的繁琐工作。
+
+例如，这是一个紧凑的规范构造函数，可以验证其隐式形式参数：
+
+[source,java]
+----
+record Range(int lo, int hi) {
+    Range {
+        if (lo > hi)  // 此处指的是隐式构造函数参数
+            throw new IllegalArgumentException(String.format("(%d,%d)", lo, hi));
+    }
+}
+----
+
+这是一个规范化其形式参数的紧凑规范构造函数：
+
+[source,java]
+----
+record Rational(int num, int denom) {
+    Rational {
+        int gcd = gcd(num, denom);
+        num /= gcd;
+        denom /= gcd;
+    }
+}
+----
+
+这个声明等同于传统的构造函数形式：
+
+[source,java]
+----
+record Rational(int num, int denom) {
+    Rational(int num, int demon) {
+        // Normalization
+        int gcd = gcd(num, denom);
+        num /= gcd;
+        denom /= gcd;
+        // Initialization
+        this.num = num;
+        this.denom = denom;
+    }
+}
+----
+
+隐式声明的构造函数和方法的 Records 类满足重要且直观的语义属性。 例如，考虑一个 Record 类 R 声明如下：
+
+[source,java]
+----
+record R(T1 c1, ..., Tn cn){ }
+----
+
+如果按以下方式复制 R 的实例 r1：
+
+[source,java]
+----
+R r2 = new R(r1.c1(), r1.c2(), ..., r1.cn());
+----
+
+假设 `r1` 不是 `null` ，那么表达式 `r1.equals(r2)` 的计算结果总是为 `true`。 显式声明的访问器和 `equals` 方法也应该遵循这个不变性。 但是，编译器通常不可能检查显式声明的方法是否遵守此不变性。
+
+例如，下面的 Record 类声明应该被认为是错误的风格，因为它的访问器方法 "默默地" 调整 Record 实例的状态，并且不满足上面的不变量：
+
+[source,java]
+----
+record SmallPoint(int x, int y) {
+  public int x() { return this.x < 100 ? this.x : 100; }
+  public int y() { return this.y < 100 ? this.y : 100; }
+}
+----
+
+此外，对于所有 Record 类，实现了隐式声明的 `equals` 方法，因此它是自反的，并且对于具有浮点组件的 Record 类，它的行为与 `hashCode` 一致。 同样，显式声明的 `equals` 和 `hashCode` 方法的行为应该相似。
+
+[[java-16-feature-record-description-ruls]]
+==== records 规则
+
+records 声明有很多限制:
+
+* record 类没有 extends 字句。 因为 record 的超类始终为 `java.lang.Record`，类似于枚举的超类始终为 `java.lang.Enum`。 即使普通类可以显式扩展其隐式超类 Object，record 也不能显式扩展任何类，甚至其隐式超类 `Record` 也不行。
+* record 默认是 `final` 的，并且不能是抽象的。 这些限制强调 record 的 API 仅由其状态描述定义，并且以后不能由另一个类或 record 进行增强。
+* record 类的 record 组件的的字段隐式声明为 `final`， 此限制体现了一种不可变的默认策略，该策略广泛适用于数据载体类。
+* record 不能显式声明实例字段，并且不能包含实例初始化程序。 这些限制可确保仅 record header 定义 record 值的状态。
+* 显式声明的任何成员都必须与自动生成的成员类型完全匹配，而不必考虑显式声明上的任何注解。显式实现访问, `equals` 或 `hashCode` 方法的够应该注意保留 Record 类的语义不变性。
+* record 不能声明 `native` 方法。 如果 record 可以声明 `native` 方法，则 record 的行为根据定义将取决于外部状态，而不是 record 的显式状态。 带有 `native` 方法的类都不适合迁移到 record。
+
+除上述限制外，record 的行为类似于普通类:
+
+* 使用 `new` 关键字实例化 record。
+* 可以将它们声明为顶级或嵌套，可以是通用的
+* 可以声明静态方法，静态字段和静态初始化方法。
+* 可以声明实例方法。即，一条 record 可以显式声明与组件相对应的公共访问器方法，也可以声明其他实例方法。
+* 可以实现接口。 尽管一条 record 不能指定超类(因为这将意味着继承，而不是 header 中描述的状态)，但是一条 record 可以自由地指定超接口并声明实例方法来帮助实现它们。 就像类一样，接口可以有效地记录许多 record 的行为。
+该行为可以是与 domain 无关的(例如，`Comparable`)或特定于域的，在这种情况下，record 可以是密封层次结构的一部分(参见下文)。
+* 可以声明嵌套的类型，包括嵌套的 record。如果 record 本身是嵌套的，则它是默认是静态的；这避免了立即关闭的实例，该实例将以静态方式将状态添加到 record 中。
+* 可以对 record 及其状态描述中的组件进行注解。 注解将传播到自动派生的字段，方法和构造函数参数。 record 组件类型的类型注解也将传播到自动派生成员的类型。
+* Record 类的实例可以被序列化和反序列化。但是，无法通过提供 `writeObject`、`readObject`、`readObjectNoData`、`writeExternal` 或 `readExternal` 方法来自定义该过程。Record 类的组件管理序列化，  规范构造函数管理反序列化。
+
+[[java-16-feature-record-description-local]]
+==== Local Record(局部 record)
+
+生产和使用 records 的程序可能会处理许多中间值，这些中间值本身就是简单的变量组。 声明 records 以对那些中间值建模通常会很方便。 一种选择是声明静态且嵌套的 "helper" records ，就像今天许多程序声明工具类一样。
+一个更方便的选择是在方法内部声明一个 records，该 records 可以操纵变量的代码。 因此，该 JEP 提出了类似于 https://docs.oracle.com/javase/specs/jls/se14/html/jls-14.html#jls-14.3[局部类] 的传统构造的局部 records。
+
+在下面的示例中，使用局部 record  `MerchantSales` 对（merchant）商人和（monthly）每月销售额进行汇总。 使用此 record  可提高以下流操作的可读性:
+
+[source,java]
+----
+List<Merchant> findTopMerchants(List<Merchant> merchants, int month) {
+    // Local record
+    record MerchantSales(Merchant merchant, double sales) {}
+
+    return merchants.stream()
+        .map(merchant -> new MerchantSales(merchant, computeSales(merchant, month)))
+        .sorted((m1, m2) -> Double.compare(m2.sales(), m1.sales()))
+        .map(MerchantSales::merchant)
+        .collect(toList());
+}
+----
+
+局部 records 是嵌套 records 的一种特殊情况。 像所有嵌套 records 一样，局部 records 是隐式静态的。 这意味着它们自己的方法无法访问封闭方法的任何变量； 反过来，这避免了捕获立即密封的实例，该实例将以静态方式将状态添加到 records 中。
+局部 records 是隐式静态的，这与不是隐式静态的本地类相反。实际上，局部类永远不会是静态的(隐式或显式)，并且始终可以访问密封方法中的变量。
+
+考虑到本地 records 的有用性，也具有本地枚举和本地接口将很有用。 由于担心它们的语义，传统上在 Java 中不允许使用它们。 具体来说，嵌套枚举和嵌套接口是隐式静态的，因此局部枚举和本地接口也应隐式静态的。
+但是，Java 语言中的本地声明(本地变量，本地类)永远不会是静态的。 但是，在 https://openjdk.java.net/jeps/359[JEP 359] 中引入本地 records 克服了这种语义上的担忧，允许本地声明为静态，并为本地枚举和本地接口打开了大门。
+
+[source,java]
+----
+record Range(int lo, int hi) {
+  public Range {
+    if (lo > hi)  /* referring here to the implicit constructor parameters */
+      throw new IllegalArgumentException(String.format("(%d,%d)", lo, hi));
+  }
+}
+----
+
+[[java-16-feature-record-interface]]
+==== 局部枚举类和局部接口
+
+添加局部记录类为添加其他隐式局部声明提供了机会。
+
+嵌套的枚举类和嵌套的接口已经是隐式静态的，所以为了保持一致性我们定义局部枚举类和局部接口，它们也是隐式静态的。
+
+[[java-16-feature-record-static]]
+==== 内部类的静态成员
+
+如果内部类显式或隐式声明了静态的成员，则当前指定为编译时错误，除非该成员是常量变量。 这意味着，例如，内部类不能声明 Record 类成员，因为嵌套记录类是隐式静态的。
+
+我们放宽此限制，以允许内部类显式或隐式声明静态的成员。 特别是，这允许内部类声明一个作为静态成员的 Record 类。
+
+[[java-16-feature-record-description-annotations]]
+==== record 组件上的注解
+
+record 组件在 record 声明中具有多个角色。 record 组件是一种高级的概念，每个组件对应于一个具有相同名称和类型的字段，一个具有相同名称和返回类型的访问器方法以及一个具有相同名称和类型的构造函数参数。
+
+这就提出了一个问题: 当对组件进行注解时，实际上是在注解什么？ 答案是 "所有适用于此特定注解的所有内容"。 这样，可以将在其字段，构造函数参数或访问器方法上使用注解的类迁移到 record，而不必重复声明这些成员。 例如，如下所示的类
+
+[source,java]
+----
+public final class Card {
+    private final @MyAnno Rank rank;
+    private final @MyAnno Suit suit;
+    @MyAnno Rank rank() { return this.rank; }
+    @MyAnno Suit suit() { return this.suit; }
+    ...
+}
+----
+
+可以使用可读性更高的 record 声明:
+
+[source,java]
+----
+public record Card(@MyAnno Rank rank, @MyAnno Suit suit) { ... }
+----
+
+注解的适用性使用 `@Target` 元注解声明。考虑以下:
+
+[source,java]
+----
+@Target(ElementType.FIELD)
+    public @interface I1 {...}
+----
+
+这将声明注解 `@I1`，并且适用于字段声明。我们可以声明一个有多个声明的注解；例如:
+
+[source,java]
+----
+@Target({ElementType.FIELD, ElementType.METHOD})
+    public @interface I2 {...}
+----
+
+这声明了一个注解 `@I2`，它适用于字段声明和方法声明。
+
+返回到 record 组件上的注解，这些注解出现在适用的相应程序点处。 换句话说，propagation 是在程序员使用 `@Target` 元注解的控制下进行的。 propagation 规则是系统且直观的，并且遵循所有适用的规则:
+
+* 如果 record 组件上的注解适用于字段声明，则注解将出现在相应的专用字段上。
+* 如果 record 组件上的注解适用于方法声明，则该注解将出现在相应的访问器方法上。
+* 如果 record 组件上的注解适用于形式参数，则如果未显式声明注解，则该注解将出现在规范构造函数的相应形式参数上；如果显式声明一个注解，则注解将出现在紧凑构造函数的相应形式参数上。
+* 如果 record 组件上的注解适用于某个类型，则该注解将传播到以下所有对象：
+** 对应字段的类型
+** 相应访问器方法的返回类型
+** 规范构造函数对应形式参数的类型
+** 记录组件的类型（可在运行时通过反射访问）
+
+如果显式声明了公共访问器方法或(非紧凑型)规范构造函数，则它仅具有直接显示在其上的注解；没有任何内容从相应的 record 组件传播到这些成员。
+
+也可以使用新的注解声明 `@Target(RECORD_COMPONENT)` 声明注解来自记录组件上定义的注解。 可以通过反射来检索这些注解，如以下 https://openjdk.org/jeps/395#Reflection-API["反射API"] 部分中所述。
+
+[[java-16-feature-record-description-grammar]]
+==== 兼容性和迁移
+
+抽象类 `java.lang.Record` 是所有 Record 类的公共超类。 每个 Java 源文件都隐式导入 `java.lang.Record` 类，以及 `java.lang` 包中的所有其他类型，无论您是启用还是禁用预览功能。
+但是，如果您的应用程序从不同的包中导入另一个名为 `Record` 的类，您可能会遇到编译器错误。
+
+考虑以下 `com.myapp.Record` 的类声明：
+
+[source,java]
+----
+package com.myapp;
+
+public class Record {
+    public String greeting;
+    public Record(String greeting) {
+        this.greeting = greeting;
+    }
+}
+----
+
+以下示例 `org.example.MyappPackageExample` 使用通配符导入 `com.myapp.Record` 但未编译：
+
+[source,java]
+----
+package org.example;
+import com.myapp.*;
+
+public class MyappPackageExample {
+    public static void main(String[] args) {
+       Record r = new Record("Hello world!");
+    }
+}
+----
+
+编译器生成类似于以下内容的错误消息：
+
+[source,java]
+----
+./org/example/MyappPackageExample.java:6: error: reference to Record is ambiguous
+       Record r = new Record("Hello world!");
+       ^
+  both class com.myapp.Record in com.myapp and class java.lang.Record in java.lang match
+
+./org/example/MyappPackageExample.java:6: error: reference to Record is ambiguous
+       Record r = new Record("Hello world!");
+                      ^
+  both class com.myapp.Record in com.myapp and class java.lang.Record in java.lang match
+----
+
+`com.myapp` 包中的 `Record` 和 `java.lang` 包中的 `Record` 都是使用通配符导入的。 因此，这两个类都不具有优先权，编译器在遇到使用简单名称 `Record` 时会生成一条错误消息。
+
+为了使该示例能够编译，可以更改 import 语句，以便它导入 Record 的完全限定名称：
+
+[source,java]
+----
+import com.myapp.Record;
+----
+
+在 `java.lang` 包中引入类的情况很少见，但有时是必要的。 之前的示例是 Java 5 中的 `Enum`、Java 9 中的 `Module` 和 Java 14 中的 `Record`。
+
+[[java-16-feature-record-compatibility-migration]]
+==== 语法
+
+[source,java]
+----
+RecordDeclaration:
+  {ClassModifier} `record` TypeIdentifier [TypeParameters]
+    RecordHeader [SuperInterfaces] RecordBody
+
+RecordHeader:
+ `(` [RecordComponentList] `)`
+
+RecordComponentList:
+ RecordComponent { `,` RecordComponent}
+
+RecordComponent:
+ {Annotation} UnannType Identifier
+ VariableArityRecordComponent
+
+VariableArityRecordComponent:
+ {Annotation} UnannType {Annotation} `...` Identifier
+
+RecordBody:
+  `{` {RecordBodyDeclaration} `}`
+
+RecordBodyDeclaration:
+  ClassBodyDeclaration
+  CompactConstructorDeclaration
+
+CompactConstructorDeclaration:
+  {ConstructorModifier} SimpleTypeName ConstructorBody
+----
+
+[[java-16-feature-record-description-representation]]
+==== Class-file representation
+
+record 类文件使用 Record 属性来存储有关 record 组件的信息:
+
+[source,java]
+----
+Record_attribute {
+    u2 attribute_name_index;
+    u4 attribute_length;
+    u2 components_count;
+    record_component_info components[components_count];
+}
+
+record_component_info {
+    u2 name_index;
+    u2 descriptor_index;
+    u2 attributes_count;
+    attribute_info attributes[attributes_count];
+}
+----
+
+如果 record 组件具有与删除的描述符不同的通用签名，那么 `record_component_info` 结构中必须具有 `Signature` 属性。
+
+[[java-16-feature-record-description-reflection]]
+==== Reflection API
+
+以下公共方法将添加到 `java.lang.Class`:
+
+* RecordComponent[] getRecordComponents()
+* boolean isRecord()
+
+方法 `getRecordComponents()` 返回一个 `java.lang.reflect.RecordComponent` 对象的数组，此数组的元素与 Record 的组件相对应，其顺序与 Record 声明中出现的顺序相同。 可以从数组中的每个 `RecordComponent` 提取其他信息，包括其名称，类型，泛型类型，注解及其访问器方法。
+
+如果将给定的类声明为 Record，则 `isRecord()` 方法将返回 `true`。 (与 `isEnum()` 比较。)
+
+[[java-16-feature-record-alternatives]]
+=== 备选方案
+
+记录可以视为 tuples （元组）的名义形式，我们可以实现结构化元组而不是 Record。 但是，虽然元组可以提供表示某些聚合的轻量级方法，但结果通常是劣等的聚合:
+
+* Java 设计哲学的一个很重要的核心是名称。 类及其成员具有有意义的名称，而元组和元组组件则没有。 也就是说，具有 `firstName` 和 `lastName` 属性的 Person 类比 String 和 String 的匿名元组更清晰和安全。
+* 类通过其构造函数支持状态验证。 元组不。 某些数据集合(例如数字范围)具有不变量，如果由构造函数强制实施，则此后可以依赖这些不变量； 元组不提供此功能。
+* 类可以具有基于其状态的行为。 将状态和行为并置放置可以使行为更易于发现和访问。 元组是原始数据，不提供此类功能。
+
+[[java-16-feature-record-dependencies]]
+=== 依赖
+
+Records 与 <<java-15-feature-sealed,密封类>> https://openjdk.java.net/jeps/360[(JEP 360)] 配合良好。 例如，一系列 Records 可以实现相同的密封接口:
+
+[source,java]
+----
+package com.example.expression;
+
+public sealed interface Expr
+    permits ConstantExpr, PlusExpr, TimesExpr, NegExpr {...}
+
+public record ConstantExpr(int i)       implements Expr {...}
+public record PlusExpr(Expr a, Expr b)  implements Expr {...}
+public record TimesExpr(Expr a, Expr b) implements Expr {...}
+public record NegExpr(Expr e)           implements Expr {...}
+----
+
+Record 和密封类一起构成通常称为 https://en.wikipedia.org/wiki/Algebraic_data_type[代数数据类型的构造]。Records 使我们能够表达产品类型，密封 Records 使我们能够表达类型数量。
+
+除了上述 records 和密封类的组合以外，records 自然会适合 https://cr.openjdk.java.net/~briangoetz/amber/pattern-match.html[模式匹配] 也能很好的组合。由于 Record 将其 API 与其状态描述相结合，因此我们最终也将能够导出记录的解构模式，并使用密封类类型信息来确定具有类型模式或解构模式的 switch 的穷举性。
+
 [[java-16-feature-instanceof]]
 == 适用于 instanceof 的模式匹配
 

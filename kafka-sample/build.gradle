@@ -1,0 +1,9 @@
+plugins {
+	id "com.jcohy.module"
+}
+
+description = "kafka Sample"
+
+dependencies {
+	compile "org.apache.kafka:kafka-clients"
+}

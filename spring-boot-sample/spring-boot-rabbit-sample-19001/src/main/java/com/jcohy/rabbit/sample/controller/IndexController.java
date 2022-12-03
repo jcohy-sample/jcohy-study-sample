@@ -19,7 +19,8 @@ import java.util.concurrent.Callable;
  * @since 1.0.0 2020/04/13 2020/4/13:11:34 Description
  */
 @Controller
-public class IndexController implements RabbitCallback {
+public class
+IndexController implements RabbitCallback {
 
 	private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
 

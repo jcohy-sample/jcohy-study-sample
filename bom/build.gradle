@@ -10,9 +10,6 @@ javaPlatform {
 
 ext {
 	//================= framework =================
-	set('springCloudAlibabaVersion', "2.2.2.RELEASE")
-	set('springCloudVersion', "Hoxton.RELEASE")
-	set('aliyunSpringBootVersion', "1.0.0")
 	set('assertjCoreVersion', "3.15.0")
 	set('junitPlatformCommonsVersion', "1.5.2")
 	set('mybatisPlusStarterVersion', "3.3.1")
@@ -64,12 +61,6 @@ ext {
 }
 
 dependencies {
-
-	api platform("org.springframework.boot:spring-boot-dependencies:2.4.5")
-	api platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
-	api platform("com.alibaba.cloud:aliyun-spring-boot-dependencies:1.0.0")
-	api platform("com.alibaba.cloud:spring-cloud-alibaba-dependencies:2021.1")
-
 
 	constraints {
 		// Platform declares some versions of libraries used in subprojects

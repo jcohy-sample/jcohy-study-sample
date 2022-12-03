@@ -356,39 +356,7 @@ null-detail 消息的第一部分是根据弹出空值的字节码指令计算�
 [[java-14-feature-record]]
 == Record (预览特性)
 
-=== 简介
-
-早在2019 年 2 月份, Java 语言架构师 Brian Goetz ,曾经 写过一篇文章,详尽的说明了并吐槽了 Java 语言,他和很多程序员一样抱怨 “Java 太啰嗦” 或有太多的 “繁文缛节 ”,他提到:开发人员想要创建纯数据载体类(plain data carriers)通常都必须编写大量低价值、
-重复的、容易出错的代码.如:构造函数、 `getter/setter`、 `equals()`、 `hashCode()` 以及 `toString()` 等 .
-
-以至于很多人选择使用 IDE 的功能来自动生成这些代码.还有一些开发会选择使用一些第三方类库,如 Lombok 等来生成这些方法,从而会导致了令人吃惊的表现( surprising behavior )和糟糕的可调试性 (poor debuggability) .
-
-通过 records 增强 Java 编程语言. 记录提供了一种紧凑的语法来声明类,效果类似 lombok 的 @Data 注解.Kotlin 中的 data class . 它们的共同点是类的部分或全部状态可以直接在类头中描述 ,并且这个类中只 包含了纯数据而已. 这是 JDK 14 中的预览语言功能.
-
-=== 描述
-
-当你用 record 声明一个类时,该类将自动拥有以下功能:
-
-* 获取成员变量的简单方法,以上面代码为例 `name()` 和 `partner()` .注意区别于我们平常 getter 的写法.
-* 一个 equals 方法的实现,执行比较时会比较该类的所有成员属性
-* 重写 equals 当然要重写 hashCode
-* 一个可以打印该类所有成员属性的 toString 方法.
-
-[NOTE]
-====
-请注意只会有一个构造方法
-====
-
-和枚举类型一样,记录也是类的一种受限形式. 作为回报,Record 对象在简洁性方面提供了显著的好处 .
-
-还可以在 Record 声明的类中定义静态字段、静态方法、构造器或实例方法.
-
-不能在 Record 声明的类中定义实例字段;类不能声明为 abstract;不能声明显式的父类等.
-
-为了在 Java 14 中引入这种新类型,需要在 Java.lang.Class 对象中添加如下两个新方法:
-
-* RecordComponent[] getRecordComponents()
-* boolean isRecord
+请参考正式版的说明 <<java-16-feature-records>>
 
 [[java-14-feature-switch]]
 == switch 表达式
