@@ -2,6 +2,9 @@
 
 本项目部分从 jcohy-study-sample 迁移过来。
 
+
+NOTE: 此项目已不再维护，相关文件已经迁移到 https://github.com/jcohy-sample[jcohy-sample] 组织中，可通过查看具体的仓库。
+
 重新整理结构优化
 
 使用 Asciidoc 重新编写文档。
